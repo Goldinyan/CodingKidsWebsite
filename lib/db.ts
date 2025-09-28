@@ -1,6 +1,7 @@
-import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { db } from "./firebase";
-import { collection, getDocs } from "firebase/firestore"
+import { db, user } from "./firebase";
+import { arrayRemove, collection, getDocs } from "firebase/firestore"
+import { doc, getDoc, setDoc, updateDoc, arrayUnion } from "firebase/firestore";
+
 
 
 export async function getUserData(uid: string) {
@@ -33,3 +34,132 @@ export async function updateUser(uid: string, updates: Partial<UserData>) {
     throw error;
   }
 }
+
+export type typeOfEvent = "Class" | "MemberOnly" | "Other"
+export type typeOfPlaces = "x" | "y" | "z" 
+
+export async function getAllEvents(){
+  const snapshot = await getDocs(collection(db, "events"))
+  return snapshot.docs.map(doc => ({
+    uid: doc.id,
+    ...doc.data(),
+  }))
+}
+
+export async function addEvent(name: string, date: Date,length: number, memberCount: number, place: typeOfPlaces, typeOfEvent: typeOfEvent) {
+  const dateId = date.toISOString(); 
+  await setDoc(doc(db, "events", dateId), {
+    name: name,
+    date: date.toISOString(), 
+    length: length,
+    memberCount: memberCount,
+    place: place,
+    typeOfEvent: typeOfEvent,
+    users: [],
+    queue: [], 
+  });
+}
+
+export async function addUserToEvent(eventId: string){
+
+  if(!user){
+    throw new Error("no user logged in")
+  }
+
+  const userId = user.uid;
+  const eventRef = doc(db, "events", eventId)
+  const eventSnapshot = await getDoc(eventRef);
+
+  if(!eventSnapshot.exists()){
+    throw new Error("Event not exist")
+  }
+
+  const eventData = eventSnapshot.data();
+  const currentUsers: string[] = eventData.users || [];
+
+  if (currentUsers.length >= 18) {
+    // Event ist voll → User in die Warteschlange
+    await updateDoc(eventRef, {
+      queue: arrayUnion(userId)
+    });
+  } else {
+    // Noch Platz → User direkt hinzufügen
+    await updateDoc(eventRef, {
+      users: arrayUnion(userId)
+    });
+  }
+}
+
+export async function isUserInEvent(eventId: string) {
+  if(!user){
+    throw new Error("no user logged in")
+  }
+  const userId = user.uid;
+  const eventRef = doc(db, "events", eventId)
+  const eventSnapshot = await getDoc(eventRef);
+
+  if(!eventSnapshot.exists()){
+    throw new Error("Event not exist")
+  }
+
+  const eventData = eventSnapshot.data();
+  const currentUsers: string[] = eventData.users;
+  const currentQueue: string[] = eventData.queue;
+
+  if(currentUsers.includes(userId)){
+    return "User"
+  }
+ 
+  if(currentQueue.includes(userId)){
+    return "Queue"
+  } 
+
+  return "false"
+}
+
+export async function removeUserFromEvent(eventId: string) {
+  if(!user){
+    throw new Error("no user logged in")
+  }
+
+  const userId = user.uid;
+  const eventRef = doc(db, "events", eventId)
+  const eventSnapshot = await getDoc(eventRef);
+
+  if(!eventSnapshot.exists()){
+    throw new Error("Event not exist")
+  }
+
+  const eventData = eventSnapshot.data();
+  const currentUsers: string[] = eventData.users;
+  const currentQueue: string[] = eventData.queue;
+
+  if(currentUsers.includes(userId)){
+     await updateDoc(eventRef, {
+      users: arrayRemove(userId)
+    });
+  }
+ 
+  if(currentQueue.includes(userId)){
+    await updateDoc(eventRef, {
+      queue: arrayRemove(userId)
+    })
+    
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

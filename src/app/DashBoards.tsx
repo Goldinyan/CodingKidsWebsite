@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
 import { collection, addDoc } from "firebase/firestore";
-import { auth, user, perf, db } from "@/lib/firebase";
-import { getAllUsers, updateUser } from "@/lib/db";
+import { auth, user, db } from "@/lib/firebase";
+import { getAllUsers, updateUser
+ } from "@/lib/db";
 import { trace } from "firebase/performance";
 import { deleteUser, User } from "firebase/auth";
 
-
-import DurationDash from "./components/durationDash";
 
 type UserData = {
   uid: string;   
@@ -56,6 +55,12 @@ type PresetRoles =
   | "Admin"
   | "Mentor";
 
+
+
+
+
+
+  
 export function AdminDashboard({ userData }: { userData: UserData }) {
   const [users, setUsers] = useState<any[]>([]);
   const [duration, setDuration] = useState<number>(0);
@@ -81,6 +86,7 @@ export function AdminDashboard({ userData }: { userData: UserData }) {
     }
   }, [searchBar]);
 
+ 
   useEffect(() => {
     let filusers: Array<UserData> = [...users]; // Kopie
 
@@ -141,12 +147,9 @@ export function AdminDashboard({ userData }: { userData: UserData }) {
     if (!auth.currentUser) throw new Error("Nicht eingeloggt");
 
     const fetchUsers = async () => {
-      const t = trace(perf, "getUser");
       const start = performance.now();
-      t.start();
       const data = await getAllUsers();
       setUsers(data);
-      t.stop();
       const end = performance.now();
       const dur = end - start;
       setDuration(dur);
@@ -192,7 +195,6 @@ export function AdminDashboard({ userData }: { userData: UserData }) {
         Filter By Name
       </p>
 
-      <DurationDash duration={duration} />
       <input value={searchBar} onChange={(e) => setSearchBar(e.target.value)} />
 
       <h1>Alle Nutzer</h1>

@@ -1,7 +1,7 @@
 "use client"
 
 // lib/auth.ts
-import { auth, db } from "./firebase";
+import { auth, db, user } from "./firebase";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -9,7 +9,7 @@ import {
   setPersistence,
   browserLocalPersistence,
 } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, updateDoc, arrayUnion } from "firebase/firestore";
 
 
 
@@ -30,9 +30,9 @@ export async function registerUser(email: string, password: string, extraData: {
     role: "N/A"
   });
 
+
   return user;
 }
-
 
 
 
