@@ -159,22 +159,21 @@ export function AdminDashboard({ userData }: { userData: UserData }) {
 
   const roles = ["admin", "member", "mentor", "notmember", "N/A"];
 
-  const createDummyUser = async () => {
-    for (let i = 10; i < 30; i++) {
-      await addDoc(collection(db, "users"), {
-        name: `Dummy ${i}`,
-        email: `dummy${i}@example.com`,
-        birthdate: new Date(1990 + i, 0, 1).toISOString(),
-        role: roles[i % roles.length],
-      });
-    }
-  };
+  // const createDummyUser = async () => {
+  //   for (let i = 10; i < 30; i++) {
+  //     await addDoc(collection(db, "users"), {
+  //       name: `Dummy ${i}`,
+  //       email: `dummy${i}@example.com`,
+  //       birthdate: new Date(1990 + i, 0, 1).toISOString(),
+  //       role: roles[i % roles.length],
+  //     });
+  //   }
+  // };
 
   const deleteMyUser = async (u: UserData, event: React.MouseEvent<HTMLParagraphElement>) => {
-  let user: User;
 
   try {
-      //  await deleteUser(u);
+    
   } catch(error) {
     console.log(error)
   }
