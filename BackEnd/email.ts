@@ -6,8 +6,8 @@ export async function sendEmail(to: string, subject: string, html: string) {
     port: 587,
     secure: false,
     auth: {
-      user: "deine@email.de",
-      pass: "deinPasswortOderAppToken",
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
     },
   });
 

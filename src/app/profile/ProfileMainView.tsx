@@ -22,6 +22,7 @@ export default function ProfileMainView() {
   }, [user]);
 
   if (!user) {
+    console.log("no user");
     return <p>NO USER</p>;
   }
 

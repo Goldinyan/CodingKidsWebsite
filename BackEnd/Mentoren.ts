@@ -13,16 +13,11 @@ class Mentor {
         this.picture = picture
     }
 
-    changeDescription(newText: string){
-        this.description = newText;
-    }
-    
-    changeName(newName: string){
+    change(newId:number, newName: string, newDescription: string, newPicture: string){
+        this.id = newId,
         this.name = newName;
-    }
-
-    changeId(newID: number){
-        this.id = newID;
+        this.description = newDescription,
+        this.picture = newPicture
     }
 
     getId(){
@@ -51,10 +46,13 @@ const allMentores: Mentor[] = [
   new Mentor(5, "Malte", "", "malte.png")
 ];
 
-export default allMentores;
+const Dummy: Mentor = new Mentor(1, "Dummy", "ALALALAL", "dummy.jpeg")
+
+export { allMentores, Dummy };
+
 
  
- 
+  
  
  
  

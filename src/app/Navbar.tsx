@@ -1,24 +1,68 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { user } from "@/lib/firebase";
+import {
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuContent,
+  NavigationMenuTrigger,
+} from "@/components/ui/navigation-menu";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
 
   return (
     <div>
-      <div className=" w-[50vw] ml-[25vw] justify-around hidden md:flex">
-        <Link href="/">Home</Link>
-        <Link href="/termine">Termine</Link>
-        <Link href="/verein">Verein</Link>
-        {!user ? (
-          <Link href="/login">Login</Link>
-        ) : (
-          <Link href="/profile">Profile</Link>
-        )}
-      </div>
+      {/* Desktop Navigation */}
+      <NavigationMenu className="w-[50vw] ml-[25vw] justify-around hidden md:flex">
+        <NavigationMenuList>
+          <NavigationMenuItem>
+            <NavigationMenuLink asChild>
+              <Link href="/">Home</Link>
+            </NavigationMenuLink>
+          </NavigationMenuItem>
+          <NavigationMenuItem>
+            <NavigationMenuLink asChild>
+              <Link href="/termine">Termine</Link>
+            </NavigationMenuLink>
+          </NavigationMenuItem>
+          <NavigationMenuItem>
+            <NavigationMenuTrigger>Verein</NavigationMenuTrigger>
+            <NavigationMenuContent>
+              <ul className="grid gap-3 p-4 w-48">
+                <li>
+                  <NavigationMenuLink asChild>
+                    <Link href="/verein/ueber-uns">Über uns</Link>
+                  </NavigationMenuLink>
+                </li>
+                <li>
+                  <NavigationMenuLink asChild>
+                    <Link href="/verein/mitglied-werden">Mitglied werden</Link>
+                  </NavigationMenuLink>
+                </li>
+                <li>
+                  <NavigationMenuLink asChild>
+                    <Link href="/verein/kontakt">Kontakt</Link>
+                  </NavigationMenuLink>
+                </li>
+              </ul>
+            </NavigationMenuContent>
+          </NavigationMenuItem>
+          <NavigationMenuItem>
+            <NavigationMenuLink asChild>
+              <Link href={user ? "/profile" : "/login"}>
+                {user ? "Profile" : "Login"}
+              </Link>
+            </NavigationMenuLink>
+          </NavigationMenuItem>
+        </NavigationMenuList>
+      </NavigationMenu>
+
+      {/* Mobile Navigation */}
       <div className="flex md:hidden">
         <button
           onClick={() => setOpen(!open)}

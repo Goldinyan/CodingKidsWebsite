@@ -9,7 +9,6 @@ export default function Home() {
   return (
     <div className="">
 
-<p className="text-6xl text-yellow-500"> DAIDASIDIS</p>
 <MainView />
     </div>
   );

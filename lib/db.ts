@@ -25,7 +25,15 @@ type UserData = {
   role: string;
 };
 
+// MENTORS
 
+export async function getAllMentors(){
+  const snapshot = await getDocs(collection(db, "mentors"));
+  return snapshot.docs.map((doc) => ({
+    uid: doc.id,
+    ...doc.data(),
+  }));
+}
 
 // USERS
 
