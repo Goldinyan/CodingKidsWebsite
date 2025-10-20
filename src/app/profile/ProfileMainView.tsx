@@ -2,40 +2,38 @@
 
 import { useState, useEffect } from "react";
 import { Dashboard, AdminDashboard } from "./DashBoards";
-import { user } from "@/lib/firebase";
 import { getUserData } from "@/lib/db";
+import { useAuth } from "@/BackEnd/AuthContext";
 
 export default function ProfileMainView() {
+  const { user, loading } = useAuth();
   const [userData, setUserData] = useState<any>(null);
-
-
 
   useEffect(() => {
     const fetchUserData = async () => {
+
       if (user) {
         const data = await getUserData(user.uid);
         setUserData(data);
+        console.log("User Data in ProfileMainView:", data);
+      } else {
+        setUserData(null);
+        console.log("No user logged in");
       }
+
     };
 
     fetchUserData();
-  }, [user]);
+  }, []);
 
-  if (!user) {
-    console.log("no user");
-    return <p>NO USER</p>;
+  if (loading) return <p>Lade...</p>;
+  if (!user) return <p>NO USER</p>;
+  if (!userData) return <p>Benutzerdaten werden geladen...</p>;
+
+  if (userData.role === "admin") {
+    return <AdminDashboard />;
   }
 
-  if(userData.role === "admin"){
-    return (
-        <div>
-            <AdminDashboard userData={userData} />
-        </div>
-    )   
-  }
-  return (
-    <div>
-        <Dashboard userData={userData} />
-    </div>
-  )
+  return <Dashboard />;
 }
+

@@ -1,8 +1,8 @@
-import { db, user } from "./firebase";
+import { db } from "./firebase";
 import { updateProfile } from "firebase/auth";
 import { arrayRemove, collection, getDocs, deleteDoc} from "firebase/firestore";
 import { doc, getDoc, setDoc, updateDoc, arrayUnion } from "firebase/firestore";
-
+import { User } from "firebase/auth";
 
 export type typeOfEvent = "Class" | "MemberOnly" | "Other";
 
@@ -18,6 +18,7 @@ type EventData = {
 };
 
 type UserData = {
+  uid: string;
   name: string;
   email: string;
   birthday: string; // ISO-String
@@ -37,11 +38,22 @@ export async function getAllMentors(){
 
 // USERS
 
-export async function getUserData(uid: string) {
+export async function getUserData(uid: string): Promise<UserData | null> {
   const snapshot = await getDoc(doc(db, "users", uid));
   if (!snapshot.exists()) return null;
-  return snapshot.data();
+
+  const data = snapshot.data();
+
+  return {
+    uid,
+    name: data.name ?? "",
+    email: data.email ?? "",
+    birthday: data.birthday ?? "",
+    createdAt: data.createdAt?.toDate?.() ?? new Date(),
+    role: data.role ?? "user",
+  };
 }
+
 
 export async function getAllUsers() {
   const snapshot = await getDocs(collection(db, "users"));
@@ -63,9 +75,7 @@ export async function updateUser(uid: string, updates: Partial<UserData>) {
 }
 
 export async function deleteUserData(uid: string){
-  if(!user){
-    console.log("NO USER LOGGED IN");
-  }
+  
   try {
     const ref = doc(db, "users", uid)
     const userSnapshot = await getDoc(ref)
@@ -82,12 +92,15 @@ export async function deleteUserData(uid: string){
   }
 }
 
-export async function deleteUser(){
+export async function deleteUser(user: User){
+  
+  
   if(!user){
-    console.log("no user logged in")
+    console.log("No user found")
     return;
   }
-  console.log(user.displayName + "got deleted")
+
+  console.log(user.displayName + " got deleted")
   await deleteUserData(user.uid)
   await user.delete()
 }
@@ -134,12 +147,8 @@ export async function updateEvent(uid: string, updates: Partial<EventData>) {
   }
 }
 
-export async function addUserToEvent(eventId: string) {
-  if (!user) {
-    throw new Error("no user logged in");
-  }
-
-  const userId = user.uid;
+export async function addUserToEvent(eventId: string, userId: string) {
+  
   const eventRef = doc(db, "events", eventId);
   const eventSnapshot = await getDoc(eventRef);
 
@@ -163,11 +172,9 @@ export async function addUserToEvent(eventId: string) {
   }
 }
 
-export async function isUserInEvent(eventId: string) {
-  if (!user) {
-    throw new Error("no user logged in");
-  }
-  const userId = user.uid;
+export async function isUserInEvent(eventId: string, userId: string) {
+
+  
   const eventRef = doc(db, "events", eventId);
   const eventSnapshot = await getDoc(eventRef);
 
@@ -190,12 +197,9 @@ export async function isUserInEvent(eventId: string) {
   return "false";
 }
 
-export async function removeUserFromEvent(eventId: string) {
-  if (!user) {
-    throw new Error("no user logged in");
-  }
+export async function removeUserFromEvent(eventId: string, userId: string) {
+  
 
-  const userId = user.uid;
   const eventRef = doc(db, "events", eventId);
   const eventSnapshot = await getDoc(eventRef);
 

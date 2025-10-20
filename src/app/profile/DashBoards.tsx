@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { collection, addDoc } from "firebase/firestore";
-import { auth, user, db } from "@/lib/firebase";
-import { getAllUsers, updateUser } from "@/lib/db";
+import { auth, db } from "@/lib/firebase";
+import { getAllUsers, getUserData, updateUser } from "@/lib/db";
 import { trace } from "firebase/performance";
 import { deleteUser, User } from "firebase/auth";
 import { allMentores } from "@/BackEnd/Mentoren";
+import { useAuth } from "@/BackEnd/AuthContext";
 
 type UserData = {
   uid: string;
@@ -15,8 +16,37 @@ type UserData = {
   role: string;
 };
 
-export function Dashboard({ userData }: { userData: UserData }) {
-  const deleteMyUser = async () => {
+export function Dashboard() {
+  const { user } = useAuth();
+  const [data, setData] = useState<UserData | null>(null);
+
+  const changeRole = async () => {
+    console.log("Changing role to admin");
+   if (!user) return;
+   const userData = await getUserData(user.uid);
+   if (!userData) return;
+   await updateUser(userData.uid, { role: "admin" });
+ };
+
+ useEffect(() => {
+  const fetchData = async () => {
+    if (!user) return;
+
+    const data = await getUserData(user.uid);
+    
+
+    if (data) {
+      setData(data);
+      console.log("Rohdaten aus Firestore:", data);
+      console.log("Extrahierte Rolle:", data.role);
+    }
+  };
+
+  fetchData();
+}, [user]);
+
+
+ const deleteMyUser = async () => {
     if (user) {
       deleteUser(user)
         .then(() => {
@@ -27,18 +57,22 @@ export function Dashboard({ userData }: { userData: UserData }) {
         });
     }
   };
+
+  
+
+
   return (
     <div>
       <p onClick={deleteMyUser}> Delete My Account</p>
-      <h1>Willkommen, {userData.name}</h1>
-      <p>Email: {userData.email}</p>
-      <p>
-        Geburtstag:{" "}
-        {userData.birthday
-          ? new Date(userData.birthday).toLocaleDateString()
-          : "Nicht angegeben"}
-      </p>{" "}
-      <p onClick={() => deleteMyUser}></p>
+      <h1>Dashboard</h1>
+      <p>Name: {data?.name}</p>
+      <p>Email: {data?.email}</p>
+      <p>Birthday: {data?.birthday}</p>
+      <p>{data?.role}</p>
+      <p onClick={() => deleteMyUser()}> DELETE </p>
+      <p onClick={() => changeRole()}>Change to Admin</p>
+
+
     </div>
   );
 }
@@ -52,7 +86,7 @@ type PresetRoles =
   | "Admin"
   | "Mentor";
 
-export function AdminDashboard({ userData }: { userData: UserData }) {
+export function AdminDashboard() {
   const [users, setUsers] = useState<any[]>([]);
   const [duration, setDuration] = useState<number>(0);
   const [filteredUsers, setFilteredUsers] = useState<Array<UserData>>([]);
@@ -69,6 +103,10 @@ export function AdminDashboard({ userData }: { userData: UserData }) {
     birthYear: "false",
     role: "false",
   });
+
+  const [data, setData] = useState<UserData | null>(null);
+  const { user } = useAuth();
+
   useEffect(() => {
     if (searchBar !== "") {
       setFilterBySearch(true);
@@ -76,6 +114,21 @@ export function AdminDashboard({ userData }: { userData: UserData }) {
       setFilterBySearch(false);
     }
   }, [searchBar]);
+
+  useEffect(() => {
+  const fetchData = async () => {
+    if (!user) return;
+
+    const data = await getUserData(user.uid);
+    if (data) {
+      setData(data);
+    }
+  };
+
+  fetchData();
+}, [user]);
+
+
 
   useEffect(() => {
     let filusers: Array<UserData> = [...users]; // Kopie
@@ -134,7 +187,7 @@ export function AdminDashboard({ userData }: { userData: UserData }) {
   }, [users, searchBar, filters]);
 
   useEffect(() => {
-    if (!auth.currentUser) throw new Error("Nicht eingeloggt");
+   
 
     const fetchUsers = async () => {
       const start = performance.now();
@@ -148,30 +201,6 @@ export function AdminDashboard({ userData }: { userData: UserData }) {
   }, []);
 
   const roles = ["admin", "member", "mentor", "notmember", "N/A"];
-
- const createDummyUser = async () => {
-   for (let i = 10; i < 30; i++) {
-       await addDoc(collection(db, "users"), {
-        name: `Dummy ${i}`,
-        email: `dummy${i}@example.com`,
-        birthdate: new Date(1990 + i, 0, 1).toISOString(),
-       role: roles[i % roles.length],
-      });
-   }
- };
-
- const convertData = async () => {
-  const promises = allMentores.map((mentor) =>
-    addDoc(collection(db, "mentors"), {
-      id: mentor.getId(),
-      name: mentor.getName(),
-      description: mentor.getDescription(),
-      picture: mentor.getPicture(),
-    })
-  );
-
-  await Promise.all(promises);
-};
 
 
   const deleteMyUser = async (
@@ -187,7 +216,7 @@ export function AdminDashboard({ userData }: { userData: UserData }) {
   return (
     <div>
       <div>
-      <p className="text-5xl text-red-600" onClick={() => (convertData)}>CONVERT DATA</p>
+      <p>{user?.uid}</p>
       <p
         onClick={() => {
           setFilters((prev) => ({
@@ -223,7 +252,6 @@ export function AdminDashboard({ userData }: { userData: UserData }) {
       </div>
 
       <div>
-        
       </div>
     </div>
   );

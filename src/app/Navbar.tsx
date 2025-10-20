@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { user } from "@/lib/firebase";
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -11,9 +10,14 @@ import {
   NavigationMenuContent,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/BackEnd/AuthContext";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+
+  const { user, loading } = useAuth();
+  const router = useRouter();
 
   return (
     <div>
@@ -27,7 +31,7 @@ export default function Navbar() {
           </NavigationMenuItem>
           <NavigationMenuItem>
             <NavigationMenuLink asChild>
-              <Link href="/termine">Termine</Link>
+              <p onClick={() => router.push("/termine")}>Termine</p>
             </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem>
@@ -36,17 +40,17 @@ export default function Navbar() {
               <ul className="grid gap-3 p-4 w-48">
                 <li>
                   <NavigationMenuLink asChild>
-                    <Link href="/verein/ueber-uns">Über uns</Link>
+                    <p onClick={() => router.push("/verein/ueber-uns")}>Über uns</p>
                   </NavigationMenuLink>
                 </li>
                 <li>
                   <NavigationMenuLink asChild>
-                    <Link href="/verein/mitglied-werden">Mitglied werden</Link>
+                    <p onClick={() => router.push("/verein/mitglied-werden")}>Mitglied werden</p>
                   </NavigationMenuLink>
                 </li>
                 <li>
                   <NavigationMenuLink asChild>
-                    <Link href="/verein/kontakt">Kontakt</Link>
+                    <p onClick={() => router.push("/verein/kontakt")}>Kontakt</p>
                   </NavigationMenuLink>
                 </li>
               </ul>
@@ -54,9 +58,7 @@ export default function Navbar() {
           </NavigationMenuItem>
           <NavigationMenuItem>
             <NavigationMenuLink asChild>
-              <Link href={user ? "/profile" : "/login"}>
-                {user ? "Profile" : "Login"}
-              </Link>
+              <p onClick={() => router.push(user ? "/profile" : "/login")}> {user ? "Profile" : "Login"}</p>
             </NavigationMenuLink>
           </NavigationMenuItem>
         </NavigationMenuList>

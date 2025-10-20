@@ -1,7 +1,7 @@
 "use client";
 
 // lib/auth.ts
-import { auth, db, user } from "./firebase";
+import { auth, db } from "./firebase";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -18,6 +18,7 @@ export async function registerUser(
   extraData: {
     name: string;
     birthdate: Date;
+    courses?: string[];
   }
 ) {
   await setPersistence(auth, browserLocalPersistence);
@@ -37,6 +38,7 @@ export async function registerUser(
     birthdate: extraData.birthdate.toISOString(),
     createdAt: new Date().toISOString(),
     role: "N/A",
+    courses: extraData.courses || [],
   });
 
   return user;

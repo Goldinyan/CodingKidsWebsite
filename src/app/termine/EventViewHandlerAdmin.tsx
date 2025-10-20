@@ -9,8 +9,7 @@ import {
   removeUserFromEvent,
   isUserInEvent
 } from "@/lib/db";
-import { user } from "@/lib/firebase"
-
+import { useAuth } from "@/BackEnd/AuthContext";
 
 interface Event {
   uid: string;
@@ -28,6 +27,7 @@ interface Event {
 
 export default function EventViewHandlerAdmin() {
   const [events, setEvents] = useState<any[]>([]);
+  const { user } = useAuth();
   const [statuses, setStatuses] = useState<Record<string, string>>({});
 
   
@@ -43,7 +43,7 @@ export default function EventViewHandlerAdmin() {
       for (const event of filEvents) {
         statusMap[event.uid] = "loading"; // Initialstatus
         try {
-          const status = await isUserInEvent(event.uid);
+          const status = await isUserInEvent(event.uid, user?.uid || "");
           statusMap[event.uid] = status;
         } catch(error) {
             console.log(error);

@@ -12,10 +12,10 @@ export function MentorCard({ name, description, picture }: {
       <CardHeader className="flex items-center gap-4">
         <Avatar>
           <AvatarImage src={picture} />
-          <AvatarFallback>{name[0]}</AvatarFallback>
+          
         </Avatar>
         <div>
-          <h3 className="text-lg font-semibold">{name}</h3>
+          <h3 className="text-lg text-red-700 font-semibold">{name}</h3>
           <p className="text-sm text-muted-foreground">{description}</p>
         </div>
       </CardHeader>
