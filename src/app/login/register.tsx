@@ -1,5 +1,5 @@
 "use client";
-
+import { useRouter } from "next/navigation"; // für App Router (Next.js 13+)
 import { registerUser } from "@/lib/auth";
 import { useState } from "react";
 
@@ -9,6 +9,8 @@ export default function RegisterView() {
   const [secpassword, setSecpassword] = useState("");
   const [name, setName] = useState("");
   const [birthdate, setBirthdate] = useState<Date | null>(null);
+
+  const router = useRouter();
 
   const handleRegister = async () => {
     if (password !== secpassword) {
@@ -26,7 +28,8 @@ export default function RegisterView() {
         birthdate,
       });
 
-      alert("Erfolgreich registriert!");
+      
+      router.push("/"); 
     } catch (err) {
       console.error("Fehler:", err);
       alert("Registrierung fehlgeschlagen");

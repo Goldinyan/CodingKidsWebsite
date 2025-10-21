@@ -4,24 +4,22 @@ import { arrayRemove, collection, getDocs, deleteDoc} from "firebase/firestore";
 import { doc, getDoc, setDoc, updateDoc, arrayUnion } from "firebase/firestore";
 import { User } from "firebase/auth";
 
-export type typeOfEvent = "Class" | "MemberOnly" | "Other";
 
-export type typeOfPlaces = "x" | "y" | "z";
 
-type EventData = {
+export type EventData = {
   name: string;
   date: Date;
   length: number;
   memberCount: number;
-  place: typeOfPlaces;
-  typeOfEvent: typeOfEvent;
+  place:  string[];
+  typeOfEvent:  string;
 };
 
-type UserData = {
+export type UserData = {
   uid: string;
   name: string;
   email: string;
-  birthday: string; // ISO-String
+  birthday: string; 
   createdAt: Date;
   role: string;
 };
@@ -53,7 +51,6 @@ export async function getUserData(uid: string): Promise<UserData | null> {
     role: data.role ?? "user",
   };
 }
-
 
 export async function getAllUsers() {
   const snapshot = await getDocs(collection(db, "users"));
@@ -105,8 +102,6 @@ export async function deleteUser(user: User){
   await user.delete()
 }
 
-
-
 // EVENTS
 
 export async function getAllEvents() {
@@ -118,21 +113,16 @@ export async function getAllEvents() {
 }
 
 export async function addEvent(
-  name: string,
-  date: Date,
-  length: number,
-  memberCount: number,
-  place: typeOfPlaces,
-  typeOfEvent: typeOfEvent
+  newEvent: EventData
 ) {
-  const dateId = date.toISOString();
+  const dateId = newEvent.date.toISOString();
   await setDoc(doc(db, "events", dateId), {
-    name: name,
-    date: date.toISOString(),
-    length: length,
-    memberCount: memberCount,
-    place: place,
-    typeOfEvent: typeOfEvent,
+    name: newEvent.name,
+    date: newEvent.date.toISOString(),
+    length: newEvent.length,
+    memberCount: newEvent.memberCount,
+    place: newEvent.place,
+    typeOfEvent: newEvent.typeOfEvent,
     users: [],
     queue: [],
   });

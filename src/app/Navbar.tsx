@@ -20,9 +20,10 @@ export default function Navbar() {
   const router = useRouter();
 
   return (
-    <div>
-      {/* Desktop Navigation */}
-      <NavigationMenu className="w-[50vw] ml-[25vw] justify-around hidden md:flex">
+    <div className="">
+      
+
+      <NavigationMenu className=" bg-amber-400   hidden md:flex">
         <NavigationMenuList>
           <NavigationMenuItem>
             <NavigationMenuLink asChild>
@@ -37,7 +38,7 @@ export default function Navbar() {
           <NavigationMenuItem>
             <NavigationMenuTrigger>Verein</NavigationMenuTrigger>
             <NavigationMenuContent>
-              <ul className="grid gap-3 p-4 w-48">
+              <ul className="grid gap-3 p-6 w-48">
                 <li>
                   <NavigationMenuLink asChild>
                     <p onClick={() => router.push("/verein/ueber-uns")}>Über uns</p>
@@ -64,7 +65,7 @@ export default function Navbar() {
         </NavigationMenuList>
       </NavigationMenu>
 
-      {/* Mobile Navigation */}
+    
       <div className="flex md:hidden">
         <button
           onClick={() => setOpen(!open)}

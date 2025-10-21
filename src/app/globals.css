@@ -4,6 +4,14 @@
 
 @custom-variant dark (&:is(.dark *));
 
+
+@theme {
+    --color-primaryOwn: #845EC2;
+    --color-secondaryOwn: #00C9A7;
+    --color-thirdOwn: #C4FCEF;
+    --color-fourthOwn: #4D8076;
+}
+
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);

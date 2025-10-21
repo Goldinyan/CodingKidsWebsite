@@ -216,7 +216,6 @@ export function AdminDashboard() {
   return (
     <div>
       <div>
-      <p>{user?.uid}</p>
       <p
         onClick={() => {
           setFilters((prev) => ({
