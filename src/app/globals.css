@@ -7,9 +7,14 @@
 
 @theme {
     --color-primaryOwn: #845EC2;
-    --color-secondaryOwn: #00C9A7;
-    --color-thirdOwn: #C4FCEF;
-    --color-fourthOwn: #4D8076;
+    --color-secondaryOwn: #0B6F12;
+    --color-thirdOwn: #428F47;
+    --color-fourthOwn: #7B028E;
+    --color-fifthOwn: #871A98;
+    --color-otherbg: #F8F9FA;
+    --color-lightborder: #EAEBEF;
+    --color-lighttext: #E3CBE8;
+    
 }
 
 @theme inline {
@@ -49,6 +54,29 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 }
+
+body {
+  scroll-behavior: smooth;
+}
+
+@theme {
+  /* cleared everything with the initial value, but I manually entered everything from the documentation table */
+  --breakpoint-*: initial;
+  /* can set the breakpoints you want to keep */
+  --breakpoint-1: 320px;
+  --breakpoint-2: 375px;
+  --breakpoint-3: 425px;
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-xxl: 1380px; /* added your custom breakpoint here */
+  --breakpoint-2xl: 1536px;
+}
+
+ /* * {
+  outline: 1px solid red;
+}  */
 
 :root {
   --radius: 0.625rem;

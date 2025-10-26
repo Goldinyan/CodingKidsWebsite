@@ -16,7 +16,8 @@ export default function Home(){
 
     return (
         <div>
-           <p>{user?.uid}</p>
+      
+           
            <ProfileMainView />
         </div>
     )

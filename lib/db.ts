@@ -24,14 +24,33 @@ export type UserData = {
   role: string;
 };
 
+export type Mentor = {
+  uid: string, 
+  name: string,
+  des1: string,
+  des2: string,
+  pic: string,
+  id: number
+}
+
 // MENTORS
 
-export async function getAllMentors(){
+export async function getAllMentors(): Promise<Mentor[]>{
   const snapshot = await getDocs(collection(db, "mentors"));
   return snapshot.docs.map((doc) => ({
     uid: doc.id,
     ...doc.data(),
-  }));
+  }) as Mentor);
+}
+
+export async function updateMentor(uid: string, updates: Partial<Mentor>) {
+  try {
+    const ref = doc(db, "mentors", uid);
+    await updateDoc(ref, updates)
+  } catch(error) {
+    console.error("Fehler beim Aktualisieren von Mentoren Daten" + error)
+    throw error;
+  }
 }
 
 // USERS

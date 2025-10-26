@@ -4,7 +4,6 @@ import { auth, db } from "@/lib/firebase";
 import { getAllUsers, getUserData, updateUser } from "@/lib/db";
 import { trace } from "firebase/performance";
 import { deleteUser, User } from "firebase/auth";
-import { allMentores } from "@/BackEnd/Mentoren";
 import { useAuth } from "@/BackEnd/AuthContext";
 
 type UserData = {

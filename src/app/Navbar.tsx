@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -12,132 +13,109 @@ import {
 } from "@/components/ui/navigation-menu";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/BackEnd/AuthContext";
+import { User, LogIn } from "lucide-react";
+import { useIsMobile } from "@/hooks/useIsMobile";
+import { Menu, X } from "lucide-react";
+import NavbarMobile from "./NavbarMobile";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
-
   const { user, loading } = useAuth();
   const router = useRouter();
 
+  const isMobile = useIsMobile();
+
   return (
-    <div className="">
-      
-
-      <NavigationMenu className=" bg-amber-400   hidden md:flex">
-        <NavigationMenuList>
-          <NavigationMenuItem>
-            <NavigationMenuLink asChild>
-              <Link href="/">Home</Link>
-            </NavigationMenuLink>
-          </NavigationMenuItem>
-          <NavigationMenuItem>
-            <NavigationMenuLink asChild>
-              <p onClick={() => router.push("/termine")}>Termine</p>
-            </NavigationMenuLink>
-          </NavigationMenuItem>
-          <NavigationMenuItem>
-            <NavigationMenuTrigger>Verein</NavigationMenuTrigger>
-            <NavigationMenuContent>
-              <ul className="grid gap-3 p-6 w-48">
-                <li>
-                  <NavigationMenuLink asChild>
-                    <p onClick={() => router.push("/verein/ueber-uns")}>Über uns</p>
-                  </NavigationMenuLink>
-                </li>
-                <li>
-                  <NavigationMenuLink asChild>
-                    <p onClick={() => router.push("/verein/mitglied-werden")}>Mitglied werden</p>
-                  </NavigationMenuLink>
-                </li>
-                <li>
-                  <NavigationMenuLink asChild>
-                    <p onClick={() => router.push("/verein/kontakt")}>Kontakt</p>
-                  </NavigationMenuLink>
-                </li>
-              </ul>
-            </NavigationMenuContent>
-          </NavigationMenuItem>
-          <NavigationMenuItem>
-            <NavigationMenuLink asChild>
-              <p onClick={() => router.push(user ? "/profile" : "/login")}> {user ? "Profile" : "Login"}</p>
-            </NavigationMenuLink>
-          </NavigationMenuItem>
-        </NavigationMenuList>
-      </NavigationMenu>
-
-    
-      <div className="flex md:hidden">
-        <button
-          onClick={() => setOpen(!open)}
-          className="p-2 rounded-md bg-gray-800 text-white focus:outline-none"
-        >
-          <svg
-            className="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            {open ? (
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            ) : (
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            )}
-          </svg>
-        </button>
-
-        {open && (
-          <div className="absolute right-0 mt-2 w-40 bg-white shadow-lg rounded-md z-50">
-            <ul className="flex flex-col text-gray-800">
-              <li>
-                <Link href="/" className="px-4 py-2 hover:bg-gray-100 block">
-                  Home
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/termine"
-                  className="px-4 py-2 hover:bg-gray-100 block"
-                >
-                  Termine
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/verein"
-                  className="px-4 py-2 hover:bg-gray-100 block"
-                >
-                  Verein
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/login"
-                  className="px-4 py-2 hover:bg-gray-100 block"
-                >
-                  Login
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/profile"
-                  className="px-4 py-2 hover:bg-gray-100 block"
-                >
-                  Profile
-                </Link>
-              </li>
-            </ul>
+    <div className="w-full">
+      <div className="w-full h-15 px-10  ">
+        
+        <div className="w-full flex items-center">
+          <div className=" flex-row items-center gap-3 hidden md:flex">
+            <img src="Logo_aussen_Transparent.png" className="w-15 h-15 p-1" />
+            <p className="font-bold hidden lg:flex">Coding Kids Niederrhein</p>
           </div>
-        )}
+
+          <div className=" flex-row items-center gap-3 ml-auto hidden md:flex">
+            <Button
+              className="bg-secondaryOwn"
+              onClick={() => router.push("/spenden")}
+            >
+              <p className="font-bold">Spenden</p>
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => router.push(user ? "/profile" : "/login")}
+            >
+              {isMobile ? (
+                !user ? (
+                  <User className="w-5 h-5" />
+                ) : (
+                  <LogIn className="w-5 h-5" />
+                )
+              ) : (
+                <span className="font-bold">{user ? "Profile" : "Login"}</span>
+              )}
+            </Button>
+          </div>
+
+          <div className="absolute left-1/2 -translate-x-1/2">
+            <NavigationMenu className="hidden md:flex">
+              <NavigationMenuList className="flex gap-6">
+                <NavigationMenuItem>
+                  <NavigationMenuLink asChild>
+                    <Link className="font-bold" href="/">
+                      Startseite
+                    </Link>
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <NavigationMenuLink asChild>
+                    <p
+                      className="font-bold"
+                      onClick={() => router.push("/termine")}
+                    >
+                      Kurse
+                    </p>
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <NavigationMenuLink asChild>
+                    <p
+                      className="font-bold"
+                      onClick={() => router.push("/verein")}
+                    >
+                      Über uns
+                    </p>
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <NavigationMenuLink>
+                    <p
+                      className="font-bold"
+                      onClick={() => router.push("/kontakt")}
+                    >
+                      Kontakt
+                    </p>
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
+          </div>
+        </div>
+
+        <div className="flex flex-col w-full  md:hidden">
+          <div className="flex flex-row justify-between pt-5  items-center w-full ">
+            <p className="text-black font-bold">Coding Kids Niederrhein</p>
+            <button
+              onClick={() => setOpen(!open)}
+              className="focus:outline-none transition-all"
+            >
+              {!open ? <Menu className="w-6 h-6" /> : <X className="w-6 h-6" />}
+            </button>
+          </div>
+          {open && <NavbarMobile /> }
+          
+        </div>
       </div>
     </div>
   );

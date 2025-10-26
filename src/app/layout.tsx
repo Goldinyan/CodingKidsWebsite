@@ -20,7 +20,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 
   return (
     <html lang="de">
-      <body>
+      <body className="overflow-x-hidden w-full">
         <AuthProvider>
           <ClientLayout>{children}</ClientLayout>
         </AuthProvider>

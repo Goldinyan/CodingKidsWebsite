@@ -32,8 +32,8 @@ const [addEventVisible, setAddEventVisible] = useState<boolean>(false);
   
 
   if (loading) return <p>Lade...</p>;
-if (!user) return <p>Kein Benutzer angemeldet</p>;
-if (!userData) return <p>Benutzerdaten werden geladen...</p>;
+//if (!user) return <p>Kein Benutzer angemeldet</p>;
+//if (!userData) return <p>Benutzerdaten werden geladen...</p>;
 
 
 
