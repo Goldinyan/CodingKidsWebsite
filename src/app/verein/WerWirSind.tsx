@@ -29,7 +29,7 @@ export default function WerWirSind() {
   return (
     <>
       <div className="w-full">
-        <div className="flex items-center justify-center flex-col h-150 gap-6 bg-fifthOwn ">
+        <div className="flex items-center justify-center flex-col h-170 gap-6 bg-fifthOwn ">
           <div className=" flex items-center flex-col  text-center">
             <p className="text-xl font-extrabold 1:text-4xl md:text-4xl lg:text-5xl text-white xxl:text-6xl xxl:w-200 pr-6 pl-6">
               Wir gestalten die digitale Zukunft.
@@ -155,9 +155,11 @@ export default function WerWirSind() {
             ))}
           </div>
         </div>
+       
         <div>
             <MentorenView />
         </div>
+       
 
 
 

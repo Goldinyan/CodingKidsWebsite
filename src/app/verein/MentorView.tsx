@@ -46,6 +46,7 @@ export default function MentorenView() {
             Freiwilligen, die sich leidenschaftlich dafür einsetzen, die nächste
             Generation von Entwickelern zu form
           </p>
+          <section id="mentor">
           <div className="grid grid-cols-1 sm:grid-cols-2  lg:grid-cols-3 gap-6">
             {filMentors.map((mentor, index) => (
               <MentorCard
@@ -65,6 +66,7 @@ export default function MentorenView() {
               />
             ))}
           </div>
+          </section>
           <div>
             <Button variant="outline" onClick={() => (setShowAll((prev) => !prev))}>
               {!showAll? <p>Alle Sehen</p> : <p>Nicht Alle sehen</p>}

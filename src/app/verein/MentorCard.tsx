@@ -1,7 +1,12 @@
-import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import {useState} from "react"
+import { useState } from "react";
 
 export function MentorCard({
   name,
@@ -21,7 +26,11 @@ export function MentorCard({
   isExpanded: boolean;
 }) {
   return (
-<Card className={`1:w-70 flex items-center ${isExpanded && isFirst ? "col-span-full w-full" : ""} transition-all duration-300 hover:-translate-y-5 hover:shadow-lg `}>
+    <Card
+      className={`1:w-70 flex items-center ${
+        isExpanded && isFirst ? "col-span-full w-full" : ""
+      } transition-all duration-300 hover:-translate-y-5 hover:shadow-lg `}
+    >
       <CardHeader className="flex w-full items-center flex-col gap-4">
         <Avatar className="w-24 h-24">
           <AvatarImage src={picture} className="object-cover rounded-full" />
@@ -29,15 +38,32 @@ export function MentorCard({
         <div className="flex items-center flex-col">
           <h3 className="pt-4 pb-4 text-3xl font-bold text-black">{name}</h3>
           <p className="text-sm text-muted-foreground">{description1}</p>
-          {isExpanded && <p>{description2}</p>}
+          {isExpanded && (
+            <p className="text-sm text-muted-foreground">{description2}</p>
+          )}
         </div>
       </CardHeader>
       <CardFooter>
-        <Button variant="outline" onClick={onExpand}>
+        <Button
+          variant="outline"
+          onClick={() => {
+            onExpand(); // deine Funktion
+            if(!isExpanded){
+            const section = document.getElementById("mentor");
+            if (section) {
+              const yOffset = -100;
+              const y =
+                section.getBoundingClientRect().top +
+                window.pageYOffset +
+                yOffset;
+
+              window.scrollTo({ top: y, behavior: "smooth" });
+            }
+          }}}
+        >
           {isExpanded ? "Weniger" : "Mehr erfahren"}
         </Button>
       </CardFooter>
     </Card>
   );
 }
-

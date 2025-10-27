@@ -23,13 +23,27 @@ export default function Navbar() {
   const { user, loading } = useAuth();
   const router = useRouter();
 
+  useEffect(() => {
+  if (open) {
+    document.body.style.overflow = "hidden";
+  } else {
+    document.body.style.overflow = "";
+  }
+
+  // Cleanup
+  return () => {
+    document.body.style.overflow = "";
+  };
+}, [open]);
+
+
   const isMobile = useIsMobile();
 
   return (
-    <div className="w-full">
-      <div className="w-full h-15 px-10  ">
+    <div className="w-full  ">
+      <div className="w-full h-16 pt-5 md:pt-0  ">
         
-        <div className="w-full flex items-center">
+        <div className="w-full flex items-center pr-15 pl-4">
           <div className=" flex-row items-center gap-3 hidden md:flex">
             <img src="Logo_aussen_Transparent.png" className="w-15 h-15 p-1" />
             <p className="font-bold hidden lg:flex">Coding Kids Niederrhein</p>
@@ -103,18 +117,18 @@ export default function Navbar() {
           </div>
         </div>
 
-        <div className="flex flex-col w-full  md:hidden">
-          <div className="flex flex-row justify-between pt-5  items-center w-full ">
-            <p className="text-black font-bold">Coding Kids Niederrhein</p>
+        <div className="flex flex-col  w-full h-full  md:hidden">
+          <div className="flex flex-row  justify-between  items-center w-full ">
+            <p className="text-black font-bold pl-6">Coding Kids Niederrhein</p>
             <button
               onClick={() => setOpen(!open)}
-              className="focus:outline-none transition-all"
+              className="focus:outline-none transition-all pr-6"
             >
-              {!open ? <Menu className="w-6 h-6" /> : <X className="w-6 h-6" />}
+              {!open ? <Menu className="w-6 h-6 text-graytext"  /> : <X className="w-6 h-6 text-graytext" />}
             </button>
           </div>
-          {open && <NavbarMobile /> }
-          
+         <div className="transition-all duration-300 "> {open && <NavbarMobile /> } </div>
+
         </div>
       </div>
     </div>
