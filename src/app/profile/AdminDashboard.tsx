@@ -1,203 +1,188 @@
 "use client";
 
-import type { Preset, PresetRoles, UserData } from "@/BackEnd/type";
+import type { UserData } from "@/BackEnd/type";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/BackEnd/AuthContext";
-import { getUserData, getAllUsers, updateUser } from "@/lib/db";
+import { getUserData } from "@/lib/db";
+import { Menu, X } from "lucide-react";
+import { useRouter } from "next/navigation";
+import {
+  Users,
+  CalendarCheck,
+  UserCheck,
+  Megaphone,
+  User,
+  LogOut,
+  ArrowRight,
+  StepBack,
+} from "lucide-react";
+import UserDashboard from "./UserDashboard";
 
-export function IDK() {
-  return (
-  <div className="flex flex-col h-screen">
-    {/* 🔝 Top-Leiste */}
-    <div className="h-16 bg-gray-800 text-white flex items-center px-4">
-      <p className="text-lg font-semibold">Mein Dashboard</p>
-    </div>
+export function MainOverlayAdminDashboard() {
+  const [open, setOpen] = useState<boolean>(false);
+  const [userData, setUserData] = useState<UserData>();
 
-    {/* 🧩 Hauptbereich */}
-    <div className="flex flex-1">
-      
+  const { user, loading } = useAuth();
 
-      {/* Seitenleiste */}
-      <div className="w-64 bg-white border-l p-6">
-        <p className="text-lg font-semibold mb-2">Sidebar</p>
-        <ul className="space-y-2">
-          <li>
-            <a className="text-blue-600 hover:underline">Einstellung 1</a>
-          </li>
-          <li>
-            <a className="text-blue-600 hover:underline">Einstellung 2</a>
-          </li>
-        </ul>
-      </div>
-
-      {/* Hauptinhalt */}
-      <div className="flex-1 bg-gray-100 p-6">
-        <p className="text-xl font-bold mb-4">Account View</p>
-        <p>Hier kommt dein Hauptinhalt rein.</p>
-      </div>
-    </div>
-  </div>
-);
-
-}
-export function AdminDashboard() {
-  const [users, setUsers] = useState<any[]>([]);
-  const [filteredUsers, setFilteredUsers] = useState<Array<UserData>>([]);
-  const [filterBySearch, setFilterBySearch] = useState<boolean>(false);
-  const [searchBar, setSearchBar] = useState<string>("");
-  const [filters, setFilters] = useState<{
-    createdAt: Preset;
-    name: Preset;
-    birthYear: Preset;
-    role: PresetRoles;
-  }>({
-    createdAt: "false",
-    name: "false",
-    birthYear: "false",
-    role: "false",
-  });
-
-  const [data, setData] = useState<UserData | null>(null);
-  const { user } = useAuth();
-
-  useEffect(() => {
-    if (searchBar !== "") {
-      setFilterBySearch(true);
-    } else {
-      setFilterBySearch(false);
-    }
-  }, [searchBar]);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
       if (!user) return;
 
       const data = await getUserData(user.uid);
+
       if (data) {
-        setData(data);
+        setUserData(data);
+        console.log("Rohdaten aus Firestore:", data);
+        console.log("Extrahierte Rolle:", data.role);
       }
     };
 
     fetchData();
   }, [user]);
 
-  useEffect(() => {
-    let filusers: Array<UserData> = [...users]; // Kopie
-
-    if (filterBySearch && searchBar.trim() !== "") {
-      const search = searchBar.toLowerCase();
-      filusers = filusers.filter(
-        (u) =>
-          u.name.toLowerCase().includes(search) ||
-          u.email.toLowerCase().includes(search) ||
-          u.birthday?.toLowerCase().includes(search)
-      );
-    }
-
-    if (filters.role !== "false") {
-      const roleMap: Record<string, string> = {
-        Admin: "admin",
-        Member: "member",
-        NotMember: "notmember",
-        Mentor: "gast",
-        "N/A": "N/A",
-      };
-      const role = roleMap[filters.role];
-      if (role) {
-        filusers = filusers.filter((u) => u.role === role);
-      } else {
-        console.warn("Ungültiger Filterwert für Rolle:", filters.role);
-      }
-    }
-
-    if (filters.createdAt !== "false") {
-      filusers = [...filusers].sort((a, b) =>
-        filters.createdAt === "ascending"
-          ? new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-          : new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      );
-    }
-
-    if (filters.birthYear !== "false") {
-      filusers = [...filusers].sort((a, b) =>
-        filters.birthYear === "ascending"
-          ? new Date(a.birthday).getTime() - new Date(b.birthday).getTime()
-          : new Date(b.birthday).getTime() - new Date(a.birthday).getTime()
-      );
-    }
-
-    if (filters.name !== "false") {
-      filusers = [...filusers].sort((a, b) =>
-        filters.name === "ascending"
-          ? a.name.localeCompare(b.name)
-          : b.name.localeCompare(a.name)
-      );
-    }
-
-    setFilteredUsers(filusers);
-  }, [users, searchBar, filters]);
-
-  useEffect(() => {
-    const fetchUsers = async () => {
-      const data = await getAllUsers();
-      setUsers(data);
-    };
-    fetchUsers();
-  }, []);
-
-  const roles = ["admin", "member", "mentor", "notmember", "N/A"];
-
-  const deleteMyUser = async (
-    u: UserData,
-    event: React.MouseEvent<HTMLParagraphElement>
-  ) => {
-    try {
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   return (
-    <div>
-      <div>
-        <p
-          onClick={() => {
-            setFilters((prev) => ({
-              ...prev,
-              name: "descending",
-            }));
-          }}
-        >
-          Filter By Name
-        </p>
-
-        <input
-          value={searchBar}
-          onChange={(e) => setSearchBar(e.target.value)}
-        />
-
-        <h1>Alle Nutzer</h1>
-        {filteredUsers.map((user) => (
-          <div key={user.uid} className="flex bg-blue-400 p-[2vw] m-[2vw]">
-            <p>
-              {user.name} ({user.email})
-            </p>
-            <p onClick={(e) => deleteMyUser(user, e)} className="text-red-700">
-              DELETE
-            </p>
-            <select
-              value={user.role}
-              onChange={(e) => updateUser(user.uid, { role: e.target.value })}
-            >
-              <option value="mitglied">Mitglied</option>
-              <option value="admin">Admin</option>
-              <option value="gast">Gast</option>
-            </select>
-          </div>
-        ))}
+    <div className="flex flex-col  bg-otherbg pb-20">
+      <div className="fixed top-0 left-0 right-0 h-16 bg-white z-50 flex items-center justify-between shadow px-4">
+        <p className="text-2xl pl-2 text-black font-bold ">Coding Kids</p>
+        {!open ? (
+          <Menu onClick={() => setOpen(!open)} className="w-6 h-6 text-black" />
+        ) : (
+          <X onClick={() => setOpen(!open)} className="w-6 h-6 text-black" />
+        )}
       </div>
 
-      <div></div>
+      <div className="flex flex-1 pt-15">
+        <div className="w-64 bg-white border-l p-6 flex-col hidden md:flex">
+          <p className="text-lg font-semibold mb-2">Sidebar</p>
+          <ul className="space-y-2">
+            <li>
+              <a className="text-secondaryOwn hover:underline">Einstellung 1</a>
+            </li>
+            <li>
+              <a className="text-secondaryOwn hover:underline">Einstellung 2</a>
+            </li>
+          </ul>
+        </div>
+
+        <div
+          className={`flex-1  px-6 flex-col pt-5 ${open ? "hidden" : "flex"}`}
+        >
+          <section id="user">
+            <UserDashboard />
+          </section>
+          <section id="events"></section>
+          <section id="mentor"></section>
+          <section id="announce"></section>
+        </div>
+
+        {open && (
+          <div className="flex flex-col items-start pl-4 pt-2  ">
+            <p className="text-md pl-2 pb-4">Hauptmenü</p>
+            <div className="bg-white border-lightborder  border-2 rounded-2xl w-70 2:w-85 3:w-100  flex flex-col gap-4 pt-4 divide-y divide-gray-200">
+              <div
+                onClick={() => {
+                  document
+                    .getElementById("user")
+                    ?.scrollIntoView({ behavior: "smooth" });
+                  setOpen(!open);
+                }}
+                className={`flex items-center gap-5  pb-4 px-4 `}
+              >
+                <div className="bg-lightPinkBg p-1.5 rounded-md">
+                  <Users className="text-primaryOwn h-5 w-5" />
+                </div>
+
+                <p className="text-black  text-lg">Nutzerverwaltung</p>
+                <ArrowRight className="h-5 ml-auto text-graytext" />
+              </div>
+
+              <div
+                onClick={() => {
+                  document
+                    .getElementById("events")
+                    ?.scrollIntoView({ behavior: "smooth" });
+                  setOpen(!open);
+                }}
+                className={`flex items-center gap-5  pb-4 px-4`}
+              >
+                <div className="bg-lightPinkBg p-1.5 rounded-md">
+                  <CalendarCheck className="text-primaryOwn h-5 w-5" />
+                </div>
+
+                <p className="text-black  text-lg">Eventverwaltung</p>
+                <ArrowRight className="h-5 ml-auto text-graytext" />
+              </div>
+
+              <div
+                onClick={() => {
+                  document
+                    .getElementById("mentor")
+                    ?.scrollIntoView({ behavior: "smooth" });
+                  setOpen(!open);
+                }}
+                className={`flex items-center gap-5  pb-4 px-4 `}
+              >
+                <div className="bg-lightGreenBg p-1.5 rounded-md">
+                  <UserCheck className="text-green h-5 w-5" />
+                </div>
+
+                <p className="text-black  text-lg">Mentoren</p>
+                <ArrowRight className="h-5 ml-auto text-graytext" />
+              </div>
+
+              <div
+                onClick={() => {
+                  document
+                    .getElementById("announce")
+                    ?.scrollIntoView({ behavior: "smooth" });
+                  setOpen(!open);
+                }}
+                className={`flex items-center gap-5  pb-4 px-4`}
+              >
+                <div className="bg-lightGreenBg p-1.5 rounded-md">
+                  <Megaphone className="text-green h-5 w-5" />
+                </div>
+
+                <p className="text-black  text-lg">Ankündigungen</p>
+                <ArrowRight className="h-5 ml-auto text-graytext" />
+              </div>
+            </div>
+
+            <p className="text-md pl-2 mt-5">Profil</p>
+
+            <div className="bg-white border-lightborder border-2 rounded-2xl w-70 2:w-85 3:w-100   flex flex-col gap-4 mt-5 pt-4 divide-y divide-gray-200">
+              <div className={`flex items-center gap-5  pb-4 px-4`}>
+                <div className="bg-gray-200 p-1.5 rounded-md">
+                  <User className="text-black h-5 w-5" />
+                </div>
+
+                <p className="text-black  text-lg">Profile</p>
+                <ArrowRight className="h-5 ml-auto text-graytext" />
+              </div>
+
+              <div className={`flex items-center gap-5  pb-4 px-4`}>
+                <div className="bg-blue-100 p-1.5 rounded-md">
+                  <StepBack className="text-blue-700 h-5 w-5" />
+                </div>
+
+                <p className="text-black  text-lg">Zur Übersicht</p>
+                <ArrowRight className="h-5 ml-auto text-graytext" />
+              </div>
+
+              <div className={`flex items-center gap-5  pb-4 px-4`}>
+                <div className="bg-lightRedBg p-1.5 rounded-md">
+                  <LogOut className="text-red-500 h-5 w-5" />
+                </div>
+
+                <p className="text-black  text-lg">Log Out</p>
+                <ArrowRight className="h-5 ml-auto text-graytext" />
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

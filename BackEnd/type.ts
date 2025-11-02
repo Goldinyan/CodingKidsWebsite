@@ -7,7 +7,7 @@ export type PresetRoles =
   | "false"
   | "N/A"
   | "Member"
-  | "NotMember"
+  | "User"
   | "Admin"
   | "Mentor";
 
@@ -24,7 +24,7 @@ export type UserData = {
   uid: string;
   name: string;
   email: string;
-  birthday: string; 
+  birthdate: string; 
   createdAt: Date;
   role: string;
 };
@@ -42,3 +42,12 @@ export type AuthContextType = {
   user: User | null;
   loading: boolean;
 };
+
+
+export type Filter = {
+    name: Preset;
+    birthYear: Preset;
+    role: PresetRoles;
+}
+
+

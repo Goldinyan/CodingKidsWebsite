@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Dashboard } from "./DashBoards";
-import { IDK } from "./AdminDashboard"
+import { MainOverlayAdminDashboard } from "./AdminDashboard"
 import { getUserData } from "@/lib/db";
 import { useAuth } from "@/BackEnd/AuthContext";
 import MentorChangeView from "./MentorChangeView";
@@ -35,7 +35,7 @@ useEffect(() => {
     return (
     <div>
       {/* <AdminDashboard /> */}
-      <IDK />
+      <MainOverlayAdminDashboard />
     </div>
     
     );

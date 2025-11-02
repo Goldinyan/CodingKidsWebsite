@@ -58,7 +58,7 @@ export function Dashboard() {
       <h1>Dashboard</h1>
       <p>Name: {data?.name}</p>
       <p>Email: {data?.email}</p>
-      <p>Birthday: {data?.birthday}</p>
+      <p>Birthday: {data?.birthdate}</p>
       <p>{data?.role}</p>
       <p onClick={() => deleteMyUser()}> DELETE </p>
       <p onClick={() => changeRole()}>Change to Admin</p>

@@ -2,7 +2,8 @@
 
 import { Button } from "@/components/ui/button";
 import { MentorCard } from "./MentorCard";
-import { getAllMentors, Mentor } from "@/lib/db";
+import { getAllMentors } from "@/lib/db";
+import type { Mentor } from "@/BackEnd/type"
 import { useState, useEffect, use } from "react";
 
 export default function MentorenView() {
