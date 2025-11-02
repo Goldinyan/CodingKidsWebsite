@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Dashboard, AdminDashboard } from "./DashBoards";
+import { Dashboard } from "./DashBoards";
+import { IDK } from "./AdminDashboard"
 import { getUserData } from "@/lib/db";
 import { useAuth } from "@/BackEnd/AuthContext";
 import MentorChangeView from "./MentorChangeView";
@@ -34,7 +35,7 @@ useEffect(() => {
     return (
     <div>
       {/* <AdminDashboard /> */}
-      <MentorChangeView />
+      <IDK />
     </div>
     
     );

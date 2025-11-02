@@ -3,35 +3,10 @@ import { updateProfile } from "firebase/auth";
 import { arrayRemove, collection, getDocs, deleteDoc} from "firebase/firestore";
 import { doc, getDoc, setDoc, updateDoc, arrayUnion } from "firebase/firestore";
 import { User } from "firebase/auth";
+import type { Mentor, EventData, UserData} from "@/BackEnd/type"
 
 
 
-export type EventData = {
-  name: string;
-  date: Date;
-  length: number;
-  memberCount: number;
-  place:  string[];
-  typeOfEvent:  string;
-};
-
-export type UserData = {
-  uid: string;
-  name: string;
-  email: string;
-  birthday: string; 
-  createdAt: Date;
-  role: string;
-};
-
-export type Mentor = {
-  uid: string, 
-  name: string,
-  des1: string,
-  des2: string,
-  pic: string,
-  id: number
-}
 
 // MENTORS
 
