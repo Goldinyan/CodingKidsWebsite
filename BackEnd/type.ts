@@ -4,20 +4,26 @@ import { User } from "firebase/auth"
 export type Preset = "false" | "ascending" | "descending";
 
 export type PresetRoles =
-  | "false"
-  | "N/A"
+  | "all"
   | "Member"
   | "User"
   | "Admin"
   | "Mentor";
 
 export type EventData = {
+  uid: string;
   name: string;
   date: Date;
+  tag: string;
+  difficulty: string;
+  requirements: string;
   length: number;
   memberCount: number;
-  place:  string[];
-  typeOfEvent:  string;
+  place: string[];
+  typeOfEvent: string;
+  description: string;
+  users: UserData[];
+  queue: UserData[];
 };
 
 export type UserData = {

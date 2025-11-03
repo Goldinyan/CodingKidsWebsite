@@ -16,26 +16,16 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import EventNavbar from "./EventNavbar";
-import EventAdd from "./EventAdd";
-import { EventData } from "@/lib/db";
+import EventAdd from "../profile/EventAdd";
+import type { EventData } from "@/BackEnd/type";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Check, Clock, Ban, AlertTriangle, Loader2 } from "lucide-react";
 
-interface Event {
-  uid: string;
-  name: string;
-  date: string;
-  length: number;
-  memberCount: number;
-  place: string[];
-  typeOfEvent: string;
-  users: [];
-  queue: [];
-}
+
 
 export default function EventViewHandlerAdmin() {
-  const [events, setEvents] = useState<Event[]>([]);
+  const [events, setEvents] = useState<EventData[]>([]);
   const { user, loading } = useAuth();
   const [statuses, setStatuses] = useState<Record<string, string>>({});
   const [premiumUser, setPremiumUser] = useState<boolean>(false);
@@ -63,7 +53,7 @@ export default function EventViewHandlerAdmin() {
 
   useEffect(() => {
     const fetchEvents = async () => {
-      const events: Event[] = (await getAllEvents()) as Event[];
+      const events: EventData[] = (await getAllEvents()) as EventData[];
       const now = new Date();
       const upcomingEvents = events
         .filter((event) => new Date(event.date) >= now)

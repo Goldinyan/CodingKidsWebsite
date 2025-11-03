@@ -40,7 +40,7 @@ export async function getUserData(uid: string): Promise<UserData | null> {
     uid,
     name: data.name ?? "",
     email: data.email ?? "",
-    birthday: data.birthday ?? "",
+    birthdate: data.birthday ?? "",
     createdAt: data.createdAt?.toDate?.() ?? new Date(),
     role: data.role ?? "user",
   };
@@ -109,18 +109,39 @@ export async function getAllEvents() {
 export async function addEvent(
   newEvent: EventData
 ) {
-  const dateId = newEvent.date.toISOString();
+  const date = typeof newEvent.date === "string" ? new Date(newEvent.date) : (newEvent.date as Date);
+  const dateId = date.toISOString();
   await setDoc(doc(db, "events", dateId), {
     name: newEvent.name,
-    date: newEvent.date.toISOString(),
+    date: date.toISOString(),
     length: newEvent.length,
     memberCount: newEvent.memberCount,
     place: newEvent.place,
     typeOfEvent: newEvent.typeOfEvent,
+    description: newEvent.description,
     users: [],
     queue: [],
   });
 }
+
+export async function deleteEvent(uid: string){
+
+  try {
+    const ref = doc(db, "events", uid)
+    const eventSnapshot = await getDoc(ref)
+
+    if(!eventSnapshot.exists){
+      console.log("No event to delete")
+      return;
+    }
+    await deleteDoc(ref)
+    console.log("Event deleted")
+
+  } catch(error){
+    console.log("Error at deleting Event" + error)
+  }
+}
+
 
 export async function updateEvent(uid: string, updates: Partial<EventData>) {
   try {

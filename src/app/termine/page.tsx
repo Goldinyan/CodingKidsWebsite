@@ -3,7 +3,7 @@ import { useState, useEffect } from "react"
 import { getUserData } from "@/lib/db"
 import { useAuth } from "@/BackEnd/AuthContext"
 import EventView from "./EventView"
-import EventAdd from "./EventAdd"
+import EventAdd from "../profile/EventAdd"
 import {
   Card,
   CardHeader,

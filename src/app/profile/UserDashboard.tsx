@@ -13,6 +13,7 @@ import {
   Pencil,
   X,
 } from "lucide-react";
+import { Button } from "@/components/ui/button"
 
 export default function UserDashboard() {
   const [users, setUsers] = useState<any[]>([]);
@@ -22,11 +23,32 @@ export default function UserDashboard() {
   const [filters, setFilters] = useState<Filter>({
     name: "false",
     birthYear: "false",
-    role: "false",
+    role: "all",
   });
+
   const [editStates, setEditStates] = useState<Record<string, boolean>>({});
+  const [editValues, setEditValues] = useState<
+    Record<string, Partial<UserData>>
+  >({});
+
   const [data, setData] = useState<UserData | null>(null);
   const { user } = useAuth();
+
+  const presetRoles: string[] = [
+    "Admin",
+    "Member",
+    "Mentor",
+    "User",
+  ];
+
+
+
+  const presetRoleLabels: Record<string, string> = {
+    Admin: "Admin",
+    Member: "Mitglied",
+    Mentor: "Mentor",
+    User: "User",
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -54,7 +76,7 @@ export default function UserDashboard() {
       );
     }
 
-    if (filters.role !== "false") {
+    if (filters.role !== "all") {
       const roleMap: Record<string, string> = {
         Admin: "admin",
         Member: "member",
@@ -111,11 +133,29 @@ export default function UserDashboard() {
     }
   };
 
-  const toggleEdit = (uid: string) => {
-    setEditStates((prev) => ({
-      ...prev,
-      [uid]: !prev[uid],
-    }));
+  const toggleEdit = (uid: string, user?: UserData) => {
+    setEditStates((prev) => ({ ...prev, [uid]: !prev[uid] }));
+
+    if (user) {
+      setEditValues((prev) => ({
+        ...prev,
+        [uid]: {
+          name: user.name,
+          email: user.email,
+          birthdate: user.birthdate,
+          role: user.role,
+        },
+      }));
+    }
+  };
+
+  const saveUserChanges = async (uid: string) => {
+    const updated = editValues[uid];
+    if (!updated) return;
+
+    await updateUser(uid, updated); // z. B. Firestore oder API
+
+    setEditStates((prev) => ({ ...prev, [uid]: false }));
   };
 
   return (
@@ -154,12 +194,12 @@ export default function UserDashboard() {
         <div className="flex flex-row gap-3 flex-wrap w-70 items-center">
           <p
             className={`${
-              filters.role === "false"
+              filters.role === "all"
                 ? "bg-fifthOwn text-white"
                 : "bg-white border border-lightborder text-black"
             }  px-2 py-1 rounded-md`}
             onClick={() => {
-              setFilters((prev) => ({ ...prev, role: "false" }));
+              setFilters((prev) => ({ ...prev, role: "all" }));
             }}
           >
             Alle
@@ -254,7 +294,6 @@ export default function UserDashboard() {
 
         <div className="flex flex-col gap-3 divide-y divide-gray-200 w-70 border border-lightborder bg-white rounded-md">
           {filteredUsers.map((user) => {
-
             const isEditing = editStates[user.uid] || false;
 
             return (
@@ -268,12 +307,12 @@ export default function UserDashboard() {
                   {isEditing ? (
                     <X
                       className="text-fifthOwn"
-                      onClick={() => toggleEdit(user.uid)}
+                      onClick={() => toggleEdit(user.uid, user)}
                     />
                   ) : (
                     <Pencil
                       className="h-5 text-fifthOwn"
-                      onClick={() => toggleEdit(user.uid)}
+                      onClick={() => toggleEdit(user.uid, user)}
                     />
                   )}
 
@@ -281,32 +320,89 @@ export default function UserDashboard() {
               DELETE
             </p> */}
                 </div>
-                                    
 
                 {isEditing && (
                   <>
-                  <p className="text-md font-bold pl-4 py-2">User Information:</p>
-                  <div className="flex flex-col justify-center px-4 mx-3 py-2 gap-2 border rounded-md border-lightborder">
-                    <div>
-                      <p>{user.email}</p>
+                    <p className="text-md font-bold pl-4 py-2">
+                      User Information:
+                    </p>
+                    <div className="flex flex-col justify-center p-4 mx-3  gap-2 border rounded-md border-lightborder">
+                      <input
+                        value={editValues[user.uid]?.email || ""}
+                        onChange={(e) =>
+                          setEditValues((prev) => ({
+                            ...prev,
+                            [user.uid]: {
+                              ...prev[user.uid],
+                              email: e.target.value,
+                            },
+                          }))
+                        }
+                        className="border px-2 py-1 rounded"
+                      />
+
+                      <input
+                        value={editValues[user.uid]?.name || ""}
+                        onChange={(e) =>
+                          setEditValues((prev) => ({
+                            ...prev,
+                            [user.uid]: {
+                              ...prev[user.uid],
+                              name: e.target.value,
+                            },
+                          }))
+                        }
+                        className="border px-2 py-1 rounded"
+                      />
+
+                      <input
+                        type="date"
+                        value={
+                          editValues[user.uid]?.birthdate
+                            ? new Date(editValues[user.uid]!.birthdate!)
+                                .toISOString()
+                                .split("T")[0]
+                            : ""
+                        }
+                        onChange={(e) =>
+                          setEditValues((prev) => ({
+                            ...prev,
+                            [user.uid]: {
+                              ...prev[user.uid],
+                              birthdate: new Date(e.target.value).toISOString(),
+                            },
+                          }))
+                        }
+                        className="border text-black px-2 py-1 rounded"
+                      />
+
+                      <select
+                        value={editValues[user.uid]?.role || ""}
+                        onChange={(e) =>
+                          setEditValues((prev) => ({
+                            ...prev,
+                            [user.uid]: {
+                              ...prev[user.uid],
+                              role: e.target.value as PresetRoles,
+                            },
+                          }))
+                        }
+                        className="border px-2 py-1 rounded text-black"
+                      >
+                        {presetRoles.map((value) => (
+                          <option key={value} value={value}>
+                            {presetRoleLabels[value]}
+                          </option>
+                        ))}
+                      </select>
+
+                      <Button onClick={() => saveUserChanges(user.uid)} className="h-8"  >
+                        Speichern
+                      </Button>
                     </div>
-                    <div>
-                      <p>
-                        {new Date(user.birthdate).toLocaleDateString("de-DE", {
-                          day: "numeric",
-                          month: "long",
-                          year: "numeric",
-                        })}
-                      </p>
-                    </div>
-                    <div>
-                      <p>{user.name}</p>
-                    </div>
-                  </div>
                   </>
                 )}
               </div>
-              
             );
           })}
         </div>
@@ -314,9 +410,13 @@ export default function UserDashboard() {
 
       <div className="flex items-center justify-center mt-5 mx-auto p-2 rounded-md w-50 border border-lightborder">
         {seeAll ? (
-          <p className="text-xl font-bold" onClick={() => setSeeAll(false)}>Sehe weniger</p>
+          <p className="text-xl font-bold" onClick={() => setSeeAll(false)}>
+            Sehe weniger
+          </p>
         ) : (
-          <p className="text-xl font-bold" onClick={() => setSeeAll(true)}>Sehe mehr</p>
+          <p className="text-xl font-bold" onClick={() => setSeeAll(true)}>
+            Sehe mehr
+          </p>
         )}
       </div>
     </div>

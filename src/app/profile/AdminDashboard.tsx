@@ -17,6 +17,7 @@ import {
   StepBack,
 } from "lucide-react";
 import UserDashboard from "./UserDashboard";
+import EventDashboard from "./EventDashboard";
 
 export function MainOverlayAdminDashboard() {
   const [open, setOpen] = useState<boolean>(false);
@@ -34,8 +35,6 @@ export function MainOverlayAdminDashboard() {
 
       if (data) {
         setUserData(data);
-        console.log("Rohdaten aus Firestore:", data);
-        console.log("Extrahierte Rolle:", data.role);
       }
     };
 
@@ -72,14 +71,16 @@ export function MainOverlayAdminDashboard() {
           <section id="user">
             <UserDashboard />
           </section>
-          <section id="events"></section>
+          <section id="events">
+            <EventDashboard />
+          </section>
           <section id="mentor"></section>
           <section id="announce"></section>
         </div>
 
         {open && (
           <div className="flex flex-col items-start pl-4 pt-2  ">
-            <p className="text-md pl-2 pb-4">Hauptmenü</p>
+            <p className="text-md pl-2 pb-4 pt-4">Hauptmenü</p>
             <div className="bg-white border-lightborder  border-2 rounded-2xl w-70 2:w-85 3:w-100  flex flex-col gap-4 pt-4 divide-y divide-gray-200">
               <div
                 onClick={() => {
