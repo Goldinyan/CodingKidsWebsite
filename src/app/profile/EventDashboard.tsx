@@ -10,8 +10,10 @@ import {
   updateEvent,
   updateUser,
   deleteEvent,
+  getUserData,
+  getAllUsers,
 } from "@/lib/db";
-import type { EventData } from "@/BackEnd/type";
+import type { EventData, UserData } from "@/BackEnd/type";
 import EventAdd from "./EventAdd";
 
 export default function EventDashboard() {
@@ -48,6 +50,7 @@ export default function EventDashboard() {
     }
   };
 
+  
   useEffect(() => {
     const fetchData = async () => {
       const events: EventData[] = (await getAllEvents()) as EventData[];
@@ -84,7 +87,6 @@ export default function EventDashboard() {
     setFilEvents(events);
   }, [eventsData.length, time, searchBar]);
 
-
   const saveUserChanges = async (uid: string) => {
     const updated = editValues[uid];
     if (!updated) return;
@@ -94,21 +96,36 @@ export default function EventDashboard() {
     setEditStates((prev) => ({ ...prev, [uid]: false }));
   };
 
+  const getData = async (uid: string) =>{
+
+  }
 
   type EventFields = Omit<EventData, "uid" | "name" | "date">;
   const fields: (keyof EventFields)[] = [
-  "tag",
-  "difficulty",
-  "requirements",
-  "length",
-  "memberCount",
-  "place",
-  "typeOfEvent",
-  "description",
-  "users",
-  "queue",
-];
+    "tag",
+    "difficulty",
+    "requirements",
+    "length",
+    "memberCount",
+    "place",
+    "typeOfEvent",
+    "description",
+    // "users",
+    // "queue",
+  ];
 
+  const names: string[] = [
+    "Tags",
+    "Schwierigkeit",
+    "Erforderungen",
+    "Länge",
+    "Teilnehmer Anzahl",
+    "Ort",
+    "Typ",
+    "Beschreibung",
+    // "User",
+    // "Wartschlange"
+  ]
   return (
     <>
       <div className="w-full pt-10">
@@ -166,7 +183,7 @@ export default function EventDashboard() {
             {filEvents.map((event, index) => {
               const full = event.users.length >= event.memberCount;
               const date = new Date(event.date);
-
+              const usersEvent = getData(event.uid)
               return (
                 <div
                   key={index}
@@ -216,20 +233,20 @@ export default function EventDashboard() {
                       )}
                     </p>
                   </div>
-                  <div>
-                    
-                  </div>
+                  <div></div>
                   {expandedTabs[event.uid] && (
                     <div>
-                        {fields.map((key) => (
-  <div key={key} className="mb-2">
-    <p>{key}</p>
-    <p>{JSON.stringify(event[key])}</p>
-  </div>
-))}
-
-                      <p onClick={() => toggleEdit(event.uid)}>Edit</p>
-                      <p onClick={() => deleteEvent(event.uid)}>Delete</p>
+                      {fields.map((key, index) => (
+                        <div key={key} className="mb-2 flex flex-col">
+                          <p className="text-lg font-bold">{names[index]}</p>
+                          <p>{JSON.stringify(event[key])}</p>
+                          
+                        </div>
+                      ))}
+                    <div className="flex flex-row justify-around w-full gap-3 items-center">
+                      <p onClick={() => toggleEdit(event.uid)} className="bg-blue-200 text-center rounded-lg text-blue-600 w-1/2 py-1">Edit</p>
+                      <p onClick={() => deleteEvent(event.uid)} className="bg-red-200 text-center rounded-lg text-red-600 w-1/2 py-1">Delete</p>
+                      </div>
                       {editStates[event.uid] && <p>Edit Open</p>}
                     </div>
                   )}

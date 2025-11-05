@@ -199,6 +199,7 @@ export async function isUserInEvent(eventId: string, userId: string) {
     return "Queue";
   }
 
+  
   return "false";
 }
 

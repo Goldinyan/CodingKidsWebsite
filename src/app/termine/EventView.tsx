@@ -22,8 +22,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Check, Clock, Ban, AlertTriangle, Loader2 } from "lucide-react";
 
-
-
 export default function EventViewHandlerAdmin() {
   const [events, setEvents] = useState<EventData[]>([]);
   const { user, loading } = useAuth();
@@ -72,12 +70,14 @@ export default function EventViewHandlerAdmin() {
         }
       }
       setStatuses({ ...statusMap });
+      console.log(statusMap);
     };
 
     fetchEvents();
   }, []);
 
   const handleEvents = async (eventId: string, action: "join" | "leave") => {
+    console.log("handleEvent");
     if (!user) return;
 
     try {
@@ -179,6 +179,7 @@ export default function EventViewHandlerAdmin() {
                 className={`${
                   tooEarly ? "cursor-not-allowed border border-primaryOwn" : ""
                 }`}
+                disabled={tooEarly}
                 variant={
                   !tooEarly
                     ? isInEvent
@@ -187,8 +188,13 @@ export default function EventViewHandlerAdmin() {
                     : "secondary"
                 }
                 onClick={() => {
+                  console.log("Button clicked");
+
                   if (!tooEarly) {
                     handleEvents(event.uid, isInEvent ? "leave" : "join");
+                    console.log("added");
+                  } else {
+                    console.log("too Early");
                   }
                 }}
               >
@@ -199,7 +205,37 @@ export default function EventViewHandlerAdmin() {
                   : "Zu früh"}
               </Button>
             </CardFooter>
+            <Button
+                className={`${
+                  tooEarly ? "cursor-not-allowed border border-primaryOwn" : ""
+                }`}
+                disabled={tooEarly}
+                variant={
+                  !tooEarly
+                    ? isInEvent
+                      ? "destructive"
+                      : "default"
+                    : "secondary"
+                }
+                onClick={() => {
+                  console.log("Button clicked");
+
+                  if (!tooEarly) {
+                    handleEvents(event.uid, isInEvent ? "leave" : "join");
+                    console.log("added");
+                  } else {
+                    console.log("too Early");
+                  }
+                }}
+              >
+                {!tooEarly
+                  ? isInEvent
+                    ? "Verlassen"
+                    : "Beitreten"
+                  : "Zu früh"}
+              </Button>
           </Card>
+          
         );
       })}
     </div>

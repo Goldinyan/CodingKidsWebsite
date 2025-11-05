@@ -18,6 +18,8 @@ import {
 } from "lucide-react";
 import UserDashboard from "./UserDashboard";
 import EventDashboard from "./EventDashboard";
+import MentorDashboard from "./MentorDashboard";
+
 
 export function MainOverlayAdminDashboard() {
   const [open, setOpen] = useState<boolean>(false);
@@ -74,7 +76,9 @@ export function MainOverlayAdminDashboard() {
           <section id="events">
             <EventDashboard />
           </section>
-          <section id="mentor"></section>
+          <section id="mentor">
+            <MentorDashboard />
+          </section>
           <section id="announce"></section>
         </div>
 

@@ -1,9 +1,10 @@
 "use client";
 
-import { getAllMentors, updateMentor, Mentor } from "@/lib/db";
+import { getAllMentors, updateMentor } from "@/lib/db";
 import { useState, useEffect, use } from "react";
 import { ArrowUp, ArrowDown} from "lucide-react"
 import  MentorCardAdmin  from "./MentorCardAdmin";
+import type { Mentor } from "@/BackEnd/type";
 
 export default function MentorChangeView() {
   const [mentorData, setMentorData] = useState<Mentor[]>([]);

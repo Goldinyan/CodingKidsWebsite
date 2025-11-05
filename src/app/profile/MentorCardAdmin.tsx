@@ -8,7 +8,8 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { Pen, X, Check} from "lucide-react";
-import { updateMentor, Mentor } from "@/lib/db";
+import { updateMentor } from "@/lib/db";
+import type { Mentor } from "@/BackEnd/type"
 
 export default function MentorCardAdmin({
   uid,
@@ -53,8 +54,8 @@ export default function MentorCardAdmin({
             ></input>
                         <p className="block  text-sm font-bold mb-1 text-gray-900 dark:text-white">Description 1:</p>
 
-            <input
-              className="bg-gray-50 border pl-3 mb-3 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            <textarea
+              className="bg-gray-50 border pl-3 mb-3 h-25 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               value={updates.des1}
               onChange={(e) =>
                 setUpdates((prev) => ({
@@ -62,19 +63,19 @@ export default function MentorCardAdmin({
                   des1: e.target.value,
                 }))
               }
-            ></input>
+            ></textarea>
                         <p className="block  text-sm font-bold mb-1 text-gray-900 dark:text-white">Description 2:</p>
 
-            <input
+            <textarea
               value={updates.des2}
-              className="bg-gray-50 border pl-3 mb-3 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              className="bg-gray-50 border pl-3 mb-3 h-50 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               onChange={(e) =>
                 setUpdates((prev) => ({
                   ...prev,
                   des2: e.target.value,
                 }))
               }
-            ></input>
+            ></textarea>
           </div>
         ) : (
           <div className="flex flex-col items-center">
