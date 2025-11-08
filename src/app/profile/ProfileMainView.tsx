@@ -18,7 +18,6 @@ useEffect(() => {
       setUserData(data);
     } else {
       setUserData(null);
-      console.log("no user uid")
     }
   };
 

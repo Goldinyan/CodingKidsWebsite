@@ -22,8 +22,8 @@ export type EventData = {
   place: string[];
   typeOfEvent: string;
   description: string;
-  users: UserData[];
-  queue: UserData[];
+  users: string[];
+  queue: string[];
 };
 
 export type UserData = {

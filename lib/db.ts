@@ -46,12 +46,12 @@ export async function getUserData(uid: string): Promise<UserData | null> {
   };
 }
 
-export async function getAllUsers() {
+export async function getAllUsers(): Promise<UserData[]> {
   const snapshot = await getDocs(collection(db, "users"));
   return snapshot.docs.map((doc) => ({
     uid: doc.id,
     ...doc.data(),
-  }));
+  })) as UserData[];
 }
 
 export async function updateUser(uid: string, updates: Partial<UserData>) {

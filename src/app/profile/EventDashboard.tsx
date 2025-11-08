@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect, use } from "react";
-import { Search, Plus, Calendar, Minus } from "lucide-react";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { Search, Plus, Calendar, Minus, Table, TrashIcon } from "lucide-react";
+import { ChevronDown, ChevronUp, Trash2 } from "lucide-react";
 
 import {
   getAllEvents,
@@ -12,6 +12,7 @@ import {
   deleteEvent,
   getUserData,
   getAllUsers,
+  removeUserFromEvent,
 } from "@/lib/db";
 import type { EventData, UserData } from "@/BackEnd/type";
 import EventAdd from "./EventAdd";
@@ -27,6 +28,10 @@ export default function EventDashboard() {
   const [editValues, setEditValues] = useState<
     Record<string, Partial<EventData>>
   >({});
+  const [userMap, setUserMap] = useState<Record<string, UserData[]>>({});
+  const [queueUserMap, setQueueUserMap] = useState<Record<string, UserData[]>>(
+    {}
+  );
 
   const toggleExpandedTabs = (uid: string) => {
     setExpandedTabs((prev) => ({ ...prev, [uid]: !prev[uid] }));
@@ -50,7 +55,38 @@ export default function EventDashboard() {
     }
   };
 
-  
+  useEffect(() => {
+    const loadUsersForEvents = async () => {
+      const map: Record<string, UserData[]> = {};
+
+      for (const event of eventsData) {
+        const users = await returnUserForEvent(event.users);
+        map[event.uid] = users;
+      }
+      setUserMap(map);
+    };
+
+    if (eventsData.length > 0) {
+      loadUsersForEvents();
+    }
+  }, [eventsData]);
+
+  useEffect(() => {
+    const loadQueueUsersForEvents = async () => {
+      const map: Record<string, UserData[]> = {};
+
+      for (const event of eventsData) {
+        const users = await returnUserForEvent(event.queue);
+        map[event.uid] = users;
+      }
+      setQueueUserMap(map);
+    };
+
+    if (eventsData.length > 0) {
+      loadQueueUsersForEvents();
+    }
+  }, [eventsData]);
+
   useEffect(() => {
     const fetchData = async () => {
       const events: EventData[] = (await getAllEvents()) as EventData[];
@@ -96,9 +132,17 @@ export default function EventDashboard() {
     setEditStates((prev) => ({ ...prev, [uid]: false }));
   };
 
-  const getData = async (uid: string) =>{
-
-  }
+  const returnUserForEvent = async (
+    usersArray: string[]
+  ): Promise<UserData[]> => {
+    //console.log("User Array: ", usersArray);
+    const uids = usersArray;
+    //console.log("User UIDs: ", uids);
+    const users = await getAllUsers();
+    const filteredUsers = users?.filter((user) => uids.includes(user.uid));
+    //console.log("Filtered Users: ", filteredUsers);
+    return filteredUsers || [];
+  };
 
   type EventFields = Omit<EventData, "uid" | "name" | "date">;
   const fields: (keyof EventFields)[] = [
@@ -110,8 +154,8 @@ export default function EventDashboard() {
     "place",
     "typeOfEvent",
     "description",
-    // "users",
-    // "queue",
+    "users",
+    "queue",
   ];
 
   const names: string[] = [
@@ -123,9 +167,10 @@ export default function EventDashboard() {
     "Ort",
     "Typ",
     "Beschreibung",
-    // "User",
-    // "Wartschlange"
-  ]
+    "User",
+    "Warteschlange",
+  ];
+
   return (
     <>
       <div className="w-full pt-10">
@@ -183,7 +228,13 @@ export default function EventDashboard() {
             {filEvents.map((event, index) => {
               const full = event.users.length >= event.memberCount;
               const date = new Date(event.date);
-              const usersEvent = getData(event.uid)
+              console.log(
+                "User Map for Event ",
+                event.uid,
+                ": ",
+                userMap[event.uid]
+              );
+
               return (
                 <div
                   key={index}
@@ -238,14 +289,57 @@ export default function EventDashboard() {
                     <div>
                       {fields.map((key, index) => (
                         <div key={key} className="mb-2 flex flex-col">
-                          <p className="text-lg font-bold">{names[index]}</p>
-                          <p>{JSON.stringify(event[key])}</p>
-                          
+                          <p className="text-lg font-bold">
+                            {names[index] === "User"
+                              ? "Teilnehmer (" + event.users.length + ")"
+                              : names[index] === "Warteschlange"
+                              ? "Warteschlange (" + event.queue.length + ")"
+                              : names[index]}
+                          </p>
+                          <p>
+                            {key !== "users"
+                              ? JSON.stringify(event[key])
+                              : null}
+                          </p>
+                          {key === "users" && (
+                            <div>
+                              <div className="flex flex-col divide-y border border-lightborder rounded-lg divide-lightborder">
+                                {(userMap[event.uid] || []).map((user) => (
+                                  <div key={user.uid} className="py-2 flex flex-row justify-between items-center px-2">
+                                    <div className="flex flex-col items-center">
+                                    <p className="font-bold">{user.name}</p>
+                                    <p className="text-graytext pr-2">{user.role}</p>
+                                    </div>
+                                    <Trash2 className="cursor-pointer h-6 w-6" onClick={() => removeUserFromEvent(event.uid, user.uid)} />
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                          {key === "queue" && (
+                            <div>
+                              <ul>
+                                {(queueUserMap[event.uid] || []).map((user) => (
+                                  <li key={user.uid}>{user.name}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
                         </div>
                       ))}
-                    <div className="flex flex-row justify-around w-full gap-3 items-center">
-                      <p onClick={() => toggleEdit(event.uid)} className="bg-blue-200 text-center rounded-lg text-blue-600 w-1/2 py-1">Edit</p>
-                      <p onClick={() => deleteEvent(event.uid)} className="bg-red-200 text-center rounded-lg text-red-600 w-1/2 py-1">Delete</p>
+                      <div className="flex flex-row justify-around w-full gap-3 items-center">
+                        <p
+                          onClick={() => toggleEdit(event.uid)}
+                          className="bg-blue-200 text-center rounded-lg text-blue-600 w-1/2 py-1"
+                        >
+                          Edit
+                        </p>
+                        <p
+                          onClick={() => deleteEvent(event.uid)}
+                          className="bg-red-200 text-center rounded-lg text-red-600 w-1/2 py-1"
+                        >
+                          Delete
+                        </p>
                       </div>
                       {editStates[event.uid] && <p>Edit Open</p>}
                     </div>

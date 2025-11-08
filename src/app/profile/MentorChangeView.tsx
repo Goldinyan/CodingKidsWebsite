@@ -13,7 +13,6 @@ export default function MentorChangeView() {
     const handleData = async () => {
       const data = await getAllMentors();
       setMentorData(data);
-      console.log("MentorData" + data);
     };
 
     handleData();
