@@ -1,5 +1,6 @@
 "use client";
 
+import { sendAccountCreationEmailToAdmin, sendWelcomeEmail } from "@/BackEnd/email";
 // lib/auth.ts
 import { auth, db, } from "./firebase";
 import {
@@ -18,6 +19,7 @@ import {
 import type { User } from "firebase/auth";
 import { doc, getDoc, setDoc, updateDoc, arrayUnion } from "firebase/firestore";
 
+
 export async function registerUser(
   email: string,
   password: string,
@@ -35,6 +37,8 @@ export async function registerUser(
   );
   const user = userCredential.user;
   await emailVerification(user);
+  await sendWelcomeEmail(email, extraData.name);
+  await sendAccountCreationEmailToAdmin(extraData.name, email);
   console.log("Verifizierung gesendet")
 
   // User verified kann man checken mit user?.emailVerified und so dann sacehn freischalten oder eben nicht 

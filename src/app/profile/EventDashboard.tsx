@@ -3,7 +3,7 @@
 import { useState, useEffect, use } from "react";
 import { Search, Plus, Calendar, Minus, Table, TrashIcon } from "lucide-react";
 import { ChevronDown, ChevronUp, Trash2 } from "lucide-react";
-
+import { removedFromEventByAdmin } from "@/BackEnd/email";
 import {
   getAllEvents,
   addEvent,
@@ -18,6 +18,23 @@ import type { EventData, UserData } from "@/BackEnd/type";
 import EventAdd from "./EventAdd";
 
 export default function EventDashboard() {
+
+  const formatValue = (v: any) => {
+    if (v === undefined || v === null) return "";
+    if (Array.isArray(v)) return v.join(", ");
+    if (typeof v === "object") {
+      try {
+        return Object.entries(v)
+          .map(([k, val]) => `${k}: ${String(val)}`)
+          .join(", ");
+      } catch (e) {
+        console.error("Fehler beim Formatieren des Objekts:", e);
+        return String(v);
+      }
+    }
+    return String(v);
+  };
+
   const [time, setTime] = useState<"Upcoming" | "Past">("Upcoming");
   const [searchBar, setSearchBar] = useState<string>("");
   const [eventsData, setEventsData] = useState<EventData[]>([]);
@@ -228,12 +245,7 @@ export default function EventDashboard() {
             {filEvents.map((event, index) => {
               const full = event.users.length >= event.memberCount;
               const date = new Date(event.date);
-              console.log(
-                "User Map for Event ",
-                event.uid,
-                ": ",
-                userMap[event.uid]
-              );
+             
 
               return (
                 <div
@@ -289,16 +301,16 @@ export default function EventDashboard() {
                     <div>
                       {fields.map((key, index) => (
                         <div key={key} className="mb-2 flex flex-col">
-                          <p className="text-lg font-bold">
+                          <p className="text-xl font-medium">
                             {names[index] === "User"
                               ? "Teilnehmer (" + event.users.length + ")"
                               : names[index] === "Warteschlange"
                               ? "Warteschlange (" + event.queue.length + ")"
                               : names[index]}
                           </p>
-                          <p>
-                            {key !== "users"
-                              ? JSON.stringify(event[key])
+                          <p className="py-2">
+                            {key !== "users" && key !== "queue"
+                              ? formatValue(event[key])
                               : null}
                           </p>
                           {key === "users" && (
@@ -310,13 +322,16 @@ export default function EventDashboard() {
                                     <p className="font-bold">{user.name}</p>
                                     <p className="text-graytext pr-2">{user.role}</p>
                                     </div>
-                                    <Trash2 className="cursor-pointer h-6 w-6" onClick={() => removeUserFromEvent(event.uid, user.uid)} />
+                                    <Trash2 className="cursor-pointer h-6 w-6 text-red-500" onClick={() => (
+                                      removeUserFromEvent(event.uid, user.uid),
+                                      removedFromEventByAdmin(user.email, event.name)
+                                    )} />
                                   </div>
                                 ))}
                               </div>
                             </div>
                           )}
-                          {key === "queue" && (
+                          {key === "queue" && event.queue.length > 0 && (
                             <div>
                               <ul>
                                 {(queueUserMap[event.uid] || []).map((user) => (
@@ -328,15 +343,10 @@ export default function EventDashboard() {
                         </div>
                       ))}
                       <div className="flex flex-row justify-around w-full gap-3 items-center">
-                        <p
-                          onClick={() => toggleEdit(event.uid)}
-                          className="bg-blue-200 text-center rounded-lg text-blue-600 w-1/2 py-1"
-                        >
-                          Edit
-                        </p>
+                
                         <p
                           onClick={() => deleteEvent(event.uid)}
-                          className="bg-red-200 text-center rounded-lg text-red-600 w-1/2 py-1"
+                          className="bg-red-200 text-center rounded-lg text-red-600 w-full py-1"
                         >
                           Delete
                         </p>

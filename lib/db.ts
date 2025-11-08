@@ -3,7 +3,7 @@ import { updateProfile } from "firebase/auth";
 import { arrayRemove, collection, getDocs, deleteDoc} from "firebase/firestore";
 import { doc, getDoc, setDoc, updateDoc, arrayUnion } from "firebase/firestore";
 import { User } from "firebase/auth";
-import type { Mentor, EventData, UserData} from "@/BackEnd/type"
+import type { Mentor, EventData, UserData, AnnouncementData} from "@/BackEnd/type"
 
 
 
@@ -26,6 +26,44 @@ export async function updateMentor(uid: string, updates: Partial<Mentor>) {
     console.error("Fehler beim Aktualisieren von Mentoren Daten" + error)
     throw error;
   }
+}
+
+//Announcements
+
+export async function getAllAnnouncements(): Promise<AnnouncementData[]> {
+  const snapshot = await getDocs(collection(db, "announcements"));
+  return snapshot.docs.map((doc) => ({
+    uid: doc.id,
+    ...doc.data(),
+  })) as AnnouncementData[];
+}
+
+export async function deleteAnnouncement(uid: string){
+  try {
+    const ref = doc(db, "announcements", uid)
+    const userSnapshot = await getDoc(ref)
+
+    if(!userSnapshot.exists()){
+      console.log("No announcement to delete")
+      return;
+    }
+
+    await deleteDoc(ref)
+    console.log("Announcement deleted")
+  } catch(err){
+    console.log(err)
+  }
+}
+
+export async function addAnnouncement(
+  newAnnouncement: AnnouncementData
+) {
+  const dateId = new Date().toISOString();
+  await setDoc(doc(db, "announcements", dateId), {
+    tag: newAnnouncement.tag,
+    title: newAnnouncement.title,
+    content: newAnnouncement.content,
+  });
 }
 
 // USERS
@@ -237,4 +275,18 @@ export async function removeUserFromEvent(eventId: string, userId: string) {
       queue: arrayRemove(userId),
     });
   }
+}
+
+
+// Admins
+
+export async function getAllAdmins(): Promise<UserData[]> {
+  const snapshot = await getDocs(collection(db, "users"));
+  const admins = snapshot.docs
+    .map((doc) => ({
+      uid: doc.id,
+      ...doc.data(),
+    })) as UserData[]
+
+    return admins.filter((user) => user.role === "admin") as UserData[];
 }

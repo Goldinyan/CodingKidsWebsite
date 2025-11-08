@@ -19,7 +19,7 @@ import {
 import UserDashboard from "./UserDashboard";
 import EventDashboard from "./EventDashboard";
 import MentorDashboard from "./MentorDashboard";
-
+import AnnouncementDashboard from "./AnnouncementDashboard";
 
 export function MainOverlayAdminDashboard() {
   const [open, setOpen] = useState<boolean>(false);
@@ -79,7 +79,9 @@ export function MainOverlayAdminDashboard() {
           <section id="mentor">
             <MentorDashboard />
           </section>
-          <section id="announce"></section>
+          <section id="announce">
+            <AnnouncementDashboard />
+          </section>
         </div>
 
         {open && (

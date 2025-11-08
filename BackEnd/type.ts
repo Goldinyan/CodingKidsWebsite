@@ -26,6 +26,16 @@ export type EventData = {
   queue: string[];
 };
 
+export type AnnouncementData = {
+  uid: string;
+  tag: PresetRoles;
+  title: string;
+  content: string;
+  author: string;
+  date: Date;
+  readBy?: string[];
+};
+
 export type UserData = {
   uid: string;
   name: string;

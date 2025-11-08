@@ -33,7 +33,7 @@ export default function MentorCardAdmin({
   });
 
   return (
-    <Card className="w-[300px] flex items-center">
+    <Card className="w-70 flex items-center">
       <CardHeader className="flex min-w-full justify-center items-center flex-col gap-4 pt-6">
        <Avatar className="w-24 h-24">
   <AvatarImage src={picture} className="object-cover rounded-full" />
