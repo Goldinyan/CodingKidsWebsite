@@ -43,6 +43,7 @@ export type UserData = {
   birthdate: string; 
   createdAt: Date;
   role: string;
+  courses?: string[];
 };
 
 export type Mentor = {
