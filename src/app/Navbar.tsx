@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,34 +15,48 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/BackEnd/AuthContext";
 import { User, LogIn } from "lucide-react";
 import { useIsMobile } from "@/hooks/useIsMobile";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LayoutDashboard } from "lucide-react";
 import NavbarMobile from "./NavbarMobile";
+import { getUserData } from "@/lib/db";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const { user, loading } = useAuth();
+  const [userData, setUserData] = useState<any>(null);
   const router = useRouter();
 
   useEffect(() => {
-  if (open) {
-    document.body.style.overflow = "hidden";
-  } else {
-    document.body.style.overflow = "";
-  }
+    if (!user) return;
 
-  // Cleanup
-  return () => {
-    document.body.style.overflow = "";
-  };
-}, [open]);
+    const fetchData = async () => {
+      const data = await getUserData(user.uid);
 
+      if (data) {
+        setUserData(data);
+      }
+    };
+
+    fetchData();
+  }, [user]);
+
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+
+    // Cleanup
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
 
   const isMobile = useIsMobile();
 
   return (
     <div className="w-full  ">
       <div className="w-full h-16 pt-5 md:pt-0  ">
-        
         <div className="w-full flex items-center pr-15 pl-4">
           <div className=" flex-row items-center gap-3 hidden md:flex">
             <img src="Logo_aussen_Transparent.png" className="w-15 h-15 p-1" />
@@ -70,6 +84,14 @@ export default function Navbar() {
                 <span className="font-bold">{user ? "Profile" : "Login"}</span>
               )}
             </Button>
+            {userData?.role === "admin" && (
+              <Button
+                variant="outline"
+                onClick={() => router.push("/dashboard")}
+              >
+                <LayoutDashboard className="w-5 h-5" />
+              </Button>
+            )}
           </div>
 
           <div className="absolute left-1/2 -translate-x-1/2">
@@ -124,11 +146,17 @@ export default function Navbar() {
               onClick={() => setOpen(!open)}
               className="focus:outline-none transition-all pr-6"
             >
-              {!open ? <Menu className="w-6 h-6 text-graytext"  /> : <X className="w-6 h-6 text-graytext" />}
+              {!open ? (
+                <Menu className="w-6 h-6 text-graytext" />
+              ) : (
+                <X className="w-6 h-6 text-graytext" />
+              )}
             </button>
           </div>
-         <div className="transition-all duration-300 "> {open && <NavbarMobile /> } </div>
-
+          <div className="transition-all duration-300 ">
+            {" "}
+            {open && <NavbarMobile />}{" "}
+          </div>
         </div>
       </div>
     </div>

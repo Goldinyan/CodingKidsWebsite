@@ -16,7 +16,7 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import EventNavbar from "./EventNavbar";
-import EventAdd from "../profile/EventAdd";
+import EventAdd from "../dashboard/EventAdd";
 import type { EventData } from "@/BackEnd/type";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";

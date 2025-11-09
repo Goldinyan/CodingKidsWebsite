@@ -15,7 +15,7 @@ import { Plus, Minus } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
-import EventAdd from "../profile/EventAdd";
+import EventAdd from "../dashboard/EventAdd";
 
 interface EventNavbarProps {
   callback: (key: string, value: boolean | string) => void;

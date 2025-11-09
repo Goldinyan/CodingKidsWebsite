@@ -1,24 +1,13 @@
-"use client"
 
-import { useAuth } from "@/BackEnd/AuthContext"
-import { useEffect } from "react"
-import ProfileMainView from "./ProfileMainView"
+import { useAuth } from "@/BackEnd/AuthContext";
+
+
 
 export default function Home(){
-  const { user, loading } = useAuth();
-
-   
-   useEffect(() => {
-    if (!loading && !user) {
-     
-    }
-  }, [user, loading]);
 
     return (
         <div>
-      
-           
-           <ProfileMainView />
+           <p className="mt-30">Profile Page</p>
         </div>
     )
 }

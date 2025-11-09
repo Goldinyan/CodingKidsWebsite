@@ -6,20 +6,39 @@ import { useAuth } from "@/BackEnd/AuthContext";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { useViewportHeight } from "@/hooks/useViewportHeight";
+import { getUserData } from "@/lib/db";
 
 export default function NavbarMobile() {
   useViewportHeight();
   const router = useRouter();
   const { user, loading } = useAuth();
- 
+  const [userData, setUserData] = useState<any>(null);
 
+  useEffect(() => {
+    if (!user) return;
 
+    const fetchData = async () => {
+      const data = await getUserData(user.uid);
+
+      if (data) {
+        setUserData(data);
+      }
+    };
+
+    fetchData();
+  }, [user]);
 
   return (
-    <div className="w-full h-full  overflow-hidden" style={{ height: 'calc(var(--vh) * 100)' }}>
+    <div
+      className="w-full h-full  overflow-hidden"
+      style={{ height: "calc(var(--vh) * 100)" }}
+    >
       <div className="absolute top-full left-0 w-full h-full bg-white shadow-md z-40">
         <div className="bg-white w-full shadow-md">
-          <div className="flex flex-col  w-full gap-6 " style={{ height: "calc(var(--vh) * 100)" }}>
+          <div
+            className="flex flex-col  w-full gap-6 "
+            style={{ height: "calc(var(--vh) * 100)" }}
+          >
             <div className="flex flex-col gap-6 px-6 pt-5">
               <p
                 className="font-extrabold text-graytext"
@@ -61,9 +80,21 @@ export default function NavbarMobile() {
               ) : (
                 ""
               )}
+              {userData?.role === "admin" ? (
+                <p
+                  className="font-bold text-graytext"
+                  onClick={() => router.push("/dashboard")}
+                >
+                  Dashboard
+                </p>
+              ) : (
+                ""
+              )}
             </div>
-            <span className="w-full h-[3px]  bg-white shadow" style={{marginTop: "calc(var(--vh) * 6)" }}></span>
-            
+            <span
+              className="w-full h-[3px]  bg-white shadow"
+              style={{ marginTop: "calc(var(--vh) * 6)" }}
+            ></span>
 
             <div className="flex flex-row pl-6 ">
               <div className="flex-col flex gap-5">

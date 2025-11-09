@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { Dashboard } from "./DashBoards";
-import { MainOverlayAdminDashboard } from "./AdminDashboard"
 import { getUserData } from "@/lib/db";
 import { useAuth } from "@/BackEnd/AuthContext";
 import MentorChangeView from "./MentorChangeView";
+import { MainOverlayAdminDashboard } from "./MainOverlayAdminDashboard";
 
 export default function ProfileMainView() {
   const { user, loading } = useAuth();

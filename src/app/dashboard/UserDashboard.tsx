@@ -23,7 +23,7 @@ export default function UserDashboard() {
   const [filters, setFilters] = useState<Filter>({
     name: "false",
     birthYear: "false",
-    role: "all",
+    role: "All",
   });
 
   const [editStates, setEditStates] = useState<Record<string, boolean>>({});
@@ -76,7 +76,7 @@ export default function UserDashboard() {
       );
     }
 
-    if (filters.role !== "all") {
+    if (filters.role !== "All") {
       const roleMap: Record<string, string> = {
         Admin: "admin",
         Member: "member",
@@ -194,12 +194,12 @@ export default function UserDashboard() {
         <div className="flex flex-row gap-3 flex-wrap w-70 items-center">
           <p
             className={`${
-              filters.role === "all"
+              filters.role === "All"
                 ? "bg-fifthOwn text-white"
                 : "bg-white border border-lightborder text-black"
             }  px-2 py-1 rounded-md`}
             onClick={() => {
-              setFilters((prev) => ({ ...prev, role: "all" }));
+              setFilters((prev) => ({ ...prev, role: "All" }));
             }}
           >
             Alle

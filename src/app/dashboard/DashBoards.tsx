@@ -12,11 +12,9 @@ export function Dashboard() {
   const [data, setData] = useState<UserData | null>(null);
 
   const changeRole = async () => {
-    console.log("Changing role to admin");
    if (!user) return;
    const userData = await getUserData(user.uid);
-   if (!userData) return;
-   await updateUser(userData.uid, { role: "admin" });
+  
  };
 
  useEffect(() => {

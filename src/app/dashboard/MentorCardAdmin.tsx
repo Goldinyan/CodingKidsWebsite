@@ -7,9 +7,9 @@ import {
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { Pen, X, Check} from "lucide-react";
+import { Pen, X, Check } from "lucide-react";
 import { updateMentor } from "@/lib/db";
-import type { Mentor } from "@/BackEnd/type"
+import type { Mentor } from "@/BackEnd/type";
 
 export default function MentorCardAdmin({
   uid,
@@ -18,7 +18,7 @@ export default function MentorCardAdmin({
   description2,
   picture,
 }: {
-  uid: string,
+  uid: string;
   name: string;
   description1: string;
   description2: string;
@@ -29,19 +29,21 @@ export default function MentorCardAdmin({
   const [updates, setUpdates] = useState<Partial<Mentor>>({
     name: name,
     des1: description1,
-    des2: description2
+    des2: description2,
   });
 
   return (
     <Card className="w-70 flex items-center">
       <CardHeader className="flex min-w-full justify-center items-center flex-col gap-4 pt-6">
-       <Avatar className="w-24 h-24">
-  <AvatarImage src={picture} className="object-cover rounded-full" />
-</Avatar>
+        <Avatar className="w-24 h-24">
+          <AvatarImage src={picture} className="object-cover rounded-full" />
+        </Avatar>
 
         {updateView ? (
           <div className="flex flex-col w-50">
-            <p className="block  text-sm font-bold mb-1 text-gray-900 dark:text-white">Name:</p>
+            <p className="block  text-sm font-bold mb-1 text-gray-900 dark:text-white">
+              Name:
+            </p>
             <input
               value={updates.name}
               className="bg-gray-50 border pl-3 mb-3 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -52,7 +54,9 @@ export default function MentorCardAdmin({
                 }))
               }
             ></input>
-                        <p className="block  text-sm font-bold mb-1 text-gray-900 dark:text-white">Description 1:</p>
+            <p className="block  text-sm font-bold mb-1 text-gray-900 dark:text-white">
+              Description 1:
+            </p>
 
             <textarea
               className="bg-gray-50 border pl-3 mb-3 h-25 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -64,7 +68,9 @@ export default function MentorCardAdmin({
                 }))
               }
             ></textarea>
-                        <p className="block  text-sm font-bold mb-1 text-gray-900 dark:text-white">Description 2:</p>
+            <p className="block  text-sm font-bold mb-1 text-gray-900 dark:text-white">
+              Description 2:
+            </p>
 
             <textarea
               value={updates.des2}
@@ -87,20 +93,23 @@ export default function MentorCardAdmin({
       </CardHeader>
       <CardFooter className="flex flex-row gap-4">
         <Button variant="outline" onClick={() => setShowDes2((prev) => !prev)}>
-          Mehr erfahren
+          {showDes2 ? "Weniger anzeigen" : "Mehr anzeigen"}
         </Button>
-        {updateView && 
-        <div>
-        <Button variant="outline" onClick={() => (updateMentor(uid, updates), setUpdateView(false))}>
-        <Check />
-        </Button>
-        </div> }
+        {updateView && (
+          <div>
+            <Button
+              variant="outline"
+              onClick={() => (updateMentor(uid, updates), setUpdateView(false))}
+            >
+              <Check />
+            </Button>
+          </div>
+        )}
         <Button
           variant="outline"
           onClick={() => setUpdateView((prev) => !prev)}
         >
-            
-          {updateView ?   <X /> : <Pen />}
+          {updateView ? <X /> : <Pen />}
         </Button>
       </CardFooter>
     </Card>
