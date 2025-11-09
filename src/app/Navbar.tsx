@@ -152,13 +152,13 @@ export default function Navbar() {
                 <X className="w-6 h-6 text-graytext" />
               )}
             </button>
-          </div>
-          <div className="transition-all duration-300 ">
-            {" "}
-            {open && <NavbarMobile />}{" "}
-          </div>
-        </div>
-      </div>
+           </div>
+           <div className="transition-all duration-300 ">
+             
+            {open && <NavbarMobile setOpen={setOpen} />}
+           </div>
+         </div>
+       </div>
     </div>
   );
 }
