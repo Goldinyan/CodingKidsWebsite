@@ -33,8 +33,9 @@ export async function updateMentor(uid: string, updates: Partial<Mentor>) {
 export async function getAllAnnouncements(): Promise<AnnouncementData[]> {
   const snapshot = await getDocs(collection(db, "announcements"));
   return snapshot.docs.map((doc) => ({
-    uid: doc.id,
-    ...doc.data(),
+   ...doc.data(),
+  uid: doc.id,
+  date: doc.data().date.toDate(),
   })) as AnnouncementData[];
 }
 
@@ -63,7 +64,20 @@ export async function addAnnouncement(
     tag: newAnnouncement.tag,
     title: newAnnouncement.title,
     content: newAnnouncement.content,
+    date: new Date(),
+    author: newAnnouncement.author,
+    readBy: [newAnnouncement.author],
   });
+}
+
+export async function updateAnnouncement(uid: string, updates: Partial<AnnouncementData>) {
+  try {
+    const ref = doc(db, "announcements", uid);
+    await updateDoc(ref, updates);
+  } catch (err) {
+    console.error("Fehler beim Aktualisieren der Ankündigung:", err);
+    throw err;
+  }
 }
 
 // USERS
@@ -290,3 +304,27 @@ export async function getAllAdmins(): Promise<UserData[]> {
 
     return admins.filter((user) => user.role === "admin") as UserData[];
 }
+
+
+
+
+
+//  ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⠞⠀⠀⠀⠀⠀
+// ⠀⠀⠀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣾⡟⠀⠀⠀⠀⠀⠀
+// ⠀⠀⠀⠈⢻⣷⣄⣀⣀⣠⣤⣴⣶⣶⣶⣶⣶⣶⣤⣤⣠⣾⡿⠀⠀⠀⠀⠀⠀⠀
+// ⠀⠀⠀⠀⠀⣻⣿⣿⣿⠿⠛⠛⠉⠉⠁⠀⠉⠉⠙⢻⣿⣿⣷⣄⠀⠀⠀⠀⠀⠀
+// ⠀⠀⠀⣀⣾⡿⢿⣿⣇⠀⠀⠚⠀⠀⠀⠀⠀⠀⠀⣼⣿⠟⠿⣿⣿⣦⠀⠀⠀⠀
+// ⠀⠀⣴⣿⠟⠁⠀⢿⣿⡄⠀⠀⠀⠀⠀⠀⠀⠀⢰⣿⡟⠀⠀⠈⣿⣿⣷⡄⠀⠀
+// ⠀⣼⣿⠃⠀⠀⠀⠈⣿⣿⠀⠀⠀⠀⠀⠀⠀⢀⣿⡿⠀⠀⠀⠀⠃⢻⣿⣿⡄⠀
+// ⢸⣿⡇⠀⠀⠀⠀⠀⠸⣿⣇⠀⠀⠀⠀⠀⠀⣾⡿⠀⠀⠀⠀⠀⠃⠀⢻⣿⣿⡀
+// ⣿⣿⡇⠀⠀⠀⠀⠀⠀⢹⣿⠀⠀⠀⠀⠀⣸⣿⠃⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⡇
+// ⢿⣿⡇⠀⠀⠀⠀⠀⠀⠈⣿⡇⠀⠀⠀⢠⣿⡏⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⣷
+// ⠸⣿⣿⡄⠀⠀⠀⠀⠀⠀⢹⣿⠀⠀⠀⣾⣿⠁⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⡇
+// ⠀⢻⣿⣿⣄⠀⠀⠀⠀⠀⠘⣿⡇⠀⣴⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⢠⣿⣿⡟⠀
+// ⠀⠀⠹⣿⣿⣧⡀⠀⠀⠀⠀⢿⣿⡀⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⣴⣿⣿⠟⠀⠀
+// ⠀⠀⠀⠈⢿⣿⣿⣦⣀⠀⠀⢸⣿⣿⣿⡇⠀⠀⠀⠀⠀⠀⣤⣾⣿⡿⠋⠀⠀⠀
+// ⠀⠀⠀⠀⠀⠋⠻⢿⣿⣷⣤⣸⣿⣿⣿⣇⣀⣀⣀⣤⣶⣿⣿⣿⡿⠁⠀⠀⠀⠀
+// ⠀⠀⠀⠀⠀⠀⠀⠀⠙⣿⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⢿⠁⠀⠀⠀⠀⠀⠀
+// ⠀⠀⠀⠀⠠⠀⠀⠀⠀⢤⠀⠙⢿⣿⣿⠟⠛⠉⢹⠁⠀⠀⢸⠀⠀⠀⠀⠀⠀⠀
+// ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⠃⠀⠀⠀⢸⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+// ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠸⠃⠀⠀⠀⠀⠘⠀⠀⠀⠸⠀⠀⠀⠀⠀⠀⠀

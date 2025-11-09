@@ -4,7 +4,7 @@ import { User } from "firebase/auth"
 export type Preset = "false" | "ascending" | "descending";
 
 export type PresetRoles =
-  | "all"
+  | "All"
   | "Member"
   | "User"
   | "Admin"
