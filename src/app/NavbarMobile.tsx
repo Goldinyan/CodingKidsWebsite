@@ -4,19 +4,34 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/BackEnd/AuthContext";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Home, GraduationCap, Users, Mail, HeartHandshakeIcon, User, LayoutDashboard   } from "lucide-react";
+import {
+  ArrowRight,
+  Home,
+  GraduationCap,
+  Users,
+  Mail,
+  HeartHandshakeIcon,
+  User,
+  LayoutDashboard,
+} from "lucide-react";
 import { useViewportHeight } from "@/hooks/useViewportHeight";
-import { getUserData } from "@/lib/db";
+import { getAllAnnouncements, getUserData } from "@/lib/db";
 
 interface NavbarMobileProps {
   setOpen: (open: boolean) => void;
+  
 }
 
-export default function NavbarMobile({ setOpen }: NavbarMobileProps) {
+export default function NavbarMobile({
+  setOpen,
+  
+}: NavbarMobileProps) {
   useViewportHeight();
   const router = useRouter();
   const { user, loading } = useAuth();
   const [userData, setUserData] = useState<any>(null);
+  const [unreadMessages, setUnreadMessages] = useState(0);
+
 
   useEffect(() => {
     if (!user) return;
@@ -27,10 +42,18 @@ export default function NavbarMobile({ setOpen }: NavbarMobileProps) {
       if (data) {
         setUserData(data);
       }
+       const announcements = await getAllAnnouncements();
+            const unread = announcements.filter(
+              (announcement) =>
+                !announcement.readBy || !announcement.readBy.includes(user.uid)
+            ).length;
+            setUnreadMessages(unread);
+            console.log("Unread messages:", unread);
     };
 
     fetchData();
   }, [user]);
+
 
   return (
     <div
@@ -44,38 +67,60 @@ export default function NavbarMobile({ setOpen }: NavbarMobileProps) {
             style={{ height: "calc(var(--vh) * 100)" }}
           >
             <div className="flex flex-col gap-6 px-4 pt-5 w-full ">
-              {
-                (() => {
-                  const items: { label: string; href: string; Icon: any }[] = [
-                    { label: "Startseite", href: "/", Icon: Home },
-                    { label: "Kurse", href: "/termine", Icon: GraduationCap },
-                    { label: "Über uns", href: "/verein", Icon: Users },
-                    { label: "Kontakt", href: "/kontakt", Icon: Mail },
-                    { label: "Spenden", href: "/spende", Icon: HeartHandshakeIcon },
-                  ];
+              {(() => {
+                const items: { label: string; href: string; Icon: any }[] = [
+                  { label: "Startseite", href: "/", Icon: Home },
+                  { label: "Kurse", href: "/termine", Icon: GraduationCap },
+                  { label: "Über uns", href: "/verein", Icon: Users },
+                  { label: "Kontakt", href: "/kontakt", Icon: Mail },
+                  {
+                    label: "Spenden",
+                    href: "/spende",
+                    Icon: HeartHandshakeIcon,
+                  },
+                ];
 
-                  if (user) items.push({ label: "Profile", href: "/profile", Icon: User });
-                  if (userData?.role === "admin") items.push({ label: "Dashboard", href: "/dashboard", Icon: LayoutDashboard });
-
-                  return items.map((it, idx) => {
-                    const bgClass = idx % 2 === 0 ? "text-primaryOwn" : "text-secondaryOwn";
-                    return (
-                      <div
-                        key={it.href}
-                        className={`flex w-full items-center shadow-sm px-3 py-3 rounded-lg`}
-                        onClick={() => {
-                          router.push(it.href);
-                          setOpen(false);
-                        }}
-                      >
-                        <it.Icon className={`mr-4 h-5 ${bgClass}`} />
-                        <p className="font-medium">{it.label}</p>
-                        <ArrowRight className="ml-auto" />
-                      </div>
-                    );
+                if (user)
+                  items.push({
+                    label: "Profile",
+                    href: "/profile",
+                    Icon: User,
                   });
-                })()
-              }
+                if (userData?.role === "admin")
+                  items.push({
+                    label: "Dashboard",
+                    href: "/dashboard",
+                    Icon: LayoutDashboard,
+                  });
+
+                return items.map((it, idx) => {
+                  const bgClass =
+                    idx % 2 === 0 ? "text-primaryOwn" : "text-secondaryOwn";
+                  return (
+                    <div
+                      key={it.href}
+                      className={`flex w-full items-center shadow-sm px-3 py-3 rounded-lg`}
+                      onClick={() => {
+                        router.push(it.href);
+                        setOpen(false);
+                      }}
+                    >
+                      <div className="relative mr-4">
+                        <it.Icon className={`h-5 ${bgClass}`} />
+                        {it.label === "Profile" && unreadMessages > 0 && (
+                          <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 scale-70 rounded-full">
+                            {unreadMessages > 99 ? "99+" : unreadMessages}
+                          </span>
+                        )}
+                      </div>
+
+                      <p className="font-medium">{it.label}</p>
+
+                      <ArrowRight className="ml-auto" />
+                    </div>
+                  );
+                });
+              })()}
             </div>
             <span
               className="w-full h-[3px]  bg-white shadow"

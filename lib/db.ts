@@ -66,7 +66,7 @@ export async function addAnnouncement(
     content: newAnnouncement.content,
     date: new Date(),
     author: newAnnouncement.author,
-    readBy: [newAnnouncement.author],
+    readBy: [],  // MACH DAS WIEDER ZU redBy: [newAnnouncement.author]  wenn authors die ankuendigungen automatisch als gelesen markiert haben sollen
   });
 }
 

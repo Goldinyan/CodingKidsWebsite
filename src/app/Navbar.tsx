@@ -15,14 +15,15 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/BackEnd/AuthContext";
 import { User, LogIn } from "lucide-react";
 import { useIsMobile } from "@/hooks/useIsMobile";
-import { Menu, X, LayoutDashboard } from "lucide-react";
+import { Menu, X, LayoutDashboard, HeartHandshakeIcon } from "lucide-react";
 import NavbarMobile from "./NavbarMobile";
-import { getUserData } from "@/lib/db";
+import { getAllAnnouncements, getUserData } from "@/lib/db";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const { user, loading } = useAuth();
   const [userData, setUserData] = useState<any>(null);
+  const [unreadMessages, setUnreadMessages] = useState(0);
   const router = useRouter();
 
   useEffect(() => {
@@ -34,6 +35,14 @@ export default function Navbar() {
       if (data) {
         setUserData(data);
       }
+
+      const announcements = await getAllAnnouncements();
+      const unread = announcements.filter(
+        (announcement) =>
+          !announcement.readBy || !announcement.readBy.includes(user.uid)
+      ).length;
+      setUnreadMessages(unread);
+      console.log("Unread messages:", unread);
     };
 
     fetchData();
@@ -57,7 +66,7 @@ export default function Navbar() {
   return (
     <div className="w-full  ">
       <div className="w-full h-16 pt-5 md:pt-0  ">
-        <div className="w-full flex items-center pr-15 pl-4">
+        <div className="w-full flex items-center pr-5 pl-5">
           <div className=" flex-row items-center gap-3 hidden md:flex">
             <img src="Logo_aussen_Transparent.png" className="w-15 h-15 p-1" />
             <p className="font-bold hidden lg:flex">Coding Kids Niederrhein</p>
@@ -68,22 +77,37 @@ export default function Navbar() {
               className="bg-secondaryOwn"
               onClick={() => router.push("/spenden")}
             >
-              <p className="font-bold">Spenden</p>
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => router.push(user ? "/profile" : "/login")}
-            >
               {isMobile ? (
-                !user ? (
-                  <User className="w-5 h-5" />
-                ) : (
-                  <LogIn className="w-5 h-5" />
-                )
+                <HeartHandshakeIcon className="w-5 h-5 text-white" />
               ) : (
-                <span className="font-bold">{user ? "Profile" : "Login"}</span>
+                <p className="font-bold">Spenden</p>
               )}
             </Button>
+            <div className="relative">
+              <Button
+                variant="outline"
+                onClick={() => router.push(user ? "/profile" : "/login")}
+              >
+                {isMobile ? (
+                  !user ? (
+                    <LogIn className="w-5 h-5" />
+                  ) : (
+                    <User className="w-5 h-5" />
+                  )
+                ) : (
+                  <span className="font-bold">
+                    {user ? "Profile" : "Login"}
+                  </span>
+                )}
+              </Button>
+
+              {unreadMessages > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 scale-80 rounded-full">
+                  {unreadMessages}
+                </span>
+              )}
+            </div>
+
             {userData?.role === "admin" && (
               <Button
                 variant="outline"
@@ -152,13 +176,12 @@ export default function Navbar() {
                 <X className="w-6 h-6 text-graytext" />
               )}
             </button>
-           </div>
-           <div className="transition-all duration-300 ">
-             
+          </div>
+          <div className="transition-all duration-300 ">
             {open && <NavbarMobile setOpen={setOpen} />}
-           </div>
-         </div>
-       </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
