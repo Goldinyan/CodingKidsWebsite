@@ -1,13 +1,15 @@
 
 import { useAuth } from "@/BackEnd/AuthContext";
-
+import ProfileView from "./ProfileView";
 
 
 export default function Home(){
 
     return (
         <div>
-           <p className="mt-30">Profile Page</p>
+          <div className="mt-40">
+            <ProfileView />
+          </div>
         </div>
     )
 }
