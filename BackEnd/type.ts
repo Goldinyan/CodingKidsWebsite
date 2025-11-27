@@ -60,7 +60,6 @@ export type AuthContextType = {
   loading: boolean;
 };
 
-
 export type Filter = {
     name: Preset;
     birthYear: Preset;
