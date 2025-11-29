@@ -101,17 +101,13 @@ export default function Navbar() {
                 variant="outline"
                 onClick={() => router.push(user ? "/profile" : "/login")}
               >
-                {isMobile ? (
+                {
                   !user ? (
                     <LogIn className="w-5 h-5" />
                   ) : (
                     <User className="w-5 h-5" />
                   )
-                ) : (
-                  <span className="font-bold">
-                    {user ? "Profile" : "Login"}
-                  </span>
-                )}
+                }
               </Button>
             </div>
 
@@ -153,6 +149,13 @@ export default function Navbar() {
                     >
                       Über uns
                     </p>
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <NavigationMenuLink>
+                    {!user && <p className="font-bold" onClick={() => router.push("/kontakt")}>
+                        Kontakt
+                    </p>}
                   </NavigationMenuLink>
                 </NavigationMenuItem>
               </NavigationMenuList>

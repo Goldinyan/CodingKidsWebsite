@@ -1,9 +1,10 @@
 "use client"
 
-import { useState, useEffect, use } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/BackEnd/AuthContext"
 import type { UserData } from "@/BackEnd/type";
 import { getUserData } from "@/lib/db";
+import { logoutUser } from "@/lib/auth";
 import AnnouncementView from "./AnnouncementView";
 
 export default function ProfileView(){
@@ -34,6 +35,9 @@ export default function ProfileView(){
     }
     return (
         <div>
+          <div onClick={() => logoutUser()}>
+            <p>LOGOUT</p>
+          </div>
             <AnnouncementView data={userData}/>
         </div>
     )
