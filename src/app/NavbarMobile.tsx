@@ -13,25 +13,21 @@ import {
   HeartHandshakeIcon,
   User,
   LayoutDashboard,
+  MessageCircle,
 } from "lucide-react";
 import { useViewportHeight } from "@/hooks/useViewportHeight";
 import { getAllAnnouncements, getUserData } from "@/lib/db";
 
 interface NavbarMobileProps {
   setOpen: (open: boolean) => void;
-  
 }
 
-export default function NavbarMobile({
-  setOpen,
-  
-}: NavbarMobileProps) {
+export default function NavbarMobile({ setOpen }: NavbarMobileProps) {
   useViewportHeight();
   const router = useRouter();
   const { user, loading } = useAuth();
   const [userData, setUserData] = useState<any>(null);
   const [unreadMessages, setUnreadMessages] = useState(0);
-
 
   useEffect(() => {
     if (!user) return;
@@ -42,18 +38,17 @@ export default function NavbarMobile({
       if (data) {
         setUserData(data);
       }
-       const announcements = await getAllAnnouncements();
-            const unread = announcements.filter(
-              (announcement) =>
-                !announcement.readBy || !announcement.readBy.includes(user.uid)
-            ).length;
-            setUnreadMessages(unread);
-            console.log("Unread messages:", unread);
+      const announcements = await getAllAnnouncements();
+      const unread = announcements.filter(
+        (announcement) =>
+          !announcement.readBy || !announcement.readBy.includes(user.uid)
+      ).length;
+      setUnreadMessages(unread);
+      console.log("Unread messages:", unread);
     };
 
     fetchData();
   }, [user]);
-
 
   return (
     <div
@@ -72,12 +67,12 @@ export default function NavbarMobile({
                   { label: "Startseite", href: "/", Icon: Home },
                   { label: "Kurse", href: "/termine", Icon: GraduationCap },
                   { label: "Über uns", href: "/verein", Icon: Users },
-                  { label: "Kontakt", href: "/kontakt", Icon: Mail },
                   {
                     label: "Spenden",
                     href: "/spende",
                     Icon: HeartHandshakeIcon,
                   },
+                  { label: "Kontakt", href: "/kontakt", Icon: MessageCircle },
                 ];
 
                 if (user)
@@ -86,7 +81,7 @@ export default function NavbarMobile({
                     href: "/profile",
                     Icon: User,
                   });
-                if (userData?.role === "admin")
+                if (userData?.role === "Admin")
                   items.push({
                     label: "Dashboard",
                     href: "/dashboard",
@@ -107,7 +102,7 @@ export default function NavbarMobile({
                     >
                       <div className="relative mr-4">
                         <it.Icon className={`h-5 ${bgClass}`} />
-                        {it.label === "Profile" && unreadMessages > 0 && (
+                        {it.label === "Kontakt" && unreadMessages > 0 && (
                           <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 scale-70 rounded-full">
                             {unreadMessages > 99 ? "99+" : unreadMessages}
                           </span>

@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/navigation-menu";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/BackEnd/AuthContext";
-import { User, LogIn } from "lucide-react";
+import { User, LogIn, MessageCircle } from "lucide-react";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { Menu, X, LayoutDashboard, HeartHandshakeIcon } from "lucide-react";
 import NavbarMobile from "./NavbarMobile";
@@ -83,6 +83,19 @@ export default function Navbar() {
                 <p className="font-bold">Spenden</p>
               )}
             </Button>
+            {user && (
+              <div className="relative">
+                <Button variant="outline" onClick={() => router.push("/kontakt")}>
+                  <MessageCircle />
+                </Button>
+                {unreadMessages > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 scale-80 rounded-full">
+                    {unreadMessages}
+                  </span>
+                )}
+              </div>
+            )}
+
             <div className="relative">
               <Button
                 variant="outline"
@@ -100,15 +113,9 @@ export default function Navbar() {
                   </span>
                 )}
               </Button>
-
-              {unreadMessages > 0 && (
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 scale-80 rounded-full">
-                  {unreadMessages}
-                </span>
-              )}
             </div>
 
-            {userData?.role === "admin" && (
+            {userData?.role === "Admin" && (
               <Button
                 variant="outline"
                 onClick={() => router.push("/dashboard")}
@@ -145,16 +152,6 @@ export default function Navbar() {
                       onClick={() => router.push("/verein")}
                     >
                       Über uns
-                    </p>
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                  <NavigationMenuLink>
-                    <p
-                      className="font-bold"
-                      onClick={() => router.push("/kontakt")}
-                    >
-                      Kontakt
                     </p>
                   </NavigationMenuLink>
                 </NavigationMenuItem>
