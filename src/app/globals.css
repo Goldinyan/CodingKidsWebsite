@@ -4,7 +4,9 @@
 
 @custom-variant dark (&:is(.dark *));
 
-
+* {
+  apply: transition-all, duration-200
+}
 @theme {
     --color-primaryOwn: #845EC2;
     --color-secondaryOwn: #0B6F12;
@@ -20,6 +22,7 @@
     --color-lightborder: #EAEBEF;
     --color-lighttext: #E3CBE8;
     --color-graytext: #686868;
+    --color-gray2text: #9A9A9A;
    
     --font-size-xxs: 0.625rem; /* 10px */
     --font-size-xxs--line-height: 0.875rem; /* 14px */
