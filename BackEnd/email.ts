@@ -152,4 +152,25 @@ export async function sendEmailDeletedUser(to: string, userName: string){
  }
 
 
+
+
+
+ //SUPPORT
+
+ export async function sendEmailToSupport(to: string, subject: string, body:string, ownEmail: string, ownNumber: string, ownName: string){
+    const emailSubject = `Support-Anfrage: ${subject}`;
+    const html = `<p>Hallo Admin,</p>
+    <p>Eine neue Support-Anfrage wurde über das Kontaktformular eingereicht.</p>
+    <p><strong>Von:</strong> ${ownName}<br/>
+    <strong>Email:</strong> ${ownEmail}<br/>
+    ${ownNumber ? `<strong>Telefonnummer:</strong> ${ownNumber}<br/>` : ''}
+    <strong>Betreff:</strong> ${subject}</p>
+    <p><strong>Nachricht:</strong></p>
+    <p>${body.replace(/\n/g, '<br/>')}</p>
+    <p>Viele Grüße,<br/>Dein Coding Kids Team</p>`;
+
+    for (const adminEmail of adminsEmail) {
+        await sendEmail(adminEmail, emailSubject, html);
+    }
+ }
   
