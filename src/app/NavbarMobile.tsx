@@ -69,7 +69,7 @@ export default function NavbarMobile({ setOpen }: NavbarMobileProps) {
                   { label: "Über uns", href: "/verein", Icon: Users },
                   {
                     label: "Spenden",
-                    href: "/spende",
+                    href: "/spenden",
                     Icon: HeartHandshakeIcon,
                   },
                   { label: "Kontakt", href: "/kontakt", Icon: MessageCircle },

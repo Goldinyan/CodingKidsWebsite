@@ -20,7 +20,9 @@
     --color-lightborder: #EAEBEF;
     --color-lighttext: #E3CBE8;
     --color-graytext: #686868;
-    
+   
+    --font-size-xxs: 0.625rem; /* 10px */
+    --font-size-xxs--line-height: 0.875rem; /* 14px */
 }
 
 @theme inline {

@@ -1,0 +1,4 @@
+# TODOs
+- [ ] Email System
+- [x] Kontakt Page
+- [ ] Spenden Page
