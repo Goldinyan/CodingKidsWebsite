@@ -7,6 +7,17 @@
 * {
   apply: transition-all, duration-200
 }
+
+/* Entfernt die Pfeile bei number inputs */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+}
 @theme {
     --color-primaryOwn: #845EC2;
     --color-secondaryOwn: #0B6F12;

@@ -12,6 +12,7 @@ type Donation = {
   from: string;
   date?: Date;
   payment: Payment;
+  message?: string;
 };
 
 type Payment = {};
@@ -22,6 +23,7 @@ export default function GiftingMainView() {
     amount: "0",
     from: "",
     payment: "",
+    message: "",
   });
 
   const steps: { text: string; number: number }[] = [
@@ -237,6 +239,7 @@ function DifferentGifts({ value, updateStep, updateValue, step }: ChildProps) {
 
 function Customize({ step, updateStep, value, updateValue }: ChildProps) {
   const giftValues: string[] = ["5", "10", "25", "50"];
+  const [customAmount, setCustomAmount] = useState<number>(0);
 
   if (step < 2) {
     return (
@@ -288,26 +291,59 @@ function Customize({ step, updateStep, value, updateValue }: ChildProps) {
             </p>
           </div>
           <div className="flex flex-col ">
-            <p>Spenden Betrag</p>
+            <p className="px-4 text-graytext text-[14px] py-2 ">
+              Spenden Betrag
+            </p>
             <div className="flex justify-around flex-row w-full">
-            {giftValues.map((v) => (
-              <div
-                key={v}
-                onClick={() => updateValue({ ...value, amount: v })}
-                className={`w-1/5 flex items-center justify-center h-10 border rounded-lg transition-all duration-200  ${
-                  value.amount === v ? "border-fourthOwn bg-purple-200" : "border-lightborder"
-                }`}
-              >
-                <p
-                  className={`${
-                    value.amount === v ? "text-fourthOwn" : "text-black"
+              {giftValues.map((v) => (
+                <div
+                  key={v}
+                  onClick={() => updateValue({ ...value, amount: v })}
+                  className={`w-1/5 flex items-center justify-center h-10 border rounded-lg transition-all duration-200  ${
+                    value.amount === v
+                      ? "border-fourthOwn bg-purple-200"
+                      : "border-lightborder"
                   }`}
                 >
-                  {v}€
-                </p>
-              </div>
-            ))}
+                  <p
+                    className={`${
+                      value.amount === v ? "text-fourthOwn" : "text-black"
+                    }`}
+                  >
+                    {v}€
+                  </p>
+                </div>
+              ))}
             </div>
+            <div
+              className={`${
+                customAmount !== 0 ? "border-fourthOwn" : "border-lightborder"
+              } mx-4 mt-4 border h-10 flex flex-row justify-between items-center rounded-lg`}
+            >
+              <input
+                type="number"
+                placeholder="oder individuellen Betrag"
+                className="w-full pl-4 py-2 border border-lightborder rounded-md 
+             text-sm text-gray-700 placeholder-gray-400 
+             focus:outline-none focus:ring-2 focus:ring-fourthOwn focus:border-fourthOwn"
+              />
+            </div>
+            <div className="w-full p-4">
+  <label
+    htmlFor="message"
+    className="block text-sm font-medium text-graytext mb-2"
+  >
+    Nachricht (optional)
+  </label>
+  <textarea
+    id="message"
+    name="message"
+    placeholder="Ihre Nachricht hinzufügen..."
+    className="w-full h-24 p-3 border border-lightborder rounded-md 
+               text-sm text-gray-700 placeholder-gray-400 
+               focus:outline-none focus:ring-2 focus:ring-fourthOwn focus:border-fourthOwn resize-none"
+  />
+</div>
           </div>
         </div>
       );
@@ -329,7 +365,7 @@ function Customize({ step, updateStep, value, updateValue }: ChildProps) {
 }
 
 function Summary({ step, updateStep, value, updateValue }: ChildProps) {
-  if (step === 1) {
+  if (step < 3) {
     return (
       <div className="border divide-y-1 shadow-md divide-lightborder bg-white rounded-lg w-full border-lightborder min-w-50 px-5">
         <div className="">
