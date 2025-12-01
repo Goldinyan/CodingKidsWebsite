@@ -1,26 +1,53 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Check, HandCoins, Laptop, Tickets } from "lucide-react";
+import {
+  Check,
+  CircleQuestionMark,
+  HandCoins,
+  Laptop,
+  Monitor,
+  Mouse,
+  Tickets,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 
 type diffGifts = "geld" | "equip" | "membership";
+type diffEquip = "Laptop" | "Monitor" | "Mouse" | "Other";
 
-type Donation = {
-  gift: diffGifts;
-  amount: string;
+type BaseDonation = {
   from: string;
   date?: Date;
   payment: Payment;
   message?: string;
 };
 
+type Donation =
+  | (BaseDonation & {
+      gift: "equip";
+      type: diffEquip;
+      messageForEquip: string;
+      assistance: boolean;
+    })
+  | (BaseDonation & {
+      gift: "geld";
+      amount: number;
+    })
+  | (BaseDonation & {
+      gift: "membership";
+      months: number;
+      amountOfMemberships: number;
+      amount: number;
+    });
+
 type Payment = {};
 export default function GiftingMainView() {
   const [step, setStep] = useState<1 | 2 | 3>(2);
   const [donation, setDonation] = useState<Donation>({
     gift: "geld",
-    amount: "0",
+    amount: 0,
     from: "",
     payment: "",
     message: "",
@@ -133,6 +160,31 @@ type Gift = {
   icon: React.ElementType;
 };
 
+function createDonation(gift: diffGifts): Donation {
+  switch (gift) {
+    case "geld":
+      return { gift, amount: 0, from: "", payment: "" };
+    case "equip":
+      return {
+        gift,
+        type: "Laptop",
+        messageForEquip: "",
+        from: "",
+        payment: "",
+        assistance: false,
+      };
+    case "membership":
+      return {
+        gift,
+        months: 1,
+        amountOfMemberships: 0,
+        amount: 0,
+        from: "",
+        payment: "",
+      };
+  }
+}
+
 function DifferentGifts({ value, updateStep, updateValue, step }: ChildProps) {
   const [filGifts, setFilGifts] = useState<Gift[]>();
   const Gifts: Gift[] = [
@@ -207,7 +259,7 @@ function DifferentGifts({ value, updateStep, updateValue, step }: ChildProps) {
             const Icon = g.icon;
             return (
               <div
-                onClick={() => updateValue({ ...value, gift: g.input })}
+                onClick={() => updateValue(createDonation(g.input))}
                 key={g.input}
                 className={`flex flex-col gap-3 p-2 border ${
                   value.gift === g.input
@@ -239,7 +291,31 @@ function DifferentGifts({ value, updateStep, updateValue, step }: ChildProps) {
 
 function Customize({ step, updateStep, value, updateValue }: ChildProps) {
   const giftValues: string[] = ["5", "10", "25", "50"];
-  const [customAmount, setCustomAmount] = useState<number>(0);
+  const [customAmount, setCustomAmount] = useState<string>("");
+  const equip: { text: string; icon: any }[] = [
+    {
+      text: "Laptop",
+      icon: Laptop,
+    },
+    {
+      text: "Monitor",
+      icon: Monitor,
+    },
+    {
+      text: "Mouses",
+      icon: Mouse,
+    },
+    {
+      text: "Other",
+      icon: CircleQuestionMark,
+    },
+  ];
+
+  useEffect(() => {
+    if (customAmount !== "" && value.gift === "geld") {
+      updateValue({ ...value, amount: Number(customAmount) });
+    }
+  }, [customAmount]);
 
   if (step < 2) {
     return (
@@ -275,7 +351,68 @@ function Customize({ step, updateStep, value, updateValue }: ChildProps) {
               Schritt 2: Spende personalisieren
             </p>
           </div>
-          <p>EQUIP</p>
+          <div className="flex flex-col mx-4 ">
+            <p className="pt-2 text-graytext text-[14px] py-2 ">
+              Was spenden Sie?
+            </p>
+            <div className="grid grid-cols-2 gap-4  md:grid-cols-4 w-full">
+              {equip.map((e) => (
+                <div
+                  key={e.text}
+                  onClick={() =>
+                    updateValue({ ...value, type: e.text as diffEquip })
+                  }
+                  className={` flex flex-col items-center justify-center gap-2 h-20 border rounded-lg transition-all duration-200  ${
+                    value.type === e.text
+                      ? "border-fourthOwn bg-purple-200"
+                      : "border-lightborder"
+                  }`}
+                >
+                  <e.icon className={`h-5 `} />
+                  <p
+                    className={`font-medium ${
+                      value.type === e.text ? "text-fourthOwn" : "text-black"
+                    }`}
+                  >
+                    {e.text}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            <div className="w-full pt-4">
+              <label
+                htmlFor="message"
+                className="block text-sm font-medium text-graytext mb-2"
+              >
+                Equipment Details:
+              </label>
+              <textarea
+                id="message"
+                name="message"
+                placeholder="Bitte geben Sie Marke, Modell, Alter und Zustand des Geräts an (z. B. Dell Latitude 5400, 1 Jahr alt, guter Zustand)"
+                className="w-full h-24 p-3 border border-lightborder rounded-md 
+               text-sm text-gray-700 placeholder-gray-400 
+               focus:outline-none focus:ring-2 focus:ring-fourthOwn focus:border-fourthOwn resize-none"
+              />
+            </div>
+            <Label className="hover:bg-accent/50 my-4 flex items-start gap-3 rounded-lg border p-3 has-[[aria-checked=true]]:border-fourthOwn has-[[aria-checked=true]]:bg-purple-200 dark:has-[[aria-checked=true]]:border-fourthOwn dark:has-[[aria-checked=true]]:bg-fourthOwn">
+              <Checkbox
+                id="toggle-2"
+                checked={value.assistance}
+                onCheckedChange={() => updateValue({...value, assistance: !value.assistance})}                
+                className="data-[state=checked]:border-fourthOwn data-[state=checked]:bg-fourthOwn data-[state=checked]:text-white dark:data-[state=checked]:border-fourthOwn dark:data-[state=checked]:bg-fourthOwn"
+              />
+              <div className="grid gap-1.5 font-normal">
+                <p className="text-sm leading-none font-medium">
+                Ich benötige Unterstützung bei Abholung/Versand. <br />
+                </p>
+                <p className="text-muted-foreground text-sm">
+                Wenn ausgewählt, kontaktieren wir Sie zur Koordination der Logistik.
+                </p>
+              </div>
+            </Label>
+          </div>
         </div>
       );
     case "geld":
@@ -298,16 +435,18 @@ function Customize({ step, updateStep, value, updateValue }: ChildProps) {
               {giftValues.map((v) => (
                 <div
                   key={v}
-                  onClick={() => updateValue({ ...value, amount: v })}
+                  onClick={() => updateValue({ ...value, amount: Number(v) })}
                   className={`w-1/5 flex items-center justify-center h-10 border rounded-lg transition-all duration-200  ${
-                    value.amount === v
+                    value.amount === Number(v)
                       ? "border-fourthOwn bg-purple-200"
                       : "border-lightborder"
                   }`}
                 >
                   <p
                     className={`${
-                      value.amount === v ? "text-fourthOwn" : "text-black"
+                      value.amount === Number(v)
+                        ? "text-fourthOwn"
+                        : "text-black"
                     }`}
                   >
                     {v}€
@@ -317,11 +456,12 @@ function Customize({ step, updateStep, value, updateValue }: ChildProps) {
             </div>
             <div
               className={`${
-                customAmount !== 0 ? "border-fourthOwn" : "border-lightborder"
+                customAmount !== "" ? "border-fourthOwn" : "border-lightborder"
               } mx-4 mt-4 border h-10 flex flex-row justify-between items-center rounded-lg`}
             >
               <input
                 type="number"
+                onChange={(e) => setCustomAmount(e.target.value)}
                 placeholder="oder individuellen Betrag"
                 className="w-full pl-4 py-2 border border-lightborder rounded-md 
              text-sm text-gray-700 placeholder-gray-400 
@@ -329,24 +469,25 @@ function Customize({ step, updateStep, value, updateValue }: ChildProps) {
               />
             </div>
             <div className="w-full p-4">
-  <label
-    htmlFor="message"
-    className="block text-sm font-medium text-graytext mb-2"
-  >
-    Nachricht (optional)
-  </label>
-  <textarea
-    id="message"
-    name="message"
-    placeholder="Ihre Nachricht hinzufügen..."
-    className="w-full h-24 p-3 border border-lightborder rounded-md 
+              <label
+                htmlFor="message"
+                className="block text-sm font-medium text-graytext mb-2"
+              >
+                Nachricht (optional)
+              </label>
+              <textarea
+                id="message"
+                name="message"
+                placeholder="Ihre Nachricht hinzufügen..."
+                className="w-full h-24 p-3 border border-lightborder rounded-md 
                text-sm text-gray-700 placeholder-gray-400 
                focus:outline-none focus:ring-2 focus:ring-fourthOwn focus:border-fourthOwn resize-none"
-  />
-</div>
+              />
+            </div>
           </div>
         </div>
       );
+
     case "membership":
       return (
         <div className="w-full shadow-md  border rounded-lg border-lightborder bg-white divide-y-1 divide-lightborder">
@@ -365,6 +506,11 @@ function Customize({ step, updateStep, value, updateValue }: ChildProps) {
 }
 
 function Summary({ step, updateStep, value, updateValue }: ChildProps) {
+  useEffect(() => {
+    if (step === 1 && value.gift === "geld") {
+      updateValue({ ...value, amount: 0 });
+    }
+  }, [step]);
   if (step < 3) {
     return (
       <div className="border divide-y-1 shadow-md divide-lightborder bg-white rounded-lg w-full border-lightborder min-w-50 px-5">
@@ -384,15 +530,33 @@ function Summary({ step, updateStep, value, updateValue }: ChildProps) {
               </p>
             </div>
             <div className="flex flex-row justify-between">
-              <p className="text-[12px] text-graytext">Wert:</p>
-              <p className="text-[12px] font-semibold">{value.amount}€</p>
+              <p className="text-[12px] text-graytext">Equipment Typ:</p>
+              <p className="text-[12px] font-semibold">
+                {value.gift === "equip"
+                  ? value.type  : ""}
+              </p>
+            </div> 
+            <div className="flex flex-row justify-between">
+              {value.gift === "geld" ||
+                (value.gift === "membership" && (
+                  <div>
+                    <p className="text-[12px] text-graytext">Wert:</p>
+                    <p className="text-[12px] font-semibold">{value.amount}€</p>
+                  </div>
+                ))}
             </div>
           </div>
         </div>
         <div className="flex flex-col pt-4 pb-4">
           <div className="flex flex-row justify-between pb-4">
-            <p className="font-semibold text-[13px]">Total: </p>
-            <p className="font-semibold text-[13px]">{value.amount}€</p>
+            <p>{value.gift === "geld" ||
+              (value.gift === "membership" && (
+                <div>
+                  <p className="font-semibold text-[13px]">Total: </p>
+                  <p className="font-semibold text-[13px]">{value.amount}€</p>
+                </div>
+              ))}</p>
+              <p className="font-light text-graytext text-[13px]">{value.gift === "equip" && "Vielen Dank für Ihre Unterstützung! Ihr Ausrüstung wird das Arbenteuer eines Coders verbessern"}</p>
           </div>
           <Button
             onClick={() => {
