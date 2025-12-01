@@ -6,8 +6,10 @@ import {
   CircleQuestionMark,
   HandCoins,
   Laptop,
+  Minus,
   Monitor,
   Mouse,
+  Plus,
   Tickets,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -217,7 +219,9 @@ function DifferentGifts({ value, updateStep, updateValue, step }: ChildProps) {
   }, [step, value]);
 
   return (
-    <div className="w-full shadow-md border rounded-lg border-lightborder bg-white divide-y-1 divide-lightborder">
+    <div
+      className={`  w-full shadow-md border rounded-lg border-lightborder bg-white divide-y-1 divide-lightborder`}
+    >
       <div>
         <p
           className={`${
@@ -229,7 +233,7 @@ function DifferentGifts({ value, updateStep, updateValue, step }: ChildProps) {
       </div>
 
       {step > 1 ? (
-        <div>
+        <div className="">
           {filGifts?.map((gift) => {
             const Icon = gift.icon;
             return (
@@ -310,7 +314,11 @@ function Customize({ step, updateStep, value, updateValue }: ChildProps) {
       icon: CircleQuestionMark,
     },
   ];
-
+  const membies: { length: number; price: number }[] = [
+    { length: 1, price: 15 },
+    { length: 3, price: 40 },
+    { length: 6, price: 80 },
+  ];
   useEffect(() => {
     if (customAmount !== "" && value.gift === "geld") {
       updateValue({ ...value, amount: Number(customAmount) });
@@ -400,15 +408,18 @@ function Customize({ step, updateStep, value, updateValue }: ChildProps) {
               <Checkbox
                 id="toggle-2"
                 checked={value.assistance}
-                onCheckedChange={() => updateValue({...value, assistance: !value.assistance})}                
+                onCheckedChange={() =>
+                  updateValue({ ...value, assistance: !value.assistance })
+                }
                 className="data-[state=checked]:border-fourthOwn data-[state=checked]:bg-fourthOwn data-[state=checked]:text-white dark:data-[state=checked]:border-fourthOwn dark:data-[state=checked]:bg-fourthOwn"
               />
               <div className="grid gap-1.5 font-normal">
                 <p className="text-sm leading-none font-medium">
-                Ich benötige Unterstützung bei Abholung/Versand. <br />
+                  Ich benötige Unterstützung bei Abholung/Versand. <br />
                 </p>
                 <p className="text-muted-foreground text-sm">
-                Wenn ausgewählt, kontaktieren wir Sie zur Koordination der Logistik.
+                  Wenn ausgewählt, kontaktieren wir Sie zur Koordination der
+                  Logistik.
                 </p>
               </div>
             </Label>
@@ -500,6 +511,108 @@ function Customize({ step, updateStep, value, updateValue }: ChildProps) {
               Schritt 2: Spende personalisieren
             </p>
           </div>
+          <div className="flex flex-col ">
+            <p className="px-4 text-graytext text-[14px] py-2 ">
+              Bestimme die Länge der Mitgliedschaft:
+            </p>
+            <div className="flex justify-between px-4 gap-4 pt-2 flex-row w-full">
+              {membies.map((m) => (
+                <div
+                  key={m.length}
+                  onClick={() =>
+                    updateValue({ ...value, amount: Number(m.price) })
+                  }
+                  className={`w-1/3 flex flex-col items-center justify-center h-25 border rounded-lg transition-all duration-200  ${
+                    value.amount === Number(m.price)
+                      ? "border-fourthOwn bg-purple-200"
+                      : "border-lightborder"
+                  }`}
+                >
+                  <p
+                    className={`text-2xl font-bold ${
+                      value.amount === Number(m.length)
+                        ? "text-fourthOwn"
+                        : "text-black"
+                    }`}
+                  >
+                    {m.length}
+                  </p>
+                  <p
+                    className={`text-sm font-light ${
+                      value.amount === Number(m.length)
+                        ? "text-fourthOwn"
+                        : "text-graytext"
+                    }`}
+                  >
+                    Monate
+                  </p>
+                  <p
+                    className={`text-lg font-medium ${
+                      value.amount === Number(m.length)
+                        ? "text-fourthOwn"
+                        : "text-black"
+                    }`}
+                  >
+                    {m.price}€
+                  </p>
+                </div>
+              ))}
+            </div>
+            <div
+              className={` mx-4 mt-4 h-10 flex flex-row justify-between items-center rounded-lg`}
+            >
+              <input
+                type="number"
+                onChange={(e) => setCustomAmount(e.target.value)}
+                placeholder="oder individuelle Länge"
+                className="w-1/2 pl-4 py-2  border border-lightborder rounded-md 
+             text-sm text-gray-700 placeholder-gray-400 
+             focus:outline-none focus:ring-2 focus:ring-fourthOwn focus:border-fourthOwn"
+              />
+              <div className="flex flex-row gap-2 items-center">
+                <Minus
+                  onClick={() => {
+                    if (value.amountOfMemberships > 0) {
+                      updateValue({
+                        ...value,
+                        amountOfMemberships: value.amountOfMemberships + -1,
+                      });
+                    }
+                  }}
+                  className={`h-7 w-7 text-graytext border border-lightborder rounded-lg p-1`}
+                />
+                <p>{value.amountOfMemberships}x</p>
+                <Plus
+                  onClick={() =>
+                    updateValue({
+                      ...value,
+                      amountOfMemberships: value.amountOfMemberships + 1,
+                    })
+                  }
+                  className={`h-7 w-7 text-graytext border border-lightborder rounded-lg p-1`}
+                />
+              </div>
+            </div>
+            <div className="w-full p-4">
+              <label
+                htmlFor="message"
+                className="block text-sm font-medium text-graytext mb-2"
+              >
+                Personale Nachricht (optional)
+              </label>
+              <textarea
+                id="message"
+                name="message"
+                onChange={(e) =>
+                  updateValue({ ...value, message: e.target.value })
+                }
+                placeholder="Ihre Nachricht hinzufügen..."
+                className="w-full h-24 p-3 border border-lightborder rounded-md 
+               text-sm text-gray-700 placeholder-gray-400 
+               focus:outline-none focus:ring-2 focus:ring-fourthOwn focus:border-fourthOwn resize-none"
+              />
+            </div>
+          </div>
         </div>
       );
   }
@@ -529,13 +642,14 @@ function Summary({ step, updateStep, value, updateValue }: ChildProps) {
                   : "Mitgliedschaft"}
               </p>
             </div>
-            <div className="flex flex-row justify-between">
-              <p className="text-[12px] text-graytext">Equipment Typ:</p>
-              <p className="text-[12px] font-semibold">
-                {value.gift === "equip"
-                  ? value.type  : ""}
-              </p>
-            </div> 
+            {value.gift === "equip" && step > 1 && (
+              <div className="flex flex-row justify-between">
+                <p className="text-[12px] text-graytext">Ausrüstung:</p>
+                <p className="text-[12px] font-semibold">
+                  {value.gift === "equip" ? value.type : ""}
+                </p>
+              </div>
+            )}
             <div className="flex flex-row justify-between">
               {value.gift === "geld" ||
                 (value.gift === "membership" && (
@@ -549,14 +663,21 @@ function Summary({ step, updateStep, value, updateValue }: ChildProps) {
         </div>
         <div className="flex flex-col pt-4 pb-4">
           <div className="flex flex-row justify-between pb-4">
-            <p>{value.gift === "geld" ||
-              (value.gift === "membership" && (
-                <div>
-                  <p className="font-semibold text-[13px]">Total: </p>
-                  <p className="font-semibold text-[13px]">{value.amount}€</p>
-                </div>
-              ))}</p>
-              <p className="font-light text-graytext text-[13px]">{value.gift === "equip" && "Vielen Dank für Ihre Unterstützung! Ihr Ausrüstung wird das Arbenteuer eines Coders verbessern"}</p>
+            <div>
+              {value.gift === "geld" ||
+                (value.gift === "membership" && (
+                  <div>
+                    <p className="font-semibold text-[13px]">Total: </p>
+                    <p className="font-semibold text-[13px]">{value.amount}€</p>
+                  </div>
+                ))}
+            </div>
+            {value.gift === "equip" && step > 1 && (
+              <p className="font-light text-graytext text-[13px]">
+                {value.gift === "equip" &&
+                  "Vielen Dank für Ihre Unterstützung! Ihr Ausrüstung wird das Arbenteuer eines Coders verbessern"}
+              </p>
+            )}
           </div>
           <Button
             onClick={() => {
