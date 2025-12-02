@@ -46,7 +46,7 @@ type Donation =
 
 type Payment = {};
 export default function GiftingMainView() {
-  const [step, setStep] = useState<1 | 2 | 3>(2);
+  const [step, setStep] = useState<1 | 2 | 3>(1);
   const [donation, setDonation] = useState<Donation>({
     gift: "geld",
     amount: 0,
@@ -73,9 +73,9 @@ export default function GiftingMainView() {
   return (
     <div className="w-full h-full min-h-screen">
       <div className="w-full h-full flex flex-col items-center">
-        <div className="flex flex-col pt-20 items-center">
-          <p className="text-2xl font-bold">Helfe uns mit Spenden</p>
-          <p className="text-center w-[70%] text-sm pt-2 text-graytext font-medium">
+        <div className="flex flex-col pt-25 items-center">
+          <p className="text-3xl font-bold">Helfe uns mit Spenden</p>
+          <p className="text-center w-[70%] text-sm pt-4 pb-4 text-graytext font-medium">
             Unterstützen Sie uns dabei, die nächste Generation von Innovatoren
             zu fördern.
           </p>
@@ -117,8 +117,8 @@ export default function GiftingMainView() {
             </div>
           ))}
         </div>
-        <div className=" pt-8 flex gap-5 sm:flex-row flex-col ">
-          <div className="w-110 md:w-140 lg:w-180 ">
+        <div className=" pt-8 flex gap-5 md:flex-row flex-col ">
+          <div className="w-110 md:w-120 lg:w-180 ">
             <div className="flex flex-col gap-5">
               <DifferentGifts
                 value={donation}
@@ -134,7 +134,7 @@ export default function GiftingMainView() {
               />
             </div>
           </div>
-          <div className="w-30 md:w-50 lg:w-70">
+          <div className="w-110 md:w-60">
             <Summary
               value={donation}
               updateStep={setStep}
@@ -314,16 +314,30 @@ function Customize({ step, updateStep, value, updateValue }: ChildProps) {
       icon: CircleQuestionMark,
     },
   ];
+
   const membies: { length: number; price: number }[] = [
     { length: 1, price: 15 },
     { length: 3, price: 40 },
     { length: 6, price: 80 },
   ];
+
   useEffect(() => {
     if (customAmount !== "" && value.gift === "geld") {
       updateValue({ ...value, amount: Number(customAmount) });
     }
   }, [customAmount]);
+
+  useEffect(() => {
+    if (value.gift === "membership") {
+      updateValue({ ...value, amountOfMemberships: 1 });
+      if (value.amountOfMemberships > 0) {
+        updateValue({
+          ...value,
+          amount: value.amountOfMemberships * value.amount,
+        });
+      }
+    }
+  }, [value.gift]);
 
   if (step < 2) {
     return (
@@ -519,9 +533,14 @@ function Customize({ step, updateStep, value, updateValue }: ChildProps) {
               {membies.map((m) => (
                 <div
                   key={m.length}
-                  onClick={() =>
-                    updateValue({ ...value, amount: Number(m.price) })
-                  }
+                  onClick={() => {
+                    updateValue({
+                      ...value,
+                      months: Number(m.length),
+                      amountOfMemberships: 1,
+                      amount: Number(m.price),
+                    });
+                  }}
                   className={`w-1/3 flex flex-col items-center justify-center h-25 border rounded-lg transition-all duration-200  ${
                     value.amount === Number(m.price)
                       ? "border-fourthOwn bg-purple-200"
@@ -561,14 +580,14 @@ function Customize({ step, updateStep, value, updateValue }: ChildProps) {
             <div
               className={` mx-4 mt-4 h-10 flex flex-row justify-between items-center rounded-lg`}
             >
-              <input
+              {/* <input
                 type="number"
                 onChange={(e) => setCustomAmount(e.target.value)}
                 placeholder="oder individuelle Länge"
                 className="w-1/2 pl-4 py-2  border border-lightborder rounded-md 
              text-sm text-gray-700 placeholder-gray-400 
              focus:outline-none focus:ring-2 focus:ring-fourthOwn focus:border-fourthOwn"
-              />
+              /> */}
               <div className="flex flex-row gap-2 items-center">
                 <Minus
                   onClick={() => {
@@ -579,17 +598,28 @@ function Customize({ step, updateStep, value, updateValue }: ChildProps) {
                       });
                     }
                   }}
-                  className={`h-7 w-7 text-graytext border border-lightborder rounded-lg p-1`}
+                  className={` ${
+                    value.amountOfMemberships > 0
+                      ? "cursor-pointer"
+                      : "cursor-not-allowed"
+                  } h-7 w-7 text-graytext border border-lightborder rounded-lg p-1`}
                 />
-                <p>{value.amountOfMemberships}x</p>
+                <p
+                  className={`border border-lightborder rounded-lg w-10 h-7 flex items-center justify-center`}
+                >
+                  {value.amountOfMemberships}x
+                </p>
                 <Plus
                   onClick={() =>
+                    value.amountOfMemberships < 10 &&
                     updateValue({
                       ...value,
                       amountOfMemberships: value.amountOfMemberships + 1,
                     })
                   }
-                  className={`h-7 w-7 text-graytext border border-lightborder rounded-lg p-1`}
+                  className={`${
+                    value.amountOfMemberships < 10 ? "" : "cursor-not-allowed"
+                  } h-7 w-7 text-graytext border border-lightborder rounded-lg p-1`}
                 />
               </div>
             </div>
@@ -626,15 +656,15 @@ function Summary({ step, updateStep, value, updateValue }: ChildProps) {
   }, [step]);
   if (step < 3) {
     return (
-      <div className="border divide-y-1 shadow-md divide-lightborder bg-white rounded-lg w-full border-lightborder min-w-50 px-5">
+      <div className="border divide-y-1 shadow-md divide-lightborder bg-white rounded-lg w-full border-lightborder px-5">
         <div className="">
           <div className="flex pt-2">
             <p className="text-lg font-medium ">Zusammenfassung</p>
           </div>
           <div className="flex flex-col gap-1 pt-2 pb-2">
             <div className="flex flex-row justify-between">
-              <p className="text-[12px] text-graytext">Spenden Typ:</p>
-              <p className="text-[12px] font-semibold">
+              <p className="text-[11px] text-graytext">Spenden Typ:</p>
+              <p className="text-[11px] font-semibold">
                 {value.gift === "geld"
                   ? "Geld"
                   : value.gift === "equip"
@@ -644,40 +674,74 @@ function Summary({ step, updateStep, value, updateValue }: ChildProps) {
             </div>
             {value.gift === "equip" && step > 1 && (
               <div className="flex flex-row justify-between">
-                <p className="text-[12px] text-graytext">Ausrüstung:</p>
-                <p className="text-[12px] font-semibold">
+                <p className="text-[11px] text-graytext">Ausrüstung:</p>
+                <p className="text-[11px] font-semibold">
                   {value.gift === "equip" ? value.type : ""}
                 </p>
               </div>
             )}
+            {value.gift === "membership" && step > 1 && (
+              <div className="flex flex-col gap-1">
+                <div className="flex flex-row justify-between">
+                  <p className="text-[11px] text-graytext">Länge:</p>
+                  <p className="text-[11px] font-semibold">
+                    {value.months > 1
+                      ? value.months + " Monate"
+                      : value.months + " Monat"}
+                  </p>
+                </div>
+                <div className="flex flex-row justify-between">
+                  <p className="text-[11px] text-graytext">Anzahl:</p>
+                  <p className="text-[11px] font-semibold">
+                    {value.amountOfMemberships}
+                  </p>
+                </div>
+                <div className="flex flex-row justify-between">
+                  <p className="text-[11px] text-graytext">Wert:</p>
+                  <p className="text-[11px] font-semibold">
+                    {value.gift === "membership"
+                      ? value.amountOfMemberships + "x " + value.amount + "€"
+                      : ""}
+                  </p>
+                </div>
+              </div>
+            )}
             <div className="flex flex-row justify-between">
-              {value.gift === "geld" ||
-                (value.gift === "membership" && (
-                  <div>
-                    <p className="text-[12px] text-graytext">Wert:</p>
-                    <p className="text-[12px] font-semibold">{value.amount}€</p>
-                  </div>
-                ))}
+              {value.gift === "geld" && (
+                <div className="flex flex-row w-full justify-between">
+                  <p className="text-[12px] text-graytext">Wert:</p>
+                  <p className="text-[12px] font-semibold">{value.amount}€</p>
+                </div>
+              )}
             </div>
           </div>
         </div>
-        <div className="flex flex-col pt-4 pb-4">
-          <div className="flex flex-row justify-between pb-4">
-            <div>
-              {value.gift === "geld" ||
-                (value.gift === "membership" && (
-                  <div>
-                    <p className="font-semibold text-[13px]">Total: </p>
-                    <p className="font-semibold text-[13px]">{value.amount}€</p>
-                  </div>
-                ))}
+        <div className="flex w-full flex-col pt-4 pb-4">
+          <div className="flex w-full  flex-col justify-between pb-4">
+            <div className="w-full">
+              {value.gift === "geld" && (
+                <div className="flex flex-row w-full justify-between">
+                  <p className="font-semibold text-[13px]">Total: </p>
+                  <p className="font-semibold text-[13px]">{value.amount}€</p>
+                </div>
+              )}
+              {value.gift === "membership" && (
+                <div className="flex flex-row w-full justify-between">
+                  <p className="font-semibold text-[13px]">Total: </p>
+                  <p className="font-semibold text-[13px]">
+                    {value.amount * value.amountOfMemberships}€
+                  </p>
+                </div>
+              )}
             </div>
-            {value.gift === "equip" && step > 1 && (
-              <p className="font-light text-graytext text-[13px]">
-                {value.gift === "equip" &&
-                  "Vielen Dank für Ihre Unterstützung! Ihr Ausrüstung wird das Arbenteuer eines Coders verbessern"}
-              </p>
-            )}
+            <div className="w-full mx-auto ">
+              {value.gift === "equip" && step > 1 && (
+                <p className="font-light text-graytext  mx-auto text-center text-[13px]">
+                  {value.gift === "equip" &&
+                    "Vielen Dank für Ihre Unterstützung! Ihr Ausrüstung wird das Arbenteuer eines Coders verbessern"}
+                </p>
+              )}
+            </div>
           </div>
           <Button
             onClick={() => {
@@ -697,28 +761,5 @@ function Summary({ step, updateStep, value, updateValue }: ChildProps) {
     );
   }
 
-  if (step === 2) {
-    return (
-      <div className="border bg-white rounded-lg w-full border-lightborder h-50 min-w-50 px-5">
-        <div className="flex pt-2">
-          <p className="text-lg font-medium ">Zusammenfassung</p>
-        </div>
-        <div className="flex flex-col gap-3">
-          <div></div>
-          <div></div>
-        </div>
-      </div>
-    );
-  }
-  return (
-    <div className="border bg-white rounded-lg w-full border-lightborder h-50 min-w-50 px-5">
-      <div className="flex pt-2">
-        <p className="text-lg font-medium ">Zusammenfassung</p>
-      </div>
-      <div className="flex flex-col gap-3">
-        <div></div>
-        <div></div>
-      </div>
-    </div>
-  );
+  
 }
