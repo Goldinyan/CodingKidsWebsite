@@ -1,18 +1,18 @@
-"use client"
+"use client";
 
 import { useState, useEffect } from "react";
-import { useAuth } from "@/BackEnd/AuthContext"
+import { useAuth } from "@/BackEnd/AuthContext";
 import type { UserData } from "@/BackEnd/type";
 import { getUserData } from "@/lib/db";
 import { logoutUser } from "@/lib/auth";
 import AnnouncementView from "./AnnouncementView";
 
-export default function ProfileView(){
-    const [userData, setUserData] = useState<UserData>();
+export default function ProfileView() {
+  const [userData, setUserData] = useState<UserData>();
 
-    const { user, loading} = useAuth();
+  const { user, loading } = useAuth();
 
-    useEffect(() => {
+  useEffect(() => {
     const fetchData = async () => {
       if (!user) return;
 
@@ -26,19 +26,15 @@ export default function ProfileView(){
     fetchData();
   }, [user, loading]);
 
-    if(!userData){
-        return (
-            <div>
-                
-            </div>
-        )
-    }
-    return (
-        <div>
-          <div onClick={() => logoutUser()}>
-            <p>LOGOUT</p>
-          </div>
-            <AnnouncementView data={userData}/>
-        </div>
-    )
+  if (!userData) {
+    return <div></div>;
+  }
+  return (
+    <div>
+      <div onClick={() => logoutUser()}>
+        <p>LOGOUT</p>
+      </div>
+      <AnnouncementView data={userData} />
+    </div>
+  );
 }
