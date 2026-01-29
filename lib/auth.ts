@@ -29,32 +29,37 @@ export async function registerUser(
     courses?: string[];
   }
 ) {
-  await setPersistence(auth, browserLocalPersistence);
-  const userCredential = await createUserWithEmailAndPassword(
-    auth,
-    email,
-    password
-  );
-  const user = userCredential.user;
-  await emailVerification(user);
-  await sendWelcomeEmail(email, extraData.name);
-  await sendAccountCreationEmailToAdmin(extraData.name, email);
-  console.log("Verifizierung gesendet")
+  try {
+    await setPersistence(auth, browserLocalPersistence);
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+    const user = userCredential.user;
+    await emailVerification(user);
+    await sendWelcomeEmail(email, extraData.name);
+    await sendAccountCreationEmailToAdmin(extraData.name, email);
+    console.log("Verifizierung gesendet")
 
-  // User verified kann man checken mit user?.emailVerified und so dann sacehn freischalten oder eben nicht 
-  await updateProfile(user, {
-    displayName: extraData.name,
-  });
-  await setDoc(doc(db, "users", user.uid), {
-    email: user.email,
-    name: extraData.name,
-    birthdate: extraData.birthdate.toISOString(),
-    createdAt: new Date().toISOString(),
-    role: "N/A",
-    courses: extraData.courses || [],
-  });
+    // User verified kann man checken mit user?.emailVerified und so dann sacehn freischalten oder eben nicht 
+    await updateProfile(user, {
+      displayName: extraData.name,
+    });
+    await setDoc(doc(db, "users", user.uid), {
+      email: user.email,
+      name: extraData.name,
+      birthdate: extraData.birthdate.toISOString(),
+      createdAt: new Date().toISOString(),
+      role: "N/A",
+      courses: extraData.courses || [],
+    });
 
-  return user;
+    return user;
+  } catch (error) {
+    console.error("Error registering user:", error);
+    throw error;
+  }
 }
 
 export async function emailVerification(user: User){
@@ -66,13 +71,18 @@ export async function emailVerification(user: User){
 }
 
 export async function loginUser(email: string, password: string) {
-  await setPersistence(auth, browserLocalPersistence);
-  const userCredential = await signInWithEmailAndPassword(
-    auth,
-    email,
-    password
-  );
-  return userCredential.user;
+  try {
+    await setPersistence(auth, browserLocalPersistence);
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+    return userCredential.user;
+  } catch (error) {
+    console.error("Error logging in user:", error);
+    throw error;
+  }
 }
 
 export async function passwordReset(email: string){
@@ -115,5 +125,10 @@ export async function reAuthenticate(email: string, password: string) {
 }
 
 export async function logoutUser() {
-  await signOut(auth);
+  try {
+    await signOut(auth);
+  } catch (error) {
+    console.error("Error logging out user:", error);
+    throw error;
+  }
 }

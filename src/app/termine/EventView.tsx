@@ -105,8 +105,9 @@ export default function EventViewHandlerAdmin() {
     return eventDate >= now && eventDate <= deadline;
   };
 
+  console.log("events: ", events);
   return (
-    <div className="flex items-center flex-col gap-4 p-6 ">
+    <div className="flex items-center flex-col gap-4 p-6 pt-20">
       <EventNavbar
         callback={(key, value) =>
           setFilters((prev) => ({ ...prev, [key]: value }))
@@ -176,9 +177,8 @@ export default function EventViewHandlerAdmin() {
 
             <CardFooter>
               <Button
-                className={`${
-                  tooEarly ? "cursor-not-allowed border border-primaryOwn" : ""
-                }`}
+                className={`${tooEarly ? "cursor-not-allowed border border-primaryOwn" : ""
+                  }`}
                 disabled={tooEarly}
                 variant={
                   !tooEarly
@@ -206,36 +206,30 @@ export default function EventViewHandlerAdmin() {
               </Button>
             </CardFooter>
             <Button
-                className={`${
-                  tooEarly ? "cursor-not-allowed border border-primaryOwn" : ""
+              className={`${tooEarly ? "cursor-not-allowed border border-primaryOwn" : ""
                 }`}
-                disabled={tooEarly}
-                variant={
-                  !tooEarly
-                    ? isInEvent
-                      ? "destructive"
-                      : "default"
-                    : "secondary"
-                }
-                onClick={() => {
-                  console.log("Button clicked");
-
-                  if (!tooEarly) {
-                    handleEvents(event.uid, isInEvent ? "leave" : "join");
-                    console.log("added");
-                  } else {
-                    console.log("too Early");
-                  }
-                }}
-              >
-                {!tooEarly
+              disabled={tooEarly}
+              variant={
+                !tooEarly
                   ? isInEvent
-                    ? "Verlassen"
-                    : "Beitreten"
-                  : "Zu früh"}
-              </Button>
+                    ? "destructive"
+                    : "default"
+                  : "secondary"
+              }
+              onClick={() => {
+                console.log("Button clicked");
+
+                if (!tooEarly) {
+                  handleEvents(event.uid, isInEvent ? "leave" : "join");
+                  console.log("added");
+                } else {
+                  console.log("too Early");
+                }
+              }}
+            >
+              {!tooEarly ? (isInEvent ? "Verlassen" : "Beitreten") : "Zu früh"}
+            </Button>
           </Card>
-          
         );
       })}
     </div>

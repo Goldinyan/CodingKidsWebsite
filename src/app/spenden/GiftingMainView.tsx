@@ -22,29 +22,28 @@ type diffEquip = "Laptop" | "Monitor" | "Mouse" | "Other";
 type BaseDonation = {
   from: string;
   date?: Date;
-  payment: Payment;
+  payment: string;
   message?: string;
 };
 
 type Donation =
   | (BaseDonation & {
-      gift: "equip";
-      type: diffEquip;
-      messageForEquip: string;
-      assistance: boolean;
-    })
+    gift: "equip";
+    type: diffEquip;
+    messageForEquip: string;
+    assistance: boolean;
+  })
   | (BaseDonation & {
-      gift: "geld";
-      amount: number;
-    })
+    gift: "geld";
+    amount: number;
+  })
   | (BaseDonation & {
-      gift: "membership";
-      months: number;
-      amountOfMemberships: number;
-      amount: number;
-    });
+    gift: "membership";
+    months: number;
+    amountOfMemberships: number;
+    amount: number;
+  });
 
-type Payment = {};
 export default function GiftingMainView() {
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [donation, setDonation] = useState<Donation>({
@@ -85,11 +84,10 @@ export default function GiftingMainView() {
             <div key={idx} className="flex items-center gap-4 ">
               <div className={`flex flex-row items-center gap-2 `}>
                 <p
-                  className={`rounded-full text-[13px] h-5 w-5 flex items-center justify-center ${
-                    step === st.number
+                  className={`rounded-full text-[13px] h-5 w-5 flex items-center justify-center ${step === st.number
                       ? "bg-fourthOwn text-white"
                       : "text-black bg-otherbg border border-lightborder"
-                  } ${step > st.number ? "bg-purple-200" : ""}`}
+                    } ${step > st.number ? "bg-purple-200" : ""}`}
                 >
                   {step > st.number ? (
                     <Check className="w-3 text-fourthOwn  h-3" />
@@ -98,18 +96,16 @@ export default function GiftingMainView() {
                   )}
                 </p>
                 <p
-                  className={`text-[13px] font-medium ${
-                    step >= st.number ? "text-fourthOwn" : ""
-                  }`}
+                  className={`text-[13px] font-medium ${step >= st.number ? "text-fourthOwn" : ""
+                    }`}
                 >
                   {st.text}
                 </p>
               </div>
               {st.number < 3 ? (
                 <span
-                  className={`${
-                    step > st.number ? "bg-fourthOwn" : "bg-gray-200"
-                  } h-[1.5px] w-7 rounded-2xl `}
+                  className={`${step > st.number ? "bg-fourthOwn" : "bg-gray-200"
+                    } h-[1.5px] w-7 rounded-2xl `}
                 />
               ) : (
                 ""
@@ -224,9 +220,8 @@ function DifferentGifts({ value, updateStep, updateValue, step }: ChildProps) {
     >
       <div>
         <p
-          className={`${
-            step !== 1 ? "text-graytext" : "text-black"
-          } text-lg px-4  py-2 mx-auto font-semibold`}
+          className={`${step !== 1 ? "text-graytext" : "text-black"
+            } text-lg px-4  py-2 mx-auto font-semibold`}
         >
           Schritt 1: Was wollen Sie spenden?
         </p>
@@ -265,19 +260,17 @@ function DifferentGifts({ value, updateStep, updateValue, step }: ChildProps) {
               <div
                 onClick={() => updateValue(createDonation(g.input))}
                 key={g.input}
-                className={`flex flex-col gap-3 p-2 border ${
-                  value.gift === g.input
+                className={`flex flex-col gap-3 p-2 border ${value.gift === g.input
                     ? "border-fourthOwn"
                     : "border-lightborder"
-                } rounded-md ${idx === 2 ? "col-span-2" : ""}`}
+                  } rounded-md ${idx === 2 ? "col-span-2" : ""}`}
               >
                 <div className="flex flex-row gap-2 items-center">
                   <Icon
-                    className={`w-6 h-6 p-1 ${
-                      value.gift === g.input
+                    className={`w-6 h-6 p-1 ${value.gift === g.input
                         ? "text-fourthOwn bg-purple-200 rounded-lg"
                         : "bg-gray-200 rounded-lg"
-                    }`}
+                      }`}
                   />
                   <p className="font-semibold text-sm">{g.text}</p>
                 </div>
@@ -344,9 +337,8 @@ function Customize({ step, updateStep, value, updateValue }: ChildProps) {
       <div className="w-full shadow-md  border rounded-lg border-lightborder bg-white divide-y-1 divide-lightborder">
         <div>
           <p
-            className={`${
-              step !== 2 ? "text-graytext" : "text-black"
-            } text-lg px-4  py-2 mx-auto font-semibold`}
+            className={`${step !== 2 ? "text-graytext" : "text-black"
+              } text-lg px-4  py-2 mx-auto font-semibold`}
           >
             Schritt 2: Spende personalisieren
           </p>
@@ -366,9 +358,8 @@ function Customize({ step, updateStep, value, updateValue }: ChildProps) {
         <div className="w-full shadow-md  border rounded-lg border-lightborder bg-white divide-y-1 divide-lightborder">
           <div>
             <p
-              className={`${
-                step !== 2 ? "text-graytext" : "text-black"
-              } text-lg px-4  py-2 mx-auto font-semibold`}
+              className={`${step !== 2 ? "text-graytext" : "text-black"
+                } text-lg px-4  py-2 mx-auto font-semibold`}
             >
               Schritt 2: Spende personalisieren
             </p>
@@ -384,17 +375,15 @@ function Customize({ step, updateStep, value, updateValue }: ChildProps) {
                   onClick={() =>
                     updateValue({ ...value, type: e.text as diffEquip })
                   }
-                  className={` flex flex-col items-center justify-center gap-2 h-20 border rounded-lg transition-all duration-200  ${
-                    value.type === e.text
+                  className={` flex flex-col items-center justify-center gap-2 h-20 border rounded-lg transition-all duration-200  ${value.type === e.text
                       ? "border-fourthOwn bg-purple-200"
                       : "border-lightborder"
-                  }`}
+                    }`}
                 >
                   <e.icon className={`h-5 `} />
                   <p
-                    className={`font-medium ${
-                      value.type === e.text ? "text-fourthOwn" : "text-black"
-                    }`}
+                    className={`font-medium ${value.type === e.text ? "text-fourthOwn" : "text-black"
+                      }`}
                   >
                     {e.text}
                   </p>
@@ -445,9 +434,8 @@ function Customize({ step, updateStep, value, updateValue }: ChildProps) {
         <div className="w-full shadow-md  border rounded-lg border-lightborder bg-white divide-y-1 divide-lightborder">
           <div>
             <p
-              className={`${
-                step !== 2 ? "text-graytext" : "text-black"
-              } text-lg px-4  py-2 mx-auto font-semibold`}
+              className={`${step !== 2 ? "text-graytext" : "text-black"
+                } text-lg px-4  py-2 mx-auto font-semibold`}
             >
               Schritt 2: Spende personalisieren
             </p>
@@ -461,18 +449,16 @@ function Customize({ step, updateStep, value, updateValue }: ChildProps) {
                 <div
                   key={v}
                   onClick={() => updateValue({ ...value, amount: Number(v) })}
-                  className={`w-1/5 flex items-center justify-center h-10 border rounded-lg transition-all duration-200  ${
-                    value.amount === Number(v)
+                  className={`w-1/5 flex items-center justify-center h-10 border rounded-lg transition-all duration-200  ${value.amount === Number(v)
                       ? "border-fourthOwn bg-purple-200"
                       : "border-lightborder"
-                  }`}
+                    }`}
                 >
                   <p
-                    className={`${
-                      value.amount === Number(v)
+                    className={`${value.amount === Number(v)
                         ? "text-fourthOwn"
                         : "text-black"
-                    }`}
+                      }`}
                   >
                     {v}€
                   </p>
@@ -480,9 +466,8 @@ function Customize({ step, updateStep, value, updateValue }: ChildProps) {
               ))}
             </div>
             <div
-              className={`${
-                customAmount !== "" ? "border-fourthOwn" : "border-lightborder"
-              } mx-4 mt-4 border h-10 flex flex-row justify-between items-center rounded-lg`}
+              className={`${customAmount !== "" ? "border-fourthOwn" : "border-lightborder"
+                } mx-4 mt-4 border h-10 flex flex-row justify-between items-center rounded-lg`}
             >
               <input
                 type="number"
@@ -518,9 +503,8 @@ function Customize({ step, updateStep, value, updateValue }: ChildProps) {
         <div className="w-full shadow-md  border rounded-lg border-lightborder bg-white divide-y-1 divide-lightborder">
           <div>
             <p
-              className={`${
-                step !== 2 ? "text-graytext" : "text-black"
-              } text-lg px-4  py-2 mx-auto font-semibold`}
+              className={`${step !== 2 ? "text-graytext" : "text-black"
+                } text-lg px-4  py-2 mx-auto font-semibold`}
             >
               Schritt 2: Spende personalisieren
             </p>
@@ -541,36 +525,32 @@ function Customize({ step, updateStep, value, updateValue }: ChildProps) {
                       amount: Number(m.price),
                     });
                   }}
-                  className={`w-1/3 flex flex-col items-center justify-center h-25 border rounded-lg transition-all duration-200  ${
-                    value.amount === Number(m.price)
+                  className={`w-1/3 flex flex-col items-center justify-center h-25 border rounded-lg transition-all duration-200  ${value.amount === Number(m.price)
                       ? "border-fourthOwn bg-purple-200"
                       : "border-lightborder"
-                  }`}
+                    }`}
                 >
                   <p
-                    className={`text-2xl font-bold ${
-                      value.amount === Number(m.length)
+                    className={`text-2xl font-bold ${value.amount === Number(m.length)
                         ? "text-fourthOwn"
                         : "text-black"
-                    }`}
+                      }`}
                   >
                     {m.length}
                   </p>
                   <p
-                    className={`text-sm font-light ${
-                      value.amount === Number(m.length)
+                    className={`text-sm font-light ${value.amount === Number(m.length)
                         ? "text-fourthOwn"
                         : "text-graytext"
-                    }`}
+                      }`}
                   >
                     Monate
                   </p>
                   <p
-                    className={`text-lg font-medium ${
-                      value.amount === Number(m.length)
+                    className={`text-lg font-medium ${value.amount === Number(m.length)
                         ? "text-fourthOwn"
                         : "text-black"
-                    }`}
+                      }`}
                   >
                     {m.price}€
                   </p>
@@ -598,11 +578,10 @@ function Customize({ step, updateStep, value, updateValue }: ChildProps) {
                       });
                     }
                   }}
-                  className={` ${
-                    value.amountOfMemberships > 0
+                  className={` ${value.amountOfMemberships > 0
                       ? "cursor-pointer"
                       : "cursor-not-allowed"
-                  } h-7 w-7 text-graytext border border-lightborder rounded-lg p-1`}
+                    } h-7 w-7 text-graytext border border-lightborder rounded-lg p-1`}
                 />
                 <p
                   className={`border border-lightborder rounded-lg w-10 h-7 flex items-center justify-center`}
@@ -617,9 +596,8 @@ function Customize({ step, updateStep, value, updateValue }: ChildProps) {
                       amountOfMemberships: value.amountOfMemberships + 1,
                     })
                   }
-                  className={`${
-                    value.amountOfMemberships < 10 ? "" : "cursor-not-allowed"
-                  } h-7 w-7 text-graytext border border-lightborder rounded-lg p-1`}
+                  className={`${value.amountOfMemberships < 10 ? "" : "cursor-not-allowed"
+                    } h-7 w-7 text-graytext border border-lightborder rounded-lg p-1`}
                 />
               </div>
             </div>
@@ -668,8 +646,8 @@ function Summary({ step, updateStep, value, updateValue }: ChildProps) {
                 {value.gift === "geld"
                   ? "Geld"
                   : value.gift === "equip"
-                  ? "Ausrüstung"
-                  : "Mitgliedschaft"}
+                    ? "Ausrüstung"
+                    : "Mitgliedschaft"}
               </p>
             </div>
             {value.gift === "equip" && step > 1 && (
@@ -752,14 +730,12 @@ function Summary({ step, updateStep, value, updateValue }: ChildProps) {
               {step === 1
                 ? "Weiter zu den Details"
                 : step === 2
-                ? "Weiter zum Bezahlen"
-                : "Bestätigen und bezahlen"}
+                  ? "Weiter zum Bezahlen"
+                  : "Bestätigen und bezahlen"}
             </p>
           </Button>
         </div>
       </div>
     );
   }
-
-  
 }

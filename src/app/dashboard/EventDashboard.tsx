@@ -18,7 +18,6 @@ import type { EventData, UserData } from "@/BackEnd/type";
 import EventAdd from "./EventAdd";
 
 export default function EventDashboard() {
-
   const formatValue = (v: any) => {
     if (v === undefined || v === null) return "";
     if (Array.isArray(v)) return v.join(", ");
@@ -28,7 +27,7 @@ export default function EventDashboard() {
           .map(([k, val]) => `${k}: ${String(val)}`)
           .join(", ");
       } catch (e) {
-        console.error("Fehler beim Formatieren des Objekts:", e);
+        console.error("Fehler beim Formatieren Objekts:", e);
         return String(v);
       }
     }
@@ -47,7 +46,7 @@ export default function EventDashboard() {
   >({});
   const [userMap, setUserMap] = useState<Record<string, UserData[]>>({});
   const [queueUserMap, setQueueUserMap] = useState<Record<string, UserData[]>>(
-    {}
+    {},
   );
 
   const toggleExpandedTabs = (uid: string) => {
@@ -119,7 +118,7 @@ export default function EventDashboard() {
     if (time === "Upcoming") {
       const now = new Date();
       const upcomingEvents = events.filter(
-        (event) => new Date(event.date) >= now
+        (event) => new Date(event.date) >= now,
       );
 
       events = upcomingEvents;
@@ -132,7 +131,7 @@ export default function EventDashboard() {
     if (searchBar.trim() !== "") {
       const search = searchBar.toLowerCase();
       events = events.filter((event) =>
-        event.name.toLowerCase().includes(search)
+        event.name.toLowerCase().includes(search),
       );
     }
 
@@ -144,13 +143,13 @@ export default function EventDashboard() {
     const updated = editValues[uid];
     if (!updated) return;
 
-    await updateUser(uid, updated); // z. B. Firestore oder API
+    await updateUser(uid, updated);
 
     setEditStates((prev) => ({ ...prev, [uid]: false }));
   };
 
   const returnUserForEvent = async (
-    usersArray: string[]
+    usersArray: string[],
   ): Promise<UserData[]> => {
     //console.log("User Array: ", usersArray);
     const uids = usersArray;
@@ -198,25 +197,22 @@ export default function EventDashboard() {
           <div className="relative flex w-full border border-lightborder rounded-lg h-6 items-center overflow-hidden bg-white">
             <p
               onClick={() => setTime("Upcoming")}
-              className={`w-1/2 py-2 text-sm text-center transition-colors duration-300 z-10 ${
-                time === "Upcoming" ? "text-white" : "text-black"
-              }`}
+              className={`w-1/2 py-2 text-sm text-center transition-colors duration-300 z-10 ${time === "Upcoming" ? "text-white" : "text-black"
+                }`}
             >
               Upcoming
             </p>
             <p
               onClick={() => setTime("Past")}
-              className={`w-1/2 py-2  text-sm text-center transition-colors duration-300 z-10 ${
-                time === "Past" ? "text-white" : "text-black"
-              }`}
+              className={`w-1/2 py-2  text-sm text-center transition-colors duration-300 z-10 ${time === "Past" ? "text-white" : "text-black"
+                }`}
             >
               Past
             </p>
 
             <span
-              className={`absolute top-0 left-0 w-1/2 h-full bg-primaryOwn rounded-lg transition-transform duration-300 z-0 ${
-                time === "Past" ? "translate-x-full" : "translate-x-0"
-              }`}
+              className={`absolute top-0 left-0 w-1/2 h-full bg-primaryOwn rounded-lg transition-transform duration-300 z-0 ${time === "Past" ? "translate-x-full" : "translate-x-0"
+                }`}
             />
           </div>
 
@@ -245,7 +241,6 @@ export default function EventDashboard() {
             {filEvents.map((event, index) => {
               const full = event.users.length >= event.memberCount;
               const date = new Date(event.date);
-             
 
               return (
                 <div
@@ -259,11 +254,10 @@ export default function EventDashboard() {
                         : event.name}
                     </p>
                     <p
-                      className={`px-2 py-1 rounded-lg text-[12px] ${
-                        !full
+                      className={`px-2 py-1 rounded-lg text-[12px] ${!full
                           ? "text-green-700 bg-lightGreenBg"
                           : "text-blue-600 bg-blue-200"
-                      }`}
+                        }`}
                     >
                       {full ? "Full" : "Published"}
                     </p>
@@ -301,12 +295,12 @@ export default function EventDashboard() {
                     <div>
                       {fields.map((key, index) => (
                         <div key={key} className="mb-2 flex flex-col">
-                          <p className="text-xl font-medium">
+                          <p className="text-md font-bold">
                             {names[index] === "User"
                               ? "Teilnehmer (" + event.users.length + ")"
                               : names[index] === "Warteschlange"
-                              ? "Warteschlange (" + event.queue.length + ")"
-                              : names[index]}
+                                ? "Warteschlange (" + event.queue.length + ")"
+                                : names[index]}
                           </p>
                           <p className="py-2">
                             {key !== "users" && key !== "queue"
@@ -317,15 +311,29 @@ export default function EventDashboard() {
                             <div>
                               <div className="flex flex-col divide-y border border-lightborder rounded-lg divide-lightborder">
                                 {(userMap[event.uid] || []).map((user) => (
-                                  <div key={user.uid} className="py-2 flex flex-row justify-between items-center px-2">
+                                  <div
+                                    key={user.uid}
+                                    className="py-2 flex flex-row justify-between items-center px-2"
+                                  >
                                     <div className="flex flex-col items-center">
-                                    <p className="font-bold">{user.name}</p>
-                                    <p className="text-graytext pr-2">{user.role}</p>
+                                      <p className="font-bold">{user.name}</p>
+                                      <p className="text-graytext pr-2">
+                                        {user.role}
+                                      </p>
                                     </div>
-                                    <Trash2 className="cursor-pointer h-6 w-6 text-red-500" onClick={() => (
-                                      removeUserFromEvent(event.uid, user.uid),
-                                      removedFromEventByAdmin(user.email, event.name)
-                                    )} />
+                                    <Trash2
+                                      className="cursor-pointer h-6 w-6 text-red-500"
+                                      onClick={() => (
+                                        removeUserFromEvent(
+                                          event.uid,
+                                          user.uid,
+                                        ),
+                                        removedFromEventByAdmin(
+                                          user.email,
+                                          event.name,
+                                        )
+                                      )}
+                                    />
                                   </div>
                                 ))}
                               </div>
@@ -343,7 +351,6 @@ export default function EventDashboard() {
                         </div>
                       ))}
                       <div className="flex flex-row justify-around w-full gap-3 items-center">
-                
                         <p
                           onClick={() => deleteEvent(event.uid)}
                           className="bg-red-200 text-center rounded-lg text-red-600 w-full py-1"

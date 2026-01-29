@@ -4,6 +4,7 @@ import TopView from "./TopView";
 import type { UserData } from "@/BackEnd/type";
 import { useEffect, useState } from "react";
 import { getUserData } from "@/lib/db";
+import MiddleView from "./MiddleView";
 
 export default function MainView() {
   const [userData, setUserData] = useState<UserData>();
@@ -28,6 +29,7 @@ export default function MainView() {
     <div className="w-full">
       <div className="pt-20 w-full flex flex-col"> 
         <TopView data={userData}/>
+        <MiddleView />
       </div>
     </div>
   );

@@ -32,6 +32,8 @@ export function MainOverlayAdminDashboard() {
 
   const router = useRouter();
 
+  console.log("MainOverlayAdminDashboard");
+
   useEffect(() => {
     const fetchData = async () => {
       if (!user) return;
@@ -48,7 +50,7 @@ export function MainOverlayAdminDashboard() {
 
   return (
     <div className="flex flex-col  bg-otherbg pb-20">
-      {userData?.role === "admin" ? (
+      {userData?.role === "Admin" ? (
         <div>
           <div className="fixed top-0 left-0 right-0 h-16 bg-white z-50 flex items-center justify-between shadow px-4">
             <p className="text-2xl pl-2 text-black font-bold ">Coding Kids</p>
@@ -83,9 +85,8 @@ export function MainOverlayAdminDashboard() {
             </div>
 
             <div
-              className={`flex-1  px-6 flex-col pt-5 ${
-                open ? "hidden" : "flex"
-              }`}
+              className={`flex-1  px-6 flex-col pt-5 ${open ? "hidden" : "flex"
+                }`}
             >
               <section id="user">
                 <UserDashboard />

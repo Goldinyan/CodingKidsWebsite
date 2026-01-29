@@ -11,18 +11,18 @@ export default function ProfileMainView() {
   const { user, loading } = useAuth();
   const [userData, setUserData] = useState<any>(null);
 
-useEffect(() => {
-  const fetchUserData = async () => {
-    if (user?.uid) {
-      const data = await getUserData(user.uid);
-      setUserData(data);
-    } else {
-      setUserData(null);
-    }
-  };
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (user?.uid) {
+        const data = await getUserData(user.uid);
+        setUserData(data);
+      } else {
+        setUserData(null);
+      }
+    };
 
-  fetchUserData();
-}, [user?.uid]);
+    fetchUserData();
+  }, [user?.uid]);
 
 
 
@@ -30,13 +30,13 @@ useEffect(() => {
   if (!user) return <p>NO USER</p>;
   if (!userData) return <p>Benutzerdaten werden geladen...</p>;
 
-  if (userData.role === "admin") {
+  if (userData.role === "Admin") {
     return (
-    <div>
-      {/* <AdminDashboard /> */}
-      <MainOverlayAdminDashboard />
-    </div>
-    
+      <div>
+        {/* <AdminDashboard /> */}
+        <MainOverlayAdminDashboard />
+      </div>
+
     );
 
   }

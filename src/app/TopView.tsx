@@ -2,6 +2,7 @@
 import type { UserData } from "@/BackEnd/type";
 import { Button } from "@/components/ui/button";
 import { GraduationCap, Rocket, Users } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function TopView({ data }: { data: UserData | undefined }) {
   const texts: { text: string; des: string; icon: React.ElementType }[] = [
@@ -46,10 +47,23 @@ export default function TopView({ data }: { data: UserData | undefined }) {
 
         <div className="flex flex-col gap-10  pt-20">
           {texts.map(({ text, des, icon: Icon }) => (
-            <div key={text} className="flex hover:shadow-md p-3 rounded-2xl duration-400 transition-all  hover:-translate-y-5 flex-col items-start gap-2">
-              <Icon className="w-7 h-7 text-fourthOwn" />
-              <p className="font-semibold">{text}</p>
-              <p className="text-sm text-gray-600">{des}</p>
+            <div
+              key={text}
+              className="flex hover:shadow-md p-3 rounded-2xl duration-4x00 transition-all  hover:-translate-y-5 flex-col items-start gap-2"
+            >
+              <AnimatePresence>
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -30 }} // Ausgangsanimation
+                  transition={{ duration: 0.6 }}
+                  viewport={{ once: false }} // erlaubt mehrfaches Ein-/Ausblenden
+                >
+                  <Icon className="w-7 h-7 text-fourthOwn" />
+                  <p className="font-semibold">{text}</p>
+                  <p className="text-sm text-gray-600">{des}</p>
+                </motion.div>
+              </AnimatePresence>
             </div>
           ))}
         </div>

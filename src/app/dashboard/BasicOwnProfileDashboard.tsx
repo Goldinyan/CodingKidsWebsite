@@ -50,6 +50,7 @@ export default function BasicOwnProfileDashboard() {
 
       <div className="flex flex-1 pt-15">
         <div className="w-64 bg-white border-l p-6 flex-col hidden md:flex">
+          <p>BasicOwnProfileDashboard</p>
         </div>
       </div>
     </div>

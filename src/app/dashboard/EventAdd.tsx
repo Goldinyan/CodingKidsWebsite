@@ -1,5 +1,6 @@
 "use client";
 
+import { Timestamp } from "firebase/firestore";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/BackEnd/AuthContext";
 import { addEvent, getUserData } from "@/lib/db";
@@ -17,12 +18,14 @@ import {
 const defaultEvent: EventData = {
   name: "",
   uid: "",
-  date: new Date(),
+  course: "",
+  date: Timestamp.fromDate(new Date()),
   length: 0,
   memberCount: 0,
   place: ["", "", ""],
   users: [],
   queue: [],
+  leftUsers: [],
   typeOfEvent: "",
   tag: "",
   difficulty: "",
@@ -49,7 +52,8 @@ export default function EventAdd() {
     setEventInfo({
       name: "Scratch Workshop",
       uid: "",
-      date: getNextWednesday(),
+      course: "",
+      date: Timestamp.fromDate(getNextWednesday()),
       length: 90,
       memberCount: 18,
       place: [
@@ -59,6 +63,7 @@ export default function EventAdd() {
       ],
       users: [],
       queue: [],
+      leftUsers: [],
       typeOfEvent: "CoderDojo",
       tag: "Scratch",
       difficulty: "Einsteigerfreundlich",
@@ -73,7 +78,8 @@ export default function EventAdd() {
     setEventInfo({
       name: "Mitgliederversammlung",
       uid: "",
-      date: getNextWednesday(),
+      date: Timestamp.fromDate(getNextWednesday()),
+      course: "DA",
       length: 180,
       memberCount: 50,
       place: [
@@ -83,6 +89,7 @@ export default function EventAdd() {
       ],
       users: [],
       queue: [],
+      leftUsers: [],
       typeOfEvent: "MemberOnly",
       tag: "Verein",
       difficulty: "Keine",
@@ -91,6 +98,8 @@ export default function EventAdd() {
         "Jährliche Versammlung aller Vereinsmitglieder zur Abstimmung über aktuelle Themen, Finanzen und zukünftige Projekte. Es wird um pünktliches Erscheinen gebeten.",
     });
   };
+
+  console.log(user?.uid == "hyNDqT9azTbPQT0gAhqu37DKCyX2");
 
   const handleEventAddcustom = async () => {
     if (!user) return;
@@ -130,9 +139,11 @@ export default function EventAdd() {
             className="border-primaryOwn"
             id="date"
             type="date"
-            value={EventInfo.date.toISOString().split("T")[0]}
+            value={EventInfo.date.toDate().toISOString().split("T")[0]}
             onChange={(e) => {
-              const selectedDate = new Date(e.target.value + "T18:00:00");
+              const selectedDate = Timestamp.fromDate(
+                new Date(e.target.value + "T18:00:00"),
+              );
               setEventInfo({ ...EventInfo, date: selectedDate });
             }}
           />
