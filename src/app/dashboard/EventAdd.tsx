@@ -99,8 +99,6 @@ export default function EventAdd() {
     });
   };
 
-  console.log(user?.uid == "hyNDqT9azTbPQT0gAhqu37DKCyX2");
-
   const handleEventAddcustom = async () => {
     if (!user) return;
 

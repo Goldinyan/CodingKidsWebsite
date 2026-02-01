@@ -102,7 +102,7 @@ export type Filter = {
 export type CourseData = {
   uid: string;
   dates: string[];
-  text: string;
+  name: string;
   des: string;
   tags: string[];
   mentors: Mentor[];

@@ -1,105 +1,76 @@
-"use client";
-
 import { useState, useEffect } from "react";
-import { getUserData } from "@/lib/db";
+import { addCourse, getUserData } from "@/lib/db";
 import { useAuth } from "@/BackEnd/AuthContext";
-import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
-import { Plus, Minus } from "lucide-react";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
-import { Card } from "@/components/ui/card";
-import EventAdd from "../dashboard/EventAdd";
+import { UserData, CourseData } from "@/BackEnd/type";
 
 interface EventNavbarProps {
   callback: (key: string, value: boolean | string) => void;
+  filters: { [key: string]: boolean | string };
+  courses: CourseData[];
 }
 
-export default function EventNavbar({ callback }: EventNavbarProps) {
+const baseTags: { name: string; value: string }[] = [
+  { name: "Teilnahme möglich", value: "showOnlyAvailable" },
+  { name: "Für dich offen", value: "showOnlyJoinable" },
+];
+
+export default function EventNavbar({
+  callback,
+  filters,
+  courses,
+}: EventNavbarProps) {
   const { user } = useAuth();
-  const [userData, setUserData] = useState<any>(null);
-  const [userAdmin, setUserAdmin] = useState<boolean>(false);
-  const [addEvent, setAddEvent] = useState<boolean>(false);
+  const [userData, setUserData] = useState<UserData>();
 
   useEffect(() => {
     if (!user) return;
     const fetchUserData = async () => {
       const data = await getUserData(user.uid);
+      if (!data) return;
       setUserData(data);
-      if (data?.role === "admin") {
-        setUserAdmin(true);
-      }
     };
     fetchUserData();
   }, [user]);
 
   return (
-    <Card className="w-full border-primaryOwn text-white p-6 rounded-xl shadow-md flex  ">
-      <div className="flex flex-row justify-between h-4">
-        <div className="flex flex-row">
-          <Select onValueChange={(value) => callback("course", value)}>
-            <SelectTrigger className=" bg-white text-black border border-fourthOwn">
-              <SelectValue placeholder="Alle Kurse" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Alle Kurse</SelectItem>
-              <SelectItem value="normal">Coding Kids</SelectItem>
-              <SelectItem value="3d">3D Druck</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="flex items-center gap-4">
-          <Switch
-            id="available-switch"
-            onCheckedChange={(checked) =>
-              callback("showOnlyAvailable", checked)
-            }
-          />
-          <Label htmlFor="available-switch" className="text-black text-xl">
-            Nur freie Plätze
-          </Label>
-        </div>
-
-        <div className="flex items-center gap-4">
-          <Switch
-            id="joinable-switch"
-            onCheckedChange={(checked) => callback("showOnlyJoinable", checked)}
-          />
-          <Label htmlFor="joinable-switch" className="text-black text-xl">
-            Nur beitretbare
-          </Label>
-          {userAdmin && (
-            <Button
-              variant="ghost"
-              onClick={() => setAddEvent((prev) => !prev)}
-              className="text-black"
+    <div className="w-full text-white items-center justify-center flex">
+      <div className="flex flex-row justify-baseline gap-4 w-full flex-wrap">
+        {baseTags.map((tag) => (
+          <div key={tag.value}>
+            <p
+              className={`${filters[tag.value] ? " " : ""} text-black border-black border-1 rounded-lg p-2 font-normal cursor-pointer hover:bg-gray-100`}
+              onClick={() => {
+                callback(tag.value, !filters[tag.value]);
+              }}
             >
-              {addEvent ? (
-                <Minus className="w-5 h-5 transition-all" />
-              ) : (
-                <Plus className="w-5 h-5" />
-              )}
-            </Button>
-          )}
-        </div>
+              {tag.name}
+            </p>
+          </div>
+        ))}
+        {courses.map((course) => (
+          <div key={`course-${course.uid}`}>
+            <p
+              className={`${filters.course && Array.isArray(filters.course)
+                  ? filters.course.includes(course.uid)
+                    ? "bg-primaryOwn text-white"
+                    : ""
+                  : ""
+                } text-black border-black border-1 rounded-lg p-2 font-normal cursor-pointer hover:bg-gray-100`}
+              onClick={() => {
+                const currentCourses = Array.isArray(filters.course)
+                  ? filters.course
+                  : [];
+                const newCourses = currentCourses.includes(course.uid)
+                  ? currentCourses.filter((c) => c !== course.uid)
+                  : [...currentCourses, course.uid];
+                callback("course", newCourses.length > 0 ? newCourses : null);
+              }}
+            >
+              {course.name}
+            </p>
+          </div>
+        ))}
       </div>
-<div
-  className={`transition-all duration-300 ease-in-out w-full  ${
-    addEvent ? "opacity-100 max-h-[1000px]" : "opacity-0 max-h-0"
-  }`}
->
-  <EventAdd />
-</div>
-
-
-
-    </Card>
+    </div>
   );
 }

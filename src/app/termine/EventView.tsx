@@ -6,6 +6,7 @@ import {
   addUserToEvent,
   removeUserFromEvent,
   isUserInEvent,
+  getAllCoureses,
 } from "@/lib/db";
 import { useAuth } from "@/BackEnd/AuthContext";
 import { getUserData } from "@/lib/db";
@@ -17,20 +18,24 @@ import {
 } from "@/components/ui/card";
 import EventNavbar from "./EventNavbar";
 import EventAdd from "../dashboard/EventAdd";
-import type { EventData } from "@/BackEnd/type";
+import type { CourseData, EventData } from "@/BackEnd/type";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Check, Clock, Ban, AlertTriangle, Loader2 } from "lucide-react";
+import { Timestamp } from "firebase/firestore";
 
 export default function EventViewHandlerAdmin() {
   const [events, setEvents] = useState<EventData[]>([]);
   const { user, loading } = useAuth();
   const [statuses, setStatuses] = useState<Record<string, string>>({});
   const [premiumUser, setPremiumUser] = useState<boolean>(false);
-  const [filters, setFilters] = useState<{ [key: string]: boolean | string }>({
+  const [courses, setCourses] = useState<CourseData[]>([]);
+  const [filters, setFilters] = useState<{
+    [key: string]: boolean | string;
+  }>({
     showOnlyAvailable: false,
     showOnlyJoinable: false,
-    course: "all",
+    course: "",
   });
 
   useEffect(() => {
@@ -50,11 +55,20 @@ export default function EventViewHandlerAdmin() {
   }, [user]);
 
   useEffect(() => {
+    const fetchCourses = async () => {
+      const courses: CourseData[] = (await getAllCoureses()) as CourseData[];
+      setCourses(courses);
+    };
+
+    fetchCourses();
+  }, []);
+
+  useEffect(() => {
     const fetchEvents = async () => {
       const events: EventData[] = (await getAllEvents()) as EventData[];
       const now = new Date();
       const upcomingEvents = events
-        .filter((event) => new Date(event.date) >= now)
+        .filter((event) => new Date(event.date.seconds * 1000) >= now)
         .slice(0, 10);
       setEvents(upcomingEvents);
 
@@ -105,13 +119,14 @@ export default function EventViewHandlerAdmin() {
     return eventDate >= now && eventDate <= deadline;
   };
 
-  console.log("events: ", events);
   return (
     <div className="flex items-center flex-col gap-4 p-6 pt-20">
       <EventNavbar
         callback={(key, value) =>
           setFilters((prev) => ({ ...prev, [key]: value }))
         }
+        filters={filters}
+        courses={courses}
       />
       {events.map((event) => {
         const status = statuses[event.uid];
@@ -125,8 +140,11 @@ export default function EventViewHandlerAdmin() {
         }[status];
 
         const isInEvent = status === "User" || status === "Queue";
-        const tooEarly = !checkIfEventIsInRange(new Date(event.date));
-        const EndOfEvent = new Date(event.date);
+
+        const tooEarly = !checkIfEventIsInRange(
+          new Date(event.date.seconds * 1000),
+        );
+        const EndOfEvent = new Date(event.date.seconds * 1000);
         EndOfEvent.setMinutes(EndOfEvent.getMinutes() + event.length);
 
         const isEventFull = event.users.length >= event.memberCount;

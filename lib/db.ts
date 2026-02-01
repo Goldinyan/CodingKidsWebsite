@@ -149,10 +149,10 @@ export async function deleteCourse(uid: string) {
 
 export async function addCourse(newCourse: CourseData) {
   try {
-    await setDoc(doc(db, "courses"), {
-      uid: newCourse.uid,
+    await setDoc(doc(db, "courses", newCourse.name), {
+      uid: newCourse.name,
       dates: newCourse.dates,
-      text: newCourse.text,
+      name: newCourse.name,
       des: newCourse.des,
       tags: newCourse.tags,
     });
