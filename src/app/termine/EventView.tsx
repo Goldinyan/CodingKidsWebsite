@@ -25,7 +25,8 @@ import { Check, Clock, Ban, AlertTriangle, Loader2 } from "lucide-react";
 import { Timestamp } from "firebase/firestore";
 
 export default function EventViewHandlerAdmin() {
-  const [events, setEvents] = useState<EventData[]>([]);
+  const [upcomingEvents, setUpcomingEvents] = useState<EventData[]>([]);
+  const [pastEvents, setPastEvents] = useState<EventData[]>([]);
   const { user, loading } = useAuth();
   const [statuses, setStatuses] = useState<Record<string, string>>({});
   const [premiumUser, setPremiumUser] = useState<boolean>(false);
@@ -36,6 +37,8 @@ export default function EventViewHandlerAdmin() {
     showOnlyAvailable: false,
     showOnlyJoinable: false,
     course: "",
+    nameSort: "",
+    dateSort: "",
   });
 
   useEffect(() => {
@@ -61,16 +64,25 @@ export default function EventViewHandlerAdmin() {
     };
 
     fetchCourses();
+    console.log(courses);
   }, []);
 
   useEffect(() => {
     const fetchEvents = async () => {
       const events: EventData[] = (await getAllEvents()) as EventData[];
       const now = new Date();
+      const normalizeDate = (d: any) =>
+        d?.seconds ? new Date(d.seconds * 1000) : new Date(d);
+
       const upcomingEvents = events
-        .filter((event) => new Date(event.date.seconds * 1000) >= now)
+        .filter((event) => normalizeDate(event.date) >= now)
         .slice(0, 10);
-      setEvents(upcomingEvents);
+
+      const pastEvents = events.filter(
+        (event) => normalizeDate(event.date) < now,
+      );
+      setUpcomingEvents(upcomingEvents);
+      setPastEvents(pastEvents);
 
       const statusMap: Record<string, string> = {};
       for (const event of upcomingEvents) {
@@ -119,113 +131,107 @@ export default function EventViewHandlerAdmin() {
     return eventDate >= now && eventDate <= deadline;
   };
 
-  return (
-    <div className="flex items-center flex-col gap-4 p-6 pt-20">
-      <EventNavbar
-        callback={(key, value) =>
-          setFilters((prev) => ({ ...prev, [key]: value }))
-        }
-        filters={filters}
-        courses={courses}
-      />
-      {events.map((event) => {
-        const status = statuses[event.uid];
+  const getSortedEvents = (events: EventData[]): EventData[] => {
+    const sorted = [...events];
+    const nameSort = filters["nameSort"] as string;
+    const dateSort = filters["dateSort"] as string;
 
-        const statusIcon = {
-          loading: <Loader2 className="animate-spin w-4 h-4" />,
-          User: <Check className="text-green-500 w-4 h-4" />,
-          Queue: <Clock className="text-yellow-500 w-4 h-4" />,
-          false: <Ban className="text-red-500 w-4 h-4" />,
-          error: <AlertTriangle className="text-orange-500 w-4 h-4" />,
-        }[status];
+    // Sortiere nach Name falls aktiviert
+    if (nameSort === "asc") {
+      sorted.sort((a, b) => a.name.localeCompare(b.name, "de"));
+    } else if (nameSort === "desc") {
+      sorted.sort((a, b) => b.name.localeCompare(a.name, "de"));
+    }
 
-        const isInEvent = status === "User" || status === "Queue";
+    // Sortiere nach Datum falls aktiviert (überschreibt Name-Sortierung)
+    if (dateSort === "asc") {
+      sorted.sort(
+        (a, b) =>
+          new Date(a.date.seconds * 1000).getTime() -
+          new Date(b.date.seconds * 1000).getTime()
+      );
+    } else if (dateSort === "desc") {
+      sorted.sort(
+        (a, b) =>
+          new Date(b.date.seconds * 1000).getTime() -
+          new Date(a.date.seconds * 1000).getTime()
+      );
+    } else if (!dateSort) {
+      // Standard: sortiere nach Datum aufsteigend
+      sorted.sort(
+        (a, b) =>
+          new Date(a.date.seconds * 1000).getTime() -
+          new Date(b.date.seconds * 1000).getTime()
+      );
+    }
 
-        const tooEarly = !checkIfEventIsInRange(
-          new Date(event.date.seconds * 1000),
-        );
-        const EndOfEvent = new Date(event.date.seconds * 1000);
-        EndOfEvent.setMinutes(EndOfEvent.getMinutes() + event.length);
+    return sorted;
+  };
 
-        const isEventFull = event.users.length >= event.memberCount;
-        const RemainingUsers = event.memberCount - event.users.length;
-        return (
-          <Card
-            key={event.uid}
-            className="border border-primaryOwn shadow-sm w-full "
-          >
-            <CardHeader className="flex justify-between items-center">
-              <h3 className="text-lg font-semibold">{event.name}</h3>
-              <Badge className="rounded-4 bg-white border border-primaryOwn p-2">
-                {statusIcon}
-              </Badge>
-            </CardHeader>
+  const EventCard = ({ event, isPast = false }: { event: EventData; isPast?: boolean }) => {
+    const status = statuses[event.uid];
+    const statusIcon = {
+      loading: <Loader2 className="animate-spin w-4 h-4" />,
+      User: <Check className="text-green-500 w-4 h-4" />,
+      Queue: <Clock className="text-yellow-500 w-4 h-4" />,
+      false: <Ban className="text-red-500 w-4 h-4" />,
+      error: <AlertTriangle className="text-orange-500 w-4 h-4" />,
+    }[status];
 
-            <CardContent className="text-sm space-y-2">
-              <div className="flex flex-col text-muted-foreground">
-                {event.place.map((line, index) => (
-                  <p key={index}>{line}</p>
-                ))}
-              </div>
+    const isInEvent = status === "User" || status === "Queue";
+    const tooEarly = !checkIfEventIsInRange(new Date(event.date.seconds * 1000));
+    const EndOfEvent = new Date(event.date.seconds * 1000);
+    EndOfEvent.setMinutes(EndOfEvent.getMinutes() + event.length);
+    const RemainingUsers = event.memberCount - event.users.length;
 
-              <div className="flex flex-col">
-                <p className="text-base font-semibold text-primary">
-                  {new Date(event.date).toLocaleString("de-DE", {
-                    weekday: "short",
-                    day: "2-digit",
-                    month: "short",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                  {" - "}
+    return (
+      <Card key={event.uid} className="border border-primaryOwn shadow-sm w-full">
+        <CardHeader className="flex justify-between items-center">
+          <h3 className="text-lg font-semibold">{event.name}</h3>
+          {!isPast && (
+            <Badge className="rounded-4 bg-white border border-primaryOwn p-2">
+              {statusIcon}
+            </Badge>
+          )}
+        </CardHeader>
 
-                  {new Date(EndOfEvent).toLocaleString("de-DE", {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  Freie Plätze:{" "}
-                  <span className="font-medium text-foreground">
-                    {RemainingUsers}
-                  </span>
-                </p>
-              </div>
-            </CardContent>
+        <CardContent className="text-sm space-y-2">
+          <div className="flex flex-col text-muted-foreground">
+            {event.place.map((line, index) => (
+              <p key={index}>{line}</p>
+            ))}
+          </div>
 
-            <CardFooter>
-              <Button
-                className={`${tooEarly ? "cursor-not-allowed border border-primaryOwn" : ""
-                  }`}
-                disabled={tooEarly}
-                variant={
-                  !tooEarly
-                    ? isInEvent
-                      ? "destructive"
-                      : "default"
-                    : "secondary"
-                }
-                onClick={() => {
-                  console.log("Button clicked");
+          <div className="flex flex-col">
+            <p className="text-base font-semibold text-primary">
+              {new Date(event.date).toLocaleString("de-DE", {
+                weekday: "short",
+                day: "2-digit",
+                month: "short",
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+              {" - "}
+              {new Date(EndOfEvent).toLocaleString("de-DE", {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </p>
+            {!isPast && (
+              <p className="text-sm text-muted-foreground">
+                Freie Plätze:{" "}
+                <span className="font-medium text-foreground">
+                  {RemainingUsers}
+                </span>
+              </p>
+            )}
+          </div>
+        </CardContent>
 
-                  if (!tooEarly) {
-                    handleEvents(event.uid, isInEvent ? "leave" : "join");
-                    console.log("added");
-                  } else {
-                    console.log("too Early");
-                  }
-                }}
-              >
-                {!tooEarly
-                  ? isInEvent
-                    ? "Verlassen"
-                    : "Beitreten"
-                  : "Zu früh"}
-              </Button>
-            </CardFooter>
+        {!isPast && (
+          <CardFooter>
             <Button
-              className={`${tooEarly ? "cursor-not-allowed border border-primaryOwn" : ""
-                }`}
+              className={`${tooEarly ? "cursor-not-allowed border border-primaryOwn" : ""}`}
               disabled={tooEarly}
               variant={
                 !tooEarly
@@ -235,21 +241,62 @@ export default function EventViewHandlerAdmin() {
                   : "secondary"
               }
               onClick={() => {
-                console.log("Button clicked");
-
                 if (!tooEarly) {
                   handleEvents(event.uid, isInEvent ? "leave" : "join");
-                  console.log("added");
-                } else {
-                  console.log("too Early");
                 }
               }}
             >
               {!tooEarly ? (isInEvent ? "Verlassen" : "Beitreten") : "Zu früh"}
             </Button>
-          </Card>
-        );
-      })}
+          </CardFooter>
+        )}
+      </Card>
+    );
+  };
+
+  return (
+    <div className="flex items-center flex-col gap-4 p-6 pt-20">
+      <EventNavbar
+        callback={(key, value) =>
+          setFilters((prev) => ({ ...prev, [key]: value }))
+        }
+        filters={filters}
+        courses={courses}
+      />
+
+      {upcomingEvents.length > 0 && (
+        <div className="w-full space-y-4">
+          <div className="flex items-center gap-3 mt-6">
+            <h2 className="text-2xl font-bold text-primary">Kommende Events</h2>
+            <Badge className="bg-primaryOwn text-white">{upcomingEvents.length}</Badge>
+          </div>
+          <div className="space-y-4">
+            {getSortedEvents(upcomingEvents).map((event) => (
+              <EventCard key={event.uid} event={event} isPast={false} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {pastEvents.length > 0 && (
+        <div className="w-full space-y-4 mt-8">
+          <div className="flex items-center gap-3">
+            <h2 className="text-2xl font-bold text-muted-foreground">Vergangene Events</h2>
+            <Badge variant="outline">{pastEvents.length}</Badge>
+          </div>
+          <div className="space-y-4">
+            {getSortedEvents(pastEvents).map((event) => (
+              <EventCard key={event.uid} event={event} isPast={true} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {upcomingEvents.length === 0 && pastEvents.length === 0 && (
+        <div className="flex flex-col items-center justify-center gap-4 py-12">
+          <p className="text-lg text-muted-foreground">Keine Events gefunden</p>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,13 +1,5 @@
-"use client"
+"use client";
 
-
-export default function KontaktView(){
-
-
-
-    return (
-        <div>
-            
-        </div>
-    )
+export default function KontaktView() {
+  return <div></div>;
 }

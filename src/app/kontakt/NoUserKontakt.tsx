@@ -45,7 +45,7 @@ export default function NoUserKontakt() {
     { text: "Rudolf-Diesel-Straße 115, 46485 Wesel", Icon: MapPin },
   ];
 
-  const handleEmailSending = async() => {
+  const handleEmailSending = async () => {
     setErrors({});
     setErrorMessage("");
 
@@ -57,29 +57,26 @@ export default function NoUserKontakt() {
       errorMsg = "Bitte geben Sie Ihren Namen ein.";
     }
 
-
     if (!emailProps.email || emailProps.email.trim() === "") {
       newErrors.email = true;
       if (!errorMsg) errorMsg = "Bitte geben Sie Ihre E-Mail-Adresse ein.";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailProps.email)) {
       newErrors.email = true;
-      if (!errorMsg) errorMsg = "Bitte geben Sie eine gültige E-Mail-Adresse ein.";
+      if (!errorMsg)
+        errorMsg = "Bitte geben Sie eine gültige E-Mail-Adresse ein.";
     }
 
-    
     if (!emailProps.body || emailProps.body.trim() === "") {
       newErrors.body = true;
       if (!errorMsg) errorMsg = "Bitte geben Sie eine Nachricht ein.";
     }
 
-    
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       setErrorMessage(errorMsg);
       return;
     }
 
-    
     try {
       await sendEmailToSupport(
         emailProps.email,
@@ -87,9 +84,9 @@ export default function NoUserKontakt() {
         emailProps.body,
         emailProps.email,
         emailProps.phone,
-        emailProps.name
+        emailProps.name,
       );
-     
+
       setEmailProps({
         name: "",
         email: "",
@@ -99,20 +96,21 @@ export default function NoUserKontakt() {
       });
       setErrorMessage("");
     } catch (error) {
-      setErrorMessage("Fehler beim Senden der E-Mail. Bitte versuchen Sie es erneut.");
+      setErrorMessage(
+        "Fehler beim Senden der E-Mail. Bitte versuchen Sie es erneut.",
+      );
     }
-  }
+  };
   return (
     <div className="w-full h-full bg-otherbg min-h-screen">
-       <div className="pt-25 flex flex-col gap-2">
-          <p className="text-3xl font-bold text-center">In Kontakt treten</p>
-          <p className="text-graytext text-center">
-            Füllen Sie das Formular aus oder melden Sie sich direkt. Wir freuen
-            uns auf Sie.
-          </p>
-          </div>
+      <div className="pt-25 flex flex-col gap-2">
+        <p className="text-3xl font-bold text-center">In Kontakt treten</p>
+        <p className="text-graytext text-center">
+          Füllen Sie das Formular aus oder melden Sie sich direkt. Wir freuen
+          uns auf Sie.
+        </p>
+      </div>
       <div className="pb-20 pt-15 md:grid-cols-2 grid gap-10 grid-cols-1 mx-[5%]">
-        
         <div className="border bg-white border-secondaryOwn rounded-2xl">
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 p-5">
             <div className="flex flex-col">
@@ -128,9 +126,8 @@ export default function NoUserKontakt() {
                     setErrors((prev) => ({ ...prev, name: false }));
                   }
                 }}
-                className={`bg-white border p-2 rounded-lg mt-2 ${
-                  errors.name ? "border-red-500" : "border-gray-300"
-                }`}
+                className={`bg-white border p-2 rounded-lg mt-2 ${errors.name ? "border-red-500" : "border-gray-300"
+                  }`}
                 placeholder="Vollständiger Namen"
               />
             </div>
@@ -147,9 +144,8 @@ export default function NoUserKontakt() {
                     setErrors((prev) => ({ ...prev, email: false }));
                   }
                 }}
-                className={`bg-white border p-2 rounded-lg mt-2 ${
-                  errors.email ? "border-red-500" : "border-gray-300"
-                }`}
+                className={`bg-white border p-2 rounded-lg mt-2 ${errors.email ? "border-red-500" : "border-gray-300"
+                  }`}
                 placeholder="du@gmail.com"
               />
             </div>
@@ -199,9 +195,8 @@ export default function NoUserKontakt() {
                   setErrors((prev) => ({ ...prev, body: false }));
                 }
               }}
-              className={`h-20 bg-white border p-2 rounded-lg mt-2 ${
-                errors.body ? "border-red-500" : "border-gray-300"
-              }`}
+              className={`h-20 bg-white border p-2 rounded-lg mt-2 ${errors.body ? "border-red-500" : "border-gray-300"
+                }`}
               placeholder="Sage uns wie wir dir helfen können"
             />
           </div>

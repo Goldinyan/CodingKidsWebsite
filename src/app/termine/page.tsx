@@ -3,14 +3,7 @@ import { useState, useEffect } from "react";
 import { getUserData } from "@/lib/db";
 import { useAuth } from "@/BackEnd/AuthContext";
 import EventView from "./EventView";
-import EventAdd from "../dashboard/EventAdd";
-import {
-  Card,
-  CardHeader,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
-import EventNavbar from "./EventNavbar";
+
 import { UserData } from "@/BackEnd/type";
 
 export default function Home() {
@@ -22,6 +15,7 @@ export default function Home() {
     const fetchUserData = async () => {
       if (user) {
         const data = await getUserData(user.uid);
+        if (!data) return;
         setUserData(data);
       }
     };
