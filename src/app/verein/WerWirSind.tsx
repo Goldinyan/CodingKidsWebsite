@@ -1,7 +1,15 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Lightbulb, Handshake, Heart, Sparkles, Presentation, MapPinned,School } from "lucide-react";
+import {
+  Lightbulb,
+  Handshake,
+  Heart,
+  Sparkles,
+  Presentation,
+  MapPinned,
+  School,
+} from "lucide-react";
 import MentorenView from "./MentorView";
 const values = [
   {
@@ -25,7 +33,6 @@ const values = [
 ] as const;
 
 export default function WerWirSind() {
-    
   return (
     <>
       <div className="w-full">
@@ -35,14 +42,12 @@ export default function WerWirSind() {
               Wir gestalten die digitale Zukunft.
             </p>
             <p className="mt-6 text-lg xxl:text-xl xxl:w-160 lg:text-l md:text-m pr-6 pl-6 text-lighttext">
-              Unsere Mission ist es, Kinder für Technologie zu begeistern, ihre Kreativität zu fördern und sie zu den Innovatoren von morgen zu machen.
+              Unsere Mission ist es, Kinder für Technologie zu begeistern, ihre
+              Kreativität zu fördern und sie zu den Innovatoren von morgen zu
+              machen.
             </p>
           </div>
         </div>
-
-
-
-
 
         <div className="flex flex-col items-center justify-around p-10 gap-30 sm:gap-0 lg:flex-row m-5">
           <div className="flex flex-col  1:w-70  md:w-120 lg:w-150 ">
@@ -61,12 +66,8 @@ export default function WerWirSind() {
             </p>
           </div>
 
-
-
           <div className="">
             <div className=" 1:w-70  md:w-120 lg:w-90 xl:w-140 flex flex-col">
-
-
               <div className="flex flex-row gap-5  items-center">
                 <Sparkles className="bg-primaryOwn p-2 rounded-full text-white w-10 h-10" />
                 <div className="flex flex-col">
@@ -76,9 +77,8 @@ export default function WerWirSind() {
               </div>
 
               <div className="flex justify-start">
-                 <span className="ml-5 m-1 block w-px h-6 bg-black"></span>
-               </div>
-
+                <span className="ml-5 m-1 block w-px h-6 bg-black"></span>
+              </div>
 
               <div className="flex flex-row gap-5  items-center">
                 <Presentation className="bg-primaryOwn p-2 rounded-full text-white w-10 h-10" />
@@ -89,11 +89,10 @@ export default function WerWirSind() {
               </div>
 
               <div className="flex justify-start">
-                 <span className="ml-5 m-1 block w-px h-6 bg-black"></span>
-               </div>
+                <span className="ml-5 m-1 block w-px h-6 bg-black"></span>
+              </div>
 
-
-               <div className="flex flex-row gap-5 items-center">
+              <div className="flex flex-row gap-5 items-center">
                 <MapPinned className="bg-primaryOwn p-2 rounded-full text-white w-10 h-10" />
                 <div className="flex flex-col">
                   <p className="font-bold">Expansion in drei Städte</p>
@@ -102,32 +101,20 @@ export default function WerWirSind() {
               </div>
 
               <div className="flex justify-start">
-                 <span className="ml-5 m-1 block w-px h-6 bg-black"></span>
-               </div>
+                <span className="ml-5 m-1 block w-px h-6 bg-black"></span>
+              </div>
 
-
-               <div className="flex flex-row gap-5 items-center">
+              <div className="flex flex-row gap-5 items-center">
                 <School className="bg-primaryOwn p-2 rounded-full text-white w-10 h-10" />
                 <div className="flex flex-col">
                   <p className="font-bold">Partnerschaft mit lokalen Schulen</p>
                   <p>2022</p>
                 </div>
               </div>
-
-             
-
-
             </div>
           </div>
-
-
-
-
-
-
-
         </div>
-        <div className="w-full flex flex-col items-center justify-center  gap-10  bg-otherbg pt-20 pb-20 ">
+        <div className="w-full flex flex-col items-center justify-center  gap-10  bg-otherbg pt-20 pb-20">
           <p className="text-center text-4xl lg:text-4xl pb-2 xl:text-5xl font-bold">
             Was uns antreibt
           </p>
@@ -136,18 +123,18 @@ export default function WerWirSind() {
             zu machen und Kreativität, kritisches Denken und Zusammenarbeit für
             jedes Kind in unserer Gemeinschaft zu fördern.
           </p>
-          <div className="flex  flex-col 1:w-70 md:flex-row lg:m-0 gap-10 justify-between  ">
+          <div className="flex justify-center flex-col 1:w-70 2:w-90 md:flex-row  gap-10 ">
             {values.map(({ title, description, icon: Icon }) => (
               <div
                 key={title}
-                className="flex flex-col sm: md: lg: xl: transition-all duration-300  shadow-primaryOwn hover:-translate-y-3 hover:shadow-lg items-center p-5 border bg-white border-primaryOwn rounded-3xl text-center md:text-left gap-4"
+                className="flex flex-col sm: md: lg: xl: transition-all duration-300   hover:-translate-y-3 hover:shadow-lg items-center p-5 border bg-white border-gray-200 shadow-sm rounded-3xl text-center md:text-left gap-4"
               >
                 <Icon className="w-8 h-8 text-secondaryOwn" />
                 <div>
                   <h3 className="text-xl sm: md: lg:  text-center font-semibold">
                     {title}
                   </h3>
-                  <p className="text-sm  sm: md: lg:w-60 xl:w-80 text-center text-muted-foreground mt-1 ">
+                  <p className="text-sm  3:w-60 sm:w-60 md:w-42 lg:w-60 xl:w-80 text-center text-muted-foreground mt-1 ">
                     {description}
                   </p>
                 </div>
@@ -155,14 +142,10 @@ export default function WerWirSind() {
             ))}
           </div>
         </div>
-       
+
         <div>
-            <MentorenView />
+          <MentorenView />
         </div>
-       
-
-
-
       </div>
     </>
   );

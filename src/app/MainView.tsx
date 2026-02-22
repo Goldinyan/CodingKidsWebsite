@@ -5,6 +5,11 @@ import type { UserData } from "@/BackEnd/type";
 import { useEffect, useState } from "react";
 import { getUserData } from "@/lib/db";
 import MiddleView from "./MiddleView";
+import FeaturedEventsView from "./FeaturedEventsView";
+import FeaturedCoursesView from "./FeaturedCoursesView";
+import MentorsView from "./MentorsView";
+import StatsView from "./StatsView";
+import CTAView from "./CTAView";
 
 export default function MainView() {
   const [userData, setUserData] = useState<UserData>();
@@ -27,9 +32,15 @@ export default function MainView() {
 
   return (
     <div className="w-full">
-      <div className="pt-20 w-full flex flex-col"> 
-        <TopView data={userData}/>
+      <div className="pt-20 w-full flex flex-col">
+        <TopView data={userData} />
         <MiddleView />
+        <FeaturedEventsView />
+        <FeaturedCoursesView />
+        <MentorsView />
+        <div className="px-8 py-8">
+          <CTAView />
+        </div>
       </div>
     </div>
   );

@@ -27,9 +27,8 @@ export function MentorCard({
 }) {
   return (
     <Card
-      className={`1:w-70 flex items-center ${
-        isExpanded && isFirst ? "col-span-full w-full" : ""
-      } transition-all duration-300 hover:-translate-y-5 hover:shadow-lg `}
+      className={`1:min-w-70  flex items-center w-full ${isExpanded && isFirst ? " md:px-20 lg:px-30 col-span-full" : ""
+        } transition-all duration-300 hover:-translate-y-5 hover:shadow-lg `}
     >
       <CardHeader className="flex w-full items-center flex-col gap-4">
         <Avatar className="w-24 h-24">
@@ -48,18 +47,19 @@ export function MentorCard({
           variant="outline"
           onClick={() => {
             onExpand(); // deine Funktion
-            if(!isExpanded){
-            const section = document.getElementById("mentor");
-            if (section) {
-              const yOffset = -100;
-              const y =
-                section.getBoundingClientRect().top +
-                window.pageYOffset +
-                yOffset;
+            if (!isExpanded) {
+              const section = document.getElementById("mentor");
+              if (section) {
+                const yOffset = -100;
+                const y =
+                  section.getBoundingClientRect().top +
+                  window.pageYOffset +
+                  yOffset;
 
-              window.scrollTo({ top: y, behavior: "smooth" });
+                window.scrollTo({ top: y, behavior: "smooth" });
+              }
             }
-          }}}
+          }}
         >
           {isExpanded ? "Weniger" : "Mehr erfahren"}
         </Button>

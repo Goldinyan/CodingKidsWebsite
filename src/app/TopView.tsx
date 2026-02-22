@@ -34,22 +34,22 @@ export default function TopView({ data }: { data: UserData | undefined }) {
           mit den Fähigkeiten für eine bessere Zukunft auszustatten.
         </p>
 
-        <div className="flex pt-8 flex-col gap-2">
-          <Button className="bg-fourthOwn hover:border-fourthOwn hover:border h-10 hover:bg-white hover:text-fourthOwn">
+        <div className="flex pt-8 flex-col   md:flex-row gap-2">
+          <Button className="bg-fourthOwn hover:border-fourthOwn w-[25%] hover:border h-10 hover:bg-white hover:text-fourthOwn">
             <p>Kurse entdecken</p>
           </Button>
           {data == undefined && (
-            <Button className="bg-secondaryOwn hover:border-secondaryOwn h-10 hover:border hover:bg-white hover:text-secondaryOwn">
+            <Button className="bg-secondaryOwn hover:border-secondaryOwn w-[25%] h-10 hover:border hover:bg-white hover:text-secondaryOwn">
               <p>Jetzt registrieren</p>
             </Button>
           )}
         </div>
 
-        <div className="flex flex-col gap-10  pt-20">
+        <div className="flex flex-col gap-10 md:flex-wrap mx-auto md:flex-row pt-20">
           {texts.map(({ text, des, icon: Icon }) => (
             <div
               key={text}
-              className="flex hover:shadow-md p-3 rounded-2xl duration-4x00 transition-all  hover:-translate-y-5 flex-col items-start gap-2"
+              className="flex border-1 w-full md:w-[45%]  md:flex-wrap md:flex-row border-primaryOwn hover:shadow-md p-3 rounded-2xl duration-4x00 transition-all  hover:-translate-y-5 flex-col items-start gap-2"
             >
               <AnimatePresence>
                 <motion.div

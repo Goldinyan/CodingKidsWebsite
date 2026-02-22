@@ -11,14 +11,13 @@ import {
   Hammer,
   BookOpenCheck,
   MapPinned,
- ArrowRight
+  ArrowRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation"
+import { useRouter } from "next/navigation";
 
 export default function Support() {
-
-   const router = useRouter();
+  const router = useRouter();
 
   return (
     <div>
@@ -37,14 +36,11 @@ export default function Support() {
           </p>
         </div>
       </div>
-      <div className="flex flex-col lg:flex-row pt-10 gap-10 items-center justify-center bg-otherbg ">
-
-
-
-        <div className="flex flex-col sm:w-100   1:w-90 border-2 p-5 py-10 border-lightborder rounded-3xl transition-all duration-300 hover:-translate-y-5 hover:shadow-lg   ">
+      <div className="flex flex-col lg:flex-row pt-10 gap-10 items-center justify-center  ">
+        <div className="flex flex-col sm:w-100 h-160  1:w-90 border-2 p-5 py-10 border-lightborder rounded-3xl transition-all duration-500 hover:-translate-y-5 hover:shadow-lg   ">
           <div className="flex flex-row    ">
             <div className="flex items-center ">
-            <Users className="w-12 h-12 p-2 mr-5 mb-10 md:flex hidden text-white bg-primaryOwn rounded-full" />
+              <Users className="w-12 h-12 p-2 mr-5 mb-10 md:flex hidden text-white bg-primaryOwn rounded-full" />
             </div>
             <div className="flex flex-col pb-5">
               <p className="text-3xl font-bold">Mitglied werden</p>
@@ -63,10 +59,10 @@ export default function Support() {
               zu können.{" "}
             </p>
           </div>
-          <div className="flex flex-col gap-5 mt-1 sm:w-70 1:w-70 w-70 mx-auto justify-center items-center ">
+          <div className="flex flex-col gap-5 mt-5 sm:w-70 1:w-70 w-70 mx-auto justify-center items-center ">
             <Button
               variant="outline"
-              className="bg-gray-200 border-gray-400 flex justify-start w-full"
+              className=" border-gray-400 flex justify-start w-full"
             >
               <a
                 href="/files/Mitgliedsantrag.pdf"
@@ -80,7 +76,7 @@ export default function Support() {
 
             <Button
               variant="outline"
-              className="bg-gray-200 border-gray-400 flex justify-start w-full"
+              className=" border-gray-400 flex justify-start w-full"
             >
               <a
                 href="/files/Vereinssatzung.pdf"
@@ -94,7 +90,7 @@ export default function Support() {
 
             <Button
               variant="outline"
-              className="bg-gray-200 border-gray-400 flex justify-start w-full"
+              className=" border-gray-400 flex justify-start w-full"
             >
               <a
                 href="/files/Beitragsordnung.pdf"
@@ -108,10 +104,10 @@ export default function Support() {
           </div>
         </div>
 
-        <div className="flex flex-col sm:w-100  1:w-90 border-2 p-5 py-10 bg-thirdOwn border-gray-400 rounded-3xl transition-all duration-300 hover:-translate-y-5 hover:shadow-lg   ">
+        <div className="flex flex-col sm:w-100 h-160  1:w-90 border-2 p-5 py-10 bg-thirdOwn border-gray-400 rounded-3xl transition-all duration-500 hover:-translate-y-5 hover:shadow-lg   ">
           <div className="flex flex-row    ">
-             <div className="flex items-center ">
-            <Gift className="w-12 h-12 p-2 mr-5 md:flex hidden text-thirdOwn bg-white rounded-full" />
+            <div className="flex items-center ">
+              <Gift className="w-12 h-12 p-2 mr-5 md:flex hidden text-thirdOwn bg-white rounded-full" />
             </div>
             <div className="flex flex-col pb-5">
               <p className="text-3xl text-white font-bold">Förderer werden</p>
@@ -125,13 +121,11 @@ export default function Support() {
               Ihre Spende macht einen direkten Unterschied. Sie ermöglicht uns,
               Laptops für Kinder ohne eigene Geräte bereitzustellen, spezielle
               Workshops mit Experten zu organisieren und Lehrnmaterial zu
-              entwickeln. Jeder Beitrag, ob groß oder klein, hilft uns, die
-              digitale Kluft zu überbrücken und Chanchengleicheit zu schaffen.
+              entwickeln.
             </p>
           </div>
           <div className="flex flex-col gap-5 w-80   justify-center items-center ">
             <div className="flex flex-col gap-5   justify-center items-center">
-
               <div className="flex flex-row items-center gap-5 sm:w-80 ">
                 <Check className="w-10 md:flex hidden h-10 p-2 text-white border-white border rounded-full shrink-0" />
                 <p className="text-white">
@@ -155,27 +149,34 @@ export default function Support() {
                   Standorte am Niederrhein erschließen.
                 </p>
               </div>
-              <Button variant="outline" className="sm:w-80 1:w-60 h-10 " onClick={() => router.push("/spenden")}>
-                <p className="text-primaryOwn font-bold">Vorstand kontaktieren</p>
-                <ArrowRight className="text-primaryOwn font-bold"/>
+              <Button
+                variant="outline"
+                className="sm:w-80 group sm:ml-10 1:w-60 h-10 "
+                onClick={() => router.push("/spenden")}
+              >
+                <p className="text-black font-bold">Vorstand kontaktieren</p>
+                <ArrowRight className="text-black font-bold group-hover:translate-x-5 transition-all duration-400" />
               </Button>
             </div>
           </div>
         </div>
       </div>
 
+      <div className="w-[90%] mx-auto mt-20 mb-10  max-w-3xl rounded-2xl border border-gray-200 bg-white p-10 shadow-sm">
+        <h2 className="text-3xl font-bold text-gray-900 mb-4">
+          Haben Sie noch Fragen?
+        </h2>
+        <p className="text-gray-600 text-lg mb-8">
+          Wir beantworten gerne Ihre Fragen zur Mitgliedschaft, zu Spenden oder
+          anderen Anliegen. Zögern Sie nicht, uns zu kontaktieren.
+        </p>
 
-      <div className="flex flex-col mx-auto mb-5 mt-20 lg:flex-row md:w-100  w-90  bg-fourthOwn  rounded-3xl justify-center items-center">
-        <div className="flex flex-col ">
-            <p className=" text-2xl lg:text-3xl 1:w-70 font-bold pt-10 text-white mb-4">
-                Haben Sie noch Fragen?
-            </p>
-            <p className="text-gray-300 text-lg lg:text-xl 1:w-70 ">
-                Wir beantworten gerne ihre Fragen zur Mitgliedschaft, zu Spenden oder anderen Anliegen. Zögern Sie nicht, uns zu kontaktieren.
-            </p>
-        </div>
-        <Button variant="outline" className="my-10 1:w-60 scale-125">
-            <p onClick={() => (router.push("/kontakt"))}>Kontakt aufnehmen</p>
+        <Button
+          variant="outline"
+          className="w-fit px-6 py-3 text-lg"
+          onClick={() => router.push("/kontakt")}
+        >
+          Kontakt aufnehmen
         </Button>
       </div>
     </div>
