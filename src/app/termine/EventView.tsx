@@ -23,8 +23,15 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Check, Clock, Ban, AlertTriangle, Loader2 } from "lucide-react";
 import { Timestamp } from "firebase/firestore";
+import { setFips } from "crypto";
 
-export default function EventViewHandlerAdmin() {
+interface termineProps {
+  searchParams: {
+    selectedCourse?: string;
+  };
+}
+
+export default function EventView({ searchParams }: termineProps) {
   const [upcomingEvents, setUpcomingEvents] = useState<EventData[]>([]);
   const [pastEvents, setPastEvents] = useState<EventData[]>([]);
   const { user, loading } = useAuth();
@@ -40,6 +47,18 @@ export default function EventViewHandlerAdmin() {
     nameSort: "",
     dateSort: "",
   });
+
+  useEffect(() => {
+    if (!searchParams.selectedCourse) return;
+
+    console.log(searchParams.selectedCourse);
+
+    if (filters.course === searchParams.selectedCourse) return;
+    setFilters((prev) => ({
+      ...prev,
+      course: searchParams.selectedCourse ?? "",
+    }));
+  }, [searchParams.selectedCourse]);
 
   useEffect(() => {
     if (!user) return;
@@ -148,27 +167,33 @@ export default function EventViewHandlerAdmin() {
       sorted.sort(
         (a, b) =>
           new Date(a.date.seconds * 1000).getTime() -
-          new Date(b.date.seconds * 1000).getTime()
+          new Date(b.date.seconds * 1000).getTime(),
       );
     } else if (dateSort === "desc") {
       sorted.sort(
         (a, b) =>
           new Date(b.date.seconds * 1000).getTime() -
-          new Date(a.date.seconds * 1000).getTime()
+          new Date(a.date.seconds * 1000).getTime(),
       );
     } else if (!dateSort) {
       // Standard: sortiere nach Datum aufsteigend
       sorted.sort(
         (a, b) =>
           new Date(a.date.seconds * 1000).getTime() -
-          new Date(b.date.seconds * 1000).getTime()
+          new Date(b.date.seconds * 1000).getTime(),
       );
     }
 
     return sorted;
   };
 
-  const EventCard = ({ event, isPast = false }: { event: EventData; isPast?: boolean }) => {
+  const EventCard = ({
+    event,
+    isPast = false,
+  }: {
+    event: EventData;
+    isPast?: boolean;
+  }) => {
     const status = statuses[event.uid];
     const statusIcon = {
       loading: <Loader2 className="animate-spin w-4 h-4" />,
@@ -179,13 +204,18 @@ export default function EventViewHandlerAdmin() {
     }[status];
 
     const isInEvent = status === "User" || status === "Queue";
-    const tooEarly = !checkIfEventIsInRange(new Date(event.date.seconds * 1000));
+    const tooEarly = !checkIfEventIsInRange(
+      new Date(event.date.seconds * 1000),
+    );
     const EndOfEvent = new Date(event.date.seconds * 1000);
     EndOfEvent.setMinutes(EndOfEvent.getMinutes() + event.length);
     const RemainingUsers = event.memberCount - event.users.length;
 
     return (
-      <Card key={event.uid} className="border border-primaryOwn shadow-sm w-full">
+      <Card
+        key={event.uid}
+        className="border border-primaryOwn shadow-sm w-full"
+      >
         <CardHeader className="flex justify-between items-center">
           <h3 className="text-lg font-semibold">{event.name}</h3>
           {!isPast && (
@@ -268,7 +298,9 @@ export default function EventViewHandlerAdmin() {
         <div className="w-full space-y-4">
           <div className="flex items-center gap-3 mt-6">
             <h2 className="text-2xl font-bold text-primary">Kommende Events</h2>
-            <Badge className="bg-primaryOwn text-white">{upcomingEvents.length}</Badge>
+            <Badge className="bg-primaryOwn text-white">
+              {upcomingEvents.length}
+            </Badge>
           </div>
           <div className="space-y-4">
             {getSortedEvents(upcomingEvents).map((event) => (
@@ -281,7 +313,9 @@ export default function EventViewHandlerAdmin() {
       {pastEvents.length > 0 && (
         <div className="w-full space-y-4 mt-8">
           <div className="flex items-center gap-3">
-            <h2 className="text-2xl font-bold text-muted-foreground">Vergangene Events</h2>
+            <h2 className="text-2xl font-bold text-muted-foreground">
+              Vergangene Events
+            </h2>
             <Badge variant="outline">{pastEvents.length}</Badge>
           </div>
           <div className="space-y-4">

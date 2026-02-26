@@ -2,3 +2,8 @@
 - [ ] Email System
 - [x] Kontakt Page
 - [ ] Spenden Page
+
+
+
+
+SEACRH PARAMS FÜR TERMINE VIEW ABER MUSST ROOT LAYOUT ÄNDERN WEIL CLIENT COMPONENT 

@@ -6,6 +6,7 @@ import { Mentor } from "@/BackEnd/type";
 import { Star } from "lucide-react";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { MentorCard } from "./verein/MentorCard";
 
 export default function MentorsView() {
   const [mentors, setMentors] = useState<Mentor[]>([]);
@@ -15,7 +16,7 @@ export default function MentorsView() {
     const fetchMentors = async () => {
       try {
         const allMentors = await getAllMentors();
-        setMentors(allMentors.slice(0, 4));
+        setMentors(allMentors.slice(0, 3));
       } catch (error) {
         console.error("Failed to fetch mentors:", error);
       } finally {
@@ -42,7 +43,7 @@ export default function MentorsView() {
         Lerne von erfahrenen Profis mit Leidenschaft für Informatik
       </p>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-30 mx-auto w-full bg-red-500">
         {mentors.map((mentor, idx) => (
           <motion.div
             key={mentor.uid}
@@ -51,31 +52,13 @@ export default function MentorsView() {
             transition={{ duration: 0.5, delay: idx * 0.1 }}
             className="text-center"
           >
-            <div className="relative mb-4 group cursor-pointer">
-              <div className="aspect-square bg-gradient-to-br from-purple-400 to-blue-400 rounded-2xl overflow-hidden relative">
-                {mentor.pic ? (
-                  <Image
-                    src={"/" + mentor.pic}
-                    alt={mentor.name}
-                    fill
-                    className="object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-purple-300 to-blue-300 text-4xl font-bold text-white">
-                    {mentor.name.charAt(0)}
-                  </div>
-                )}
-                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all flex items-center justify-center">
-                  <Star className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity fill-white" />
-                </div>
-              </div>
-            </div>
-
-            <h3 className="text-lg font-semibold mb-1">{mentor.name}</h3>
-            <p className="text-sm text-gray-600 mb-2 line-clamp-2">
-              {mentor.des1}
-            </p>
-            <p className="text-xs text-gray-500">{mentor.des2}</p>
+            <MentorCard
+              key={mentor.uid}
+              name={mentor.name}
+              description1={mentor.des1}
+              description2={mentor.des2}
+              picture={mentor.pic}
+            />
           </motion.div>
         ))}
       </div>

@@ -21,13 +21,13 @@ export function MentorCard({
   description1: string;
   description2: string;
   picture: string;
-  onExpand: () => void;
-  isFirst: boolean;
-  isExpanded: boolean;
+  onExpand?: () => void;
+  isFirst?: boolean;
+  isExpanded?: boolean;
 }) {
   return (
     <Card
-      className={`1:min-w-70  flex items-center w-full ${isExpanded && isFirst ? " md:px-20 lg:px-30 col-span-full" : ""
+      className={`1:min-w-70 min-h-100 flex items-center w-full ${isExpanded && isFirst ? " md:px-20 lg:px-30 col-span-full" : ""
         } transition-all duration-300 hover:-translate-y-5 hover:shadow-lg `}
     >
       <CardHeader className="flex w-full items-center flex-col gap-4">
@@ -46,7 +46,9 @@ export function MentorCard({
         <Button
           variant="outline"
           onClick={() => {
-            onExpand(); // deine Funktion
+            if (onExpand) {
+              onExpand();
+            }
             if (!isExpanded) {
               const section = document.getElementById("mentor");
               if (section) {
