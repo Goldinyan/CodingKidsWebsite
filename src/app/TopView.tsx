@@ -3,8 +3,11 @@ import type { UserData } from "@/BackEnd/type";
 import { Button } from "@/components/ui/button";
 import { GraduationCap, Rocket, Users } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useRouter } from "next/navigation";
 
 export default function TopView({ data }: { data: UserData | undefined }) {
+  const router = useRouter();
+
   const texts: { text: string; des: string; icon: React.ElementType }[] = [
     {
       text: "Für alle Altersgruppen",
@@ -25,7 +28,7 @@ export default function TopView({ data }: { data: UserData | undefined }) {
 
   return (
     <div className="w-full flex flex-col">
-      <div className="w-full px-8 pt-2">
+      <div className="w-full px-8 pt-10">
         <p className="text-4xl font-extrabold w-[75%]">
           Die digitale Zukunft deines Kindes beginnt hier.
         </p>
@@ -35,32 +38,38 @@ export default function TopView({ data }: { data: UserData | undefined }) {
         </p>
 
         <div className="flex pt-8 flex-col   md:flex-row gap-2">
-          <Button className="bg-fourthOwn hover:border-fourthOwn w-[25%] hover:border h-10 hover:bg-white hover:text-fourthOwn">
+          <Button className="bg-fourthOwn min-w-90 hover:border-fourthOwn w-[25%] hover:border h-10 hover:bg-white hover:text-fourthOwn">
             <p>Kurse entdecken</p>
           </Button>
           {data == undefined && (
-            <Button className="bg-secondaryOwn hover:border-secondaryOwn w-[25%] h-10 hover:border hover:bg-white hover:text-secondaryOwn">
+            <Button
+              onClick={() => router.push("/login")}
+              className="bg-secondaryOwn min-w-90 hover:border-secondaryOwn w-[25%] h-10 hover:border hover:bg-white hover:text-secondaryOwn"
+            >
               <p>Jetzt registrieren</p>
             </Button>
           )}
         </div>
 
-        <div className="flex flex-col gap-10 md:flex-wrap mx-auto md:flex-row pt-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mx-auto pt-20">
           {texts.map(({ text, des, icon: Icon }) => (
             <div
               key={text}
-              className="flex border-1 w-full md:w-[45%]  md:flex-wrap md:flex-row border-primaryOwn hover:shadow-md p-3 rounded-2xl duration-4x00 transition-all  hover:-translate-y-5 flex-col items-start gap-2"
+              className="flex border-1 p-8 max-w-120 mx-auto shadow-md rounded-2xl duration-400 transition-all  hover:-translate-y-5 flex-col items-start gap-2"
             >
               <AnimatePresence>
                 <motion.div
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -30 }} // Ausgangsanimation
-                  transition={{ duration: 0.6 }}
+                  transition={{ duration: 1 }}
                   viewport={{ once: false }} // erlaubt mehrfaches Ein-/Ausblenden
                 >
-                  <Icon className="w-7 h-7 text-fourthOwn" />
-                  <p className="font-semibold">{text}</p>
+                  <div className="flex flex-row justify-between">
+                    <p className="font-semibold">{text}</p>
+                    <Icon className="w-7 mb-2 h-7 text-fourthOwn" />
+                  </div>
+
                   <p className="text-sm text-gray-600">{des}</p>
                 </motion.div>
               </AnimatePresence>

@@ -18,11 +18,12 @@ import { useIsMobile } from "@/hooks/useIsMobile";
 import { Menu, X, LayoutDashboard, HeartHandshakeIcon } from "lucide-react";
 import NavbarMobile from "./NavbarMobile";
 import { getAllAnnouncements, getUserData } from "@/lib/db";
+import { UserData } from "@/BackEnd/type";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const { user, loading } = useAuth();
-  const [userData, setUserData] = useState<any>(null);
+  const [userData, setUserData] = useState<null | UserData>(null);
   const [unreadMessages, setUnreadMessages] = useState(0);
   const router = useRouter();
 
@@ -39,7 +40,7 @@ export default function Navbar() {
       const announcements = await getAllAnnouncements();
       const unread = announcements.filter(
         (announcement) =>
-          !announcement.readBy || !announcement.readBy.includes(user.uid)
+          !announcement.readBy || !announcement.readBy.includes(user.uid),
       ).length;
       setUnreadMessages(unread);
       console.log("Unread messages:", unread);
@@ -69,7 +70,12 @@ export default function Navbar() {
         <div className="w-full flex items-center pr-5 pl-5">
           <div className=" flex-row items-center gap-3 hidden md:flex">
             <img src="Logo_aussen_Transparent.png" className="w-15 h-15 p-1" />
-            <p className="font-bold hidden lg:flex">Coding Kids Niederrhein</p>
+            <p
+              onClick={() => router.push("/")}
+              className="font-bold hidden cursor-pointer lg:flex"
+            >
+              Coding Kids Niederrhein
+            </p>
           </div>
 
           <div className=" flex-row items-center gap-3 ml-auto hidden md:flex">
@@ -85,7 +91,10 @@ export default function Navbar() {
             </Button>
             {user && (
               <div className="relative">
-                <Button variant="outline" onClick={() => router.push("/kontakt")}>
+                <Button
+                  variant="outline"
+                  onClick={() => router.push("/kontakt")}
+                >
                   <MessageCircle />
                 </Button>
                 {unreadMessages > 0 && (
@@ -101,13 +110,11 @@ export default function Navbar() {
                 variant="outline"
                 onClick={() => router.push(user ? "/profile" : "/login")}
               >
-                {
-                  !user ? (
-                    <LogIn className="w-5 h-5" />
-                  ) : (
-                    <User className="w-5 h-5" />
-                  )
-                }
+                {!user ? (
+                  <LogIn className="w-5 h-5" />
+                ) : (
+                  <User className="w-5 h-5" />
+                )}
               </Button>
             </div>
 
@@ -153,9 +160,14 @@ export default function Navbar() {
                 </NavigationMenuItem>
                 <NavigationMenuItem>
                   <NavigationMenuLink>
-                    {!user && <p className="font-bold" onClick={() => router.push("/kontakt")}>
+                    {!user && (
+                      <p
+                        className="font-bold"
+                        onClick={() => router.push("/kontakt")}
+                      >
                         Kontakt
-                    </p>}
+                      </p>
+                    )}
                   </NavigationMenuLink>
                 </NavigationMenuItem>
               </NavigationMenuList>

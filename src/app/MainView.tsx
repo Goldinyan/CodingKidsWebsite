@@ -38,9 +38,7 @@ export default function MainView() {
         <FeaturedEventsView />
         <FeaturedCoursesView />
         <MentorsView />
-        <div className="px-8 py-8">
-          <CTAView />
-        </div>
+        <CTAView />
       </div>
     </div>
   );

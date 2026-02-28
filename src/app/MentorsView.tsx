@@ -43,7 +43,7 @@ export default function MentorsView() {
         Lerne von erfahrenen Profis mit Leidenschaft für Informatik
       </p>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-30 mx-auto w-full bg-red-500">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 w-full justify-between ">
         {mentors.map((mentor, idx) => (
           <motion.div
             key={mentor.uid}
