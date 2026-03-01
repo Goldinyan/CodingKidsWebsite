@@ -7,7 +7,7 @@ import { ArrowRight } from "lucide-react";
 export default function CTAView() {
   return (
     <div className="w-full  bg-gradient-to-b from-purple-50 to-purple-100">
-      <div className="bg-white mx-auto mb-20 py-5 w-90 sm:w-[80%] md:w-[60%] shadow-md rounded-2xl  max-w-6xl">
+      <div className="bg-white mx-auto mb-20 py-15 w-90 sm:w-[80%] md:w-[60%] shadow-md rounded-2xl  max-w-6xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -22,7 +22,7 @@ export default function CTAView() {
             spannende Welt der Programmierung. Keine Vorkenntnisse erforderlich!
           </p>
 
-          <div className="flex flex-col lg:flex-row w-[80%] md:w-[60%] lg:w-[40%] md:items-start mx-auto gap-4 justify-center">
+          <div className="flex flex-col lg:flex-row w-[80%] md:w-[60%] lg:w-[30%] md:items-start mx-auto lg:items-start gap-4 justify-center">
             <Button className="bg-white w-full text-black border-1 border-primaryOwn hover:bg-gray-100 font-semibold  py-2 ">
               Kostenlos Starten
               <ArrowRight className="ml-2 w-5 h-5" />

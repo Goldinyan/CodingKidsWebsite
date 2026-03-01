@@ -8,7 +8,6 @@ import MiddleView from "./MiddleView";
 import FeaturedEventsView from "./FeaturedEventsView";
 import FeaturedCoursesView from "./FeaturedCoursesView";
 import MentorsView from "./MentorsView";
-import StatsView from "./StatsView";
 import CTAView from "./CTAView";
 
 export default function MainView() {

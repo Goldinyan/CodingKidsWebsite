@@ -3,9 +3,7 @@
 import { useEffect, useState } from "react";
 import { getAllMentors } from "@/lib/db";
 import { Mentor } from "@/BackEnd/type";
-import { Star } from "lucide-react";
 import { motion } from "framer-motion";
-import Image from "next/image";
 import { MentorCard } from "./verein/MentorCard";
 
 export default function MentorsView() {
@@ -16,7 +14,7 @@ export default function MentorsView() {
     const fetchMentors = async () => {
       try {
         const allMentors = await getAllMentors();
-        setMentors(allMentors.slice(0, 3));
+        setMentors(allMentors.sort((a, b) => a.id - b.id));
       } catch (error) {
         console.error("Failed to fetch mentors:", error);
       } finally {
@@ -43,7 +41,7 @@ export default function MentorsView() {
         Lerne von erfahrenen Profis mit Leidenschaft für Informatik
       </p>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 w-full justify-between ">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 3xl:grid-cols-5 gap-10  justify-between ">
         {mentors.map((mentor, idx) => (
           <motion.div
             key={mentor.uid}
@@ -56,7 +54,6 @@ export default function MentorsView() {
               key={mentor.uid}
               name={mentor.name}
               description1={mentor.des1}
-              description2={mentor.des2}
               picture={mentor.pic}
             />
           </motion.div>

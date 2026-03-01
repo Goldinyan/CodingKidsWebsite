@@ -421,7 +421,7 @@ export async function isUserInEvent(eventId: string, userId: string) {
     const eventSnapshot = await getDoc(eventRef);
 
     if (!eventSnapshot.exists()) {
-      throw new Error("Event not exist");
+      throw new Error("Event does not exist");
     }
 
     const eventData = eventSnapshot.data();

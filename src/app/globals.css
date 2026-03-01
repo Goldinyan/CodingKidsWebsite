@@ -5,38 +5,38 @@
 @custom-variant dark (&:is(.dark *));
 
 * {
-  apply: transition-all, duration-200
+  apply: transition-all, duration-200;
 }
 
 /* Entfernt die Pfeile bei number inputs */
-input[type=number]::-webkit-inner-spin-button,
-input[type=number]::-webkit-outer-spin-button {
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 
-input[type=number] {
+input[type="number"] {
   -moz-appearance: textfield;
 }
 @theme {
-    --color-primaryOwn: #845EC2;
-    --color-secondaryOwn: #0B6F12;
-    --color-thirdOwn: #428F47;
-    --color-fourthOwn: #7B028E;
-    --color-fifthOwn: #871A98;
-    --color-otherbg: #F8F9FA;
-    
-    --color-lightPinkBg: #F2E5F3;
-    --color-lightGreenBg: #E6F0E7;
-    --color-lightRedBg: #FDECEC;
+  --color-primaryOwn: #845ec2;
+  --color-secondaryOwn: #0b6f12;
+  --color-thirdOwn: #428f47;
+  --color-fourthOwn: #7b028e;
+  --color-fifthOwn: #871a98;
+  --color-otherbg: #f8f9fa;
 
-    --color-lightborder: #EAEBEF;
-    --color-lighttext: #E3CBE8;
-    --color-graytext: #686868;
-    --color-gray2text: #9A9A9A;
-   
-    --font-size-xxs: 0.625rem; /* 10px */
-    --font-size-xxs--line-height: 0.875rem; /* 14px */
+  --color-lightPinkBg: #f2e5f3;
+  --color-lightGreenBg: #e6f0e7;
+  --color-lightRedBg: #fdecec;
+
+  --color-lightborder: #eaebef;
+  --color-lighttext: #e3cbe8;
+  --color-graytext: #686868;
+  --color-gray2text: #9a9a9a;
+
+  --font-size-xxs: 0.625rem; /* 10px */
+  --font-size-xxs--line-height: 0.875rem; /* 14px */
 }
 
 @theme inline {
@@ -93,10 +93,10 @@ body {
   --breakpoint-lg: 1024px;
   --breakpoint-xl: 1280px;
   --breakpoint-xxl: 1380px; /* added your custom breakpoint here */
-  --breakpoint-2xl: 1536px;
+  --breakpoint-3xl: 1536px;
 }
 
- /* * {
+/* * {
   outline: 1px solid red;
 }  */
 

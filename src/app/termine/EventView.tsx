@@ -2,7 +2,6 @@
 import { useState, useEffect } from "react";
 import {
   getAllEvents,
-  addEvent,
   addUserToEvent,
   removeUserFromEvent,
   isUserInEvent,
@@ -10,20 +9,25 @@ import {
 } from "@/lib/db";
 import { useAuth } from "@/BackEnd/AuthContext";
 import { getUserData } from "@/lib/db";
-import {
-  Card,
-  CardHeader,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
+
 import EventNavbar from "./EventNavbar";
-import EventAdd from "../dashboard/EventAdd";
 import type { CourseData, EventData } from "@/BackEnd/type";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Check, Clock, Ban, AlertTriangle, Loader2 } from "lucide-react";
-import { Timestamp } from "firebase/firestore";
-import { setFips } from "crypto";
+import {
+  Check,
+  Clock,
+  Ban,
+  AlertTriangle,
+  Loader2,
+  Calendar,
+  MapPin,
+  Users,
+  UserRoundX,
+} from "lucide-react";
+import { toJsDate } from "@/BackEnd/utils";
+import { motion } from "framer-motion";
+import { defaults } from "joi";
 
 interface termineProps {
   searchParams: {
@@ -140,6 +144,23 @@ export default function EventView({ searchParams }: termineProps) {
     }
   };
 
+  const getHoverMessage = (status: string): string => {
+    switch (status) {
+      case "loading":
+        return "Der Status dieses Events wird derzeit geladen.";
+      case "User":
+        return "Sie sind als Teilnehmer:in für dieses Event eingetragen.";
+      case "Queue":
+        return "Sie befinden sich in der Warteschlange für dieses Event.";
+      case "false":
+        return "Sie sind nicht als Teilnehmer:in für dieses Event registriert.";
+      case "Error":
+        return "Beim Laden dieses Events ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut.";
+      default:
+        return "Unbekannter Status.";
+    }
+  };
+
   const checkIfEventIsInRange = (eventDate: Date): boolean => {
     const now = new Date();
     const deadline = new Date();
@@ -196,11 +217,11 @@ export default function EventView({ searchParams }: termineProps) {
   }) => {
     const status = statuses[event.uid];
     const statusIcon = {
-      loading: <Loader2 className="animate-spin w-4 h-4" />,
-      User: <Check className="text-green-500 w-4 h-4" />,
-      Queue: <Clock className="text-yellow-500 w-4 h-4" />,
-      false: <Ban className="text-red-500 w-4 h-4" />,
-      error: <AlertTriangle className="text-orange-500 w-4 h-4" />,
+      loading: <Loader2 className="animate-spin w-7 h-7" />,
+      User: <Check className="text-green-400 w-7 h-7" />,
+      Queue: <Clock className="text-yellow-400 w-7 h-7" />,
+      false: <UserRoundX className="text-red-400 w-7 h-7" />,
+      error: <AlertTriangle className="text-orange-400 w-7 h-7" />,
     }[status];
 
     const isInEvent = status === "User" || status === "Queue";
@@ -209,32 +230,39 @@ export default function EventView({ searchParams }: termineProps) {
     );
     const EndOfEvent = new Date(event.date.seconds * 1000);
     EndOfEvent.setMinutes(EndOfEvent.getMinutes() + event.length);
-    const RemainingUsers = event.memberCount - event.users.length;
 
     return (
-      <Card
-        key={event.uid}
-        className="border border-primaryOwn shadow-sm w-full"
-      >
-        <CardHeader className="flex justify-between items-center">
-          <h3 className="text-lg font-semibold">{event.name}</h3>
+      <div>
+        <div className="flex items-start justify-between mb-4">
+          <span className="bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full">
+            {event.difficulty}
+          </span>
+          <span className="ml-auto mr-10 mt-3 text-sm text-gray-500">
+            {event.typeOfEvent}
+          </span>
           {!isPast && (
-            <Badge className="rounded-4 bg-white border border-primaryOwn p-2">
-              {statusIcon}
-            </Badge>
+            <div className="group relative">
+              <div className="rounded-full p-2 bg-white border border-gray-400">
+                {statusIcon}
+              </div>
+
+              <div className="absolute left-1/4 -translate-x-50 w-50 mt-2 hidden group-hover:flex bg-white p-2 rounded-md shadow-md">
+                {getHoverMessage(status)}
+              </div>
+            </div>
           )}
-        </CardHeader>
+        </div>
 
-        <CardContent className="text-sm space-y-2">
-          <div className="flex flex-col text-muted-foreground">
-            {event.place.map((line, index) => (
-              <p key={index}>{line}</p>
-            ))}
-          </div>
+        <h3 className="text-lg font-semibold mb-3">{event.name}</h3>
+        <p className="text-sm text-gray-600 mb-4  line-clamp-2">
+          {event.description}
+        </p>
 
-          <div className="flex flex-col">
-            <p className="text-base font-semibold text-primary">
-              {new Date(event.date).toLocaleString("de-DE", {
+        <div className="space-y-2 mb-6 text-sm text-gray-700">
+          <div className="flex items-center gap-2">
+            <Calendar className="w-4 h-4 text-fourthOwn" />
+            <p className="">
+              {toJsDate(event.date).toLocaleString("de-DE", {
                 weekday: "short",
                 day: "2-digit",
                 month: "short",
@@ -242,45 +270,48 @@ export default function EventView({ searchParams }: termineProps) {
                 minute: "2-digit",
               })}
               {" - "}
-              {new Date(EndOfEvent).toLocaleString("de-DE", {
+              {toJsDate(EndOfEvent).toLocaleString("de-DE", {
                 hour: "2-digit",
                 minute: "2-digit",
               })}
             </p>
-            {!isPast && (
-              <p className="text-sm text-muted-foreground">
-                Freie Plätze:{" "}
-                <span className="font-medium text-foreground">
-                  {RemainingUsers}
-                </span>
-              </p>
-            )}
           </div>
-        </CardContent>
+          {event.place && (
+            <div className="flex justify-start items-start gap-2">
+              <MapPin className="w-4 h-4 text-fourthOwn" />
+              <div className="flex flex-col ">
+                {event.place.map((line, index) => (
+                  <p key={index}>{line}</p>
+                ))}
+              </div>
+            </div>
+          )}
+          <div className="flex items-center gap-2">
+            <Users className="w-4 h-4 text-fourthOwn" />
+            <span>
+              {event.users?.length + (event.queue?.length || 0)}/
+              {event.memberCount} Plätze belegt
+            </span>
+          </div>
+        </div>
 
         {!isPast && (
-          <CardFooter>
-            <Button
-              className={`${tooEarly ? "cursor-not-allowed border border-primaryOwn" : ""}`}
-              disabled={tooEarly}
-              variant={
-                !tooEarly
-                  ? isInEvent
-                    ? "destructive"
-                    : "default"
-                  : "secondary"
+          <Button
+            className={`${tooEarly ? "cursor-not-allowed border border-primaryOwn" : ""}`}
+            disabled={tooEarly}
+            variant={
+              !tooEarly ? (isInEvent ? "destructive" : "default") : "secondary"
+            }
+            onClick={() => {
+              if (!tooEarly) {
+                handleEvents(event.uid, isInEvent ? "leave" : "join");
               }
-              onClick={() => {
-                if (!tooEarly) {
-                  handleEvents(event.uid, isInEvent ? "leave" : "join");
-                }
-              }}
-            >
-              {!tooEarly ? (isInEvent ? "Verlassen" : "Beitreten") : "Zu früh"}
-            </Button>
-          </CardFooter>
+            }}
+          >
+            {!tooEarly ? (isInEvent ? "Verlassen" : "Beitreten") : "Zu früh"}
+          </Button>
         )}
-      </Card>
+      </div>
     );
   };
 
@@ -302,9 +333,17 @@ export default function EventView({ searchParams }: termineProps) {
               {upcomingEvents.length}
             </Badge>
           </div>
-          <div className="space-y-4">
-            {getSortedEvents(upcomingEvents).map((event) => (
-              <EventCard key={event.uid} event={event} isPast={false} />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {getSortedEvents(upcomingEvents).map((event, idx) => (
+              <motion.div
+                key={event.uid}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: idx * 0.1 }}
+                className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow"
+              >
+                <EventCard key={event.uid} event={event} isPast={false} />
+              </motion.div>
             ))}
           </div>
         </div>
@@ -318,9 +357,17 @@ export default function EventView({ searchParams }: termineProps) {
             </h2>
             <Badge variant="outline">{pastEvents.length}</Badge>
           </div>
-          <div className="space-y-4">
-            {getSortedEvents(pastEvents).map((event) => (
-              <EventCard key={event.uid} event={event} isPast={true} />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {getSortedEvents(pastEvents).map((event, idx) => (
+              <motion.div
+                key={event.uid}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: idx * 0.1 }}
+                className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow"
+              >
+                <EventCard key={event.uid} event={event} isPast={false} />
+              </motion.div>
             ))}
           </div>
         </div>

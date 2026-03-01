@@ -19,7 +19,7 @@ export function MentorCard({
 }: {
   name: string;
   description1: string;
-  description2: string;
+  description2?: string;
   picture: string;
   onExpand?: () => void;
   isFirst?: boolean;
@@ -27,8 +27,8 @@ export function MentorCard({
 }) {
   return (
     <Card
-      className={`1:min-w-70  flex items-center w-full ${isExpanded && isFirst ? " md:px-20 lg:px-30 col-span-full" : ""
-        } ${onExpand ? "min-h-70" : "min-h-100"}transition-all duration-300 hover:-translate-y-5 hover:shadow-lg `}
+      className={`1:min-w-70 flex  items-center w-full ${isExpanded && isFirst ? " md:px-20 lg:px-30 col-span-full" : ""
+        } ${onExpand ? "min-h-70" : "h-80"} transition-all duration-300 hover:-translate-y-5 hover:shadow-lg `}
     >
       <CardHeader className="flex w-full items-center flex-col gap-4">
         <Avatar className="w-24 h-24">
@@ -43,7 +43,7 @@ export function MentorCard({
         </div>
       </CardHeader>
       <CardFooter>
-        {onExpand && (
+        {onExpand ? (
           <Button
             variant="outline"
             onClick={() => {
@@ -66,6 +66,10 @@ export function MentorCard({
           >
             {isExpanded ? "Weniger" : "Mehr erfahren"}
           </Button>
+        ) : (
+          <div>
+            <p>{description2}</p>
+          </div>
         )}
       </CardFooter>
     </Card>

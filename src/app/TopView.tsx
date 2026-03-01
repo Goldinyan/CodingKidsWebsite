@@ -30,7 +30,7 @@ export default function TopView({ data }: { data: UserData | undefined }) {
     <div className="w-full flex flex-col">
       <div className="w-full px-8 pt-10">
         <p className="text-4xl font-extrabold w-[75%]">
-          Die digitale Zukunft deines Kindes beginnt hier.
+          Die digitale Zukunft ihres Kindes beginnt hier.
         </p>
         <p className="text-md pt-4 text-graytext w-[90%]">
           Wir bieten unterhaltsame und lehrreiche Programmierkurse, um Kinder
@@ -51,7 +51,7 @@ export default function TopView({ data }: { data: UserData | undefined }) {
           )}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mx-auto pt-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10  max-w-400 pt-20">
           {texts.map(({ text, des, icon: Icon }) => (
             <div
               key={text}
