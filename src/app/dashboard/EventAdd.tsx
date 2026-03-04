@@ -128,7 +128,6 @@ export default function EventAdd() {
       </CardHeader>
 
       <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Event-Name */}
         <div className="grid gap-2">
           <Label htmlFor="name" className="font-semibold text-gray-700">
             Event-Name *
@@ -144,7 +143,6 @@ export default function EventAdd() {
           />
         </div>
 
-        {/* Datum */}
         <div className="grid gap-2">
           <Label htmlFor="date" className="font-semibold text-gray-700">
             Datum *
@@ -163,7 +161,6 @@ export default function EventAdd() {
           />
         </div>
 
-        {/* Dauer */}
         <div className="grid gap-2">
           <Label htmlFor="length" className="font-semibold text-gray-700">
             Dauer (Minuten) *
@@ -183,7 +180,6 @@ export default function EventAdd() {
           />
         </div>
 
-        {/* Teilnehmerzahl */}
         <div className="grid gap-2">
           <Label htmlFor="memberCount" className="font-semibold text-gray-700">
             Teilnehmerzahl *
@@ -203,7 +199,6 @@ export default function EventAdd() {
           />
         </div>
 
-        {/* Plätze */}
         <div className="col-span-1 md:col-span-2 grid gap-2">
           <Label className="font-semibold text-gray-700">Ort *</Label>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -225,7 +220,6 @@ export default function EventAdd() {
           </div>
         </div>
 
-        {/* Event-Typ */}
         <div className="grid gap-2">
           <Label htmlFor="type" className="font-semibold text-gray-700">
             Event-Typ *
@@ -241,7 +235,6 @@ export default function EventAdd() {
           />
         </div>
 
-        {/* Tag */}
         <div className="grid gap-2">
           <Label htmlFor="tag" className="font-semibold text-gray-700">
             Tag / Thema
@@ -257,7 +250,6 @@ export default function EventAdd() {
           />
         </div>
 
-        {/* Schwierigkeitsgrad */}
         <div className="grid gap-2">
           <Label htmlFor="difficulty" className="font-semibold text-gray-700">
             Schwierigkeitsgrad
@@ -273,7 +265,6 @@ export default function EventAdd() {
           />
         </div>
 
-        {/* Voraussetzungen */}
         <div className="col-span-1 md:col-span-2 grid gap-2">
           <Label htmlFor="requirements" className="font-semibold text-gray-700">
             Voraussetzungen
@@ -289,7 +280,6 @@ export default function EventAdd() {
           />
         </div>
 
-        {/* Beschreibung */}
         <div className="col-span-1 md:col-span-2 grid gap-2">
           <Label htmlFor="description" className="font-semibold text-gray-700">
             Beschreibung
@@ -329,7 +319,7 @@ export default function EventAdd() {
           </div>
           <Button
             onClick={handleEventAddcustom}
-            className="flex-1 bg-gradient-to-r from-primaryOwn to-blue-600 hover:from-blue-700 hover:to-blue-700 text-white font-bold py-2 rounded-lg shadow-md transition-all"
+            className="flex-1  text-white font-bold py-2 rounded-lg shadow-md transition-all"
           >
             Event speichern
           </Button>

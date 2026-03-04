@@ -402,12 +402,12 @@ export default function UserDashboard() {
       {(filteredUsers.length > 10 || filters.role === "All") && (
         <div className="flex items-center justify-center mt-5 mx-auto p-2 rounded-md w-50 border border-lightborder">
           {seeAll ? (
-            <p className="text-xl font-normal" onClick={() => setSeeAll(false)}>
-              Sehe weniger
+            <p className="text-lg font-normal" onClick={() => setSeeAll(false)}>
+              Weniger anzeigen{" "}
             </p>
           ) : (
-            <p className="text-xl font-normal" onClick={() => setSeeAll(true)}>
-              Sehe mehr
+            <p className="text-lg font-normal" onClick={() => setSeeAll(true)}>
+              Mehr anzeigen{" "}
             </p>
           )}
         </div>

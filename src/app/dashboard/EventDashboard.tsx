@@ -204,6 +204,32 @@ export default function EventDashboard() {
     }
   };
 
+  const handleSaveEventChanges = async (uid: string) => {
+    const updated = editValues[uid];
+    if (!updated) return;
+
+    try {
+      await updateEvent(uid, updated);
+      setEditStates((prev) => ({ ...prev, [uid]: false }));
+
+      toast({
+        title: "✓ Event aktualisiert",
+        description: "Die Änderungen wurden erfolgreich gespeichert.",
+        variant: "success",
+      });
+
+      const events: EventData[] = (await getAllEvents()) as EventData[];
+      setEventsData(events);
+    } catch (error) {
+      console.error("Fehler beim Aktualisieren des Events:", error);
+      toast({
+        title: "Fehler",
+        description: "Das Event konnte nicht aktualisiert werden.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const returnUserForEvent = async (
     usersArray: string[],
   ): Promise<UserData[]> => {
@@ -288,11 +314,21 @@ export default function EventDashboard() {
             ) : (
               <Minus
                 className="h-6 p-1 w-6 mx-2 text-white bg-primaryOwn rounded-full"
-                onClick={() => setAddEventView(!addEventView)}
+                onClick={() => {
+                  setAddEventView(!addEventView);
+                  const getEvents = async () => {
+                    const events: EventData[] =
+                      (await getAllEvents()) as EventData[];
+                    setEventsData(events);
+                  };
+                  getEvents();
+                }}
               />
             )}
           </div>
-          <div className="w-70">{addEventView && <EventAdd />}</div>
+          <div className={`w-full ${addEventView ? "py-10" : ""}`}>
+            {addEventView && <EventAdd />}
+          </div>
           <div className="flex flex-col gap-4  mt-5">
             {filEvents.map((event, index) => {
               const full = event.users.length >= event.memberCount;
@@ -435,6 +471,12 @@ export default function EventDashboard() {
 
                       <div className="flex flex-row gap-3 items-center pt-2">
                         <button
+                          onClick={() => toggleEdit(event.uid, event)}
+                          className="flex-1 bg-blue-100 hover:bg-blue-200 text-center rounded-lg text-blue-600 font-semibold py-2 transition-colors"
+                        >
+                          {editStates[event.uid] ? "Abbrechen" : "Bearbeiten"}
+                        </button>
+                        <button
                           onClick={() =>
                             openDeleteConfirm(event.uid, event.name)
                           }
@@ -443,6 +485,136 @@ export default function EventDashboard() {
                           Löschen
                         </button>
                       </div>
+
+                      {editStates[event.uid] && (
+                        <div className="mt-4 p-4 bg-blue-50 border-2 border-blue-300 rounded-lg">
+                          <p className="text-sm font-bold text-blue-900 mb-4">
+                            Bearbeite Event-Eigenschaften:
+                          </p>
+
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                              <label className="text-sm font-semibold text-gray-700">
+                                Event-Name
+                              </label>
+                              <input
+                                type="text"
+                                value={
+                                  editValues[event.uid]?.name || event.name
+                                }
+                                onChange={(e) => {
+                                  setEditValues((prev) => ({
+                                    ...prev,
+                                    [event.uid]: {
+                                      ...prev[event.uid],
+                                      name: e.target.value,
+                                    },
+                                  }));
+                                }}
+                                className="w-full mt-1 px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-primaryOwn focus:outline-none"
+                              />
+                            </div>
+
+                            <div>
+                              <label className="text-sm font-semibold text-gray-700">
+                                Teilnehmerzahl
+                              </label>
+                              <input
+                                type="number"
+                                value={
+                                  editValues[event.uid]?.memberCount ||
+                                  event.memberCount
+                                }
+                                onChange={(e) => {
+                                  setEditValues((prev) => ({
+                                    ...prev,
+                                    [event.uid]: {
+                                      ...prev[event.uid],
+                                      memberCount:
+                                        parseInt(e.target.value) || 0,
+                                    },
+                                  }));
+                                }}
+                                className="w-full mt-1 px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-primaryOwn focus:outline-none"
+                              />
+                            </div>
+
+                            <div>
+                              <label className="text-sm font-semibold text-gray-700">
+                                Dauer (Minuten)
+                              </label>
+                              <input
+                                type="number"
+                                value={
+                                  editValues[event.uid]?.length || event.length
+                                }
+                                onChange={(e) => {
+                                  setEditValues((prev) => ({
+                                    ...prev,
+                                    [event.uid]: {
+                                      ...prev[event.uid],
+                                      length: parseInt(e.target.value) || 0,
+                                    },
+                                  }));
+                                }}
+                                className="w-full mt-1 px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-primaryOwn focus:outline-none"
+                              />
+                            </div>
+
+                            <div>
+                              <label className="text-sm font-semibold text-gray-700">
+                                Event-Typ
+                              </label>
+                              <input
+                                type="text"
+                                value={
+                                  editValues[event.uid]?.typeOfEvent ||
+                                  event.typeOfEvent
+                                }
+                                onChange={(e) => {
+                                  setEditValues((prev) => ({
+                                    ...prev,
+                                    [event.uid]: {
+                                      ...prev[event.uid],
+                                      typeOfEvent: e.target.value,
+                                    },
+                                  }));
+                                }}
+                                className="w-full mt-1 px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-primaryOwn focus:outline-none"
+                              />
+                            </div>
+
+                            <div className="md:col-span-2">
+                              <label className="text-sm font-semibold text-gray-700">
+                                Beschreibung
+                              </label>
+                              <textarea
+                                value={
+                                  editValues[event.uid]?.description ||
+                                  event.description
+                                }
+                                onChange={(e) => {
+                                  setEditValues((prev) => ({
+                                    ...prev,
+                                    [event.uid]: {
+                                      ...prev[event.uid],
+                                      description: e.target.value,
+                                    },
+                                  }));
+                                }}
+                                className="w-full mt-1 px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-primaryOwn focus:outline-none min-h-[100px] resize-none"
+                              />
+                            </div>
+                          </div>
+
+                          <button
+                            onClick={() => handleSaveEventChanges(event.uid)}
+                            className="w-full mt-4 bg-green-500 hover:bg-green-600 text-white font-semibold py-2 rounded-lg transition-colors"
+                          >
+                            Änderungen speichern
+                          </button>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -468,8 +640,8 @@ export default function EventDashboard() {
           <DialogHeader>
             <DialogTitle>Event löschen?</DialogTitle>
             <DialogDescription>
-              Möchtest du "{deleteConfirmModal.eventName}" wirklich löschen?
-              Diese Aktion kann nicht rückgängig gemacht werden.
+              Möchtest du &quot;{deleteConfirmModal.eventName}&quot; wirklich
+              löschen? Diese Aktion kann nicht rückgängig gemacht werden.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="gap-2 sm:gap-0">

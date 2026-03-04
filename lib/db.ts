@@ -343,7 +343,6 @@ export async function addEvent(newEvent: EventData) {
 }
 
 export async function deleteEvent(uid: string) {
-  window.location.reload();
   try {
     const ref = doc(db, "events", uid);
     const eventSnapshot = await getDoc(ref);
@@ -358,10 +357,14 @@ export async function deleteEvent(uid: string) {
     const course = (await getAllCoureses()).find((c) => c.dates.includes(uid));
 
     if (course) {
-      const updatedDates = [];
+      const courseRef = doc(db, "courses", course.uid);
+      await updateDoc(courseRef, {
+        dates: arrayRemove(uid),
+      });
     }
   } catch (error) {
     console.log("Error at deleting Event" + error);
+    throw error;
   }
 }
 
