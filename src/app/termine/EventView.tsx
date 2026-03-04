@@ -27,7 +27,6 @@ import {
 } from "lucide-react";
 import { toJsDate } from "@/BackEnd/utils";
 import { motion } from "framer-motion";
-import { defaults } from "joi";
 
 interface termineProps {
   searchParams: {
@@ -176,14 +175,16 @@ export default function EventView({ searchParams }: termineProps) {
     const nameSort = filters["nameSort"] as string;
     const dateSort = filters["dateSort"] as string;
 
-    // Sortiere nach Name falls aktiviert
+    if (filters.course != "") {
+      sorted.filter((a) => a.course == filters.course);
+    }
+
     if (nameSort === "asc") {
       sorted.sort((a, b) => a.name.localeCompare(b.name, "de"));
     } else if (nameSort === "desc") {
       sorted.sort((a, b) => b.name.localeCompare(a.name, "de"));
     }
 
-    // Sortiere nach Datum falls aktiviert (überschreibt Name-Sortierung)
     if (dateSort === "asc") {
       sorted.sort(
         (a, b) =>
@@ -197,7 +198,6 @@ export default function EventView({ searchParams }: termineProps) {
           new Date(a.date.seconds * 1000).getTime(),
       );
     } else if (!dateSort) {
-      // Standard: sortiere nach Datum aufsteigend
       sorted.sort(
         (a, b) =>
           new Date(a.date.seconds * 1000).getTime() -
@@ -217,19 +217,16 @@ export default function EventView({ searchParams }: termineProps) {
   }) => {
     const status = statuses[event.uid];
     const statusIcon = {
-      loading: <Loader2 className="animate-spin w-7 h-7" />,
-      User: <Check className="text-green-400 w-7 h-7" />,
-      Queue: <Clock className="text-yellow-400 w-7 h-7" />,
-      false: <UserRoundX className="text-red-400 w-7 h-7" />,
-      error: <AlertTriangle className="text-orange-400 w-7 h-7" />,
+      loading: <Loader2 className="animate-spin w-5 h-5" />,
+      User: <Check className="text-green-400 w-5 h-5" />,
+      Queue: <Clock className="text-yellow-400 w-5 h-5" />,
+      false: <UserRoundX className="text-red-400 w-5 h-5" />,
+      error: <AlertTriangle className="text-orange-400 w-5 h-5" />,
     }[status];
 
     const isInEvent = status === "User" || status === "Queue";
-    const tooEarly = !checkIfEventIsInRange(
-      new Date(event.date.seconds * 1000),
-    );
-    const EndOfEvent = new Date(event.date.seconds * 1000);
-    EndOfEvent.setMinutes(EndOfEvent.getMinutes() + event.length);
+    const tooEarly = !checkIfEventIsInRange(toJsDate(event.date));
+    const EndOfEvent = toJsDate(event.date);
 
     return (
       <div>
@@ -366,7 +363,7 @@ export default function EventView({ searchParams }: termineProps) {
                 transition={{ duration: 0.5, delay: idx * 0.1 }}
                 className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow"
               >
-                <EventCard key={event.uid} event={event} isPast={false} />
+                <EventCard key={event.uid} event={event} isPast={true} />
               </motion.div>
             ))}
           </div>

@@ -276,17 +276,17 @@ export default function EventDashboard() {
           <p className="text-2xl pl-1 font-extrabold">Event-Verwaltung</p>
         </div>
         <div className="flex flex-col">
-          <div className="relative flex w-full border border-lightborder rounded-lg h-6 items-center overflow-hidden bg-white">
+          <div className="relative flex w-full border border-lightborder rounded-lg h-8 items-center overflow-hidden bg-white">
             <p
               onClick={() => setTime("Upcoming")}
-              className={`w-1/2 py-2 text-sm text-center transition-colors duration-300 z-10 ${time === "Upcoming" ? "text-white" : "text-black"
+              className={`w-1/2 py-8 text-sm text-center transition-colors duration-300 z-10 ${time === "Upcoming" ? "text-white" : "text-black"
                 }`}
             >
               Upcoming
             </p>
             <p
               onClick={() => setTime("Past")}
-              className={`w-1/2 py-2  text-sm text-center transition-colors duration-300 z-10 ${time === "Past" ? "text-white" : "text-black"
+              className={`w-1/2 py-8  text-sm text-center transition-colors duration-300 z-10 ${time === "Past" ? "text-white" : "text-black"
                 }`}
             >
               Past

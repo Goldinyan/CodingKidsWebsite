@@ -26,10 +26,10 @@ export default function Support() {
           <p className="text-xl text-secondaryOwn font-extrabold text-center mb-5">
             GEMEINSAM ZUKUNFT GESTALTEN
           </p>
-          <p className="1:text-4xl text-6xl font-bold 1:w-80 text-center mb-5">
+          <p className="1:text-4xl text-6xl font-bold 1:w-80 sm:w-100 md:w-130 text-center mb-5">
             Werden Sie Teil unserer Mission
           </p>
-          <p className="text-2xl 1:w-70 text-center mx-auto text-muted-foreground">
+          <p className="text-2xl 1:w-70 text-center sm:w-100 md:w-130 mx-auto text-muted-foreground">
             Ihre Unterstützung als Mitdlied oder Förderer ermöglicht es uns,
             kostenlose CoderDojos anzubieten und die digitale Bildung der Region
             voranzutreiben
@@ -56,7 +56,7 @@ export default function Support() {
               Jugendlichen einsetzt. Ihr Beitrag hilft uns, unsere CoderDojos zu
               finanzieren, neue Technologien anzuschaffen und unsere Reichweite
               zu vergrößern. Eine Mitgliedschaft ist nicht nötig um teilnehmen
-              zu können.{" "}
+              zu können.
             </p>
           </div>
           <div className="flex flex-col gap-5 mt-5 sm:w-70 1:w-70 w-70 mx-auto justify-center items-center ">

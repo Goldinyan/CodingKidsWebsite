@@ -6,6 +6,7 @@ import type { UserData } from "@/BackEnd/type";
 import { getUserData } from "@/lib/db";
 import { logoutUser } from "@/lib/auth";
 import { LogOut, Mail, Cake, Calendar, BookOpen, Shield } from "lucide-react";
+import { toJsDate } from "@/BackEnd/utils";
 
 export default function ProfileView() {
   const [userData, setUserData] = useState<UserData>();
@@ -43,13 +44,13 @@ export default function ProfileView() {
   const getInitials = (name: string) => {
     return name
       .split(" ")
-      .map((n) => n[0])
+      .map((n) => n[0]) // first char
       .join("")
       .toUpperCase();
   };
 
   const calculateAge = (birthdate: string) => {
-    const birth = new Date(birthdate);
+    const birth = toJsDate(birthdate);
     const today = new Date();
     let age = today.getFullYear() - birth.getFullYear();
     const monthDiff = today.getMonth() - birth.getMonth();
