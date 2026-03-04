@@ -2,6 +2,7 @@
 - [ ] Email System
 - [x] Kontakt Page
 - [ ] Spenden Page
+- [ ] User Dashboard filter reworken dass nicht jede einzelnd sind
 
 
 

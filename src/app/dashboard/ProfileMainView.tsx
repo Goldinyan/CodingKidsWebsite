@@ -4,12 +4,12 @@ import { useState, useEffect } from "react";
 import { Dashboard } from "./DashBoards";
 import { getUserData } from "@/lib/db";
 import { useAuth } from "@/BackEnd/AuthContext";
-import MentorChangeView from "./MentorChangeView";
+import { UserData } from "@/BackEnd/type";
 import { MainOverlayAdminDashboard } from "./MainOverlayAdminDashboard";
 
 export default function ProfileMainView() {
   const { user, loading } = useAuth();
-  const [userData, setUserData] = useState<any>(null);
+  const [userData, setUserData] = useState<UserData | null>(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -24,8 +24,6 @@ export default function ProfileMainView() {
     fetchUserData();
   }, [user?.uid]);
 
-
-
   if (loading) return <p>Lade...</p>;
   if (!user) return <p>NO USER</p>;
   if (!userData) return <p>Benutzerdaten werden geladen...</p>;
@@ -33,14 +31,10 @@ export default function ProfileMainView() {
   if (userData.role === "Admin") {
     return (
       <div>
-        {/* <AdminDashboard /> */}
         <MainOverlayAdminDashboard />
       </div>
-
     );
-
   }
 
   return <Dashboard />;
 }
-

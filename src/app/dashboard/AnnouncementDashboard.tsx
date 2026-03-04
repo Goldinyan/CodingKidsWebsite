@@ -14,6 +14,7 @@ import { Plus, Trash2, X, Check } from "lucide-react";
 import { useAuth } from "@/BackEnd/AuthContext";
 import { Card, CardHeader, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { toJsDate } from "@/BackEnd/utils";
 
 export default function AnnouncementDashboard() {
   const [announcements, setAnnouncements] = useState<AnnouncementData[]>([]);
@@ -125,9 +126,8 @@ export default function AnnouncementDashboard() {
   };
 
   return (
-    <div>
+    <div className="mx-auto w-[80%]">
       <div className="flex items-center justify-between gap-2 w-full mt-5 ">
-        
         <p className="text-xl font-semibold">Ankündigungen</p>
         <Button
           variant="outline"
@@ -141,47 +141,53 @@ export default function AnnouncementDashboard() {
         {showAddAnnouncement && (
           <div>
             <Card className=" w-full flex flex-col items-center ">
-              <div className="w-full" >
-              <CardHeader className="flex flex-col">
-                <p className="block text-sm font-bold mb-1 text-gray-900">
-                  Titel:
-                </p>
-                <input
-                  type="text"
-                  placeholder="Titel"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  className="bg-gray-50 border pl-3  mb-3 border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-1"
-                />
-                <p className="block text-sm font-bold mb-1 text-gray-900">
-                  Tag:
-                </p>
-                <select
-                  value={tags}
-                  onChange={(e) => setTags(e.target.value as "User" | "Member")}
-                  className="bg-gray-50 border pl-3 mb-3 border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-1 "
-                >
-                  <option value="User">User</option>
-                  <option value="Member">Member</option>
-                </select>
+              <div className="w-full">
+                <CardHeader className="flex flex-col">
+                  <p className="block text-sm font-bold mb-1 text-gray-900">
+                    Titel:
+                  </p>
+                  <input
+                    type="text"
+                    placeholder="Titel"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    className="bg-gray-50 border pl-3  mb-3 border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-1"
+                  />
+                  <p className="block text-sm font-bold mb-1 text-gray-900">
+                    Tag:
+                  </p>
+                  <select
+                    value={tags}
+                    onChange={(e) =>
+                      setTags(e.target.value as "User" | "Member")
+                    }
+                    className="bg-gray-50 border pl-3 mb-3 border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-1 "
+                  >
+                    <option value="User">User</option>
+                    <option value="Member">Member</option>
+                  </select>
 
-                <p className="block text-sm font-bold mb-1 text-gray-900">
-                  Inhalt:
-                </p>
-                <textarea
-                  placeholder="Inhalt"
-                  value={content}
-                  onChange={(e) => setContent(e.target.value)}
-                  className="bg-gray-50 border pl-3 mb-3 h-40 border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-1"
-                ></textarea>
-              </CardHeader>
-              <CardFooter>
-                <div className="flex gap-2 mx-auto w-full items-center justify-center">
-                  <Button variant="outline" onClick={submitAddAnnouncement()} className="w-full">
-                    Hinzufügen
-                  </Button>
-                </div>
-              </CardFooter>
+                  <p className="block text-sm font-bold mb-1 text-gray-900">
+                    Inhalt:
+                  </p>
+                  <textarea
+                    placeholder="Inhalt"
+                    value={content}
+                    onChange={(e) => setContent(e.target.value)}
+                    className="bg-gray-50 border pl-3 mb-3 h-40 border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-1"
+                  ></textarea>
+                </CardHeader>
+                <CardFooter>
+                  <div className="flex gap-2 mx-auto w-full items-center justify-center">
+                    <Button
+                      variant="outline"
+                      onClick={submitAddAnnouncement()}
+                      className="w-full"
+                    >
+                      Hinzufügen
+                    </Button>
+                  </div>
+                </CardFooter>
               </div>
             </Card>
           </div>
@@ -202,7 +208,7 @@ export default function AnnouncementDashboard() {
                       {"Veröffentlicht von: "}
                       {author}
                       {" am "}
-                      {new Date(announcement.date).toLocaleDateString("de-DE", {
+                      {toJsDate(announcement.date).toLocaleDateString("de-DE", {
                         weekday: "short",
                         day: "2-digit",
                         month: "short",

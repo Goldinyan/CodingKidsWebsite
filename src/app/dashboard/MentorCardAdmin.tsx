@@ -87,7 +87,11 @@ export default function MentorCardAdmin({
           <div className="flex flex-col items-center">
             <h3 className="text-3xl pb-4 pt-4 font-bold text-black ">{name}</h3>
             <p className="text-sm text-muted-foreground">{description1}</p>
-            {showDes2 && <p>{description2}</p>}
+            {showDes2 && (
+              <p className="pt-10 font-normal text-black text-sm">
+                {description2}
+              </p>
+            )}
           </div>
         )}
       </CardHeader>

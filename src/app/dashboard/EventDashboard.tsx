@@ -16,8 +16,30 @@ import {
 } from "@/lib/db";
 import type { EventData, UserData } from "@/BackEnd/type";
 import EventAdd from "./EventAdd";
+import { useToast } from "@/components/ui/use-toast";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { toJsDate } from "@/BackEnd/utils";
 
 export default function EventDashboard() {
+  const { toast } = useToast();
+  const [deleteConfirmModal, setDeleteConfirmModal] = useState<{
+    isOpen: boolean;
+    eventId: string | null;
+    eventName: string | null;
+  }>({
+    isOpen: false,
+    eventId: null,
+    eventName: null,
+  });
+
   const formatValue = (v: any) => {
     if (v === undefined || v === null) return "";
     if (Array.isArray(v)) return v.join(", ");
@@ -118,13 +140,13 @@ export default function EventDashboard() {
     if (time === "Upcoming") {
       const now = new Date();
       const upcomingEvents = events.filter(
-        (event) => new Date(event.date) >= now,
+        (event) => toJsDate(event.date) >= now,
       );
 
       events = upcomingEvents;
     } else {
       const now = new Date();
-      const pastEvents = events.filter((event) => new Date(event.date) <= now);
+      const pastEvents = events.filter((event) => toJsDate(event.date) <= now);
       events = pastEvents;
     }
 
@@ -137,7 +159,7 @@ export default function EventDashboard() {
 
     events = events.slice(0, 10);
     setFilEvents(events);
-  }, [eventsData.length, time, searchBar]);
+  }, [eventsData.length, time, searchBar, eventsData]);
 
   const saveUserChanges = async (uid: string) => {
     const updated = editValues[uid];
@@ -146,6 +168,40 @@ export default function EventDashboard() {
     await updateUser(uid, updated);
 
     setEditStates((prev) => ({ ...prev, [uid]: false }));
+  };
+
+  const openDeleteConfirm = (eventId: string, eventName: string) => {
+    setDeleteConfirmModal({
+      isOpen: true,
+      eventId,
+      eventName,
+    });
+  };
+
+  const handleDeleteEvent = async () => {
+    const { eventId, eventName } = deleteConfirmModal;
+    if (!eventId) return;
+
+    try {
+      await deleteEvent(eventId);
+      setDeleteConfirmModal({ isOpen: false, eventId: null, eventName: null });
+
+      toast({
+        title: "Event gelöscht",
+        description: `"${eventName}" wurde erfolgreich gelöscht.`,
+        variant: "success",
+      });
+
+      const events: EventData[] = (await getAllEvents()) as EventData[];
+      setEventsData(events);
+    } catch (error) {
+      console.error("Fehler beim Löschen des Events:", error);
+      toast({
+        title: "Fehler",
+        description: "Das Event konnte nicht gelöscht werden.",
+        variant: "destructive",
+      });
+    }
   };
 
   const returnUserForEvent = async (
@@ -189,7 +245,7 @@ export default function EventDashboard() {
 
   return (
     <>
-      <div className="w-full pt-10">
+      <div className="w-[80%] mx-auto pt-10">
         <div className="flex flex-col pb-2">
           <p className="text-2xl pl-1 font-extrabold">Event-Verwaltung</p>
         </div>
@@ -240,7 +296,7 @@ export default function EventDashboard() {
           <div className="flex flex-col gap-4  mt-5">
             {filEvents.map((event, index) => {
               const full = event.users.length >= event.memberCount;
-              const date = new Date(event.date);
+              const date = toJsDate(event.date);
 
               return (
                 <div
@@ -292,73 +348,101 @@ export default function EventDashboard() {
                   </div>
                   <div></div>
                   {expandedTabs[event.uid] && (
-                    <div>
+                    <div className="mt-4 space-y-4 border-t pt-4">
                       {fields.map((key, index) => (
-                        <div key={key} className="mb-2 flex flex-col">
-                          <p className="text-md font-bold">
+                        <div
+                          key={key}
+                          className="bg-gray-50 p-4 rounded-lg border border-gray-200"
+                        >
+                          <p className="text-sm font-bold text-primaryOwn uppercase tracking-wide mb-3">
                             {names[index] === "User"
                               ? "Teilnehmer (" + event.users.length + ")"
                               : names[index] === "Warteschlange"
                                 ? "Warteschlange (" + event.queue.length + ")"
                                 : names[index]}
                           </p>
-                          <p className="py-2">
-                            {key !== "users" && key !== "queue"
-                              ? formatValue(event[key])
-                              : null}
-                          </p>
+
+                          {key !== "users" && key !== "queue" && (
+                            <p className="text-gray-700 text-sm py-2 whitespace-pre-wrap">
+                              {formatValue(event[key]) || "—"}
+                            </p>
+                          )}
+
                           {key === "users" && (
                             <div>
-                              <div className="flex flex-col divide-y border border-lightborder rounded-lg divide-lightborder">
-                                {(userMap[event.uid] || []).map((user) => (
-                                  <div
-                                    key={user.uid}
-                                    className="py-2 flex flex-row justify-between items-center px-2"
-                                  >
-                                    <div className="flex flex-col items-center">
-                                      <p className="font-bold">{user.name}</p>
-                                      <p className="text-graytext pr-2">
-                                        {user.role}
-                                      </p>
-                                    </div>
-                                    <Trash2
-                                      className="cursor-pointer h-6 w-6 text-red-500"
-                                      onClick={() => (
-                                        removeUserFromEvent(
-                                          event.uid,
-                                          user.uid,
-                                        ),
-                                        removedFromEventByAdmin(
-                                          user.email,
-                                          event.name,
-                                        )
-                                      )}
-                                    />
-                                  </div>
-                                ))}
-                              </div>
+                              {event.users.length > 0 ? (
+                                <div className="flex flex-col divide-y border border-gray-300 rounded-lg divide-gray-200 bg-white">
+                                  {(userMap[event.uid] || []).map(
+                                    (user, idx) => (
+                                      <div
+                                        key={user.uid}
+                                        className="py-3 flex flex-row justify-between items-center px-4 hover:bg-gray-100 transition-colors"
+                                      >
+                                        <div className="flex flex-col items-start flex-1">
+                                          <p className="font-semibold text-gray-900">
+                                            {user.name}
+                                          </p>
+                                          <p className="text-sm text-graytext">
+                                            {user.role}
+                                          </p>
+                                        </div>
+                                        <Trash2
+                                          className="cursor-pointer h-5 w-5 text-red-500 hover:text-red-700 hover:scale-110 transition-all ml-3"
+                                          onClick={() => (
+                                            removeUserFromEvent(
+                                              event.uid,
+                                              user.uid,
+                                            ),
+                                            removedFromEventByAdmin(
+                                              user.email,
+                                              event.name,
+                                            )
+                                          )}
+                                        />
+                                      </div>
+                                    ),
+                                  )}
+                                </div>
+                              ) : (
+                                <p className="text-gray-500 text-sm italic">
+                                  Keine Teilnehmer
+                                </p>
+                              )}
                             </div>
                           )}
+
                           {key === "queue" && event.queue.length > 0 && (
                             <div>
-                              <ul>
+                              <ul className="space-y-2">
                                 {(queueUserMap[event.uid] || []).map((user) => (
-                                  <li key={user.uid}>{user.name}</li>
+                                  <li
+                                    key={user.uid}
+                                    className="text-gray-700 text-sm py-1 px-2 bg-white border-l-4 border-primaryOwn"
+                                  >
+                                    {user.name}
+                                  </li>
                                 ))}
                               </ul>
                             </div>
                           )}
+                          {key === "queue" && event.queue.length === 0 && (
+                            <p className="text-gray-500 text-sm italic">
+                              Keine Warteschlange
+                            </p>
+                          )}
                         </div>
                       ))}
-                      <div className="flex flex-row justify-around w-full gap-3 items-center">
-                        <p
-                          onClick={() => deleteEvent(event.uid)}
-                          className="bg-red-200 text-center rounded-lg text-red-600 w-full py-1"
+
+                      <div className="flex flex-row gap-3 items-center pt-2">
+                        <button
+                          onClick={() =>
+                            openDeleteConfirm(event.uid, event.name)
+                          }
+                          className="flex-1 bg-red-100 hover:bg-red-200 text-center rounded-lg text-red-600 font-semibold py-2 transition-colors"
                         >
-                          Delete
-                        </p>
+                          Löschen
+                        </button>
                       </div>
-                      {editStates[event.uid] && <p>Edit Open</p>}
                     </div>
                   )}
                 </div>
@@ -367,6 +451,50 @@ export default function EventDashboard() {
           </div>
         </div>
       </div>
+
+      <Dialog
+        open={deleteConfirmModal.isOpen}
+        onOpenChange={(open) => {
+          if (!open) {
+            setDeleteConfirmModal({
+              isOpen: false,
+              eventId: null,
+              eventName: null,
+            });
+          }
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Event löschen?</DialogTitle>
+            <DialogDescription>
+              Möchtest du "{deleteConfirmModal.eventName}" wirklich löschen?
+              Diese Aktion kann nicht rückgängig gemacht werden.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button
+              variant="outline"
+              onClick={() =>
+                setDeleteConfirmModal({
+                  isOpen: false,
+                  eventId: null,
+                  eventName: null,
+                })
+              }
+              className="border-primaryOwn text-primaryOwn"
+            >
+              Abbrechen
+            </Button>
+            <Button
+              onClick={handleDeleteEvent}
+              className="bg-red-500 hover:bg-red-600 text-white"
+            >
+              Löschen
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

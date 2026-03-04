@@ -343,6 +343,7 @@ export async function addEvent(newEvent: EventData) {
 }
 
 export async function deleteEvent(uid: string) {
+  window.location.reload();
   try {
     const ref = doc(db, "events", uid);
     const eventSnapshot = await getDoc(ref);

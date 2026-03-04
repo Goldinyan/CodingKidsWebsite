@@ -13,10 +13,10 @@ import {
   Pencil,
   X,
 } from "lucide-react";
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 
 export default function UserDashboard() {
-  const [users, setUsers] = useState<any[]>([]);
+  const [users, setUsers] = useState<UserData[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<Array<UserData>>([]);
   const [searchBar, setSearchBar] = useState<string>("");
   const [seeAll, setSeeAll] = useState<boolean>(false);
@@ -34,14 +34,7 @@ export default function UserDashboard() {
   const [data, setData] = useState<UserData | null>(null);
   const { user } = useAuth();
 
-  const presetRoles: string[] = [
-    "Admin",
-    "Member",
-    "Mentor",
-    "User",
-  ];
-
-
+  const presetRoles: string[] = ["Admin", "Member", "Mentor", "User"];
 
   const presetRoleLabels: Record<string, string> = {
     Admin: "Admin",
@@ -72,7 +65,7 @@ export default function UserDashboard() {
         (u) =>
           u.name.toLowerCase().includes(search) ||
           u.email.toLowerCase().includes(search) ||
-          u.birthdate?.toLowerCase().includes(search)
+          u.birthdate?.toLowerCase().includes(search),
       );
     }
 
@@ -96,7 +89,7 @@ export default function UserDashboard() {
       filusers = [...filusers].sort((a, b) =>
         filters.birthYear === "ascending"
           ? new Date(a.birthdate).getTime() - new Date(b.birthdate).getTime()
-          : new Date(b.birthdate).getTime() - new Date(a.birthdate).getTime()
+          : new Date(b.birthdate).getTime() - new Date(a.birthdate).getTime(),
       );
     }
 
@@ -104,7 +97,7 @@ export default function UserDashboard() {
       filusers = [...filusers].sort((a, b) =>
         filters.name === "ascending"
           ? a.name.localeCompare(b.name)
-          : b.name.localeCompare(a.name)
+          : b.name.localeCompare(a.name),
       );
     }
 
@@ -125,7 +118,7 @@ export default function UserDashboard() {
 
   const deleteMyUser = async (
     u: UserData,
-    event: React.MouseEvent<HTMLParagraphElement>
+    event: React.MouseEvent<HTMLParagraphElement>,
   ) => {
     try {
     } catch (error) {
@@ -153,15 +146,15 @@ export default function UserDashboard() {
     const updated = editValues[uid];
     if (!updated) return;
 
-    await updateUser(uid, updated); // z. B. Firestore oder API
+    await updateUser(uid, updated); // firestore
 
     setEditStates((prev) => ({ ...prev, [uid]: false }));
   };
 
   return (
-    <div className="">
-      <div className="flex flex-col gap-5 ">
-        <div className="flex flex-row  gap-3 w-70 items-center">
+    <div className="w-[80%] mx-auto">
+      <div className="flex flex-col w-full items-center justify-center gap-5 ">
+        <div className="flex flex-row  gap-3 w-full items-center">
           <div className="flex border flex-row gap-3 items-center border-lightborder p-2 rounded-md ">
             <Search className="h-5 text-gray-600" />
             <input
@@ -191,13 +184,12 @@ export default function UserDashboard() {
           )}
         </div>
 
-        <div className="flex flex-row gap-3 flex-wrap w-70 items-center">
+        <div className="flex flex-row gap-3 flex-wrap w-full items-center">
           <p
-            className={`${
-              filters.role === "All"
+            className={`${filters.role === "All"
                 ? "bg-fifthOwn text-white"
                 : "bg-white border border-lightborder text-black"
-            }  px-2 py-1 rounded-md`}
+              }  px-2 py-1 rounded-md`}
             onClick={() => {
               setFilters((prev) => ({ ...prev, role: "All" }));
             }}
@@ -205,11 +197,10 @@ export default function UserDashboard() {
             Alle
           </p>
           <p
-            className={`${
-              filters.role === "Mentor"
+            className={`${filters.role === "Mentor"
                 ? "bg-fifthOwn text-white"
                 : "bg-white border border-lightborder text-black"
-            }  px-2 py-1 rounded-md`}
+              }  px-2 py-1 rounded-md`}
             onClick={() => {
               setFilters((prev) => ({ ...prev, role: "Mentor" }));
             }}
@@ -217,11 +208,10 @@ export default function UserDashboard() {
             Mentor
           </p>
           <p
-            className={`${
-              filters.role === "Admin"
+            className={`${filters.role === "Admin"
                 ? "bg-fifthOwn text-white"
                 : "bg-white border border-lightborder text-black"
-            }  px-2 py-1 rounded-md`}
+              }  px-2 py-1 rounded-md`}
             onClick={() => {
               setFilters((prev) => ({ ...prev, role: "Admin" }));
             }}
@@ -229,11 +219,10 @@ export default function UserDashboard() {
             Admin
           </p>
           <p
-            className={`${
-              filters.role === "User"
+            className={`${filters.role === "User"
                 ? "bg-fifthOwn text-white"
                 : "bg-white border border-lightborder text-black"
-            }  px-2 py-1 rounded-md`}
+              }  px-2 py-1 rounded-md`}
             onClick={() => {
               setFilters((prev) => ({ ...prev, role: "User" }));
             }}
@@ -241,11 +230,10 @@ export default function UserDashboard() {
             User
           </p>
           <p
-            className={`${
-              filters.role === "Member"
+            className={`${filters.role === "Member"
                 ? "bg-fifthOwn text-white"
                 : "bg-white border border-lightborder text-black"
-            }  px-2 py-1  rounded-md`}
+              }  px-2 py-1  rounded-md`}
             onClick={() => {
               setFilters((prev) => ({ ...prev, role: "Member" }));
             }}
@@ -292,7 +280,7 @@ export default function UserDashboard() {
           </div>
         </div>
 
-        <div className="flex flex-col gap-3 divide-y divide-gray-200 w-70 border border-lightborder bg-white rounded-md">
+        <div className="flex flex-col gap-3 divide-y divide-gray-200 w-full border border-lightborder bg-white rounded-md">
           {filteredUsers.map((user) => {
             const isEditing = editStates[user.uid] || false;
 
@@ -360,8 +348,8 @@ export default function UserDashboard() {
                         value={
                           editValues[user.uid]?.birthdate
                             ? new Date(editValues[user.uid]!.birthdate!)
-                                .toISOString()
-                                .split("T")[0]
+                              .toISOString()
+                              .split("T")[0]
                             : ""
                         }
                         onChange={(e) =>
@@ -396,7 +384,10 @@ export default function UserDashboard() {
                         ))}
                       </select>
 
-                      <Button onClick={() => saveUserChanges(user.uid)} className="h-8"  >
+                      <Button
+                        onClick={() => saveUserChanges(user.uid)}
+                        className="h-8"
+                      >
                         Speichern
                       </Button>
                     </div>
@@ -408,17 +399,19 @@ export default function UserDashboard() {
         </div>
       </div>
 
-      <div className="flex items-center justify-center mt-5 mx-auto p-2 rounded-md w-50 border border-lightborder">
-        {seeAll ? (
-          <p className="text-xl font-bold" onClick={() => setSeeAll(false)}>
-            Sehe weniger
-          </p>
-        ) : (
-          <p className="text-xl font-bold" onClick={() => setSeeAll(true)}>
-            Sehe mehr
-          </p>
-        )}
-      </div>
+      {(filteredUsers.length > 10 || filters.role === "All") && (
+        <div className="flex items-center justify-center mt-5 mx-auto p-2 rounded-md w-50 border border-lightborder">
+          {seeAll ? (
+            <p className="text-xl font-normal" onClick={() => setSeeAll(false)}>
+              Sehe weniger
+            </p>
+          ) : (
+            <p className="text-xl font-normal" onClick={() => setSeeAll(true)}>
+              Sehe mehr
+            </p>
+          )}
+        </div>
+      )}
     </div>
   );
 }

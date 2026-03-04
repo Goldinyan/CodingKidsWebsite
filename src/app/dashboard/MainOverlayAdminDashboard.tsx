@@ -22,8 +22,6 @@ import MentorDashboard from "./MentorDashboard";
 import AnnouncementDashboard from "./AnnouncementDashboard";
 import BasicOwnProfileDashboard from "./BasicOwnProfileDashboard";
 
-
-
 export function MainOverlayAdminDashboard() {
   const [open, setOpen] = useState<boolean>(false);
   const [userData, setUserData] = useState<UserData>();
@@ -54,20 +52,22 @@ export function MainOverlayAdminDashboard() {
         <div>
           <div className="fixed top-0 left-0 right-0 h-16 bg-white z-50 flex items-center justify-between shadow px-4">
             <p className="text-2xl pl-2 text-black font-bold ">Coding Kids</p>
-            {!open ? (
-              <Menu
-                onClick={() => setOpen(!open)}
-                className="w-6 h-6 text-black"
-              />
-            ) : (
-              <X
-                onClick={() => setOpen(!open)}
-                className="w-6 h-6 text-black"
-              />
-            )}
+            <div className="md:hidden ">
+              {!open ? (
+                <Menu
+                  onClick={() => setOpen(!open)}
+                  className="w-6 h-6 text-black"
+                />
+              ) : (
+                <X
+                  onClick={() => setOpen(!open)}
+                  className="w-6 h-6 text-black"
+                />
+              )}
+            </div>
           </div>
 
-          <div className="flex flex-1 pt-15">
+          <div className="flex ">
             <div className="w-64 bg-white border-l p-6 flex-col hidden md:flex">
               <p className="text-lg font-semibold mb-2">Sidebar</p>
               <ul className="space-y-2">
@@ -85,7 +85,7 @@ export function MainOverlayAdminDashboard() {
             </div>
 
             <div
-              className={`flex-1  px-6 flex-col pt-5 ${open ? "hidden" : "flex"
+              className={`grid grid-cols-1 xl:grid-cols-2 pt-20 w-full gap-10 ${open ? "hidden" : "flex"
                 }`}
             >
               <section id="user">
@@ -94,7 +94,7 @@ export function MainOverlayAdminDashboard() {
               <section id="events">
                 <EventDashboard />
               </section>
-              <section id="mentor">
+              <section className="xl:col-span-2" id="mentor">
                 <MentorDashboard />
               </section>
               <section id="announce">
