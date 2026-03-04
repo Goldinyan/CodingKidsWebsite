@@ -26,7 +26,26 @@ export function MainOverlayAdminDashboard() {
   const [open, setOpen] = useState<boolean>(false);
   const [userData, setUserData] = useState<UserData>();
 
+  const scrollToSection = (id: string) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+
+    el.scrollIntoView({ behavior: "smooth", block: "start" });
+    setOpen(false);
+  };
+
   const { user, loading } = useAuth();
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        setOpen(false);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const router = useRouter();
 
@@ -47,7 +66,7 @@ export function MainOverlayAdminDashboard() {
   }, [user]);
 
   return (
-    <div className="flex flex-col  bg-otherbg pb-20">
+    <div className="flex flex-col  bg-otherbg min-h-screen pb-20">
       {userData?.role === "Admin" ? (
         <div>
           <div className="fixed top-0 left-0 right-0 h-16 bg-white z-50 flex items-center justify-between shadow px-4">
@@ -103,9 +122,9 @@ export function MainOverlayAdminDashboard() {
             </div>
 
             {open && (
-              <div className="flex flex-col items-start pl-4 pt-2  ">
+              <div className="flex flex-col md:hidden items-start pl-4 pt-20 w-full  ">
                 <p className="text-md pl-2 pb-4 pt-4">Hauptmenü</p>
-                <div className="bg-white border-lightborder  border-2 rounded-2xl w-70 2:w-85 3:w-100  flex flex-col gap-4 pt-4 divide-y divide-gray-200">
+                <div className="bg-white border-lightborder  border-2 rounded-2xl w-70 2:w-85 3:w-100  sm:w-120 flex flex-col gap-4 pt-4 divide-y divide-gray-200">
                   <div
                     onClick={() => {
                       document
@@ -177,7 +196,7 @@ export function MainOverlayAdminDashboard() {
 
                 <p className="text-md pl-2 mt-5">Profil</p>
 
-                <div className="bg-white border-lightborder border-2 rounded-2xl w-70 2:w-85 3:w-100   flex flex-col gap-4 mt-5 pt-4 divide-y divide-gray-200">
+                <div className="bg-white border-lightborder border-2 rounded-2xl w-70 2:w-85 3:w-100 sm:w-120  flex flex-col gap-4 mt-5 pt-4 divide-y divide-gray-200">
                   <div className={`flex items-center gap-5  pb-4 px-4`}>
                     <div className="bg-gray-200 p-1.5 rounded-md">
                       <User className="text-black h-5 w-5" />
