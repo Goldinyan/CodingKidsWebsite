@@ -1,3 +1,4 @@
+import { UserRole } from "@/lib/rate_limiting/rateLimiter";
 import { User } from "firebase/auth";
 import { Timestamp } from "firebase/firestore";
 
@@ -75,7 +76,7 @@ export type UserData = {
   email: string;
   birthdate: string;
   createdAt: Timestamp;
-  role: string;
+  role: UserRole;
   courses?: string[];
 };
 
@@ -90,6 +91,7 @@ export type Mentor = {
 
 export type AuthContextType = {
   user: User | null;
+  userRole: UserRole | null;
   loading: boolean;
 };
 

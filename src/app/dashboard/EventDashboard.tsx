@@ -3,6 +3,7 @@
 import { useState, useEffect, use } from "react";
 import { Search, Plus, Calendar, Minus, Table, TrashIcon } from "lucide-react";
 import { ChevronDown, ChevronUp, Trash2 } from "lucide-react";
+import { useAuth } from "@/BackEnd/AuthContext";
 import { removedFromEventByAdmin } from "@/BackEnd/email";
 import {
   getAllEvents,
@@ -29,6 +30,7 @@ import { Button } from "@/components/ui/button";
 import { toJsDate } from "@/BackEnd/utils";
 
 export default function EventDashboard() {
+  const { user, userRole } = useAuth();
   const { toast } = useToast();
   const [deleteConfirmModal, setDeleteConfirmModal] = useState<{
     isOpen: boolean;
@@ -127,12 +129,12 @@ export default function EventDashboard() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const events: EventData[] = (await getAllEvents()) as EventData[];
+      const events: EventData[] = (await getAllEvents(user?.uid || "anonymous", userRole)) as EventData[];
       setEventsData(events);
     };
 
     fetchData();
-  }, []);
+  }, [user?.uid, userRole]);
 
   useEffect(() => {
     let events = eventsData;
@@ -165,7 +167,7 @@ export default function EventDashboard() {
     const updated = editValues[uid];
     if (!updated) return;
 
-    await updateUser(uid, updated);
+    await updateUser(uid, updated, user?.uid || "anonymous", userRole);
 
     setEditStates((prev) => ({ ...prev, [uid]: false }));
   };
@@ -183,7 +185,7 @@ export default function EventDashboard() {
     if (!eventId) return;
 
     try {
-      await deleteEvent(eventId);
+      await deleteEvent(eventId, user?.uid || "anonymous", userRole);
       setDeleteConfirmModal({ isOpen: false, eventId: null, eventName: null });
 
       toast({
@@ -192,7 +194,7 @@ export default function EventDashboard() {
         variant: "success",
       });
 
-      const events: EventData[] = (await getAllEvents()) as EventData[];
+      const events: EventData[] = (await getAllEvents(user?.uid || "anonymous", userRole)) as EventData[];
       setEventsData(events);
     } catch (error) {
       console.error("Fehler beim Löschen des Events:", error);
@@ -209,7 +211,7 @@ export default function EventDashboard() {
     if (!updated) return;
 
     try {
-      await updateEvent(uid, updated);
+      await updateEvent(uid, updated, user?.uid || "anonymous", userRole);
       setEditStates((prev) => ({ ...prev, [uid]: false }));
 
       toast({
@@ -218,7 +220,7 @@ export default function EventDashboard() {
         variant: "success",
       });
 
-      const events: EventData[] = (await getAllEvents()) as EventData[];
+      const events: EventData[] = (await getAllEvents(user?.uid || "anonymous", userRole)) as EventData[];
       setEventsData(events);
     } catch (error) {
       console.error("Fehler beim Aktualisieren des Events:", error);
@@ -236,7 +238,7 @@ export default function EventDashboard() {
     //console.log("User Array: ", usersArray);
     const uids = usersArray;
     //console.log("User UIDs: ", uids);
-    const users = await getAllUsers();
+    const users = await getAllUsers(user?.uid || "anonymous", userRole);
     const filteredUsers = users?.filter((user) => uids.includes(user.uid));
     //console.log("Filtered Users: ", filteredUsers);
     return filteredUsers || [];
@@ -318,7 +320,7 @@ export default function EventDashboard() {
                   setAddEventView(!addEventView);
                   const getEvents = async () => {
                     const events: EventData[] =
-                      (await getAllEvents()) as EventData[];
+                      (await getAllEvents(user?.uid || "anonymous", userRole)) as EventData[];
                     setEventsData(events);
                   };
                   getEvents();

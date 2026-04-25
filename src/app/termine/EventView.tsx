@@ -1,11 +1,12 @@
 "use client";
+
 import { useState, useEffect } from "react";
 import {
   getAllEvents,
   addUserToEvent,
   removeUserFromEvent,
   isUserInEvent,
-  getAllCoureses,
+  getAllCourses,
 } from "@/lib/db";
 import { useAuth } from "@/BackEnd/AuthContext";
 import { getUserData } from "@/lib/db";
@@ -37,7 +38,7 @@ interface termineProps {
 export default function EventView({ searchParams }: termineProps) {
   const [upcomingEvents, setUpcomingEvents] = useState<EventData[]>([]);
   const [pastEvents, setPastEvents] = useState<EventData[]>([]);
-  const { user, loading } = useAuth();
+  const { user, loading, userRole } = useAuth();
   const [statuses, setStatuses] = useState<Record<string, string>>({});
   const [premiumUser, setPremiumUser] = useState<boolean>(false);
   const [courses, setCourses] = useState<CourseData[]>([]);
@@ -81,17 +82,17 @@ export default function EventView({ searchParams }: termineProps) {
 
   useEffect(() => {
     const fetchCourses = async () => {
-      const courses: CourseData[] = (await getAllCoureses()) as CourseData[];
+      const courses: CourseData[] = (await getAllCourses(user?.uid || "anonymous", userRole)) as CourseData[];
       setCourses(courses);
     };
 
     fetchCourses();
     console.log(courses);
-  }, []);
+  }, [user?.uid, userRole]);
 
   useEffect(() => {
     const fetchEvents = async () => {
-      const events: EventData[] = (await getAllEvents()) as EventData[];
+      const events: EventData[] = (await getAllEvents(user?.uid || "anonymous", userRole)) as EventData[];
       const now = new Date();
       const normalizeDate = (d: any) =>
         d?.seconds ? new Date(d.seconds * 1000) : new Date(d);
@@ -110,7 +111,7 @@ export default function EventView({ searchParams }: termineProps) {
       for (const event of upcomingEvents) {
         statusMap[event.uid] = "loading"; // Initialstatus
         try {
-          const status = await isUserInEvent(event.uid, user?.uid || "");
+          const status = await isUserInEvent(event.uid, user?.uid || "", user?.uid || "anonymous", userRole);
           statusMap[event.uid] = status;
         } catch (error) {
           console.log(error);
@@ -130,9 +131,9 @@ export default function EventView({ searchParams }: termineProps) {
 
     try {
       if (action === "join") {
-        await addUserToEvent(eventId, user.uid);
+        await addUserToEvent(eventId, user.uid, user.uid, userRole);
       } else {
-        await removeUserFromEvent(eventId, user.uid);
+        await removeUserFromEvent(eventId, user.uid, user.uid, userRole);
       }
       setStatuses((prev) => ({
         ...prev,

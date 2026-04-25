@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import { addCourse, getUserData } from "@/lib/db";
 import { useAuth } from "@/BackEnd/AuthContext";

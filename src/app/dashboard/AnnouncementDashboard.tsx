@@ -1,20 +1,22 @@
 "use client";
 
 import { AnnouncementData, UserData } from "@/BackEnd/type";
+import { getAllAdmins } from "@/lib/db/admins";
 import {
-  getAllAdmins,
   getAllAnnouncements,
-  getUserData,
   addAnnouncement,
   deleteAnnouncement,
   updateAnnouncement,
-} from "@/lib/db";
+} from "@/lib/db/announcements";
+import { getUserData } from "@/lib/db/users";
+
 import { useState, useEffect } from "react";
 import { Plus, Trash2, X, Check } from "lucide-react";
 import { useAuth } from "@/BackEnd/AuthContext";
 import { Card, CardHeader, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toJsDate } from "@/BackEnd/utils";
+import { Timestamp } from "firebase/firestore";
 
 export default function AnnouncementDashboard() {
   const [announcements, setAnnouncements] = useState<AnnouncementData[]>([]);
@@ -22,7 +24,7 @@ export default function AnnouncementDashboard() {
   const [userIsAdmin, setUserIsAdmin] = useState<boolean>(false);
   const [showAddAnnouncement, setShowAddAnnouncement] =
     useState<boolean>(false);
-  const { user } = useAuth();
+  const { user, userRole } = useAuth();
   const [editStates, setEditStates] = useState<Record<string, boolean>>({});
   const [editValues, setEditValues] = useState<
     Record<string, { title: string; content: string; tag?: string }>
@@ -48,12 +50,12 @@ export default function AnnouncementDashboard() {
 
   useEffect(() => {
     const fetchAnnouncements = async () => {
-      const data = await getAllAnnouncements();
+      const data = await getAllAnnouncements(user?.uid || "anonymous", userRole);
       setAnnouncements(data);
     };
 
     fetchAnnouncements();
-  }, []);
+  }, [user?.uid, userRole]);
 
   useEffect(() => {
     const fetchAllAdmins = async () => {
@@ -96,12 +98,12 @@ export default function AnnouncementDashboard() {
     await updateAnnouncement(uid, {
       title: values.title,
       content: values.content,
-    });
+    }, user?.uid || "anonymous", userRole);
     setEditStates((prev) => ({ ...prev, [uid]: false }));
   };
 
   const handleDelete = async (uid: string) => {
-    await deleteAnnouncement(uid);
+    await deleteAnnouncement(uid, user?.uid || "anonymous", userRole);
     setAnnouncements((prev) => prev.filter((a) => a.uid !== uid));
   };
 
@@ -114,10 +116,10 @@ export default function AnnouncementDashboard() {
       content,
       tag: tags,
       author: user.uid,
-      date: new Date(),
+      date: Timestamp.fromDate(new Date()),
     };
 
-    await addAnnouncement(newAnnouncement);
+    await addAnnouncement(newAnnouncement, user.uid, userRole);
     setAnnouncements((prev) => [...prev, newAnnouncement]);
     setShowAddAnnouncement(false);
     setTitle("");

@@ -44,7 +44,7 @@ function getNextWednesday(): Date {
 }
 
 export default function EventAdd() {
-  const { user } = useAuth();
+  const { user, userRole } = useAuth();
 
   const [EventInfo, setEventInfo] = useState<EventData>(defaultEvent);
 
@@ -108,7 +108,7 @@ export default function EventAdd() {
     }
 
     try {
-      await addEvent(EventInfo);
+      await addEvent(EventInfo, user.uid, userRole);
       console.log("Event erfolgreich hinzugefügt");
       setEventInfo(defaultEvent);
     } catch (error) {

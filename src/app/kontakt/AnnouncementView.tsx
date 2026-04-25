@@ -11,17 +11,18 @@ const roles: PresetRoles[] = ["Admin", "All", "Member", "Mentor", "User"];
 export default function AnnouncementView({ data }: { data: UserData }) {
   const [announcements, setAnnouncements] = useState<AnnouncementData[]>([]);
   const [filAn, setFilAn] = useState<Record<string, AnnouncementData[]>>({});
+  const { user, userRole } = useAuth();
 
   useEffect(() => {
     const fetchAnnouncements = async () => {
-      const data = await getAllAnnouncements();
+      const data = await getAllAnnouncements(user?.uid || "anonymous", userRole);
       setAnnouncements(data);
     };
     fetchAnnouncements();
-  }, []);
+  }, [user?.uid, userRole]);
 
   const getAuthor = async (id: string): Promise<UserData> => {
-    const allUsers = await getAllUsers();
+    const allUsers = await getAllUsers(user?.uid || "anonymous", userRole);
     allUsers.filter((u) => u.uid == id);
     return allUsers[0];
   };

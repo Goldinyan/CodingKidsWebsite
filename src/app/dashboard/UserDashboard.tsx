@@ -32,7 +32,7 @@ export default function UserDashboard() {
   >({});
 
   const [data, setData] = useState<UserData | null>(null);
-  const { user } = useAuth();
+  const { user, userRole } = useAuth();
 
   const presetRoles: string[] = ["Admin", "Member", "Mentor", "User"];
 
@@ -110,11 +110,11 @@ export default function UserDashboard() {
 
   useEffect(() => {
     const fetchUsers = async () => {
-      const data = await getAllUsers();
+      const data = await getAllUsers(user?.uid || "anonymous", userRole);
       setUsers(data);
     };
     fetchUsers();
-  }, []);
+  }, [user?.uid, userRole]);
 
   const deleteMyUser = async (
     u: UserData,
@@ -146,7 +146,7 @@ export default function UserDashboard() {
     const updated = editValues[uid];
     if (!updated) return;
 
-    await updateUser(uid, updated); // firestore
+    await updateUser(uid, updated, user?.uid || "anonymous", userRole); // firestore
 
     setEditStates((prev) => ({ ...prev, [uid]: false }));
   };

@@ -25,7 +25,7 @@ interface NavbarMobileProps {
 export default function NavbarMobile({ setOpen }: NavbarMobileProps) {
   useViewportHeight();
   const router = useRouter();
-  const { user, loading } = useAuth();
+  const { user, loading, userRole } = useAuth();
   const [userData, setUserData] = useState<any>(null);
   const [unreadMessages, setUnreadMessages] = useState(0);
 
@@ -38,7 +38,7 @@ export default function NavbarMobile({ setOpen }: NavbarMobileProps) {
       if (data) {
         setUserData(data);
       }
-      const announcements = await getAllAnnouncements();
+      const announcements = await getAllAnnouncements(user.uid, userRole);
       const unread = announcements.filter(
         (announcement) =>
           !announcement.readBy || !announcement.readBy.includes(user.uid)
@@ -48,7 +48,7 @@ export default function NavbarMobile({ setOpen }: NavbarMobileProps) {
     };
 
     fetchData();
-  }, [user]);
+  }, [user, userRole]);
 
   return (
     <div

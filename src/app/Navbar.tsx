@@ -22,7 +22,7 @@ import { UserData } from "@/BackEnd/type";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
-  const { user, loading } = useAuth();
+  const { user, loading, userRole } = useAuth();
   const [userData, setUserData] = useState<null | UserData>(null);
   const [unreadMessages, setUnreadMessages] = useState(0);
   const router = useRouter();
@@ -37,7 +37,7 @@ export default function Navbar() {
         setUserData(data);
       }
 
-      const announcements = await getAllAnnouncements();
+      const announcements = await getAllAnnouncements(user.uid, userRole);
       const unread = announcements.filter(
         (announcement) =>
           !announcement.readBy || !announcement.readBy.includes(user.uid),
@@ -47,7 +47,7 @@ export default function Navbar() {
     };
 
     fetchData();
-  }, [user]);
+  }, [user, userRole]);
 
   useEffect(() => {
     if (open) {

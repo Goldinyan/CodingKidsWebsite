@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getAllCoureses } from "@/lib/db";
+import { useAuth } from "@/BackEnd/AuthContext";
+import { getAllCourses } from "@/lib/db";
 import { CourseData } from "@/BackEnd/type";
 import { BookOpen, Users, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -9,6 +10,7 @@ import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 
 export default function FeaturedCoursesView() {
+  const { user, userRole } = useAuth();
   const [courses, setCourses] = useState<CourseData[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -17,7 +19,7 @@ export default function FeaturedCoursesView() {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const allCourses = await getAllCoureses();
+        const allCourses = await getAllCourses(user?.uid || "anonymous", userRole);
         // Take the first 3 courses
         setCourses(allCourses.slice(0, 3));
       } catch (error) {
@@ -28,7 +30,7 @@ export default function FeaturedCoursesView() {
     };
 
     fetchCourses();
-  }, []);
+  }, [user?.uid, userRole]);
 
   if (loading) {
     return (
