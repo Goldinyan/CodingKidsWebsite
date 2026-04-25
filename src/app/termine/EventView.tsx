@@ -68,10 +68,7 @@ export default function EventView({ searchParams }: termineProps) {
     if (!user) return;
     const checkPremiumStatus = async () => {
       const userData = await getUserData(user.uid);
-      if (
-        userData &&
-        (userData.role === "premium" || userData.role === "admin")
-      ) {
+      if (userData && userData.role === "admin") {
         setPremiumUser(true);
       } else {
         setPremiumUser(false);
@@ -82,7 +79,10 @@ export default function EventView({ searchParams }: termineProps) {
 
   useEffect(() => {
     const fetchCourses = async () => {
-      const courses: CourseData[] = (await getAllCourses(user?.uid || "anonymous", userRole)) as CourseData[];
+      const courses: CourseData[] = (await getAllCourses(
+        user?.uid || "anonymous",
+        userRole,
+      )) as CourseData[];
       setCourses(courses);
     };
 
@@ -92,7 +92,10 @@ export default function EventView({ searchParams }: termineProps) {
 
   useEffect(() => {
     const fetchEvents = async () => {
-      const events: EventData[] = (await getAllEvents(user?.uid || "anonymous", userRole)) as EventData[];
+      const events: EventData[] = (await getAllEvents(
+        user?.uid || "anonymous",
+        userRole,
+      )) as EventData[];
       const now = new Date();
       const normalizeDate = (d: any) =>
         d?.seconds ? new Date(d.seconds * 1000) : new Date(d);
@@ -111,7 +114,12 @@ export default function EventView({ searchParams }: termineProps) {
       for (const event of upcomingEvents) {
         statusMap[event.uid] = "loading"; // Initialstatus
         try {
-          const status = await isUserInEvent(event.uid, user?.uid || "", user?.uid || "anonymous", userRole);
+          const status = await isUserInEvent(
+            event.uid,
+            user?.uid || "",
+            user?.uid || "anonymous",
+            userRole,
+          );
           statusMap[event.uid] = status;
         } catch (error) {
           console.log(error);

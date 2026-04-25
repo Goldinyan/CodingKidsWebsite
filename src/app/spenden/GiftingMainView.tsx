@@ -15,6 +15,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { useAuth } from "@/BackEnd/AuthContext";
+import { Toaster } from "@/components/ui/toaster";
+import { useToast } from "@/components/ui/use-toast";
 
 type diffGifts = "geld" | "equip" | "membership";
 type diffEquip = "Laptop" | "Monitor" | "Mouse" | "Other";
@@ -45,6 +48,8 @@ type Donation =
   });
 
 export default function GiftingMainView() {
+  const { userRole } = useAuth();
+  const { toast } = useToast();
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [donation, setDonation] = useState<Donation>({
     gift: "geld",
@@ -53,6 +58,16 @@ export default function GiftingMainView() {
     payment: "",
     message: "",
   });
+
+  useEffect(() => {
+    if (userRole !== "admin") {
+      toast({
+        title: "In Arbeit",
+        description: "Diese Seite befindet sich noch in der Entwicklung.",
+        variant: "success",
+      });
+    }
+  }, [userRole]);
 
   const steps: { text: string; number: number }[] = [
     {
@@ -70,7 +85,9 @@ export default function GiftingMainView() {
   ];
 
   return (
-    <div className="w-full h-full min-h-screen">
+    <div
+      className={` ${userRole !== "admin" ? "blur-[3px] pointer-events-none select-none" : ""} w-full h-full min-h-screen`}
+    >
       <div className="w-full h-full flex flex-col items-center">
         <div className="flex flex-col pt-25 items-center">
           <p className="text-3xl font-bold">Helfe uns mit Spenden</p>
