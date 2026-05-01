@@ -1,6 +1,8 @@
 // lib/rateLimiter.ts
 // In-memory rate limiting for database operations
 
+import { UserRole } from "@/BackEnd/type";
+
 interface RateLimitEntry {
   count: number;
   resetAt: number;
@@ -10,122 +12,162 @@ interface RateLimitStore {
   [key: string]: RateLimitEntry;
 }
 
-export type UserRole = "user" | "admin" | "mentor";
-
+// NEED TO REWORK THIS FOR SPECIFIC VALUES
 // Configuration for different functions and roles
 // Format: { functionName: { roleType: { maxRequests, windowMs } } }
 export const rateLimitConfig = {
   // Read operations (high limit - these are cheap)
   getUserData: {
+    anonymous: { maxRequests: 0, windowMs: 60000 }, // No access for anonymous
     user: { maxRequests: 100, windowMs: 60000 }, // 100 per minute
-    admin: { maxRequests: 1000, windowMs: 60000 }, // 1000 per minute
+    member: { maxRequests: 100, windowMs: 60000 }, // 100 per minute
     mentor: { maxRequests: 500, windowMs: 60000 }, // 500 per minute
+    admin: { maxRequests: 1000, windowMs: 60000 }, // 1000 per minute
   },
   getAllUsers: {
-    user: { maxRequests: 5, windowMs: 60000 }, // Only admins/mentors should call this
-    admin: { maxRequests: 50, windowMs: 60000 },
+    anonymous: { maxRequests: 0, windowMs: 60000 },
+    user: { maxRequests: 0, windowMs: 60000 }, // Only admins/mentors should call this
+    member: { maxRequests: 0, windowMs: 60000 },
     mentor: { maxRequests: 20, windowMs: 60000 },
+    admin: { maxRequests: 50, windowMs: 60000 },
   },
   getAllEvents: {
-    user: { maxRequests: 50, windowMs: 60000 },
-    admin: { maxRequests: 500, windowMs: 60000 },
+    anonymous: { maxRequests: 10, windowMs: 60000 },
+    user: { maxRequests: 10, windowMs: 60000 },
+    member: { maxRequests: 100, windowMs: 60000 },
     mentor: { maxRequests: 200, windowMs: 60000 },
+    admin: { maxRequests: 500, windowMs: 60000 },
   },
   getAllCourses: {
-    user: { maxRequests: 30, windowMs: 60000 },
-    admin: { maxRequests: 300, windowMs: 60000 },
+    anonymous: { maxRequests: 10, windowMs: 60000 },
+    user: { maxRequests: 10, windowMs: 60000 },
+    member: { maxRequests: 100, windowMs: 60000 },
     mentor: { maxRequests: 150, windowMs: 60000 },
+    admin: { maxRequests: 300, windowMs: 60000 },
   },
   getAllMentors: {
+    anonymous: { maxRequests: 20, windowMs: 60000 },
     user: { maxRequests: 50, windowMs: 60000 },
-    admin: { maxRequests: 500, windowMs: 60000 },
+    member: { maxRequests: 100, windowMs: 60000 },
     mentor: { maxRequests: 200, windowMs: 60000 },
+    admin: { maxRequests: 500, windowMs: 60000 },
   },
   getAllAnnouncements: {
+    anonymous: { maxRequests: 10, windowMs: 60000 },
     user: { maxRequests: 30, windowMs: 60000 },
-    admin: { maxRequests: 300, windowMs: 60000 },
+    member: { maxRequests: 100, windowMs: 60000 },
     mentor: { maxRequests: 100, windowMs: 60000 },
+    admin: { maxRequests: 300, windowMs: 60000 },
   },
   getAllAdmins: {
-    user: { maxRequests: 1, windowMs: 60000 }, // Should not be called by users
-    admin: { maxRequests: 50, windowMs: 60000 },
+    anonymous: { maxRequests: 0, windowMs: 60000 },
+    user: { maxRequests: 1, windowMs: 60000 }, // IDK HERE
+    member: { maxRequests: 100, windowMs: 60000 },
     mentor: { maxRequests: 5, windowMs: 60000 },
+    admin: { maxRequests: 50, windowMs: 60000 },
   },
 
-  // Write operations (lower limit - these are expensive)
+  // Write operations are expensive
   updateUser: {
-    user: { maxRequests: 20, windowMs: 60000 }, // Users can update themselves
-    admin: { maxRequests: 200, windowMs: 60000 },
+    anonymous: { maxRequests: 0, windowMs: 60000 },
+    user: { maxRequests: 20, windowMs: 60000 },
+    member: { maxRequests: 20, windowMs: 60000 },
     mentor: { maxRequests: 50, windowMs: 60000 },
+    admin: { maxRequests: 200, windowMs: 60000 },
   },
   updateEvent: {
+    anonymous: { maxRequests: 0, windowMs: 60000 },
     user: { maxRequests: 5, windowMs: 60000 },
-    admin: { maxRequests: 100, windowMs: 60000 },
+    member: { maxRequests: 20, windowMs: 60000 },
     mentor: { maxRequests: 50, windowMs: 60000 },
+    admin: { maxRequests: 100, windowMs: 60000 },
   },
   addEvent: {
-    user: { maxRequests: 1, windowMs: 3600000 }, // 1 per hour for users
-    admin: { maxRequests: 50, windowMs: 60000 },
+    anonymous: { maxRequests: 0, windowMs: 60000 },
+    user: { maxRequests: 0, windowMs: 3600000 },
+    member: { maxRequests: 0, windowMs: 60000 },
     mentor: { maxRequests: 20, windowMs: 60000 },
+    admin: { maxRequests: 50, windowMs: 60000 },
   },
   deleteEvent: {
-    user: { maxRequests: 0, windowMs: 60000 }, // Users cannot delete events
-    admin: { maxRequests: 50, windowMs: 60000 },
+    anonymous: { maxRequests: 0, windowMs: 60000 },
+    user: { maxRequests: 0, windowMs: 60000 },
+    member: { maxRequests: 100, windowMs: 60000 },
     mentor: { maxRequests: 10, windowMs: 60000 },
+    admin: { maxRequests: 50, windowMs: 60000 },
   },
   addUserToEvent: {
-    user: { maxRequests: 30, windowMs: 60000 }, // Users joining events
-    admin: { maxRequests: 500, windowMs: 60000 },
+    anonymous: { maxRequests: 0, windowMs: 60000 },
+    user: { maxRequests: 30, windowMs: 60000 },
+    member: { maxRequests: 100, windowMs: 60000 },
     mentor: { maxRequests: 200, windowMs: 60000 },
+    admin: { maxRequests: 500, windowMs: 60000 },
   },
   removeUserFromEvent: {
+    anonymous: { maxRequests: 0, windowMs: 60000 },
     user: { maxRequests: 30, windowMs: 60000 },
-    admin: { maxRequests: 500, windowMs: 60000 },
+    member: { maxRequests: 100, windowMs: 60000 },
     mentor: { maxRequests: 200, windowMs: 60000 },
+    admin: { maxRequests: 500, windowMs: 60000 },
   },
   isUserInEvent: {
+    anonymous: { maxRequests: 0, windowMs: 60000 },
     user: { maxRequests: 100, windowMs: 60000 },
-    admin: { maxRequests: 1000, windowMs: 60000 },
+    member: { maxRequests: 100, windowMs: 60000 },
     mentor: { maxRequests: 500, windowMs: 60000 },
+    admin: { maxRequests: 1000, windowMs: 60000 },
   },
   updateCourse: {
+    anonymous: { maxRequests: 0, windowMs: 60000 },
     user: { maxRequests: 0, windowMs: 60000 },
-    admin: { maxRequests: 100, windowMs: 60000 },
+    member: { maxRequests: 0, windowMs: 60000 },
     mentor: { maxRequests: 20, windowMs: 60000 },
+    admin: { maxRequests: 100, windowMs: 60000 },
   },
   addCourse: {
+    anonymous: { maxRequests: 0, windowMs: 60000 },
     user: { maxRequests: 0, windowMs: 60000 },
-    admin: { maxRequests: 50, windowMs: 60000 },
+    member: { maxRequests: 0, windowMs: 60000 },
     mentor: { maxRequests: 5, windowMs: 60000 },
+    admin: { maxRequests: 50, windowMs: 60000 },
   },
   deleteCourse: {
+    anonymous: { maxRequests: 0, windowMs: 60000 },
     user: { maxRequests: 0, windowMs: 60000 },
-    admin: { maxRequests: 50, windowMs: 60000 },
+    member: { maxRequests: 0, windowMs: 60000 },
     mentor: { maxRequests: 0, windowMs: 60000 },
+    admin: { maxRequests: 50, windowMs: 60000 },
   },
   updateAnnouncement: {
-    user: { maxRequests: 0, windowMs: 60000 },
+    anonymous: { maxRequests: 0, windowMs: 60000 },
+    user: { maxRequests: 10, windowMs: 60000 },
+    member: { maxRequests: 10, windowMs: 60000 },
+    mentor: { maxRequests: 10, windowMs: 60000 },
     admin: { maxRequests: 100, windowMs: 60000 },
-    mentor: { maxRequests: 0, windowMs: 60000 },
   },
   addAnnouncement: {
+    anonymous: { maxRequests: 0, windowMs: 60000 },
     user: { maxRequests: 0, windowMs: 60000 },
-    admin: { maxRequests: 50, windowMs: 60000 },
+    member: { maxRequests: 100, windowMs: 60000 },
     mentor: { maxRequests: 0, windowMs: 60000 },
+    admin: { maxRequests: 50, windowMs: 60000 },
   },
   deleteAnnouncement: {
+    anonymous: { maxRequests: 0, windowMs: 60000 },
     user: { maxRequests: 0, windowMs: 60000 },
-    admin: { maxRequests: 100, windowMs: 60000 },
+    member: { maxRequests: 100, windowMs: 60000 },
     mentor: { maxRequests: 0, windowMs: 60000 },
+    admin: { maxRequests: 100, windowMs: 60000 },
   },
   updateMentor: {
+    anonymous: { maxRequests: 0, windowMs: 60000 },
     user: { maxRequests: 0, windowMs: 60000 },
-    admin: { maxRequests: 50, windowMs: 60000 },
+    member: { maxRequests: 100, windowMs: 60000 },
     mentor: { maxRequests: 10, windowMs: 60000 },
+    admin: { maxRequests: 50, windowMs: 60000 },
   },
 } as const;
 
-// Store for tracking requests
 const store: RateLimitStore = {};
 
 /**
@@ -147,7 +189,9 @@ export function checkRateLimit(
   // Get the rate limit config for this function and role
   const config = rateLimitConfig[functionName];
   if (!config) {
-    throw new Error(`Rate limit config not found for function: ${functionName}`);
+    throw new Error(
+      `Rate limit config not found for function: ${functionName}`,
+    );
   }
 
   const limits = config[userRole as keyof typeof config];
@@ -206,11 +250,7 @@ export function getRateLimitStatus(
  * Custom error class for rate limit exceeded
  */
 export class RateLimitExceededError extends Error {
-  constructor(
-    functionName: string,
-    userRole: string,
-    retryAfter?: number,
-  ) {
+  constructor(functionName: string, userRole: string, retryAfter?: number) {
     const message = `Rate limit exceeded for ${functionName} (${userRole}). Retry after ${retryAfter}ms`;
     super(message);
     this.name = "RateLimitExceededError";

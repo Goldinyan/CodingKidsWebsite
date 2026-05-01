@@ -21,6 +21,7 @@ import EventDashboard from "./EventDashboard";
 import MentorDashboard from "./MentorDashboard";
 import AnnouncementDashboard from "./AnnouncementDashboard";
 import BasicOwnProfileDashboard from "./BasicOwnProfileDashboard";
+import CourseDashboard from "./CourseDashboard";
 
 export function MainOverlayAdminDashboard() {
   const [open, setOpen] = useState<boolean>(false);
@@ -67,7 +68,7 @@ export function MainOverlayAdminDashboard() {
 
   return (
     <div className="flex flex-col  bg-otherbg min-h-screen pb-20">
-      {userData?.role === "Admin" ? (
+      {userData?.role === "admin" ? (
         <div>
           <div className="fixed top-0 left-0 right-0 h-16 bg-white z-50 flex items-center justify-between shadow px-4">
             <p className="text-2xl pl-2 text-black font-bold ">Coding Kids</p>
@@ -112,6 +113,9 @@ export function MainOverlayAdminDashboard() {
               </section>
               <section id="events">
                 <EventDashboard />
+              </section>
+              <section id="courses">
+                <CourseDashboard />
               </section>
               <section className="xl:col-span-2" id="mentor">
                 <MentorDashboard />

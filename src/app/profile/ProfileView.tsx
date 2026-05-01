@@ -3,16 +3,31 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/BackEnd/AuthContext";
 import type { UserData } from "@/BackEnd/type";
-import { getUserData } from "@/lib/db";
+import { deleteUser, getUserData } from "@/lib/db";
 import { logoutUser } from "@/lib/auth";
 import { LogOut, Mail, Cake, Calendar, BookOpen, Shield } from "lucide-react";
 import { toJsDate } from "@/BackEnd/utils";
+import { Timestamp } from "firebase/firestore";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 
 export default function ProfileView() {
   const [userData, setUserData] = useState<UserData>();
   const [loading, setLoading] = useState(true);
 
-  const { user } = useAuth();
+  const { user, userRole } = useAuth();
+  const [deleteConfirm, setDeleteConfirm] = useState<{
+    isOpen: boolean;
+  }>({
+    isOpen: false,
+  });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -63,6 +78,9 @@ export default function ProfileView() {
     return age;
   };
 
+  const getMember = (t: Timestamp | null) =>
+    t ? Math.floor((Date.now() - toJsDate(t).getTime()) / 86400000) : -1;
+
   const getRoleColor = (role: string) => {
     switch (role) {
       case "Admin":
@@ -78,29 +96,47 @@ export default function ProfileView() {
 
   const getRoleIcon = (role: string) => {
     switch (role) {
-      case "Admin":
+      case "admin":
         return <Shield className="w-4 h-4" />;
-      case "Mentor":
+      case "mentor":
         return <BookOpen className="w-4 h-4" />;
       default:
         return null;
     }
   };
 
+  const deleteAccount = () => {
+    if (!user) return;
+
+    if (confirm("Möchtest du wirklich deinen Account löschen?")) {
+      deleteUser(user, user.uid, userRole);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-otherbg">
+    <div className="min-h-screen bg-otherbg -m-t-16">
       <div className="bg-white border-b border-lightborder p-4 sm:p-6">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <h1 className="text-2xl sm:text-3xl font-bold text-primaryOwn">
             Mein Profil
           </h1>
-          <button
-            onClick={() => logoutUser()}
-            className="flex items-center gap-2 px-4 py-2 bg-fourthOwn hover:bg-fifthOwn text-white rounded-lg transition-colors duration-200 font-medium"
-          >
-            <LogOut className="w-4 h-4" />
-            <span className="hidden sm:inline">Abmelden</span>
-          </button>
+          <div className="flex gap-10">
+            {" "}
+            <button
+              onClick={() => logoutUser()}
+              className="flex items-center gap-2 px-4 py-2 bg-fourthOwn hover:bg-fifthOwn text-white rounded-lg transition-colors duration-200 font-medium"
+            >
+              <LogOut className="w-4 h-4" />
+              <span className="hidden sm:inline">Abmelden</span>
+            </button>
+            <button
+              onClick={() => deleteAccount()}
+              className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg transition-colors duration-200 font-medium"
+            >
+              <LogOut className="w-4 h-4" />
+              <span className="hidden sm:inline">Account löschen</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -127,9 +163,7 @@ export default function ProfileView() {
                   {userData.role}
                 </span>
                 <span className="text-graytext text-sm">
-                  Mitglied seit{" "}
-                  {userData.createdAt?.toDate?.().toLocaleDateString("de-DE") ||
-                    "N/A"}
+                  Mitglied seit {getMember(userData.createdAt)} Tagen
                 </span>
               </div>
             </div>
@@ -194,6 +228,42 @@ export default function ProfileView() {
           </div>
         </div>
       </div>
+
+      {/* Lösch-Bestätigungs Dialog */}
+      <Dialog
+        open={deleteConfirm.isOpen}
+        onOpenChange={(open) =>
+          setDeleteConfirm({
+            isOpen: open,
+          })
+        }
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Kurs löschen?</DialogTitle>
+            <DialogDescription>
+              Sind Sie sicher, dass Sie ihren Account löschen möchten? Diese
+              Aktion kann nicht rückgängig gemacht werden.
+            </DialogDescription>
+          </DialogHeader>
+
+          <DialogFooter>
+            <Button
+              onClick={() =>
+                setDeleteConfirm({
+                  isOpen: false,
+                })
+              }
+              variant="outline"
+            >
+              Abbrechen
+            </Button>
+            <Button onClick={deleteAccount} variant="destructive">
+              Löschen
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

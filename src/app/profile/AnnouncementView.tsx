@@ -5,8 +5,7 @@ import { useAuth } from "@/BackEnd/AuthContext";
 import type { UserData, AnnouncementData, PresetRoles } from "@/BackEnd/type";
 import { getAllAnnouncements } from "@/lib/db";
 import { Bell, User, Zap, Shield, CheckCircle2, Clock } from "lucide-react";
-
-const roles: PresetRoles[] = ["Admin", "All", "Member", "Mentor", "User"];
+import { UserRole } from "@/lib/rate_limiting/rateLimiter";
 
 export default function AnnouncementView({ data }: { data: UserData }) {
   const [announcements, setAnnouncements] = useState<AnnouncementData[]>([]);
@@ -15,7 +14,10 @@ export default function AnnouncementView({ data }: { data: UserData }) {
 
   useEffect(() => {
     const fetchAnnouncements = async () => {
-      const data = await getAllAnnouncements(user?.uid || "anonymous", userRole);
+      const data = await getAllAnnouncements(
+        user?.uid || "anonymous",
+        userRole,
+      );
       setAnnouncements(data);
     };
     fetchAnnouncements();

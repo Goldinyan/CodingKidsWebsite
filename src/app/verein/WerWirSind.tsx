@@ -71,8 +71,8 @@ export default function WerWirSind() {
               <div className="flex flex-row gap-5  items-center">
                 <Sparkles className="bg-primaryOwn p-2 rounded-full text-white w-10 h-10" />
                 <div className="flex flex-col">
-                  <p className="font-bold">Gegründet</p>
-                  <p>2018</p>
+                  <p className="font-bold">Erfolg 1</p>
+                  <p>Datum 1</p>
                 </div>
               </div>
 
@@ -83,8 +83,8 @@ export default function WerWirSind() {
               <div className="flex flex-row gap-5  items-center">
                 <Presentation className="bg-primaryOwn p-2 rounded-full text-white w-10 h-10" />
                 <div className="flex flex-col">
-                  <p className="font-bold">Erster Öffentlicher Workshop</p>
-                  <p>2019</p>
+                  <p className="font-bold">Erfolg 2</p>
+                  <p>Datum 2</p>
                 </div>
               </div>
 
@@ -95,8 +95,8 @@ export default function WerWirSind() {
               <div className="flex flex-row gap-5 items-center">
                 <MapPinned className="bg-primaryOwn p-2 rounded-full text-white w-10 h-10" />
                 <div className="flex flex-col">
-                  <p className="font-bold">Expansion in drei Städte</p>
-                  <p>2021</p>
+                  <p className="font-bold">Erfolg 3</p>
+                  <p>Datum 3</p>
                 </div>
               </div>
 
@@ -107,8 +107,8 @@ export default function WerWirSind() {
               <div className="flex flex-row gap-5 items-center">
                 <School className="bg-primaryOwn p-2 rounded-full text-white w-10 h-10" />
                 <div className="flex flex-col">
-                  <p className="font-bold">Partnerschaft mit lokalen Schulen</p>
-                  <p>2022</p>
+                  <p className="font-bold">Erfolg 4</p>
+                  <p>Datum 4</p>
                 </div>
               </div>
             </div>

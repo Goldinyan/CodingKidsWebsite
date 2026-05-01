@@ -46,7 +46,7 @@ export default function FeaturedEventsView() {
   }
 
   return (
-    <div className="w-full px-8 py-16 bg-gradient-to-b from-transparent to-blue-50">
+    <div className="w-full px-8 py-16 ">
       <p className="text-3xl font-bold mb-2">Kommende Events</p>
       <p className="text-gray-600 mb-10">
         Entdecke die nächsten Kurse und Workshops

@@ -1,10 +1,9 @@
-import { UserRole } from "@/lib/rate_limiting/rateLimiter";
 import { User } from "firebase/auth";
 import { Timestamp } from "firebase/firestore";
 
-export type Preset = "false" | "ascending" | "descending";
+export type UserRole = "anonymous" | "user" | "member" | "admin" | "mentor";
 
-export type PresetRoles = "All" | "Member" | "User" | "Admin" | "Mentor";
+export type Preset = "false" | "ascending" | "descending";
 
 export const LOG_TYPES = [
   "userLeftQueue",
@@ -62,7 +61,7 @@ export type EventData = {
 
 export type AnnouncementData = {
   uid: string;
-  tag: PresetRoles;
+  tag: UserRole;
   title: string;
   content: string;
   author: string;
@@ -74,7 +73,7 @@ export type UserData = {
   uid: string;
   name: string;
   email: string;
-  birthdate: string;
+  birthdate: Timestamp;
   createdAt: Timestamp;
   role: UserRole;
   courses?: string[];
@@ -91,14 +90,14 @@ export type Mentor = {
 
 export type AuthContextType = {
   user: User | null;
-  userRole: UserRole | null;
+  userRole: UserRole;
   loading: boolean;
 };
 
 export type Filter = {
   name: Preset;
   birthYear: Preset;
-  role: PresetRoles;
+  role: UserRole;
 };
 
 export type CourseData = {

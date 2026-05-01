@@ -6,7 +6,7 @@ import { ArrowRight } from "lucide-react";
 
 export default function CTAView() {
   return (
-    <div className="w-full  bg-gradient-to-b from-purple-50 to-purple-100">
+    <div className="w-full  ">
       <div className="bg-white mx-auto mb-20 py-15 w-90 sm:w-[80%] md:w-[60%] shadow-md rounded-2xl  max-w-6xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

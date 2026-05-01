@@ -118,7 +118,7 @@ export default function Navbar() {
               </Button>
             </div>
 
-            {userData?.role === "Admin" && (
+            {userData?.role === "admin" && (
               <Button
                 variant="outline"
                 onClick={() => router.push("/dashboard")}

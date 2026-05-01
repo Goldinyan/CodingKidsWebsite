@@ -35,7 +35,7 @@ export default function MentorsView() {
   }
 
   return (
-    <div className="w-full px-8 py-16 bg-gradient-to-b from-transparent to-purple-50">
+    <div className="w-full px-8 py-16 ">
       <p className="text-3xl font-bold mb-2">Unsere Mentoren</p>
       <p className="text-gray-600 mb-10">
         Lerne von erfahrenen Profis mit Leidenschaft für Informatik

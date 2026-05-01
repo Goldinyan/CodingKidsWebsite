@@ -28,7 +28,7 @@ export default function ProfileMainView() {
   if (!user) return <p>NO USER</p>;
   if (!userData) return <p>Benutzerdaten werden geladen...</p>;
 
-  if (userData.role === "Admin") {
+  if (userData.role === "admin") {
     return (
       <div>
         <MainOverlayAdminDashboard />

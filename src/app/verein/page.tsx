@@ -1,14 +1,8 @@
-"use client"
+"use client";
 
+import ClubViews from "./ClubView";
 
-import ClubViews from "./ClubView"
- 
-export default function Home(){
-
-
-    return (
-        <div>
-            <ClubViews />
-        </div>
-    )
+export default function Home() {
+  return <ClubViews />;
 }
+ 

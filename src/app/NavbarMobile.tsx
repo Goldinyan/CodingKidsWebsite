@@ -41,7 +41,7 @@ export default function NavbarMobile({ setOpen }: NavbarMobileProps) {
       const announcements = await getAllAnnouncements(user.uid, userRole);
       const unread = announcements.filter(
         (announcement) =>
-          !announcement.readBy || !announcement.readBy.includes(user.uid)
+          !announcement.readBy || !announcement.readBy.includes(user.uid),
       ).length;
       setUnreadMessages(unread);
       console.log("Unread messages:", unread);
@@ -81,7 +81,7 @@ export default function NavbarMobile({ setOpen }: NavbarMobileProps) {
                     href: "/profile",
                     Icon: User,
                   });
-                if (userData?.role === "Admin")
+                if (userData?.role === "admin")
                   items.push({
                     label: "Dashboard",
                     href: "/dashboard",
@@ -140,7 +140,7 @@ export default function NavbarMobile({ setOpen }: NavbarMobileProps) {
               <div className="flex flex-col px-5 pt-6 gap-4">
                 <Button
                   onClick={() => {
-                    router.push("/signup"), setOpen(false);
+                    (router.push("/signup"), setOpen(false));
                   }}
                   variant="outline"
                   className="bg-black"
@@ -150,7 +150,7 @@ export default function NavbarMobile({ setOpen }: NavbarMobileProps) {
                 </Button>
                 <Button
                   onClick={() => {
-                    router.push("/login"), setOpen(false);
+                    (router.push("/login"), setOpen(false));
                   }}
                 >
                   <p>Log in</p>

@@ -55,7 +55,7 @@ export default function TopView({ data }: { data: UserData | undefined }) {
           {texts.map(({ text, des, icon: Icon }) => (
             <div
               key={text}
-              className="flex border-1 p-8 max-w-120 mx-auto shadow-md rounded-2xl duration-400 transition-all  hover:-translate-y-5 flex-col items-start gap-2"
+              className="flex border-1 bg-white p-8 max-w-120 mx-auto shadow-md rounded-2xl duration-400 transition-all  hover:-translate-y-5 flex-col items-start gap-2"
             >
               <AnimatePresence>
                 <motion.div
