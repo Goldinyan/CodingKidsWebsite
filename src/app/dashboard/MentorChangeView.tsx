@@ -1,41 +1,47 @@
 "use client";
 
 import { getAllMentors, updateMentor } from "@/lib/db";
-import { useState, useEffect, use } from "react";
-import { ArrowUp, ArrowDown } from "lucide-react";
+import { useState, useEffect } from "react";
 import MentorCardAdmin from "./MentorCardAdmin";
 import type { Mentor } from "@/BackEnd/type";
 
 export default function MentorChangeView() {
-  const [mentorData, setMentorData] = useState<Mentor[]>([]);
+        const [mentorData, setMentorData] = useState<Mentor[]>([]);
 
-  useEffect(() => {
-    const handleData = async () => {
-      const data = await getAllMentors();
-      setMentorData(data);
-    };
+        useEffect(() => {
+                const handleData = async () => {
+                        const data = await getAllMentors();
+                        setMentorData(data);
+                };
 
-    handleData();
-  }, []);
+                handleData();
+        }, []);
 
-  useEffect(() => { }, []);
+        return (
+                <div className="w-full p-6 bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen">
+                        <div className="max-w-7xl mx-auto">
+                                <div className="mb-8">
+                                        <h1 className="text-4xl font-bold text-gray-900 mb-2">
+                                                Mentoren Verwaltung
+                                        </h1>
+                                        <p className="text-gray-600">
+                                                Verwalten Sie Ihre Mentoren und deren Informationen
+                                        </p>
+                                </div>
 
-  return (
-    <>
-      <div className="flex flex-col mx-auto w-[80%] items-center md:items-start justify-center gap-5">
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-10 w-full">
-          {mentorData.map((mentor, index) => (
-            <MentorCardAdmin
-              uid={mentor.uid}
-              key={index}
-              name={mentor.name}
-              description1={mentor.des1}
-              description2={mentor.des2}
-              picture={mentor.pic}
-            />
-          ))}
-        </div>
-      </div>
-    </>
-  );
+                                <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                                        {mentorData.map((mentor, index) => (
+                                                <MentorCardAdmin
+                                                        uid={mentor.uid}
+                                                        key={index}
+                                                        name={mentor.name}
+                                                        description1={mentor.des1}
+                                                        description2={mentor.des2}
+                                                        picture={mentor.pic}
+                                                />
+                                        ))}
+                                </div>
+                        </div>
+                </div>
+        );
 }

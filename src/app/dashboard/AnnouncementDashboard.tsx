@@ -1,325 +1,224 @@
 "use client";
 
-import { AnnouncementData, UserData } from "@/BackEnd/type";
-import { getAllAdmins } from "@/lib/db/admins";
 import {
-  getAllAnnouncements,
-  addAnnouncement,
-  deleteAnnouncement,
-  updateAnnouncement,
+        addAnnouncement,
+        deleteAnnouncement,
+        updateAnnouncement,
 } from "@/lib/db/announcements";
-import { getUserData } from "@/lib/db/users";
-
-import { useState, useEffect } from "react";
-import { Plus, Trash2, X, Check } from "lucide-react";
+import type { AnnouncementData } from "@/BackEnd/type";
+import { useState } from "react";
+import { Plus, Search } from "lucide-react";
 import { useAuth } from "@/BackEnd/AuthContext";
-import { Card, CardHeader, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { toJsDate } from "@/BackEnd/utils";
 import { Timestamp } from "firebase/firestore";
+import { getAuthorName } from "./announcements/getAuthor";
+import {
+        useAdmins,
+        useAnnouncementsData,
+        useFilteredAnnouncements,
+        useUserIsAdmin,
+} from "./announcements/hooks";
+import {
+        AnnouncementCard,
+        DeleteAnnouncementDialog,
+        EditAnnouncementDialog,
+        NewAnnouncementDialog,
+} from "./announcements/components";
 
 export default function AnnouncementDashboard() {
-  const [announcements, setAnnouncements] = useState<AnnouncementData[]>([]);
-  const [admins, setAdmins] = useState<UserData[]>([]);
-  const [userIsAdmin, setUserIsAdmin] = useState<boolean>(false);
-  const [showAddAnnouncement, setShowAddAnnouncement] =
-    useState<boolean>(false);
-  const { user, userRole } = useAuth();
-  const [editStates, setEditStates] = useState<Record<string, boolean>>({});
-  const [editValues, setEditValues] = useState<
-    Record<string, { title: string; content: string; tag?: string }>
-  >({});
-  const [title, setTitle] = useState<string>("");
-  const [content, setContent] = useState<string>("");
-  const [tags, setTags] = useState<"User" | "Member">("User");
+        const [isAddingAnnouncement, setIsAddingAnnouncement] =
+                useState<boolean>(false);
+        const [editingId, setEditingId] = useState<string | null>(null);
+        const [searchBar, setSearchBar] = useState<string>("");
+        const { user, userRole } = useAuth();
+        const userIsAdmin = useUserIsAdmin(user?.uid);
+        const admins = useAdmins(user?.uid, userRole);
+        const { announcements, setAnnouncements } = useAnnouncementsData(user?.uid, userRole);
+        const filteredAnnouncements = useFilteredAnnouncements(announcements, searchBar);
+        const [editValues, setEditValues] = useState<{
+                title: string;
+                content: string;
+        }>({
+                title: "",
+                content: "",
+        });
+        const [newAnnouncement, setNewAnnouncement] = useState<{
+                title: string;
+                content: string;
+                tag: "User" | "Member";
+        }>({
+                title: "",
+                content: "",
+                tag: "User",
+        });
+        const [deleteConfirm, setDeleteConfirm] = useState<{
+                isOpen: boolean;
+                announcementId: string | null;
+                announcementTitle: string | null;
+        }>({
+                isOpen: false,
+                announcementId: null,
+                announcementTitle: null,
+        });
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      if (!user) return;
+        const handleAddAnnouncement = async () => {
+                if (!user || !newAnnouncement.title.trim()) {
+                        return;
+                }
 
-      if (user?.uid) {
-        const data = await getUserData(user.uid);
-        setUserIsAdmin(data?.role === "admin");
-      } else {
-        setUserIsAdmin(false);
-      }
-    };
+                const announcementToAdd: AnnouncementData = {
+                        uid: "",
+                        title: newAnnouncement.title,
+                        content: newAnnouncement.content,
+                        tag: newAnnouncement.tag,
+                        author: user.uid,
+                        date: Timestamp.fromDate(new Date()),
+                };
 
-    fetchUserData();
-  }, [user?.uid]);
+                await addAnnouncement(announcementToAdd, user.uid, userRole);
+                setAnnouncements((prev) => [...prev, announcementToAdd]);
+                setIsAddingAnnouncement(false);
+                setNewAnnouncement({ title: "", content: "", tag: "User" });
+        };
 
-  useEffect(() => {
-    const fetchAnnouncements = async () => {
-      const data = await getAllAnnouncements(user?.uid || "anonymous", userRole);
-      setAnnouncements(data);
-    };
+        const handleEditStart = (announcement: AnnouncementData) => {
+                setEditingId(announcement.uid);
+                setEditValues({
+                        title: announcement.title,
+                        content: announcement.content,
+                });
+        };
 
-    fetchAnnouncements();
-  }, [user?.uid, userRole]);
+        const handleSaveEdit = async (uid: string) => {
+                await updateAnnouncement(
+                        uid,
+                        {
+                                title: editValues.title,
+                                content: editValues.content,
+                        },
+                        user?.uid || "anonymous",
+                        userRole,
+                );
+                setAnnouncements(
+                        announcements.map((a) => (a.uid === uid ? { ...a, ...editValues } : a)),
+                );
+                setEditingId(null);
+                setEditValues({ title: "", content: "" });
+        };
 
-  useEffect(() => {
-    const fetchAllAdmins = async () => {
-      const admins = await getAllAdmins();
-      console.log("Admins fetched:", admins);
-      setAdmins(admins);
-    };
+        const handleDelete = async (uid: string) => {
+                await deleteAnnouncement(uid, user?.uid || "anonymous", userRole);
+                setAnnouncements((prev) => prev.filter((a) => a.uid !== uid));
+                setDeleteConfirm({
+                        isOpen: false,
+                        announcementId: null,
+                        announcementTitle: null,
+                });
+        };
 
-    fetchAllAdmins();
-  }, []);
+        return (
+                <div className="w-full p-6 bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen">
+                        <div className="max-w-7xl mx-auto">
+                                <div className="mb-8">
+                                        <h1 className="text-4xl font-bold text-gray-900 mb-2">
+                                                Ankündigungen
+                                        </h1>
+                                        <p className="text-gray-600">
+                                                Verwalten Sie Ankündigungen für Benutzer
+                                        </p>
+                                </div>
 
-  const getAuthor = (authorId: string) => {
-    for (const admin of admins) {
-      if (admin?.uid.trim() === authorId?.trim()) {
-        return admin.name ?? admin.email ?? "Unbekannt";
-      }
-    }
-    return "Unbekannt";
-  };
+                                <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                                        <div className="flex-1 relative">
+                                                <Search className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
+                                                <input
+                                                        type="text"
+                                                        placeholder="Ankündigungen durchsuchen..."
+                                                        value={searchBar}
+                                                        onChange={(e) => setSearchBar(e.target.value)}
+                                                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                />
+                                        </div>
 
-  const toggleEdit = (announcement?: AnnouncementData) => {
-    if (!announcement) return;
-    setEditStates((prev) => ({
-      ...prev,
-      [announcement.uid]: !prev[announcement.uid],
-    }));
-    setEditValues((prev) => ({
-      ...prev,
-      [announcement.uid]: {
-        title: announcement.title ?? "",
-        content: announcement.content ?? "",
-        tag: announcement.tag ?? "",
-      },
-    }));
-  };
+                                        {userIsAdmin && (
+                                                <Button
+                                                        onClick={() => setIsAddingAnnouncement(true)}
+                                                        className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2"
+                                                >
+                                                        <Plus className="w-5 h-5" />
+                                                        Neue Ankündigung
+                                                </Button>
+                                        )}
+                                </div>
 
-  const saveEdit = async (uid: string) => {
-    const values = editValues[uid];
-    if (!values) return;
-    await updateAnnouncement(uid, {
-      title: values.title,
-      content: values.content,
-    }, user?.uid || "anonymous", userRole);
-    setEditStates((prev) => ({ ...prev, [uid]: false }));
-  };
+                                <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2">
+                                        {filteredAnnouncements.length === 0 ? (
+                                                <div className="col-span-full text-center py-12">
+                                                        <p className="text-gray-500 text-lg">
+                                                                {searchBar
+                                                                        ? "Keine Ankündigungen gefunden"
+                                                                        : "Keine Ankündigungen vorhanden"}
+                                                        </p>
+                                                </div>
+                                        ) : (
+                                                filteredAnnouncements.map((announcement) => (
+                                                        <AnnouncementCard
+                                                                key={announcement.uid}
+                                                                announcement={announcement}
+                                                                authorName={getAuthorName(admins, announcement.author)}
+                                                                userIsAdmin={userIsAdmin}
+                                                                onEdit={() => handleEditStart(announcement)}
+                                                                onDelete={() =>
+                                                                        setDeleteConfirm({
+                                                                                isOpen: true,
+                                                                                announcementId: announcement.uid,
+                                                                                announcementTitle: announcement.title,
+                                                                        })
+                                                                }
+                                                        />
+                                                ))
+                                        )}
+                                </div>
+                        </div>
 
-  const handleDelete = async (uid: string) => {
-    await deleteAnnouncement(uid, user?.uid || "anonymous", userRole);
-    setAnnouncements((prev) => prev.filter((a) => a.uid !== uid));
-  };
+                        <NewAnnouncementDialog
+                                open={isAddingAnnouncement}
+                                onOpenChange={setIsAddingAnnouncement}
+                                value={newAnnouncement}
+                                onChange={setNewAnnouncement}
+                                onCreate={handleAddAnnouncement}
+                        />
 
-  const submitAddAnnouncement = () => async () => {
-    if (!user) return;
+                        <EditAnnouncementDialog
+                                open={editingId !== null}
+                                onOpenChange={(open) => {
+                                        if (!open) setEditingId(null);
+                                }}
+                                value={editValues}
+                                onChange={setEditValues}
+                                onCancel={() => {
+                                        setEditingId(null);
+                                        setEditValues({ title: "", content: "" });
+                                }}
+                                onSave={() => {
+                                        if (editingId) handleSaveEdit(editingId);
+                                }}
+                        />
 
-    const newAnnouncement: AnnouncementData = {
-      uid: "",
-      title,
-      content,
-      tag: tags,
-      author: user.uid,
-      date: Timestamp.fromDate(new Date()),
-    };
-
-    await addAnnouncement(newAnnouncement, user.uid, userRole);
-    setAnnouncements((prev) => [...prev, newAnnouncement]);
-    setShowAddAnnouncement(false);
-    setTitle("");
-    setContent("");
-    setTags("User");
-  };
-
-  return (
-    <div className="mx-auto w-[80%]">
-      <div className="flex items-center justify-between gap-2 w-full mt-5 ">
-        <p className="text-xl font-semibold">Ankündigungen</p>
-        <Button
-          variant="outline"
-          onClick={() => setShowAddAnnouncement((s) => !s)}
-        >
-          <Plus />
-        </Button>
-      </div>
-
-      <div className="mt-4">
-        {showAddAnnouncement && (
-          <div>
-            <Card className=" w-full flex flex-col items-center ">
-              <div className="w-full">
-                <CardHeader className="flex flex-col">
-                  <p className="block text-sm font-bold mb-1 text-gray-900">
-                    Titel:
-                  </p>
-                  <input
-                    type="text"
-                    placeholder="Titel"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    className="bg-gray-50 border pl-3  mb-3 border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-1"
-                  />
-                  <p className="block text-sm font-bold mb-1 text-gray-900">
-                    Tag:
-                  </p>
-                  <select
-                    value={tags}
-                    onChange={(e) =>
-                      setTags(e.target.value as "User" | "Member")
-                    }
-                    className="bg-gray-50 border pl-3 mb-3 border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-1 "
-                  >
-                    <option value="User">User</option>
-                    <option value="Member">Member</option>
-                  </select>
-
-                  <p className="block text-sm font-bold mb-1 text-gray-900">
-                    Inhalt:
-                  </p>
-                  <textarea
-                    placeholder="Inhalt"
-                    value={content}
-                    onChange={(e) => setContent(e.target.value)}
-                    className="bg-gray-50 border pl-3 mb-3 h-40 border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-1"
-                  ></textarea>
-                </CardHeader>
-                <CardFooter>
-                  <div className="flex gap-2 mx-auto w-full items-center justify-center">
-                    <Button
-                      variant="outline"
-                      onClick={submitAddAnnouncement()}
-                      className="w-full"
-                    >
-                      Hinzufügen
-                    </Button>
-                  </div>
-                </CardFooter>
-              </div>
-            </Card>
-          </div>
-        )}
-      </div>
-
-      <div className="flex flex-col border border-lightborder mt-4 divide-y">
-        {announcements.map((announcement) => {
-          const author = getAuthor(announcement.author);
-
-          return (
-            <Card key={announcement.uid} className="">
-              <CardHeader className="flex flex-col gap-2">
-                {!editStates[announcement.uid] ? (
-                  <>
-                    <p className="font-bold text-xl">{announcement.title}</p>
-                    <p className="text-sm text-gray-600">
-                      {"Veröffentlicht von: "}
-                      {author}
-                      {" am "}
-                      {toJsDate(announcement.date).toLocaleDateString("de-DE", {
-                        weekday: "short",
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
-                      })}
-                    </p>
-                    <p className="pt-2">{announcement.content}</p>
-                  </>
-                ) : (
-                  <div className="flex flex-col w-full">
-                    <p className="block text-sm font-bold mb-1 text-gray-900">
-                      Titel:
-                    </p>
-                    <input
-                      value={editValues[announcement.uid]?.title ?? ""}
-                      onChange={(e) =>
-                        setEditValues((prev) => ({
-                          ...prev,
-                          [announcement.uid]: {
-                            ...(prev[announcement.uid] ?? {}),
-                            title: e.target.value,
-                          },
-                        }))
-                      }
-                      className="bg-gray-50 border pl-3 mb-3 border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-1"
-                    />
-
-                    <p className="block text-sm font-bold mb-1 text-gray-900">
-                      Inhalt:
-                    </p>
-                    <textarea
-                      value={editValues[announcement.uid]?.content ?? ""}
-                      onChange={(e) =>
-                        setEditValues((prev) => ({
-                          ...prev,
-                          [announcement.uid]: {
-                            ...(prev[announcement.uid] ?? {}),
-                            content: e.target.value,
-                          },
-                        }))
-                      }
-                      className="bg-gray-50 border pl-3 mb-3 h-40 border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-1"
-                    />
-                  </div>
-                )}
-              </CardHeader>
-
-              <CardFooter className="flex justify-between">
-                {!editStates[announcement.uid] ? (
-                  <>
-                    <Button
-                      variant="outline"
-                      onClick={() => toggleEdit(announcement)}
-                    >
-                      Bearbeiten
-                    </Button>
-                    <Button
-                      variant="destructive"
-                      onClick={() => handleDelete(announcement.uid)}
-                    >
-                      <Trash2 />
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <Button
-                      variant="outline"
-                      onClick={() =>
-                        setEditStates((p) => ({
-                          ...p,
-                          [announcement.uid]: false,
-                        }))
-                      }
-                    >
-                      <X />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      onClick={() => saveEdit(announcement.uid)}
-                    >
-                      <Check />
-                    </Button>
-                  </>
-                )}
-              </CardFooter>
-            </Card>
-          );
-        })}
-      </div>
-    </div>
-  );
+                        <DeleteAnnouncementDialog
+                                open={deleteConfirm.isOpen}
+                                title={deleteConfirm.announcementTitle}
+                                onOpenChange={(open) =>
+                                        setDeleteConfirm({
+                                                isOpen: open,
+                                                announcementId: open ? deleteConfirm.announcementId : null,
+                                                announcementTitle: open ? deleteConfirm.announcementTitle : null,
+                                        })
+                                }
+                                onConfirm={() => {
+                                        if (deleteConfirm.announcementId) handleDelete(deleteConfirm.announcementId);
+                                }}
+                        />
+                </div>
+        );
 }
-
-//  ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⠞⠀⠀⠀⠀⠀
-// ⠀⠀⠀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣾⡟⠀⠀⠀⠀⠀⠀
-// ⠀⠀⠀⠈⢻⣷⣄⣀⣀⣠⣤⣴⣶⣶⣶⣶⣶⣶⣤⣤⣠⣾⡿⠀⠀⠀⠀⠀⠀⠀
-// ⠀⠀⠀⠀⠀⣻⣿⣿⣿⠿⠛⠛⠉⠉⠁⠀⠉⠉⠙⢻⣿⣿⣷⣄⠀⠀⠀⠀⠀⠀
-// ⠀⠀⠀⣀⣾⡿⢿⣿⣇⠀⠀⠚⠀⠀⠀⠀⠀⠀⠀⣼⣿⠟⠿⣿⣿⣦⠀⠀⠀⠀
-// ⠀⠀⣴⣿⠟⠁⠀⢿⣿⡄⠀⠀⠀⠀⠀⠀⠀⠀⢰⣿⡟⠀⠀⠈⣿⣿⣷⡄⠀⠀
-// ⠀⣼⣿⠃⠀⠀⠀⠈⣿⣿⠀⠀⠀⠀⠀⠀⠀⢀⣿⡿⠀⠀⠀⠀⠃⢻⣿⣿⡄⠀
-// ⢸⣿⡇⠀⠀⠀⠀⠀⠸⣿⣇⠀⠀⠀⠀⠀⠀⣾⡿⠀⠀⠀⠀⠀⠃⠀⢻⣿⣿⡀
-// ⣿⣿⡇⠀⠀⠀⠀⠀⠀⢹⣿⠀⠀⠀⠀⠀⣸⣿⠃⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⡇
-// ⢿⣿⡇⠀⠀⠀⠀⠀⠀⠈⣿⡇⠀⠀⠀⢠⣿⡏⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⣷
-// ⠸⣿⣿⡄⠀⠀⠀⠀⠀⠀⢹⣿⠀⠀⠀⣾⣿⠁⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⡇
-// ⠀⢻⣿⣿⣄⠀⠀⠀⠀⠀⠘⣿⡇⠀⣴⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⢠⣿⣿⡟⠀
-// ⠀⠀⠹⣿⣿⣧⡀⠀⠀⠀⠀⢿⣿⡀⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⣴⣿⣿⠟⠀⠀
-// ⠀⠀⠀⠈⢿⣿⣿⣦⣀⠀⠀⢸⣿⣿⣿⡇⠀⠀⠀⠀⠀⠀⣤⣾⣿⡿⠋⠀⠀⠀
-// ⠀⠀⠀⠀⠀⠋⠻⢿⣿⣷⣤⣸⣿⣿⣿⣇⣀⣀⣀⣤⣶⣿⣿⣿⡿⠁⠀⠀⠀⠀
-// ⠀⠀⠀⠀⠀⠀⠀⠀⠙⣿⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⢿⠁⠀⠀⠀⠀⠀⠀
-// ⠀⠀⠀⠀⠠⠀⠀⠀⠀⢤⠀⠙⢿⣿⣿⠟⠛⠉⢹⠁⠀⠀⢸⠀⠀⠀⠀⠀⠀⠀
-// ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⠃⠀⠀⠀⢸⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-// ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠸⠃⠀⠀⠀⠀⠘⠀⠀⠀⠸⠀⠀⠀⠀⠀⠀⠀
