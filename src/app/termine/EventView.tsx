@@ -23,8 +23,11 @@ import {
   Loader2,
   Calendar,
   MapPin,
+  ChevronRight,
+  ChevronLeft,
   Users,
   UserRoundX,
+  ArrowDown,
 } from "lucide-react";
 import { toJsDate } from "@/BackEnd/utils";
 import { motion } from "framer-motion";
@@ -237,8 +240,10 @@ export default function EventView({ searchParams }: termineProps) {
     const tooEarly = !checkIfEventIsInRange(toJsDate(event.date));
     const EndOfEvent = toJsDate(event.date);
 
+    const [showAllPlaces, setShowAllPlaces] = useState(false);
+
     return (
-      <div>
+      <div className="flex flex-col h-full  ">
         <div className="flex items-start justify-between mb-4">
           <span className="bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full">
             {event.difficulty}
@@ -251,8 +256,7 @@ export default function EventView({ searchParams }: termineProps) {
               <div className="rounded-full p-2 bg-white border border-gray-400">
                 {statusIcon}
               </div>
-
-              <div className="absolute left-1/4 -translate-x-50 w-50 mt-2 hidden group-hover:flex bg-white p-2 rounded-md shadow-md">
+              <div className="absolute left-1/4 -translate-x-1/2 w-48 mt-2 hidden group-hover:flex bg-white p-2 rounded-md shadow-md z-10 text-xs">
                 {getHoverMessage(status)}
               </div>
             </div>
@@ -260,14 +264,14 @@ export default function EventView({ searchParams }: termineProps) {
         </div>
 
         <h3 className="text-lg font-semibold mb-3">{event.name}</h3>
-        <p className="text-sm text-gray-600 mb-4  line-clamp-2">
-          {event.description}
-        </p>
+        <p className="text-sm text-gray-600 mb-4 ">{event.description}</p>
+
+        <div className="flex-grow" />
 
         <div className="space-y-2 mb-6 text-sm text-gray-700">
           <div className="flex items-center gap-2">
             <Calendar className="w-4 h-4 text-fourthOwn" />
-            <p className="">
+            <p>
               {toJsDate(event.date).toLocaleString("de-DE", {
                 weekday: "short",
                 day: "2-digit",
@@ -282,16 +286,34 @@ export default function EventView({ searchParams }: termineProps) {
               })}
             </p>
           </div>
+
           {event.place && (
             <div className="flex justify-start items-start gap-2">
               <MapPin className="w-4 h-4 text-fourthOwn" />
-              <div className="flex flex-col ">
-                {event.place.map((line, index) => (
-                  <p key={index}>{line}</p>
-                ))}
+              <div className="flex flex-col flex-1">
+                {showAllPlaces ? (
+                  <div>
+                    {event.place.map((line, index) => (
+                      <p key={index}>{line}</p>
+                    ))}
+                  </div>
+                ) : (
+                  <p>{event.place[0]}</p>
+                )}
               </div>
+              <button
+                onClick={() => setShowAllPlaces(!showAllPlaces)}
+                className="hover:bg-gray-100 p-1 rounded"
+              >
+                {showAllPlaces ? (
+                  <ChevronLeft className="w-4 h-4 text-fourthOwn" />
+                ) : (
+                  <ChevronRight className="w-4 h-4 text-fourthOwn" />
+                )}
+              </button>
             </div>
           )}
+
           <div className="flex items-center gap-2">
             <Users className="w-4 h-4 text-fourthOwn" />
             <span>
@@ -303,15 +325,14 @@ export default function EventView({ searchParams }: termineProps) {
 
         {!isPast && (
           <Button
-            className={`${tooEarly ? "cursor-not-allowed border border-primaryOwn" : ""}`}
+            className={`w-full ${tooEarly ? "cursor-not-allowed border border-primaryOwn" : ""}`}
             disabled={tooEarly}
             variant={
               !tooEarly ? (isInEvent ? "destructive" : "default") : "secondary"
             }
             onClick={() => {
-              if (!tooEarly) {
+              if (!tooEarly)
                 handleEvents(event.uid, isInEvent ? "leave" : "join");
-              }
             }}
           >
             {!tooEarly ? (isInEvent ? "Verlassen" : "Beitreten") : "Zu früh"}
@@ -339,7 +360,7 @@ export default function EventView({ searchParams }: termineProps) {
               {upcomingEvents.length}
             </Badge>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid min-h-100 grid-cols-1 md:grid-cols-3 gap-6">
             {getSortedEvents(upcomingEvents).map((event, idx) => (
               <motion.div
                 key={event.uid}
@@ -363,7 +384,7 @@ export default function EventView({ searchParams }: termineProps) {
             </h2>
             <Badge variant="outline">{pastEvents.length}</Badge>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid min-h-100 grid-cols-1 md:grid-cols-3 gap-6">
             {getSortedEvents(pastEvents).map((event, idx) => (
               <motion.div
                 key={event.uid}

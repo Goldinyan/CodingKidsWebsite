@@ -51,9 +51,9 @@ export default function EventNavbar({
                 onClick={() => {
                   callback(tag.value, !filters[tag.value]);
                 }}
-                className={`px-4 py-2 rounded-lg  font-medium transition-all duration-200 ${filters[tag.value]
-                    ? "bg-black text-white border border-black "
-                    : "bg-gray-100 text-gray-800 border border-gray-300 hover:bg-gray-200"
+                className={`px-4 py-2 rounded-lg border-2 bg-gray-100 hover:bg-gray-200 font-medium transition-all duration-200 ${filters[tag.value]
+                    ? "text-black border-secondaryOwn "
+                    : "text-gray-800 border-gray-300"
                   }`}
               >
                 {tag.name}
@@ -78,9 +78,9 @@ export default function EventNavbar({
                   onClick={() => {
                     callback(filter.value, nextState);
                   }}
-                  className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${currentState
-                      ? "bg-black text-white border border-black"
-                      : "bg-gray-100 text-gray-800 border border-gray-300 hover:bg-gray-200"
+                  className={`px-4 py-2 rounded-lg bg-gray-100 border-2 hover:bg-gray-200 font-medium transition-all duration-200 ${currentState
+                      ? "text-black border-secondaryOwn"
+                      : "text-gray-800 border-gray-300 "
                     }`}
                 >
                   {displayText}
@@ -102,9 +102,9 @@ export default function EventNavbar({
                     callback("course", course.name);
                   }
                 }}
-                className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-all duration-200 ${filters["course"] === course.name
-                    ? "bg-black text-white border border-black shadow-md"
-                    : "bg-gray-100 text-gray-800 border border-gray-300 hover:bg-gray-200"
+                className={`px-4 py-2 bg-gray-100 border-2 rounded-lg hover:bg-gray-200 font-medium whitespace-nowrap transition-all duration-200 ${filters["course"] === course.name
+                    ? " text-black border-fifthOwn shadow-md"
+                    : " text-gray-800 border-gray-300 "
                   }`}
               >
                 {course.name}
@@ -125,8 +125,8 @@ export default function EventNavbar({
               }
             }}
             className={`text-left p-4 rounded-lg border-2 transition-all duration-200 hover:shadow-lg ${filters["course"] === course.name
-                ? "border-black bg-black text-white"
-                : "border-gray-200 bg-white text-black hover:border-gray-400"
+                ? "border-fifthOwn text-black shadow-md"
+                : "border-gray-200 bg-white text-black"
               }`}
           >
             <p className="font-bold text-lg mb-1">{course.name}</p>
@@ -142,7 +142,7 @@ export default function EventNavbar({
                   <span
                     key={tag}
                     className={`text-xs px-2 py-1 rounded font-medium ${filters["course"] === course.name
-                        ? "bg-white/20 text-white"
+                        ? "bg-gray-100"
                         : "bg-gray-100 text-gray-700"
                       }`}
                   >

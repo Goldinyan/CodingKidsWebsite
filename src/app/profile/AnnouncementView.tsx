@@ -35,22 +35,22 @@ export default function AnnouncementView({ data }: { data: UserData }) {
 
   const hasAccess = (role: string) => {
     switch (data.role) {
-      case "Admin":
+      case "admin":
         return true;
-      case "Mentor":
-        if (role === "User" || role === "Member" || role === "Mentor") {
+      case "mentor":
+        if (role === "user" || role === "member" || role === "mentor") {
           return true;
         } else {
           return false;
         }
-      case "User":
-        if (role === "User" || role === "Member") {
+      case "user":
+        if (role === "user" || role === "member") {
           return true;
         } else {
           return false;
         }
-      case "Member":
-        if (role === "Member") {
+      case "member":
+        if (role === "member") {
           return true;
         } else {
           return false;
@@ -72,11 +72,11 @@ export default function AnnouncementView({ data }: { data: UserData }) {
 
   const getRoleIcon = (role: string) => {
     switch (role) {
-      case "Admin":
+      case "admin":
         return <Shield className="w-4 h-4" />;
-      case "Mentor":
+      case "mentor":
         return <Zap className="w-4 h-4" />;
-      case "Member":
+      case "member":
         return <User className="w-4 h-4" />;
       default:
         return <Bell className="w-4 h-4" />;
@@ -85,11 +85,11 @@ export default function AnnouncementView({ data }: { data: UserData }) {
 
   const getRoleTagColor = (role: string) => {
     switch (role) {
-      case "Admin":
+      case "admin":
         return "bg-red-900 text-red-200";
-      case "Mentor":
+      case "mentor":
         return "bg-yellow-900 text-yellow-200";
-      case "Member":
+      case "member":
         return "bg-green-900 text-green-200";
       default:
         return "bg-blue-900 text-blue-200";

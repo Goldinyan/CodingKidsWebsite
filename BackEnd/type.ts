@@ -3,6 +3,8 @@ import { Timestamp } from "firebase/firestore";
 
 export type UserRole = "anonymous" | "user" | "member" | "admin" | "mentor";
 
+export type PresetRoles = UserRole;
+
 export type Preset = "false" | "ascending" | "descending";
 
 export const LOG_TYPES = [

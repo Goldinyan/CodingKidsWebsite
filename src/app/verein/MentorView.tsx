@@ -34,7 +34,7 @@ export default function MentorenView() {
     <div>
       <div>
         <div className="w-full flex flex-col items-center justify-center pt-10 pb-10 gap-10  bg-white">
-          <p className="text-center text-4xl lg:text-4xl xl:text-5xl pt-5 font-bold">
+          <p className="text-center w-[70%] text-4xl lg:text-4xl xl:text-5xl pt-5 font-bold">
             Lernen Sie die Menschen hinter der Mission kennen
           </p>
           <p className=" text-center  1:w-70 text-lg sm:w-100 md:w-140 lg:text-2xl  xl:text-2xl lg:w-200 text-muted-foreground ">

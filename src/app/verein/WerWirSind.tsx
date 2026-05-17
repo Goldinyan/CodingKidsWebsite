@@ -66,7 +66,7 @@ export default function WerWirSind() {
             </p>
           </div>
 
-          <div className="">
+          <div className="ml-20">
             <div className=" 1:w-70  md:w-120 lg:w-90 xl:w-140 flex flex-col">
               <div className="flex flex-row gap-5  items-center">
                 <Sparkles className="bg-primaryOwn p-2 rounded-full text-white w-10 h-10" />
@@ -123,7 +123,7 @@ export default function WerWirSind() {
             zu machen und Kreativität, kritisches Denken und Zusammenarbeit für
             jedes Kind in unserer Gemeinschaft zu fördern.
           </p>
-          <div className="flex justify-center flex-col 1:w-70 2:w-90 md:flex-row  gap-10 ">
+          <div className="flex justify-center flex-col 1:w-70 2:w-90 lg:flex-row  gap-10 ">
             {values.map(({ title, description, icon: Icon }) => (
               <div
                 key={title}
@@ -134,7 +134,7 @@ export default function WerWirSind() {
                   <h3 className="text-xl sm: md: lg:  text-center font-semibold">
                     {title}
                   </h3>
-                  <p className="text-sm  3:w-60 sm:w-60 md:w-42 lg:w-60 xl:w-80 text-center text-muted-foreground mt-1 ">
+                  <p className="text-sm  3:w-60 sm:w-60 md:w-42 lg:w-50 xl:w-70 text-center text-muted-foreground mt-1 ">
                     {description}
                   </p>
                 </div>

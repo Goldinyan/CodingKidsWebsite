@@ -6,7 +6,7 @@ import type { UserData, AnnouncementData, PresetRoles } from "@/BackEnd/type";
 import { getAllAnnouncements, getAllUsers } from "@/lib/db";
 import { Bell, User, Zap, Shield, CheckCircle2, Clock } from "lucide-react";
 
-const roles: PresetRoles[] = ["Admin", "All", "Member", "Mentor", "User"];
+const roles: PresetRoles[] = ["admin", "user", "member", "mentor", "anonymous"];
 
 export default function AnnouncementView({ data }: { data: UserData }) {
   const [announcements, setAnnouncements] = useState<AnnouncementData[]>([]);
@@ -39,22 +39,22 @@ export default function AnnouncementView({ data }: { data: UserData }) {
 
   const hasAccess = (role: string) => {
     switch (data.role) {
-      case "Admin":
+      case "admin":
         return true;
-      case "Mentor":
-        if (role === "User" || role === "Member" || role === "Mentor") {
+      case "mentor":
+        if (role === "user" || role === "member" || role === "mentor") {
           return true;
         } else {
           return false;
         }
-      case "User":
-        if (role === "User" || role === "Member") {
+      case "user":
+        if (role === "user" || role === "member") {
           return true;
         } else {
           return false;
         }
-      case "Member":
-        if (role === "Member") {
+      case "member":
+        if (role === "member") {
           return true;
         } else {
           return false;
@@ -76,11 +76,11 @@ export default function AnnouncementView({ data }: { data: UserData }) {
 
   const getRoleIcon = (role: string) => {
     switch (role) {
-      case "Admin":
+      case "admin":
         return <Shield className="w-4 h-4" />;
-      case "Mentor":
+      case "mentor":
         return <Zap className="w-4 h-4" />;
-      case "Member":
+      case "member":
         return <User className="w-4 h-4" />;
       default:
         return <Bell className="w-4 h-4" />;
@@ -89,11 +89,11 @@ export default function AnnouncementView({ data }: { data: UserData }) {
 
   const getRoleTagColor = (role: string) => {
     switch (role) {
-      case "Admin":
+      case "admin":
         return "bg-red-100 text-red-800";
-      case "Mentor":
+      case "mentor":
         return "bg-yellow-100 text-yellow-800";
-      case "Member":
+      case "member":
         return "bg-green-100 text-green-800";
       default:
         return "bg-blue-100 text-blue-800";

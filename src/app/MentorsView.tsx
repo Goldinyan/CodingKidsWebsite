@@ -5,15 +5,20 @@ import { getAllMentors } from "@/lib/db";
 import { Mentor } from "@/BackEnd/type";
 import { motion } from "framer-motion";
 import { MentorCard } from "./verein/MentorCard";
+import { useAuth } from "@/BackEnd/AuthContext";
 
 export default function MentorsView() {
   const [mentors, setMentors] = useState<Mentor[]>([]);
   const [loading, setLoading] = useState(true);
+  const { user, userRole } = useAuth();
 
   useEffect(() => {
     const fetchMentors = async () => {
       try {
-        const allMentors = await getAllMentors();
+        const allMentors = await getAllMentors(
+          user?.uid || "anonymous",
+          userRole,
+        );
         setMentors(allMentors.sort((a, b) => a.id - b.id));
       } catch (error) {
         console.error("Failed to fetch mentors:", error);
@@ -41,7 +46,7 @@ export default function MentorsView() {
         Lerne von erfahrenen Profis mit Leidenschaft für Informatik
       </p>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 3xl:grid-cols-5 gap-10  justify-between ">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xxxl:grid-cols-4 3xl:grid-cols-5 gap-10  justify-between ">
         {mentors.map((mentor, idx) => (
           <motion.div
             key={mentor.uid}
