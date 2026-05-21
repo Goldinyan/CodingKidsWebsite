@@ -1,15 +1,12 @@
 "use client";
 
-import { useState, useEffect, use } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import {
   NavigationMenu,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-  NavigationMenuContent,
-  NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/BackEnd/AuthContext";
@@ -22,7 +19,7 @@ import { UserData } from "@/BackEnd/type";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
-  const { user, loading, userRole } = useAuth();
+  const { user, userRole } = useAuth();
   const [userData, setUserData] = useState<null | UserData>(null);
   const [unreadMessages, setUnreadMessages] = useState(0);
   const router = useRouter();
@@ -65,40 +62,40 @@ export default function Navbar() {
   const isMobile = useIsMobile();
 
   return (
-    <div className="w-full  ">
-      <div className="w-full h-16 pt-5 md:pt-0  ">
+    <div className="w-full bg-black backdrop-blur-sm border-b-2 border-white/10">
+      <div className="w-full h-16 pt-5 md:pt-0">
         <div className="w-full flex items-center pr-5 pl-5">
-          <div className=" flex-row items-center gap-3 hidden md:flex">
+          <div className="flex-row items-center gap-3 hidden md:flex">
             <img src="Logo_aussen_Transparent.png" className="w-15 h-15 p-1" />
             <p
               onClick={() => router.push("/")}
-              className="font-bold hidden cursor-pointer lg:flex"
+              className="font-bold hidden cursor-pointer lg:flex text-white text-sm hover:text-gray-300 transition-colors"
             >
               Coding Kids Niederrhein
             </p>
           </div>
 
-          <div className=" flex-row items-center gap-3 ml-auto hidden md:flex">
-            <Button
-              className="bg-secondaryOwn"
+          <div className="flex-row items-center gap-3 ml-auto hidden md:flex">
+            <button
               onClick={() => router.push("/spenden")}
+              className="px-4 py-2 text-white font-medium border border-gray-400 hover:border-white hover:bg-white/10 transition-all duration-200 hover:scale-105 active:scale-100 flex items-center gap-2"
             >
               {isMobile ? (
-                <HeartHandshakeIcon className="w-5 h-5 text-white" />
+                <HeartHandshakeIcon className="w-5 h-5" />
               ) : (
-                <p className="font-bold">Spenden</p>
+                <p>Spenden</p>
               )}
-            </Button>
+            </button>
             {user && (
               <div className="relative">
-                <Button
-                  variant="outline"
+                <button
                   onClick={() => router.push("/kontakt")}
+                  className="p-2 text-gray-300 hover:text-white hover:bg-white/10 border border-gray-400 hover:border-white transition-all duration-200"
                 >
-                  <MessageCircle />
-                </Button>
+                  <MessageCircle className="w-5 h-5" />
+                </button>
                 {unreadMessages > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 scale-80 rounded-full">
+                  <span className="absolute -top-1 -right-1 bg-white text-black text-xs font-bold px-1.5 py-0.5 scale-75 rounded-full">
                     {unreadMessages}
                   </span>
                 )}
@@ -106,25 +103,25 @@ export default function Navbar() {
             )}
 
             <div className="relative">
-              <Button
-                variant="outline"
+              <button
                 onClick={() => router.push(user ? "/profile" : "/login")}
+                className="p-2 text-gray-300 hover:text-white hover:bg-white/10 border border-gray-400 hover:border-white transition-all duration-200"
               >
                 {!user ? (
                   <LogIn className="w-5 h-5" />
                 ) : (
                   <User className="w-5 h-5" />
                 )}
-              </Button>
+              </button>
             </div>
 
             {userData?.role === "admin" && (
-              <Button
-                variant="outline"
+              <button
                 onClick={() => router.push("/dashboard")}
+                className="p-2 text-gray-300 hover:text-white hover:bg-white/10 border border-gray-400 hover:border-white transition-all duration-200"
               >
                 <LayoutDashboard className="w-5 h-5" />
-              </Button>
+              </button>
             )}
           </div>
 
@@ -133,7 +130,10 @@ export default function Navbar() {
               <NavigationMenuList className="flex gap-6">
                 <NavigationMenuItem>
                   <NavigationMenuLink asChild>
-                    <Link className="font-bold" href="/">
+                    <Link
+                      className="font-bold text-white hover:text-gray-300 transition-colors"
+                      href="/"
+                    >
                       Startseite
                     </Link>
                   </NavigationMenuLink>
@@ -141,7 +141,7 @@ export default function Navbar() {
                 <NavigationMenuItem>
                   <NavigationMenuLink asChild>
                     <p
-                      className="font-bold"
+                      className="font-bold text-white hover:text-gray-300 transition-colors cursor-pointer"
                       onClick={() => router.push("/termine")}
                     >
                       Kurse
@@ -151,7 +151,7 @@ export default function Navbar() {
                 <NavigationMenuItem>
                   <NavigationMenuLink asChild>
                     <p
-                      className="font-bold"
+                      className="font-bold text-white hover:text-gray-300 transition-colors cursor-pointer"
                       onClick={() => router.push("/verein")}
                     >
                       Über uns
@@ -162,7 +162,7 @@ export default function Navbar() {
                   <NavigationMenuLink>
                     {!user && (
                       <p
-                        className="font-bold"
+                        className="font-bold text-white hover:text-gray-300 transition-colors cursor-pointer"
                         onClick={() => router.push("/kontakt")}
                       >
                         Kontakt
@@ -175,21 +175,17 @@ export default function Navbar() {
           </div>
         </div>
 
-        <div className="flex flex-col  w-full h-full  md:hidden">
-          <div className="flex flex-row  justify-between  items-center w-full ">
-            <p className="text-black font-bold pl-6">Coding Kids Niederrhein</p>
+        <div className="flex flex-col w-full h-full md:hidden">
+          <div className="flex flex-row justify-between items-center w-full">
+            <p className="text-white font-bold pl-6">Coding Kids Niederrhein</p>
             <button
               onClick={() => setOpen(!open)}
-              className="focus:outline-none transition-all pr-6"
+              className="focus:outline-none transition-all pr-6 text-white"
             >
-              {!open ? (
-                <Menu className="w-6 h-6 text-graytext" />
-              ) : (
-                <X className="w-6 h-6 text-graytext" />
-              )}
+              {!open ? <Menu className="w-6 h-6" /> : <X className="w-6 h-6" />}
             </button>
           </div>
-          <div className="transition-all duration-300 ">
+          <div className="transition-all duration-300">
             {open && <NavbarMobile setOpen={setOpen} />}
           </div>
         </div>

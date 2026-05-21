@@ -1,14 +1,13 @@
 "use client";
 import type { UserData } from "@/BackEnd/type";
-import { Button } from "@/components/ui/button";
 import { GraduationCap, Rocket, Users } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 
 export default function TopView({ data }: { data: UserData | undefined }) {
   const router = useRouter();
 
-  const texts: { text: string; des: string; icon: React.ElementType }[] = [
+  const features: { text: string; des: string; icon: React.ElementType }[] = [
     {
       text: "Für alle Altersgruppen",
       des: "Vom Einstieg mit blockbasierter Programmierung bis hin zu fortgeschrittenen textbasierten Sprachen wie JavaScript.",
@@ -26,56 +25,86 @@ export default function TopView({ data }: { data: UserData | undefined }) {
     },
   ];
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.15, delayChildren: 0.1 },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 12 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+  };
+
   return (
-    <div className="w-full flex flex-col">
-      <div className="w-full px-8 pt-10">
-        <p className="text-4xl font-extrabold w-[75%]">
-          Die digitale Zukunft ihres Kindes beginnt hier.
-        </p>
-        <p className="text-md pt-4 text-graytext w-[90%]">
-          Wir bieten unterhaltsame und lehrreiche Programmierkurse, um Kinder
-          mit den Fähigkeiten für eine bessere Zukunft auszustatten.
-        </p>
+    <div className="w-full flex flex-col bg-gradient-to-b from-black via-zinc-950 to-black">
+      {/* Subtle background grid */}
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.02)_1px,transparent_1px)] bg-[size:50px_50px] pointer-events-none opacity-30" />
 
-        <div className="flex pt-8 flex-col   md:flex-row gap-2">
-          <Button className="bg-fourthOwn min-w-90 hover:border-fourthOwn w-[25%] hover:border h-10 hover:bg-white hover:text-fourthOwn">
-            <p>Kurse entdecken</p>
-          </Button>
-          {data == undefined && (
-            <Button
+      <div className="relative w-full px-8 pt-16 pb-20">
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="max-w-4xl"
+        >
+          <h1 className="text-5xl md:text-6xl font-bold text-white tracking-tight mb-6 leading-tight">
+            Die digitale Zukunft ihres Kindes beginnt hier.
+          </h1>
+          <p className="text-lg md:text-xl text-gray-300 mb-12 leading-relaxed max-w-2xl font-light">
+            Wir bieten unterhaltsame und lehrreiche Programmierkurse, um Kinder
+            mit den Fähigkeiten für eine bessere Zukunft auszustatten.
+          </p>
+        </motion.div>
+
+        {/* Buttons */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="flex flex-col sm:flex-row gap-4 mb-20"
+        >
+          <button className="px-8 py-3 bg-white text-black font-medium border border-white hover:bg-gray-100 transition-all duration-200 hover:scale-105 active:scale-100">
+            Kurse entdecken
+          </button>
+          {data === undefined && (
+            <button
               onClick={() => router.push("/login")}
-              className="bg-secondaryOwn min-w-90 hover:border-secondaryOwn w-[25%] h-10 hover:border hover:bg-white hover:text-secondaryOwn"
+              className="px-8 py-3 bg-transparent text-white font-medium border border-gray-400 hover:border-white hover:bg-white hover:text-black transition-all duration-200 hover:scale-105 active:scale-100"
             >
-              <p>Jetzt registrieren</p>
-            </Button>
+              Jetzt registrieren
+            </button>
           )}
-        </div>
+        </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10  max-w-400 pt-20">
-          {texts.map(({ text, des, icon: Icon }) => (
-            <div
+        {/* Feature Cards */}
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "0px 0px -100px 0px" }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        >
+          {features.map(({ text, des, icon: Icon }) => (
+            <motion.div
               key={text}
-              className="flex border-1 bg-white p-8 max-w-120 mx-auto shadow-md rounded-2xl duration-400 transition-all  hover:-translate-y-5 flex-col items-start gap-2"
+              variants={itemVariants}
+              className="group p-6 bg-white/5 border border-white/10 backdrop-blur-sm hover:border-white/20 transition-all duration-300 hover:bg-white/8"
             >
-              <AnimatePresence>
-                <motion.div
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -30 }} // Ausgangsanimation
-                  transition={{ duration: 1 }}
-                  viewport={{ once: false }} // erlaubt mehrfaches Ein-/Ausblenden
-                >
-                  <div className="flex flex-row justify-between">
-                    <p className="font-semibold">{text}</p>
-                    <Icon className="w-7 mb-2 h-7 text-fourthOwn" />
-                  </div>
-
-                  <p className="text-sm text-gray-600">{des}</p>
-                </motion.div>
-              </AnimatePresence>
-            </div>
+              <div className="flex items-start gap-4 mb-4">
+                <Icon className="w-6 h-6 text-gray-300 flex-shrink-0 mt-1 group-hover:text-white transition-colors" />
+                <h3 className="text-lg font-semibold text-white leading-tight">
+                  {text}
+                </h3>
+              </div>
+              <p className="text-gray-400 text-sm leading-relaxed">
+                {des}
+              </p>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </div>
   );

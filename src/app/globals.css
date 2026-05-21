@@ -8,6 +8,15 @@
   apply: transition-all, duration-200;
 }
 
+/* Scrollbar komplett ausblenden */
+::-webkit-scrollbar {
+  display: none;
+}
+
+html {
+  scrollbar-width: none; /* Firefox */
+}
+
 /* Entfernt die Pfeile bei number inputs */
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
@@ -18,6 +27,7 @@ input[type="number"]::-webkit-outer-spin-button {
 input[type="number"] {
   -moz-appearance: textfield;
 }
+
 @theme {
   --color-primaryOwn: #845ec2;
   --color-secondaryOwn: #0b6f12;

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import {
   Users,
   Gift,
@@ -13,172 +14,195 @@ import {
   MapPinned,
   ArrowRight,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 
 export default function Support() {
   const router = useRouter();
 
   return (
-    <div>
-      <div className="w-full flex items-center justify-center  ">
-        <div className=" mt-20 mb-30  ">
-          <p className="text-xl text-secondaryOwn font-extrabold text-center mb-5">
-            GEMEINSAM ZUKUNFT GESTALTEN
+    <div className="w-full bg-black">
+      {/* Header Section */}
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        viewport={{ once: true }}
+        className="w-full flex items-center justify-center py-20 px-8"
+      >
+        <div className="max-w-3xl text-center">
+          <p className="text-sm font-semibold text-gray-400 mb-4 tracking-wide uppercase">
+            Gemeinsam Zukunft gestalten
           </p>
-          <p className="1:text-4xl text-6xl font-bold 1:w-80 sm:w-100 md:w-130 text-center mb-5">
+          <h2 className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight">
             Werden Sie Teil unserer Mission
-          </p>
-          <p className="text-2xl 1:w-70 text-center sm:w-100 md:w-130 mx-auto text-muted-foreground">
-            Ihre Unterstützung als Mitdlied oder Förderer ermöglicht es uns,
+          </h2>
+          <p className="text-xl text-gray-400 font-light leading-relaxed">
+            Ihre Unterstützung als Mitglied oder Förderer ermöglicht es uns,
             kostenlose CoderDojos anzubieten und die digitale Bildung der Region
-            voranzutreiben
+            voranzutreiben.
           </p>
         </div>
-      </div>
-      <div className="flex flex-col lg:flex-row pt-10 gap-10 items-center justify-center  ">
-        <div className="flex flex-col sm:w-100 h-160  1:w-90 border-2 p-5 py-10 border-lightborder rounded-3xl transition-all duration-500 hover:-translate-y-5 hover:shadow-lg   ">
-          <div className="flex flex-row    ">
-            <div className="flex items-center ">
-              <Users className="w-12 h-12 p-2 mr-5 mb-10 md:flex hidden text-white bg-primaryOwn rounded-full" />
+      </motion.div>
+
+      {/* Cards Section */}
+      <div className="w-full px-8 py-20">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10">
+          {/* Membership Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="group p-8 bg-white/5 border border-white/10 backdrop-blur-sm hover:border-white/20 hover:bg-white/8 transition-all duration-300"
+          >
+            <div className="flex items-start gap-4 mb-6">
+              <div className="w-12 h-12 bg-white/10 group-hover:bg-white/20 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors">
+                <Users className="w-6 h-6 text-gray-300 group-hover:text-white transition-colors" />
+              </div>
+              <div>
+                <h3 className="text-2xl font-semibold text-white">
+                  Mitglied werden
+                </h3>
+                <p className="text-gray-400 mt-1">Gestalten Sie aktiv mit!</p>
+              </div>
             </div>
-            <div className="flex flex-col pb-5">
-              <p className="text-3xl font-bold">Mitglied werden</p>
-              <p className="text-l text-muted-foreground">
-                Gestalten sie aktiv mit!
-              </p>
-            </div>
-          </div>
-          <div className="">
-            <p className="text-muted-foreground   pb-10 sm:w-80 ">
-              Als Mitgleid im Coding Kids Niederrhein e.V. sind Sie Teil einer
-              wachsenden Gemeinschaft, die sich für die Förderung von Kinder und
+
+            <p className="text-gray-400 text-sm leading-relaxed mb-8">
+              Als Mitglied im Coding Kids Niederrhein e.V. sind Sie Teil einer
+              wachsenden Gemeinschaft, die sich für die Förderung von Kindern und
               Jugendlichen einsetzt. Ihr Beitrag hilft uns, unsere CoderDojos zu
               finanzieren, neue Technologien anzuschaffen und unsere Reichweite
               zu vergrößern. Eine Mitgliedschaft ist nicht nötig um teilnehmen
               zu können.
             </p>
-          </div>
-          <div className="flex flex-col gap-5 mt-5 sm:w-70 1:w-70 w-70 mx-auto justify-center items-center ">
-            <Button
-              variant="outline"
-              className=" border-gray-400 flex justify-start w-full"
-            >
+
+            <div className="space-y-3">
               <a
                 href="/files/Mitgliedsantrag.pdf"
                 download
-                className="flex items-center gap-2 text-black"
+                className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-white text-black font-medium border border-white hover:bg-gray-100 transition-all duration-200 hover:scale-105 active:scale-100 text-sm"
               >
-                <UserPlus size={18} className="text-primaryOwn" />
+                <UserPlus size={16} />
                 Mitgliedsantrag
               </a>
-            </Button>
 
-            <Button
-              variant="outline"
-              className=" border-gray-400 flex justify-start w-full"
-            >
               <a
                 href="/files/Vereinssatzung.pdf"
                 download
-                className="flex items-center gap-2 text-black"
+                className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-transparent text-white font-medium border border-gray-400 hover:border-white hover:bg-white/10 transition-all duration-200 hover:scale-105 active:scale-100 text-sm"
               >
-                <ScrollText size={18} className="text-primaryOwn" />
+                <ScrollText size={16} />
                 Satzung des Vereins
               </a>
-            </Button>
 
-            <Button
-              variant="outline"
-              className=" border-gray-400 flex justify-start w-full"
-            >
               <a
                 href="/files/Beitragsordnung.pdf"
                 download
-                className="flex items-center gap-2 text-black"
+                className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-transparent text-white font-medium border border-gray-400 hover:border-white hover:bg-white/10 transition-all duration-200 hover:scale-105 active:scale-100 text-sm"
               >
-                <Coins size={18} className="text-primaryOwn" />
+                <Coins size={16} />
                 Beitragsordnung
               </a>
-            </Button>
-          </div>
-        </div>
+            </div>
+          </motion.div>
 
-        <div className="flex flex-col sm:w-100 h-160  1:w-90 border-2 p-5 py-10 bg-thirdOwn border-gray-400 rounded-3xl transition-all duration-500 hover:-translate-y-5 hover:shadow-lg   ">
-          <div className="flex flex-row    ">
-            <div className="flex items-center ">
-              <Gift className="w-12 h-12 p-2 mr-5 md:flex hidden text-thirdOwn bg-white rounded-full" />
+          {/* Donation Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            viewport={{ once: true }}
+            className="group p-8 bg-white/5 border border-white/10 backdrop-blur-sm hover:border-white/20 hover:bg-white/8 transition-all duration-300"
+          >
+            <div className="flex items-start gap-4 mb-6">
+              <div className="w-12 h-12 bg-white/10 group-hover:bg-white/20 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors">
+                <Gift className="w-6 h-6 text-gray-300 group-hover:text-white transition-colors" />
+              </div>
+              <div>
+                <h3 className="text-2xl font-semibold text-white">
+                  Förderer werden
+                </h3>
+                <p className="text-gray-400 mt-1">
+                  Bewegen Sie viel mit Ihrer Spende!
+                </p>
+              </div>
             </div>
-            <div className="flex flex-col pb-5">
-              <p className="text-3xl text-white font-bold">Förderer werden</p>
-              <p className="text-l text-white">
-                Bewegen sie viel mit ihrer Spende!
-              </p>
-            </div>
-          </div>
-          <div className="">
-            <p className="text-white   pb-10 sm:w-80 ">
+
+            <p className="text-gray-400 text-sm leading-relaxed mb-8">
               Ihre Spende macht einen direkten Unterschied. Sie ermöglicht uns,
               Laptops für Kinder ohne eigene Geräte bereitzustellen, spezielle
-              Workshops mit Experten zu organisieren und Lehrnmaterial zu
+              Workshops mit Experten zu organisieren und Lehrmaterial zu
               entwickeln.
             </p>
-          </div>
-          <div className="flex flex-col gap-5 w-80   justify-center items-center ">
-            <div className="flex flex-col gap-5   justify-center items-center">
-              <div className="flex flex-row items-center gap-5 sm:w-80 ">
-                <Check className="w-10 md:flex hidden h-10 p-2 text-white border-white border rounded-full shrink-0" />
-                <p className="text-white">
-                  <span className="font-bold">Hardware anschaffen:</span>{" "}
+
+            <div className="space-y-4 mb-8">
+              <div className="flex items-start gap-3">
+                <div className="w-5 h-5 bg-white/10 border border-white/20 rounded flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <Check className="w-3 h-3 text-white" />
+                </div>
+                <p className="text-gray-400 text-sm">
+                  <span className="font-semibold text-white">Hardware anschaffen:</span>{" "}
                   Laptops & Robotik-Kits für unsere Dojos.
                 </p>
               </div>
 
-              <div className="flex flex-row items-center gap-5 sm:w-80 ">
-                <Check className="w-10 h-10 md:flex hidden p-2 text-white border-white border rounded-full shrink-0" />
-                <p className="text-white">
-                  <span className="font-bold">Workshops ermöglichen:</span>{" "}
+              <div className="flex items-start gap-3">
+                <div className="w-5 h-5 bg-white/10 border border-white/20 rounded flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <Check className="w-3 h-3 text-white" />
+                </div>
+                <p className="text-gray-400 text-sm">
+                  <span className="font-semibold text-white">Workshops ermöglichen:</span>{" "}
                   Raummieten und Materialkosten decken.
                 </p>
               </div>
 
-              <div className="flex flex-row items-center gap-5 sm:w-80 ">
-                <Check className="w-10 h-10 md:flex hidden p-2 text-white border-white border rounded-full shrink-0" />
-                <p className="text-white">
-                  <span className="font-bold">Reichweite vergrößern:</span> Neue
+              <div className="flex items-start gap-3">
+                <div className="w-5 h-5 bg-white/10 border border-white/20 rounded flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <Check className="w-3 h-3 text-white" />
+                </div>
+                <p className="text-gray-400 text-sm">
+                  <span className="font-semibold text-white">Reichweite vergrößern:</span> Neue
                   Standorte am Niederrhein erschließen.
                 </p>
               </div>
-              <Button
-                variant="outline"
-                className="sm:w-80 group sm:ml-10 1:w-60 h-10 "
-                onClick={() => router.push("/spenden")}
-              >
-                <p className="text-black font-bold">Vorstand kontaktieren</p>
-                <ArrowRight className="text-black font-bold group-hover:translate-x-5 transition-all duration-400" />
-              </Button>
             </div>
-          </div>
+
+            <button
+              onClick={() => router.push("/spenden")}
+              className="w-full px-4 py-3 bg-white text-black font-medium border border-white hover:bg-gray-100 transition-all duration-200 hover:scale-105 active:scale-100 flex items-center justify-center gap-2 group/btn"
+            >
+              Vorstand kontaktieren
+              <ArrowRight className="w-5 h-5 group-hover/btn:translate-x-1 transition-transform" />
+            </button>
+          </motion.div>
         </div>
       </div>
 
-      <div className="w-[90%] mx-auto mt-20 mb-10  max-w-3xl rounded-2xl border border-gray-200 bg-white p-10 shadow-sm">
-        <h2 className="text-3xl font-bold text-gray-900 mb-4">
-          Haben Sie noch Fragen?
-        </h2>
-        <p className="text-gray-600 text-lg mb-8">
-          Wir beantworten gerne Ihre Fragen zur Mitgliedschaft, zu Spenden oder
-          anderen Anliegen. Zögern Sie nicht, uns zu kontaktieren.
-        </p>
+      {/* FAQ Section */}
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        viewport={{ once: true }}
+        className="w-full px-8 py-20"
+      >
+        <div className="max-w-2xl mx-auto p-12 bg-white/5 border border-white/10 backdrop-blur-sm hover:border-white/20 transition-all duration-300">
+          <h2 className="text-3xl font-bold text-white mb-4">
+            Haben Sie noch Fragen?
+          </h2>
+          <p className="text-gray-400 text-lg mb-8 leading-relaxed font-light">
+            Wir beantworten gerne Ihre Fragen zur Mitgliedschaft, zu Spenden oder
+            anderen Anliegen. Zögern Sie nicht, uns zu kontaktieren.
+          </p>
 
-        <Button
-          variant="outline"
-          className="w-fit px-6 py-3 text-lg"
-          onClick={() => router.push("/kontakt")}
-        >
-          Kontakt aufnehmen
-        </Button>
-      </div>
+          <button
+            onClick={() => router.push("/kontakt")}
+            className="px-8 py-3 bg-white text-black font-medium border border-white hover:bg-gray-100 transition-all duration-200 hover:scale-105 active:scale-100"
+          >
+            Kontakt aufnehmen
+          </button>
+        </div>
+      </motion.div>
     </div>
   );
 }

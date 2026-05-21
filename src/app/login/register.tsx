@@ -92,106 +92,106 @@ export default function RegisterView() {
   return (
     <div className="w-full space-y-6">
       <div>
-        <h2 className="text-3xl font-bold text-primaryOwn mb-2">Registrieren</h2>
-        <p className="text-graytext">Erstelle dein Konto und starte deine Programmier-Reise!</p>
+        <h2 className="text-3xl font-bold text-white mb-2">Registrieren</h2>
+        <p className="text-gray-400 font-light">Erstelle dein Konto und starte deine Programmier-Reise!</p>
       </div>
 
       <div className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-foreground mb-2">
+          <label className="block text-sm font-medium text-gray-300 mb-2">
             Vollständiger Name
           </label>
           <div className="relative">
-            <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-primaryOwn opacity-50" />
+            <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />
             <input
               type="text"
               value={name}
               onChange={handleNameChange}
               placeholder="Max Mustermann"
               maxLength={255}
-              className="w-full pl-10 pr-4 py-3 border border-lightborder rounded-lg bg-white text-foreground placeholder-gray2text focus:outline-none focus:ring-2 focus:ring-primaryOwn focus:border-transparent transition"
+              className="w-full pl-10 pr-4 py-3 border border-white/10 rounded-lg bg-white/5 backdrop-blur-sm text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent transition"
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-foreground mb-2">
+          <label className="block text-sm font-medium text-gray-300 mb-2">
             E-Mail
           </label>
           <div className="relative">
-            <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-primaryOwn opacity-50" />
+            <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />
             <input
               type="email"
               value={email}
               onChange={handleEmailChange}
               placeholder="deine@email.com"
               maxLength={255}
-              className="w-full pl-10 pr-4 py-3 border border-lightborder rounded-lg bg-white text-foreground placeholder-gray2text focus:outline-none focus:ring-2 focus:ring-primaryOwn focus:border-transparent transition"
+              className="w-full pl-10 pr-4 py-3 border border-white/10 rounded-lg bg-white/5 backdrop-blur-sm text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent transition"
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-foreground mb-2">
+          <label className="block text-sm font-medium text-gray-300 mb-2">
             Geburtsdatum
           </label>
           <div className="relative">
-            <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-primaryOwn opacity-50" />
+            <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />
             <input
               type="date"
               value={birthdate?.toISOString().split("T")[0] ?? ""}
               onChange={(e) => setBirthdate(new Date(e.target.value))}
-              className="w-full pl-10 pr-4 py-3 border border-lightborder rounded-lg bg-white text-foreground focus:outline-none focus:ring-2 focus:ring-primaryOwn focus:border-transparent transition"
+              className="w-full pl-10 pr-4 py-3 border border-white/10 rounded-lg bg-white/5 backdrop-blur-sm text-white focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent transition"
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-foreground mb-2">
+          <label className="block text-sm font-medium text-gray-300 mb-2">
             Passwort
           </label>
           <div className="relative">
-            <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-primaryOwn opacity-50" />
+            <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />
             <input
               type="password"
               value={password}
               onChange={handlePasswordChange}
               placeholder="••••••••"
               maxLength={255}
-              className="w-full pl-10 pr-4 py-3 border border-lightborder rounded-lg bg-white text-foreground placeholder-gray2text focus:outline-none focus:ring-2 focus:ring-primaryOwn focus:border-transparent transition"
+              className="w-full pl-10 pr-4 py-3 border border-white/10 rounded-lg bg-white/5 backdrop-blur-sm text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent transition"
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-foreground mb-2">
+          <label className="block text-sm font-medium text-gray-300 mb-2">
             Passwort wiederholen
           </label>
           <div className="relative">
-            <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-primaryOwn opacity-50" />
+            <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />
             <input
               type="password"
               value={secpassword}
               onChange={handleSecPasswordChange}
               placeholder="••••••••"
               maxLength={255}
-              className="w-full pl-10 pr-4 py-3 border border-lightborder rounded-lg bg-white text-foreground placeholder-gray2text focus:outline-none focus:ring-2 focus:ring-primaryOwn focus:border-transparent transition"
+              className="w-full pl-10 pr-4 py-3 border border-white/10 rounded-lg bg-white/5 backdrop-blur-sm text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent transition"
             />
           </div>
         </div>
       </div>
 
       {errorMsg && (
-        <div className="flex items-center gap-3 p-4 bg-lightRedBg border border-red-200 rounded-lg animate-shake">
-          <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
-          <p className="text-sm text-red-800">{errorMsg}</p>
+        <div className="flex items-center gap-3 p-4 bg-red-950/50 border border-red-900/50 rounded-lg animate-shake">
+          <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
+          <p className="text-sm text-red-300">{errorMsg}</p>
         </div>
       )}
 
       <button
         onClick={handleRegister}
         disabled={isLoading || !email || !password || !secpassword || !name || !birthdate}
-        className="w-full py-3 bg-secondaryOwn hover:bg-thirdOwn text-white font-semibold rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
+        className="w-full py-3 bg-white text-black font-semibold rounded-lg hover:bg-gray-100 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
       >
         {isLoading ? "Wird registriert..." : "Registrieren"}
       </button>

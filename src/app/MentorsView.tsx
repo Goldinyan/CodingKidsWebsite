@@ -28,42 +28,66 @@ export default function MentorsView() {
     };
 
     fetchMentors();
-  }, []);
+  }, [user?.uid, userRole]);
 
   if (loading) {
     return (
       <div className="w-full px-8 py-16">
-        <p className="text-2xl font-bold mb-8">Unsere Mentoren</p>
+        <p className="text-2xl font-bold text-white mb-8">Unsere Mentoren</p>
         <p className="text-gray-500">Lädt...</p>
       </div>
     );
   }
 
-  return (
-    <div className="w-full px-8 py-16 ">
-      <p className="text-3xl font-bold mb-2">Unsere Mentoren</p>
-      <p className="text-gray-600 mb-10">
-        Lerne von erfahrenen Profis mit Leidenschaft für Informatik
-      </p>
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.08 },
+    },
+  };
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xxxl:grid-cols-4 3xl:grid-cols-5 gap-10  justify-between ">
-        {mentors.map((mentor, idx) => (
+  const itemVariants = {
+    hidden: { opacity: 0, scale: 0.95 },
+    visible: { opacity: 1, scale: 1, transition: { duration: 0.4 } },
+  };
+
+  return (
+    <div className="w-full px-8 py-20">
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        viewport={{ once: true }}
+        className="mb-12"
+      >
+        <h2 className="text-4xl font-bold text-white mb-3">Unsere Mentoren</h2>
+        <p className="text-gray-400 text-lg">
+          Lerne von erfahrenen Profis mit Leidenschaft für Informatik
+        </p>
+      </motion.div>
+
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "0px 0px -100px 0px" }}
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xxxl:grid-cols-4 3xl:grid-cols-5 gap-10"
+      >
+        {mentors.map((mentor) => (
           <motion.div
             key={mentor.uid}
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: idx * 0.1 }}
+            variants={itemVariants}
             className="text-center"
           >
             <MentorCard
-              key={mentor.uid}
               name={mentor.name}
               description1={mentor.des1}
               picture={mentor.pic}
             />
           </motion.div>
         ))}
-      </div>
+      </motion.div>
     </div>
   );
 }

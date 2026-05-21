@@ -55,57 +55,57 @@ export default function LoginView() {
   return (
     <div className="w-full space-y-6">
       <div>
-        <h2 className="text-3xl font-bold text-primaryOwn mb-2">Anmelden</h2>
-        <p className="text-graytext">Willkommen zurück! Bitte melde dich an.</p>
+        <h2 className="text-3xl font-bold text-white mb-2">Anmelden</h2>
+        <p className="text-gray-400 font-light">Willkommen zurück! Bitte melde dich an.</p>
       </div>
 
       <div className="space-y-4">
-        <div className="">
-          <label className="block text-sm font-medium text-foreground mb-2">
+        <div>
+          <label className="block text-sm font-medium text-gray-300 mb-2">
             E-Mail
           </label>
-          <div className="mx-1 relative">
-            <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-primaryOwn opacity-50" />
+          <div className="relative">
+            <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />
             <input
               type="email"
               value={email}
               onChange={handleEmailChange}
               placeholder="deine@email.com"
               maxLength={255}
-              className="w-full pl-10 pr-4 py-3 border border-lightborder rounded-lg bg-red text-foreground placeholder-gray2text focus:outline-none focus:ring-2 focus:ring-primaryOwn focus:border-transparent transition"
+              className="w-full pl-10 pr-4 py-3 border border-white/10 rounded-lg bg-white/5 backdrop-blur-sm text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent transition"
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-foreground mb-2">
+          <label className="block text-sm font-medium text-gray-300 mb-2">
             Passwort
           </label>
-          <div className="mx-1 relative">
-            <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-primaryOwn opacity-50" />
+          <div className="relative">
+            <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />
             <input
               type="password"
               value={password}
               onChange={handlePasswordChange}
               placeholder="••••••••"
               maxLength={255}
-              className="w-full pl-10 pr-4 py-3 border border-lightborder rounded-lg bg-white text-foreground placeholder-gray2text focus:outline-none focus:ring-2 focus:ring-primaryOwn focus:border-transparent transition"
+              className="w-full pl-10 pr-4 py-3 border border-white/10 rounded-lg bg-white/5 backdrop-blur-sm text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent transition"
             />
           </div>
         </div>
       </div>
 
       {errorMsg && (
-        <div className="flex items-center gap-3 p-4 bg-lightRedBg border border-red-200 rounded-lg animate-shake">
-          <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
-          <p className="text-sm text-red-800">{errorMsg}</p>
+        <div className="flex items-center gap-3 p-4 bg-red-950/50 border border-red-900/50 rounded-lg animate-shake">
+          <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
+          <p className="text-sm text-red-300">{errorMsg}</p>
         </div>
       )}
 
       <button
         onClick={handleLogin}
         disabled={isLoading || !email || !password}
-        className="w-full py-3 bg-primaryOwn hover:bg-fifthOwn text-white font-semibold rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
+        className="w-full py-3 bg-white text-black font-semibold rounded-lg hover:bg-gray-100 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
       >
         {isLoading ? "Wird angemeldet..." : "Anmelden"}
       </button>

@@ -25,8 +25,8 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-otherbg">
-        <div className="text-graytext">Lädt...</div>
+      <div className="flex items-center justify-center min-h-screen bg-black">
+        <div className="text-gray-400">Lädt...</div>
       </div>
     );
   }
@@ -34,10 +34,10 @@ export default function Home() {
   if (!user) return <NoUserKontakt />;
 
   return (
-    <div className="min-h-screen bg-otherbg">
-      <div className="bg-white border-b border-lightborder p-4 sm:p-6">
+    <div className="min-h-screen bg-black">
+      <div className="bg-white/5 border-b border-white/10 p-4 sm:p-6 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-2xl sm:text-3xl font-bold text-primaryOwn">
+          <h1 className="text-2xl sm:text-3xl font-bold text-white">
             Kontakt & Ankündigungen
           </h1>
         </div>

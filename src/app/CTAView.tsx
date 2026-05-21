@@ -1,38 +1,40 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 
 export default function CTAView() {
   return (
-    <div className="w-full  ">
-      <div className="bg-white mx-auto mb-20 py-15 w-90 sm:w-[80%] md:w-[60%] shadow-md rounded-2xl  max-w-6xl">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center text-white"
-        >
-          <h2 className="text-2xl md:text-4xl w-[80%] mx-auto text-start text-black  font-bold mb-4">
-            Bereit für die Zukunft?
-          </h2>
-          <p className=" md:text-md text-sm w-[80%] text-start text-graytext mb-8 mx-auto">
-            Starten Sie jetzt mit kostenlosen Kursen und entdecken Sie die
-            spannende Welt der Programmierung. Keine Vorkenntnisse erforderlich!
-          </p>
+    <div className="w-full py-20">
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        viewport={{ once: true }}
+        className="mx-auto px-8 max-w-4xl"
+      >
+        <div className="bg-white/5 border border-white/10 backdrop-blur-sm p-12 md:p-16">
+          <div className="max-w-2xl">
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
+              Bereit für die Zukunft?
+            </h2>
+            <p className="text-lg text-gray-300 mb-10 leading-relaxed font-light">
+              Starten Sie jetzt mit kostenlosen Kursen und entdecken Sie die
+              spannende Welt der Programmierung. Keine Vorkenntnisse erforderlich!
+            </p>
 
-          <div className="flex flex-col lg:flex-row w-[80%] md:w-[60%] lg:w-[30%] md:items-start mx-auto lg:items-start gap-4 justify-center">
-            <Button className="bg-white w-full text-black border-1 border-primaryOwn hover:bg-gray-100 font-semibold  py-2 ">
-              Kostenlos Starten
-              <ArrowRight className="ml-2 w-5 h-5" />
-            </Button>
-            <Button className="bg-white w-full text-black border-1 border-secondaryOwn hover:bg-gray-100 font-semibold py-2 ">
-              Mehr erfahren
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <button className="px-8 py-3 bg-white text-black font-medium border border-white hover:bg-gray-100 transition-all duration-200 hover:scale-105 active:scale-100 flex items-center justify-center gap-2 group">
+                Kostenlos Starten
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </button>
+              <button className="px-8 py-3 bg-transparent text-white font-medium border border-gray-400 hover:border-white hover:bg-white/10 transition-all duration-200 hover:scale-105 active:scale-100">
+                Mehr erfahren
+              </button>
+            </div>
           </div>
-        </motion.div>
-      </div>
+        </div>
+      </motion.div>
     </div>
   );
 }
