@@ -30,7 +30,7 @@ export default function MainView() {
   }, [user, loading]);
 
   return (
-    <div className="w-full">
+    <div className="w-full bg-background text-foreground transition-colors duration-300">
       <div className="pt-20 w-full flex flex-col">
         <TopView data={userData} />
         <MiddleView />
