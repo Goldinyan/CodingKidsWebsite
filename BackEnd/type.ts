@@ -1,5 +1,6 @@
 import { User } from "firebase/auth";
 import { Timestamp } from "firebase/firestore";
+import { BaseSyntheticEvent } from "react";
 
 export type UserRole = "anonymous" | "user" | "member" | "admin" | "mentor";
 
@@ -71,15 +72,55 @@ export type AnnouncementData = {
   readBy?: string[];
 };
 
-export type UserData = {
+// ------------------------------
+// USER
+// ------------------------------
+
+type BaseSettings = {
+  darkMode: boolean;
+  notifications: {
+    newEvent: boolean;
+  };
+};
+
+type StaffSettings = BaseSettings & {
+  notifications: {
+    newEvent: boolean;
+    logs: boolean;
+  };
+};
+
+type BaseUserData = {
   uid: string;
   name: string;
   email: string;
   birthdate: Timestamp;
   createdAt: Timestamp;
-  role: UserRole;
   courses?: string[];
+  settings: {
+    darkMode: boolean;
+    notifications: {
+      newEvent: boolean;
+      logs: boolean;
+    };
+  };
 };
+
+// UNION
+
+export type UserData =
+  | (BaseUserData & {
+    role: "admin" | "mentor";
+    children: string[];
+    settings: StaffSettings;
+  })
+  | (BaseUserData & {
+    role: "anonymous" | "user" | "member";
+    children?: never;
+    settings: BaseSettings;
+  });
+
+// --------------------------------------
 
 export type Mentor = {
   uid: string;

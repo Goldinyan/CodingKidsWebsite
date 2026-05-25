@@ -33,7 +33,7 @@ export function MentorCard({
         <div className="flex flex-row items-center gap-4 w-full">
           <Avatar className="w-10 h-10 shrink-0">
             <AvatarImage src={picture} className="object-cover rounded-full" />
-            <AvatarFallback>{name[0]}</AvatarFallback>
+            <AvatarFallback>{name}</AvatarFallback>
           </Avatar>
           <div className="flex flex-col">
             <h3 className="text-2xl font-bold text-white leading-tight">

@@ -32,8 +32,10 @@ input[type="number"] {
   /* Brand Akzentfarben */
   --color-accent-primary: #0b6f12;
   --color-accent-secondary: #7b028e;
-  
-  /* Vorhandene Custom Colors */
+
+  --color-lighter-black: #080808;
+
+  --color-base-white: #f8f8f8;
   --color-primaryOwn: #845ec2;
   --color-secondaryOwn: #0b6f12;
   --color-thirdOwn: #428f47;
@@ -117,7 +119,7 @@ body {
 
 :root {
   --radius: 0.65rem;
-  
+
   /* Light Mode - helle, weiche Hintergründe */
   --background: oklch(0.98 0 0);
   --foreground: oklch(0.15 0.01 285);
@@ -125,41 +127,41 @@ body {
   --card-foreground: oklch(0.15 0.01 285);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.15 0.01 285);
-  
+
   /* Primäre Akzentfarbe: #0B6F12 (Tiefes Grün) */
   --primary: oklch(0.52 0.19 142);
   --primary-foreground: oklch(0.97 0.01 142);
-  
+
   /* Sekundäre Akzentfarbe: #7B028E (Sattes Lila) */
-  --secondary: oklch(0.40 0.23 310);
+  --secondary: oklch(0.4 0.23 310);
   --secondary-foreground: oklch(0.97 0.01 310);
-  
+
   /* Muted für neutrale Elemente */
-  --muted: oklch(0.90 0.01 285);
-  --muted-foreground: oklch(0.50 0.01 285);
-  
+  --muted: oklch(0.9 0.01 285);
+  --muted-foreground: oklch(0.5 0.01 285);
+
   /* Accent für CTAs und Highlights */
   --accent: oklch(0.52 0.19 142);
   --accent-foreground: oklch(0.97 0.01 142);
-  
+
   --destructive: oklch(0.58 0.25 27);
   --border: oklch(0.92 0.004 286);
   --input: oklch(0.95 0.003 286);
   --ring: oklch(0.52 0.19 142);
-  
+
   /* Chart colors */
   --chart-1: oklch(0.52 0.19 142);
-  --chart-2: oklch(0.40 0.23 310);
-  --chart-3: oklch(0.70 0.15 142);
-  --chart-4: oklch(0.60 0.15 310);
-  --chart-5: oklch(0.80 0.08 142);
-  
+  --chart-2: oklch(0.4 0.23 310);
+  --chart-3: oklch(0.7 0.15 142);
+  --chart-4: oklch(0.6 0.15 310);
+  --chart-5: oklch(0.8 0.08 142);
+
   /* Sidebar */
   --sidebar: oklch(0.98 0 0);
   --sidebar-foreground: oklch(0.15 0.01 285);
   --sidebar-primary: oklch(0.52 0.19 142);
   --sidebar-primary-foreground: oklch(0.97 0.01 142);
-  --sidebar-accent: oklch(0.40 0.23 310);
+  --sidebar-accent: oklch(0.4 0.23 310);
   --sidebar-accent-foreground: oklch(0.97 0.01 310);
   --sidebar-border: oklch(0.92 0.004 286);
   --sidebar-ring: oklch(0.52 0.19 142);
@@ -169,41 +171,41 @@ body {
   /* Dark Mode - tiefe, weiche Dunkeltöne (nicht reines Schwarz) */
   --background: oklch(0.13 0.01 285);
   --foreground: oklch(0.95 0.01 0);
-  --card: oklch(0.20 0.01 285);
+  --card: oklch(0.2 0.01 285);
   --card-foreground: oklch(0.95 0.01 0);
-  --popover: oklch(0.20 0.01 285);
+  --popover: oklch(0.2 0.01 285);
   --popover-foreground: oklch(0.95 0.01 0);
-  
+
   /* Primäre Akzentfarbe: #0B6F12 (heller im Dark Mode) */
   --primary: oklch(0.62 0.18 142);
   --primary-foreground: oklch(0.97 0.01 142);
-  
+
   /* Sekundäre Akzentfarbe: #7B028E (heller im Dark Mode) */
   --secondary: oklch(0.55 0.22 310);
   --secondary-foreground: oklch(0.97 0.01 310);
-  
+
   /* Muted für neutrale Elemente */
   --muted: oklch(0.35 0.01 285);
-  --muted-foreground: oklch(0.70 0.01 285);
-  
+  --muted-foreground: oklch(0.7 0.01 285);
+
   /* Accent für CTAs und Highlights */
   --accent: oklch(0.62 0.18 142);
   --accent-foreground: oklch(0.13 0.01 285);
-  
-  --destructive: oklch(0.68 0.20 27);
+
+  --destructive: oklch(0.68 0.2 27);
   --border: oklch(0.25 0.01 285);
-  --input: oklch(0.20 0.01 285);
+  --input: oklch(0.2 0.01 285);
   --ring: oklch(0.62 0.18 142);
-  
+
   /* Chart colors */
   --chart-1: oklch(0.62 0.18 142);
   --chart-2: oklch(0.55 0.22 310);
-  --chart-3: oklch(0.70 0.15 142);
-  --chart-4: oklch(0.60 0.15 310);
-  --chart-5: oklch(0.50 0.12 142);
-  
+  --chart-3: oklch(0.7 0.15 142);
+  --chart-4: oklch(0.6 0.15 310);
+  --chart-5: oklch(0.5 0.12 142);
+
   /* Sidebar */
-  --sidebar: oklch(0.20 0.01 285);
+  --sidebar: oklch(0.2 0.01 285);
   --sidebar-foreground: oklch(0.95 0.01 0);
   --sidebar-primary: oklch(0.62 0.18 142);
   --sidebar-primary-foreground: oklch(0.13 0.01 285);
@@ -219,5 +221,52 @@ body {
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@utility main-view-container {
+  width: 100%;
+  padding-top: 5rem; /* pt-20 */
+  display: flex;
+  flex-direction: column;
+
+  /* Light Mode (Default) */
+  background-image: linear-gradient(
+    to bottom,
+    var(--color-slate-50),
+    #ffffff,
+    var(--color-slate-50)
+  );
+
+  /* Dark Mode */
+  &:where(.dark &),
+  .dark & {
+    background-image: linear-gradient(
+      to bottom,
+      #000000,
+      var(--color-zinc-950),
+      #000000
+    );
+  }
+}
+
+/* Definiere das Grid-Muster im Hintergrund */
+@utility bg-grid-pattern {
+  position: absolute;
+  inset: 0;
+  background-size: 50px 50px;
+  pointer-events: none;
+  opacity: 1;
+
+  /* eig immer 0.4 bei opacity*/
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.08) 1px, transparent 1px);
+
+  &:where(.dark &),
+  .dark & {
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
   }
 }

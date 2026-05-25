@@ -17,12 +17,17 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
+import { useTheme } from "@/context/ThemeContext";
+import { getInstance } from "next/dist/compiled/amphtml-validator";
+import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
 
 export default function ProfileView() {
   const [userData, setUserData] = useState<UserData>();
   const [loading, setLoading] = useState(true);
 
   const { user, userRole } = useAuth();
+  const { theme } = useTheme();
+
   const [deleteConfirm, setDeleteConfirm] = useState<{
     isOpen: boolean;
   }>({
@@ -64,7 +69,17 @@ export default function ProfileView() {
       .toUpperCase();
   };
 
-  const calculateAge = (birthdate: string) => {
+  // Avatars by Pablo Stanley (Bottts) - Free for personal and commercial use
+  //
+  // Muss ich benutzen im impressum
+
+  const getAvatar = (name: string) => {
+    return "/avatars/fun-1.png";
+  };
+
+  console.log();
+
+  const calculateAge = (birthdate: Timestamp) => {
     const birth = toJsDate(birthdate);
     const today = new Date();
     let age = today.getFullYear() - birth.getFullYear();
@@ -114,14 +129,125 @@ export default function ProfileView() {
   };
 
   return (
-    <div className="min-h-screen bg-otherbg -m-t-16">
-      <div className="bg-white border-b border-lightborder p-4 sm:p-6">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <h1 className="text-2xl sm:text-3xl font-bold text-primaryOwn">
-            Mein Profil
-          </h1>
+    <div className={`min-h-screen main-view-container relative -m-t-16`}>
+      <div className="bg-grid-pattern ">
+        <div className="flex w-full mx-auto justify-center flex-col gap-5">
+          <div className="flex flex-row mt-10  items-center px-10 h-40 border-1 bg-black border-gray-900 rounded-xl">
+            <div className="w-28 h-28 rounded-full flex border-gray-900 border-1 items-center justify-center">
+              <Avatar>
+                <AvatarImage
+                  src={getAvatar(userData.name)}
+                  className="object-cover rounded-full"
+                />
+              </Avatar>
+
+              {/*
+              <span className="text-4xl font-bold text-white">
+                {getInitials(userData.name)}
+              </span>
+              */}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+  return (
+    <div className={`min-h-screen main-view-container relative -m-t-16`}>
+      <div className="bg-grid-pattern">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="bg-white rounded-xl shadow-md p-6 sm:p-8 border border-lightborder mb-8">
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 mb-8">
+              <div className="flex-shrink-0">
+                <div className="w-32 h-32 rounded-full bg-gradient-to-br from-primaryOwn to-fourthOwn flex items-center justify-center shadow-lg">
+                  <span className="text-4xl font-bold text-white">
+                    {getInitials(userData.name)}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex-grow text-center sm:text-left">
+                <h2 className="text-3xl sm:text-4xl font-bold text-primaryOwn mb-2">
+                  {userData.name}
+                </h2>
+                <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 items-center sm:items-start">
+                  <span
+                    className={`inline-flex items-center gap-2 px-4 py-1 rounded-full font-semibold text-sm ${getRoleColor(userData.role)}`}
+                  >
+                    {getRoleIcon(userData.role)}
+                    {userData.role}
+                  </span>
+                  <span className="text-graytext text-sm">
+                    Mitglied seit {getMember(userData.createdAt)} Tagen
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+              <div className="bg-lightPinkBg rounded-lg p-4 border border-lightborder">
+                <div className="flex items-center gap-3 mb-2">
+                  <Mail className="w-5 h-5 text-primaryOwn" />
+                  <span className="text-graytext font-medium">E-Mail</span>
+                </div>
+                <p className="text-foreground text-lg break-all">
+                  {userData.email}
+                </p>
+              </div>
+
+              <div className="bg-lightGreenBg rounded-lg p-4 border border-lightborder">
+                <div className="flex items-center gap-3 mb-2">
+                  <Cake className="w-5 h-5 text-secondaryOwn" />
+                  <span className="text-graytext font-medium">Geburtstag</span>
+                </div>
+                <div className="flex items-baseline gap-2">
+                  <p className="text-foreground text-lg">
+                    {toJsDate(userData.birthdate).toLocaleDateString("de-DE")}
+                  </p>
+                  <span className="text-graytext text-sm">
+                    ({calculateAge(userData.birthdate)} Jahre)
+                  </span>
+                </div>
+              </div>
+
+              <div className="bg-lightRedBg rounded-lg p-4 border border-lightborder">
+                <div className="flex items-center gap-3 mb-2">
+                  <Shield className="w-5 h-5 text-fourthOwn" />
+                  <span className="text-graytext font-medium">Benutzer ID</span>
+                </div>
+                <p className="text-foreground text-sm font-mono break-all">
+                  {userData.uid}
+                </p>
+              </div>
+
+              <div className="bg-lightPinkBg rounded-lg p-4 border border-lightborder">
+                <div className="flex items-center gap-3 mb-2">
+                  <BookOpen className="w-5 h-5 text-primaryOwn" />
+                  <span className="text-graytext font-medium">Kurse</span>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {userData.courses && userData.courses.length > 0 ? (
+                    userData.courses.map((course, idx) => (
+                      <span
+                        key={idx}
+                        className="bg-secondaryOwn text-white px-3 py-1 rounded-full text-sm"
+                      >
+                        {course}
+                      </span>
+                    ))
+                  ) : (
+                    <span className="text-graytext italic">
+                      Noch keine Kurse
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
           <div className="flex gap-10">
-            {" "}
             <button
               onClick={() => logoutUser()}
               className="flex items-center gap-2 px-4 py-2 bg-fourthOwn hover:bg-fifthOwn text-white rounded-lg transition-colors duration-200 font-medium"
@@ -138,132 +264,54 @@ export default function ProfileView() {
             </button>
           </div>
         </div>
+
+        <Dialog
+          open={deleteConfirm.isOpen}
+          onOpenChange={(open) =>
+            setDeleteConfirm({
+              isOpen: open,
+            })
+          }
+        >
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Kurs löschen?</DialogTitle>
+              <DialogDescription>
+                Sind Sie sicher, dass Sie ihren Account löschen möchten? Diese
+                Aktion kann nicht rückgängig gemacht werden.
+              </DialogDescription>
+            </DialogHeader>
+
+            <DialogFooter>
+              <Button
+                onClick={() =>
+                  setDeleteConfirm({
+                    isOpen: false,
+                  })
+                }
+                variant="outline"
+              >
+                Abbrechen
+              </Button>
+              <Button onClick={deleteAccount} variant="destructive">
+                Löschen
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-white rounded-xl shadow-md p-6 sm:p-8 border border-lightborder mb-8">
-          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 mb-8">
-            <div className="flex-shrink-0">
-              <div className="w-32 h-32 rounded-full bg-gradient-to-br from-primaryOwn to-fourthOwn flex items-center justify-center shadow-lg">
-                <span className="text-4xl font-bold text-white">
-                  {getInitials(userData.name)}
-                </span>
-              </div>
-            </div>
-
-            <div className="flex-grow text-center sm:text-left">
-              <h2 className="text-3xl sm:text-4xl font-bold text-primaryOwn mb-2">
-                {userData.name}
-              </h2>
-              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 items-center sm:items-start">
-                <span
-                  className={`inline-flex items-center gap-2 px-4 py-1 rounded-full font-semibold text-sm ${getRoleColor(userData.role)}`}
-                >
-                  {getRoleIcon(userData.role)}
-                  {userData.role}
-                </span>
-                <span className="text-graytext text-sm">
-                  Mitglied seit {getMember(userData.createdAt)} Tagen
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-            <div className="bg-lightPinkBg rounded-lg p-4 border border-lightborder">
-              <div className="flex items-center gap-3 mb-2">
-                <Mail className="w-5 h-5 text-primaryOwn" />
-                <span className="text-graytext font-medium">E-Mail</span>
-              </div>
-              <p className="text-foreground text-lg break-all">
-                {userData.email}
-              </p>
-            </div>
-
-            <div className="bg-lightGreenBg rounded-lg p-4 border border-lightborder">
-              <div className="flex items-center gap-3 mb-2">
-                <Cake className="w-5 h-5 text-secondaryOwn" />
-                <span className="text-graytext font-medium">Geburtstag</span>
-              </div>
-              <div className="flex items-baseline gap-2">
-                <p className="text-foreground text-lg">
-                  {new Date(userData.birthdate).toLocaleDateString("de-DE")}
-                </p>
-                <span className="text-graytext text-sm">
-                  ({calculateAge(userData.birthdate)} Jahre)
-                </span>
-              </div>
-            </div>
-
-            <div className="bg-lightRedBg rounded-lg p-4 border border-lightborder">
-              <div className="flex items-center gap-3 mb-2">
-                <Shield className="w-5 h-5 text-fourthOwn" />
-                <span className="text-graytext font-medium">Benutzer ID</span>
-              </div>
-              <p className="text-foreground text-sm font-mono break-all">
-                {userData.uid}
-              </p>
-            </div>
-
-            <div className="bg-lightPinkBg rounded-lg p-4 border border-lightborder">
-              <div className="flex items-center gap-3 mb-2">
-                <BookOpen className="w-5 h-5 text-primaryOwn" />
-                <span className="text-graytext font-medium">Kurse</span>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {userData.courses && userData.courses.length > 0 ? (
-                  userData.courses.map((course, idx) => (
-                    <span
-                      key={idx}
-                      className="bg-secondaryOwn text-white px-3 py-1 rounded-full text-sm"
-                    >
-                      {course}
-                    </span>
-                  ))
-                ) : (
-                  <span className="text-graytext italic">Noch keine Kurse</span>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Lösch-Bestätigungs Dialog */}
-      <Dialog
-        open={deleteConfirm.isOpen}
-        onOpenChange={(open) =>
-          setDeleteConfirm({
-            isOpen: open,
-          })
-        }
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Kurs löschen?</DialogTitle>
-            <DialogDescription>
-              Sind Sie sicher, dass Sie ihren Account löschen möchten? Diese
-              Aktion kann nicht rückgängig gemacht werden.
-            </DialogDescription>
-          </DialogHeader>
-
-          <DialogFooter>
-            <Button
-              onClick={() =>
-                setDeleteConfirm({
-                  isOpen: false,
-                })
-              }
-              variant="outline"
-            >
-              Abbrechen
-            </Button>
-            <Button onClick={deleteAccount} variant="destructive">
-              Löschen
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
+}
+
+function UserSettingsView() {
+  return <div></div>;
+}
+
+function MentorSettingsView() {
+  return <div></div>;
+}
+
+function AdminSettingsView() {
+  return <div></div>;
 }

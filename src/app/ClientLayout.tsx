@@ -1,7 +1,7 @@
 "use client";
 
 import { ReactNode } from "react";
-import NavbarWrapper from "./NavbarWrapper";
+import NavbarWrapper from "./navbar/NavbarWrapper";
 import { Toaster } from "@/components/ui/toaster";
 import AnimatedBackground from "@/components/AnimatedBackground";
 import { ThemeProvider } from "@/context/ThemeContext";

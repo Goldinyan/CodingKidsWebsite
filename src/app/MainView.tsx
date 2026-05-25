@@ -1,19 +1,24 @@
 "use client";
+
 import { useAuth } from "@/BackEnd/AuthContext";
-import TopView from "./TopView";
 import type { UserData } from "@/BackEnd/type";
 import { useEffect, useState } from "react";
 import { getUserData } from "@/lib/db";
-import MiddleView from "./MiddleView";
-import FeaturedEventsView from "./FeaturedEventsView";
-import FeaturedCoursesView from "./FeaturedCoursesView";
-import MentorsView from "./MentorsView";
-import CTAView from "./CTAView";
+import { useTheme } from "@/context/ThemeContext";
+import {
+  TopView,
+  MiddleView,
+  FeaturedEventsView,
+  FeaturedCoursesView,
+  MentorsView,
+  CTAView,
+} from "./homepage";
 
 export default function MainView() {
   const [userData, setUserData] = useState<UserData>();
 
   const { user, loading } = useAuth();
+  const { theme } = useTheme();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -30,8 +35,9 @@ export default function MainView() {
   }, [user, loading]);
 
   return (
-    <div className="w-full bg-background text-foreground transition-colors duration-300">
-      <div className="pt-20 w-full flex flex-col">
+    <div className={`w-full min-h-screen relative main-view-container`}>
+      <div className="absolute inset-0 bg-grid-pattern   z-0" />
+      <div className="relative w-full flex flex-col z-10">
         <TopView data={userData} />
         <MiddleView />
         <FeaturedEventsView />

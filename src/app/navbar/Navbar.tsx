@@ -66,7 +66,10 @@ export default function Navbar() {
       <div className="w-full h-16 pt-5 md:pt-0">
         <div className="w-full flex items-center pr-5 pl-5">
           <div className="flex-row items-center gap-3 hidden md:flex">
-            <img src="Logo_aussen_Transparent.png" className="w-15 h-15 p-1" />
+            <img
+              src="Logo_aussen_Transparent.png"
+              className="w-14 h-14 p-1 mt-1"
+            />
             <p
               onClick={() => router.push("/")}
               className="font-bold hidden cursor-pointer lg:flex text-white text-sm hover:text-gray-300 transition-colors"
@@ -76,9 +79,10 @@ export default function Navbar() {
           </div>
 
           <div className="flex-row items-center gap-3 ml-auto hidden md:flex">
+            {/* they normally have a  borderg-gray-400 */}
             <button
               onClick={() => router.push("/spenden")}
-              className="px-4 py-2 text-white font-medium border border-gray-400 hover:border-white hover:bg-white/10 transition-all duration-200 hover:scale-105 active:scale-100 flex items-center gap-2"
+              className="px-4 py-2 text-white font-medium border-gray-400 hover:border-white hover:bg-white/10 transition-all duration-200 hover:scale-105 active:scale-100 flex items-center gap-2"
             >
               {isMobile ? (
                 <HeartHandshakeIcon className="w-5 h-5" />
