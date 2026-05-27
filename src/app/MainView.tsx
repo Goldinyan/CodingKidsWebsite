@@ -38,7 +38,7 @@ export default function MainView() {
     <div className={`w-full min-h-screen relative main-view-container`}>
       <div className="absolute inset-0 bg-grid-pattern   z-0" />
       <div className="relative w-full flex flex-col z-10">
-        <TopView data={userData} />
+        <TopView data={userData} loading={loading} />
         <MiddleView />
         <FeaturedEventsView />
         <FeaturedCoursesView />

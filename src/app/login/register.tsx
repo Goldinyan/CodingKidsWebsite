@@ -6,10 +6,7 @@ import { useState } from "react";
 import { Mail, Lock, User, Calendar, AlertCircle } from "lucide-react";
 
 const sanitizeInput = (input: string): string => {
-  return input
-    .trim()
-    .replace(/[<>]/g, "")
-    .substring(0, 255);
+  return input.trim().replace(/[<>]/g, "").substring(0, 255);
 };
 
 export default function RegisterView() {
@@ -31,7 +28,13 @@ export default function RegisterView() {
     const sanitizedPassword = sanitizeInput(password);
     const sanitizedSecPassword = sanitizeInput(secpassword);
 
-    if (!sanitizedEmail || !sanitizedPassword || !sanitizedSecPassword || !sanitizedName || !birthdate) {
+    if (
+      !sanitizedEmail ||
+      !sanitizedPassword ||
+      !sanitizedSecPassword ||
+      !sanitizedName ||
+      !birthdate
+    ) {
       setErrorMsg("Bitte fülle alle Felder aus.");
       return;
     }
@@ -93,7 +96,9 @@ export default function RegisterView() {
     <div className="w-full space-y-6">
       <div>
         <h2 className="text-3xl font-bold text-white mb-2">Registrieren</h2>
-        <p className="text-gray-400 font-light">Erstelle dein Konto und starte deine Programmier-Reise!</p>
+        <p className="text-gray-400 font-light">
+          Erstelle dein Konto und starte deine Programmier-Reise!
+        </p>
       </div>
 
       <div className="space-y-4">
@@ -109,7 +114,7 @@ export default function RegisterView() {
               onChange={handleNameChange}
               placeholder="Max Mustermann"
               maxLength={255}
-              className="w-full pl-10 pr-4 py-3 border border-white/10 rounded-lg bg-white/5 backdrop-blur-sm text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent transition"
+              className="w-[98%] ml-[2px] pl-10 pr-4 py-3 border border-white/10 rounded-lg bg-white/5 backdrop-blur-sm text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent transition"
             />
           </div>
         </div>
@@ -126,7 +131,7 @@ export default function RegisterView() {
               onChange={handleEmailChange}
               placeholder="deine@email.com"
               maxLength={255}
-              className="w-full pl-10 pr-4 py-3 border border-white/10 rounded-lg bg-white/5 backdrop-blur-sm text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent transition"
+              className="w-[98%] ml-[2px] pl-10 pr-4 py-3 border border-white/10 rounded-lg bg-white/5 backdrop-blur-sm text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent transition"
             />
           </div>
         </div>
@@ -141,7 +146,7 @@ export default function RegisterView() {
               type="date"
               value={birthdate?.toISOString().split("T")[0] ?? ""}
               onChange={(e) => setBirthdate(new Date(e.target.value))}
-              className="w-full pl-10 pr-4 py-3 border border-white/10 rounded-lg bg-white/5 backdrop-blur-sm text-white focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent transition"
+              className="w-[98%] ml-[2px] pl-10 pr-4 py-3 border border-white/10 rounded-lg bg-white/5 backdrop-blur-sm text-white focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent transition"
             />
           </div>
         </div>
@@ -158,7 +163,7 @@ export default function RegisterView() {
               onChange={handlePasswordChange}
               placeholder="••••••••"
               maxLength={255}
-              className="w-full pl-10 pr-4 py-3 border border-white/10 rounded-lg bg-white/5 backdrop-blur-sm text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent transition"
+              className="w-[98%] ml-[2px] pl-10 pr-4 py-3 border border-white/10 rounded-lg bg-white/5 backdrop-blur-sm text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent transition"
             />
           </div>
         </div>
@@ -175,7 +180,7 @@ export default function RegisterView() {
               onChange={handleSecPasswordChange}
               placeholder="••••••••"
               maxLength={255}
-              className="w-full pl-10 pr-4 py-3 border border-white/10 rounded-lg bg-white/5 backdrop-blur-sm text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent transition"
+              className="w-[98%] ml-[2px] pl-10 pr-4 py-3 border border-white/10 rounded-lg bg-white/5 backdrop-blur-sm text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent transition"
             />
           </div>
         </div>
@@ -190,7 +195,14 @@ export default function RegisterView() {
 
       <button
         onClick={handleRegister}
-        disabled={isLoading || !email || !password || !secpassword || !name || !birthdate}
+        disabled={
+          isLoading ||
+          !email ||
+          !password ||
+          !secpassword ||
+          !name ||
+          !birthdate
+        }
         className="w-full py-3 bg-white text-black font-semibold rounded-lg hover:bg-gray-100 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
       >
         {isLoading ? "Wird registriert..." : "Registrieren"}

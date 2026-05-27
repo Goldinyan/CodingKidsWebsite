@@ -1,15 +1,22 @@
 "use client";
+
+import { useEffect, useState } from "react";
 import type { UserData } from "@/BackEnd/type";
 import { GraduationCap, Rocket, Users } from "lucide-react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useTheme } from "@/context/ThemeContext";
 
-export default function TopView({ data }: { data: UserData | undefined }) {
+export default function TopView({
+  data,
+  loading,
+}: {
+  data: UserData | undefined;
+  loading: boolean;
+}) {
   const router = useRouter();
   const { theme } = useTheme();
-
-  const hasAccount = data == undefined;
+  const showRegisterButton = data === undefined && !loading;
 
   const features: { text: string; des: string; icon: React.ElementType }[] = [
     {
@@ -54,7 +61,7 @@ export default function TopView({ data }: { data: UserData | undefined }) {
     <div className="">
       <div className="" />
 
-      <div className="relative w-full px-8 pt-8 pb-20">
+      <div className="relative w-full px-8 pt-4 pb-20">
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
@@ -94,13 +101,13 @@ export default function TopView({ data }: { data: UserData | undefined }) {
             Kurse entdecken
           </motion.button>
 
-          {hasAccount && (
+          {showRegisterButton && (
             <motion.button
               onClick={() => router.push("/login")}
               whileHover={{ scale: 1.03, y: -1 }}
               whileTap={{ scale: 0.98 }}
               transition={{ type: "spring", stiffness: 400, damping: 15 }}
-              className={`px-8 py-3 font-medium border ${hasAccount ? "opacity-100" : "opacity-0"} ${theme === "dark"
+              className={`px-8 py-3 font-medium border  ${theme === "dark"
                   ? "bg-black text-white border-gray-400 hover:border-white hover:bg-white/5"
                   : "bg-white text-slate-900 border-slate-400 hover:border-slate-900 hover:bg-slate-50"
                 }`}

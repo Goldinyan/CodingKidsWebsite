@@ -1,8 +1,11 @@
 "use client";
 
-import { sendAccountCreationEmailToAdmin, sendWelcomeEmail } from "@/BackEnd/email";
+import {
+  sendAccountCreationEmailToAdmin,
+  sendWelcomeEmail,
+} from "@/BackEnd/email";
 // lib/auth.ts
-import { auth, db, } from "./firebase";
+import { auth, db } from "./firebase";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -14,11 +17,10 @@ import {
   sendPasswordResetEmail,
   updateEmail,
   reauthenticateWithCredential,
-  EmailAuthProvider
+  EmailAuthProvider,
 } from "firebase/auth";
 import type { User } from "firebase/auth";
 import { doc, getDoc, setDoc, updateDoc, arrayUnion } from "firebase/firestore";
-
 
 export async function registerUser(
   email: string,
@@ -27,22 +29,22 @@ export async function registerUser(
     name: string;
     birthdate: Date;
     courses?: string[];
-  }
+  },
 ) {
   try {
     await setPersistence(auth, browserLocalPersistence);
     const userCredential = await createUserWithEmailAndPassword(
       auth,
       email,
-      password
+      password,
     );
     const user = userCredential.user;
     await emailVerification(user);
     await sendWelcomeEmail(email, extraData.name);
     await sendAccountCreationEmailToAdmin(extraData.name, email);
-    console.log("Verifizierung gesendet")
+    console.log("Verifizierung gesendet");
 
-    // User verified kann man checken mit user?.emailVerified und so dann sacehn freischalten oder eben nicht 
+    // User verified kann man checken mit user?.emailVerified und so dann sacehn freischalten oder eben nicht
     await updateProfile(user, {
       displayName: extraData.name,
     });
@@ -62,10 +64,10 @@ export async function registerUser(
   }
 }
 
-export async function emailVerification(user: User){
+export async function emailVerification(user: User) {
   try {
     await sendEmailVerification(user);
-  } catch(error){
+  } catch (error) {
     console.log(error);
   }
 }
@@ -76,7 +78,7 @@ export async function loginUser(email: string, password: string) {
     const userCredential = await signInWithEmailAndPassword(
       auth,
       email,
-      password
+      password,
     );
     return userCredential.user;
   } catch (error) {
@@ -85,10 +87,10 @@ export async function loginUser(email: string, password: string) {
   }
 }
 
-export async function passwordReset(email: string){
+export async function passwordReset(email: string) {
   try {
     await sendPasswordResetEmail(auth, email);
-  } catch(error){
+  } catch (error) {
     console.log(error);
   }
 }
@@ -124,7 +126,7 @@ export async function reAuthenticate(email: string, password: string) {
   }
 }
 
-export async function logoutUser() {
+export async function logOutUser() {
   try {
     await signOut(auth);
   } catch (error) {

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/BackEnd/AuthContext";
 import type { UserData } from "@/BackEnd/type";
 import { deleteUser, getUserData } from "@/lib/db";
-import { logoutUser } from "@/lib/auth";
+import { logOutUser } from "@/lib/auth";
 import { LogOut, Mail, Cake, Calendar, BookOpen, Shield } from "lucide-react";
 import { toJsDate } from "@/BackEnd/utils";
 import { Timestamp } from "firebase/firestore";
@@ -128,17 +128,31 @@ export default function ProfileView() {
     }
   };
 
+  if (user) {
+    console.log(user.uid);
+  }
+
   return (
     <div className={`min-h-screen main-view-container relative -m-t-16`}>
+      <button
+        className="text-black h-20 w-100"
+        onClick={() => {
+          logOutUser();
+          console.log("logging out");
+        }}
+      >
+        LOG OUT
+      </button>
       <div className="bg-grid-pattern ">
         <div className="flex w-full mx-auto justify-center flex-col gap-5">
-          <div className="flex flex-row mt-10  items-center px-10 h-40 border-1 bg-black border-gray-900 rounded-xl">
+          <div className="flex flex-row mt-10  items-center px-10 h-40 border-1  border-gray-900 rounded-xl">
             <div className="w-28 h-28 rounded-full flex border-gray-900 border-1 items-center justify-center">
               <Avatar>
+                {/*
                 <AvatarImage
                   src={getAvatar(userData.name)}
                   className="object-cover rounded-full"
-                />
+                />*/}
               </Avatar>
 
               {/*

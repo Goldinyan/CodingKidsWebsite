@@ -250,7 +250,6 @@ body {
   }
 }
 
-/* Definiere das Grid-Muster im Hintergrund */
 @utility bg-grid-pattern {
   position: absolute;
   inset: 0;
@@ -260,13 +259,13 @@ body {
 
   /* eig immer 0.4 bei opacity*/
   background-image:
-    linear-gradient(rgba(0, 0, 0, 0.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.08) 1px, transparent 1px);
+    linear-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
 
   &:where(.dark &),
   .dark & {
     background-image:
-      linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+      linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
   }
 }

@@ -55,13 +55,17 @@ export default function LoginView() {
   return (
     <div className="w-full space-y-6">
       <div>
-        <h2 className="text-3xl font-bold text-white mb-2">Anmelden</h2>
-        <p className="text-gray-400 font-light">Willkommen zurück! Bitte melde dich an.</p>
+        <h2 className="text-3xl font-bold ml-[2px]  text-white mb-2">
+          Anmelden
+        </h2>
+        <p className="text-gray-400 ml-[2px] font-light">
+          Willkommen zurück! Bitte melde dich an.
+        </p>
       </div>
 
       <div className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">
+          <label className="block text-sm ml-[2px] font-medium text-gray-300 mb-2">
             E-Mail
           </label>
           <div className="relative">
@@ -72,7 +76,7 @@ export default function LoginView() {
               onChange={handleEmailChange}
               placeholder="deine@email.com"
               maxLength={255}
-              className="w-full pl-10 pr-4 py-3 border border-white/10 rounded-lg bg-white/5 backdrop-blur-sm text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent transition"
+              className="w-[98%] ml-[2px] pl-10 pr-4 py-3 border border-white/10 rounded-lg bg-white/5 backdrop-blur-sm text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent transition"
             />
           </div>
         </div>
@@ -89,7 +93,7 @@ export default function LoginView() {
               onChange={handlePasswordChange}
               placeholder="••••••••"
               maxLength={255}
-              className="w-full pl-10 pr-4 py-3 border border-white/10 rounded-lg bg-white/5 backdrop-blur-sm text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent transition"
+              className="w-[98%] ml-[2px] pl-10 pr-4 py-3 border border-white/10 rounded-lg bg-white/5 backdrop-blur-sm text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent transition"
             />
           </div>
         </div>

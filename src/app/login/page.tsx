@@ -3,35 +3,41 @@
 import LoginView from "./login";
 import RegisterView from "./register";
 import { useState } from "react";
+import { useTheme } from "@/context/ThemeContext";
 
 export default function Home() {
   const [view, setView] = useState<"Login" | "SignUp">("Login");
+  const { theme } = useTheme();
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-black via-zinc-950 to-black w-full flex items-center justify-center px-4 relative">
-      {/* Subtle background grid */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.02)_1px,transparent_1px)] bg-[size:50px_50px] pointer-events-none opacity-30" />
-
+    <div
+      className={`
+      ${view == "Login" ? "min-h-200" : "min-h-270"}  
+      ${theme == "dark" ? " " : " "} 
+      w-full flex items-center justify-center relative main-view-container px-4`}
+    >
+      <div className="absolute inset-0 bg-grid-pattern z-0" />
       <div className="w-full max-w-md relative z-10">
-        <div className="bg-white/5 w-full border border-white/10 backdrop-blur-sm p-8">
+        <div
+          className={` ${theme == "dark" ? "bg-base-white/5 border-base-white/10" : "bg-black/5 border-black/10 "}
+w-full border backdrop-blur-sm p-8`}
+        >
           <div className="flex gap-2 mb-8 w-full border-b border-white/10">
             <button
               onClick={() => setView("Login")}
-              className={`flex-1 pb-4 font-semibold transition-all duration-300 ${
-                view === "Login"
+              className={`flex-1 pb-4 font-semibold transition-all duration-300 ${view === "Login"
                   ? "text-white border-b-2 border-white"
                   : "text-gray-500 hover:text-gray-400"
-              }`}
+                }`}
             >
               Anmelden
             </button>
             <button
               onClick={() => setView("SignUp")}
-              className={`flex-1 pb-4 font-semibold transition-all duration-300 ${
-                view === "SignUp"
+              className={`flex-1 pb-4 font-semibold transition-all duration-300 ${view === "SignUp"
                   ? "text-white border-b-2 border-white"
                   : "text-gray-500 hover:text-gray-400"
-              }`}
+                }`}
             >
               Registrieren
             </button>
@@ -39,20 +45,18 @@ export default function Home() {
 
           <div className="relative overflow-hidden min-h-[400px]">
             <div
-              className={`transition-all duration-500 ease-in-out transform ${
-                view === "Login"
+              className={`transition-all duration-500 ease-in-out transform ${view === "Login"
                   ? "opacity-100 translate-x-0"
                   : "absolute opacity-0 translate-x-full pointer-events-none"
-              }`}
+                }`}
             >
               <LoginView />
             </div>
             <div
-              className={`transition-all duration-500 ease-in-out transform ${
-                view === "SignUp"
+              className={`transition-all duration-500 ease-in-out transform ${view === "SignUp"
                   ? "opacity-100 translate-x-0"
                   : "absolute opacity-0 -translate-x-full pointer-events-none"
-              }`}
+                }`}
             >
               <RegisterView />
             </div>

@@ -16,6 +16,7 @@ import { Menu, X, LayoutDashboard, HeartHandshakeIcon } from "lucide-react";
 import NavbarMobile from "./NavbarMobile";
 import { getAllAnnouncements, getUserData } from "@/lib/db";
 import { UserData } from "@/BackEnd/type";
+import { useTheme } from "@/context/ThemeContext";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
@@ -23,6 +24,7 @@ export default function Navbar() {
   const [userData, setUserData] = useState<null | UserData>(null);
   const [unreadMessages, setUnreadMessages] = useState(0);
   const router = useRouter();
+  const { theme } = useTheme();
 
   useEffect(() => {
     if (!user) return;
@@ -62,7 +64,9 @@ export default function Navbar() {
   const isMobile = useIsMobile();
 
   return (
-    <div className="w-full bg-black backdrop-blur-sm border-b-2 border-white/10">
+    <div
+      className={`w-full  ${theme == "dark" ? "bg-black" : "bg-base-white"} backdrop-blur-sm border-b-2 border-white/10`}
+    >
       <div className="w-full h-16 pt-5 md:pt-0">
         <div className="w-full flex items-center pr-5 pl-5">
           <div className="flex-row items-center gap-3 hidden md:flex">
@@ -72,7 +76,7 @@ export default function Navbar() {
             />
             <p
               onClick={() => router.push("/")}
-              className="font-bold hidden cursor-pointer lg:flex text-white text-sm hover:text-gray-300 transition-colors"
+              className={`${theme == "dark" ? "text-white" : "text-black"} font-bold hidden cursor-pointer lg:flex -white text-sm transition-colors`}
             >
               Coding Kids Niederrhein
             </p>
@@ -82,7 +86,11 @@ export default function Navbar() {
             {/* they normally have a  borderg-gray-400 */}
             <button
               onClick={() => router.push("/spenden")}
-              className="px-4 py-2 text-white font-medium border-gray-400 hover:border-white hover:bg-white/10 transition-all duration-200 hover:scale-105 active:scale-100 flex items-center gap-2"
+              className={`${theme == "dark"
+                  ? "text-white hover:bg-base-white/10 border-gray-400 hover:border-white"
+                  : "text-black border-gray-400 hover:border-black hover:bg-black/10"
+                } 
+px-4 py-2 font-medium transition-all duration-200 active:scale-100 flex items-center gap-2`}
             >
               {isMobile ? (
                 <HeartHandshakeIcon className="w-5 h-5" />
@@ -94,12 +102,19 @@ export default function Navbar() {
               <div className="relative">
                 <button
                   onClick={() => router.push("/kontakt")}
-                  className="p-2 text-gray-300 hover:text-white hover:bg-white/10 border border-gray-400 hover:border-white transition-all duration-200"
+                  className={` ${theme == "dark"
+                      ? "text-gray-300 hover:text-white hover:bg-white/10 hover:border-white border-gray-400"
+                      : "text-gray-900 hover:text-black hover:bg-black/10 hover:border-black border-gray-800"
+                    } 
+
+                  p-2 border transition-all duration-200`}
                 >
                   <MessageCircle className="w-5 h-5" />
                 </button>
                 {unreadMessages > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-white text-black text-xs font-bold px-1.5 py-0.5 scale-75 rounded-full">
+                  <span
+                    className={`${theme == "dark" ? " bg-white text-black" : " bg-black text-white"} absolute -top-1 -right-1 text-xs font-bold px-1.5 py-0.5 scale-75 rounded-full`}
+                  >
                     {unreadMessages}
                   </span>
                 )}
@@ -109,7 +124,12 @@ export default function Navbar() {
             <div className="relative">
               <button
                 onClick={() => router.push(user ? "/profile" : "/login")}
-                className="p-2 text-gray-300 hover:text-white hover:bg-white/10 border border-gray-400 hover:border-white transition-all duration-200"
+                className={` ${theme == "dark"
+                    ? "text-gray-300 hover:text-white hover:bg-white/10 hover:border-white border-gray-400"
+                    : "text-gray-900 hover:text-black hover:bg-black/10 hover:border-black border-gray-800"
+                  } 
+
+                  p-2 border transition-all duration-200`}
               >
                 {!user ? (
                   <LogIn className="w-5 h-5" />
@@ -122,7 +142,12 @@ export default function Navbar() {
             {userData?.role === "admin" && (
               <button
                 onClick={() => router.push("/dashboard")}
-                className="p-2 text-gray-300 hover:text-white hover:bg-white/10 border border-gray-400 hover:border-white transition-all duration-200"
+                className={` ${theme == "dark"
+                    ? "text-gray-300 hover:text-white hover:bg-white/10 hover:border-white border-gray-400"
+                    : "text-gray-900 hover:text-black hover:bg-black/10 hover:border-black border-gray-800"
+                  } 
+
+                  p-2 border transition-all duration-200`}
               >
                 <LayoutDashboard className="w-5 h-5" />
               </button>
@@ -130,52 +155,46 @@ export default function Navbar() {
           </div>
 
           <div className="absolute left-1/2 -translate-x-1/2">
-            <NavigationMenu className="hidden md:flex">
-              <NavigationMenuList className="flex gap-6">
-                <NavigationMenuItem>
-                  <NavigationMenuLink asChild>
-                    <Link
-                      className="font-bold text-white hover:text-gray-300 transition-colors"
-                      href="/"
-                    >
-                      Startseite
-                    </Link>
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                  <NavigationMenuLink asChild>
-                    <p
-                      className="font-bold text-white hover:text-gray-300 transition-colors cursor-pointer"
-                      onClick={() => router.push("/termine")}
-                    >
-                      Kurse
-                    </p>
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                  <NavigationMenuLink asChild>
-                    <p
-                      className="font-bold text-white hover:text-gray-300 transition-colors cursor-pointer"
-                      onClick={() => router.push("/verein")}
-                    >
-                      Über uns
-                    </p>
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                  <NavigationMenuLink>
-                    {!user && (
-                      <p
-                        className="font-bold text-white hover:text-gray-300 transition-colors cursor-pointer"
-                        onClick={() => router.push("/kontakt")}
-                      >
-                        Kontakt
-                      </p>
-                    )}
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
-              </NavigationMenuList>
-            </NavigationMenu>
+            <div className="hidden md:flex gap-6">
+              <p
+                className={`${theme == "dark"
+                    ? "text-white hover:text-white hover:bg-base-white/10 border-gray-400 hover:border-white"
+                    : "text-black hover:text-black border-gray-400 hover:border-black hover:bg-black/10"
+                  } 
+px-4 py-2 font-medium transition-all duration-200 active:scale-100 flex items-center gap-2`}
+                onClick={() => router.push("/")}
+              >
+                Startseite
+              </p>
+              <p
+                className={`${theme == "dark"
+                    ? "text-white hover:text-white hover:bg-base-white/10 border-gray-400 hover:border-white"
+                    : "text-black hover:text-black border-gray-400 hover:border-black hover:bg-black/10"
+                  } 
+px-4 py-2 font-medium transition-all duration-200 active:scale-100 flex items-center gap-2`}
+                onClick={() => router.push("/termine")}
+              >
+                Kurse
+              </p>
+              <p
+                className={`${theme == "dark"
+                    ? "text-white hover:text-white hover:bg-base-white/10 border-gray-400 hover:border-white"
+                    : "text-black hover:text-black border-gray-400 hover:border-black hover:bg-black/10"
+                  } 
+px-4 py-2 font-medium transition-all duration-200 active:scale-100 flex items-center gap-2`}
+                onClick={() => router.push("/verein")}
+              >
+                Über uns
+              </p>
+              {!user && (
+                <p
+                  className="font-bold text-white hover:text-gray-300 transition-colors cursor-pointer"
+                  onClick={() => router.push("/kontakt")}
+                >
+                  Kontakt
+                </p>
+              )}
+            </div>
           </div>
         </div>
 
