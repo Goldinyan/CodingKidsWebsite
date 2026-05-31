@@ -17,7 +17,7 @@ export default function Impressum() {
           className={`${theme === "dark"
               ? "bg-white/5 border-white/10"
               : "bg-white border-slate-200"
-            } border rounded-lg backdrop-blur-sm p-8 mb-8`}
+            } border  -lg backdrop-blur-sm p-8 mb-8`}
         >
           <h1
             className={`text-4xl font-bold mb-4 ${theme === "dark" ? "text-white" : "text-slate-900"
@@ -37,7 +37,7 @@ export default function Impressum() {
           className={`${theme === "dark"
               ? "bg-white/5 border-white/10"
               : "bg-white border-slate-200"
-            } border rounded-lg backdrop-blur-sm p-8 space-y-8`}
+            } border  -lg backdrop-blur-sm p-8 space-y-8`}
         >
           <section>
             <h2

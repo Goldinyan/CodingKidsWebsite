@@ -66,7 +66,7 @@ const Datenschutz = () => {
       className={`${theme === "dark"
           ? "bg-white/5 border-white/10"
           : "bg-white border-slate-200"
-        } border rounded-lg scroll-mt-[90px] backdrop-blur-sm p-8 mb-6`}
+        } border rounded-none scroll-mt-[90px] backdrop-blur-sm p-8 mb-6`}
     >
       <h2
         className={`text-2xl font-bold mb-4 ${theme === "dark" ? "text-white" : "text-slate-900"
@@ -111,7 +111,7 @@ const Datenschutz = () => {
 
       <div
         onClick={() => scrollToSection("top")}
-        className={`fixed w-14 h-14 bottom-25 border border-border/50 group-hover:border-border/70 transition-all duration-400 right-6  rounded-full  z-20 bg-gradient-to-br from-background/50 to-background/30 backdrop-blur-md flex items-center justify-center ${theme == "dark" ? " text-slate-300 " : " text-amber-500"}`}
+        className={`fixed w-14 h-14 bottom-25 border border-border/50 group-hover:border-border/70 transition-all duration-400 right-6   -full  z-20 bg-gradient-to-br from-background/50 to-background/30 backdrop-blur-md flex items-center justify-center ${theme == "dark" ? " text-slate-300 " : " text-amber-500"}`}
       >
         <ArrowUp />
       </div>
@@ -121,7 +121,7 @@ const Datenschutz = () => {
           className={`${theme === "dark"
               ? "bg-white/5 border-white/10"
               : "bg-white border-slate-200"
-            } border rounded-lg backdrop-blur-sm p-8 mb-8`}
+            } border  -lg backdrop-blur-sm p-8 mb-8`}
         >
           <h1
             className={`text-4xl font-bold mb-2 ${theme === "dark" ? "text-white" : "text-slate-900"
@@ -141,7 +141,7 @@ const Datenschutz = () => {
           className={`${theme === "dark"
               ? "bg-white/5 border-white/10"
               : "bg-white border-slate-200"
-            } border rounded-lg backdrop-blur-sm p-8 mb-8`}
+            } border  -lg backdrop-blur-sm p-8 mb-8`}
         >
           <h2
             className={`text-xl font-bold mb-4 ${theme === "dark" ? "text-white" : "text-slate-900"
@@ -149,14 +149,14 @@ const Datenschutz = () => {
           >
             Inhaltsverzeichnis
           </h2>
-          <div className="space-y-2 flex items-center justify-center flex-row flex-wrap">
+          <div className="w-full flex items-center gap-4 justify-center flex-row flex-wrap">
             {tableOfContents.map((item) => (
               <button
                 key={item.id}
                 onClick={() => scrollToSection(item.id)}
-                className={`block text-left px-4 py-2 rounded transition-colors ${theme === "dark"
-                    ? "text-green-400 hover:text-green-300 hover:bg-white/10"
-                    : "text-green-600 hover:text-green-700 hover:bg-slate-100"
+                className={`block text-left px-4 py-2   transition-colors ${theme === "dark"
+                    ? "text-white hover:text-green-300 hover:bg-white/10 hover:border-green-400  -lg border border-white/10"
+                    : "text-slate-900 hover:text-green-700 hover:bg-slate-100 hover:border-green-600 border border-slate-200"
                   }`}
               >
                 {item.label}
@@ -566,7 +566,7 @@ const Datenschutz = () => {
             className={`${theme === "dark"
                 ? "bg-white/5 border-white/10"
                 : "bg-white border-slate-200"
-              } border rounded-lg backdrop-blur-sm p-8 text-center`}
+              } border backdrop-blur-sm p-8 text-center`}
           >
             <p
               className={`text-sm ${theme === "dark" ? "text-gray-400" : "text-slate-600"
