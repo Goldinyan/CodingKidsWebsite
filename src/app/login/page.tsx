@@ -4,17 +4,19 @@ import LoginView from "./login";
 import RegisterView from "./register";
 import { useState } from "react";
 import { useTheme } from "@/context/ThemeContext";
+import { Link } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const [view, setView] = useState<"Login" | "SignUp">("Login");
   const { theme } = useTheme();
+  const router = useRouter();
 
   return (
     <div
       className={`
-      ${view == "Login" ? "min-h-200" : "min-h-270"}  
-      ${theme == "dark" ? " " : " "} 
-      w-full flex items-center justify-center relative main-view-container px-4`}
+     ${view == "Login" ? "min-h-220" : "min-h-270"}  
+     w-full flex items-center justify-center relative main-view-container px-4`}
     >
       <div className="absolute inset-0 bg-grid-pattern z-0" />
       <div className="w-full max-w-md relative z-10">
@@ -22,12 +24,18 @@ export default function Home() {
           className={` ${theme == "dark" ? "bg-base-white/5 border-base-white/10" : "bg-black/5 border-black/10 "}
 w-full border backdrop-blur-sm p-8`}
         >
-          <div className="flex gap-2 mb-8 w-full border-b border-white/10">
+          <div
+            className={`flex gap-2 mb-8 w-full border-b ${theme == "dark" ? "border-white/10" : "border-black/10"}`}
+          >
             <button
               onClick={() => setView("Login")}
               className={`flex-1 pb-4 font-semibold transition-all duration-300 ${view === "Login"
-                  ? "text-white border-b-2 border-white"
-                  : "text-gray-500 hover:text-gray-400"
+                  ? theme === "dark"
+                    ? "text-white border-b-2 border-white"
+                    : "text-slate-900 border-b-2 border-slate-900"
+                  : theme === "dark"
+                    ? "text-gray-500 hover:text-gray-400"
+                    : "text-slate-600 hover:text-slate-700"
                 }`}
             >
               Anmelden
@@ -35,8 +43,12 @@ w-full border backdrop-blur-sm p-8`}
             <button
               onClick={() => setView("SignUp")}
               className={`flex-1 pb-4 font-semibold transition-all duration-300 ${view === "SignUp"
-                  ? "text-white border-b-2 border-white"
-                  : "text-gray-500 hover:text-gray-400"
+                  ? theme === "dark"
+                    ? "text-white border-b-2 border-white"
+                    : "text-slate-900 border-b-2 border-slate-900"
+                  : theme === "dark"
+                    ? "text-gray-500 hover:text-gray-400"
+                    : "text-slate-600 hover:text-slate-700"
                 }`}
             >
               Registrieren
@@ -62,13 +74,15 @@ w-full border backdrop-blur-sm p-8`}
             </div>
           </div>
 
-          <div className="mt-8 pt-6 border-t border-white/10 text-center text-sm text-gray-400 animate-fade-in">
+          <div
+            className={`mt-8 pt-6 border-t ${theme == "dark" ? "border-white/10 text-gray-400" : "border-black/10 text-slate-600"} text-center text-sm animate-fade-in`}
+          >
             {view === "Login" ? (
               <p>
                 Noch kein Konto?{" "}
                 <button
                   onClick={() => setView("SignUp")}
-                  className="text-white font-semibold hover:text-gray-300 transition-colors"
+                  className={`font-semibold transition-colors ${theme == "dark" ? "text-white hover:text-gray-300" : "text-slate-900 hover:text-slate-700"}`}
                 >
                   Jetzt registrieren
                 </button>
@@ -78,7 +92,7 @@ w-full border backdrop-blur-sm p-8`}
                 Bereits registriert?{" "}
                 <button
                   onClick={() => setView("Login")}
-                  className="text-white font-semibold hover:text-gray-300 transition-colors"
+                  className={`font-semibold transition-colors ${theme == "dark" ? "text-white hover:text-gray-300" : "text-slate-900 hover:text-slate-700"}`}
                 >
                   Hier anmelden
                 </button>
@@ -87,22 +101,29 @@ w-full border backdrop-blur-sm p-8`}
           </div>
         </div>
 
-        <div className="mt-8 text-center text-sm text-gray-500">
+        <div
+          className={`mt-8 text-center text-sm ${theme == "dark" ? "text-gray-500" : "text-slate-600"}`}
+        >
           <p>
             Mit deiner Anmeldung akzeptierst du unsere Datenschutzbestimmungen
           </p>
+          <div>
+            <p onClick={() => router.push("http://localhost:3000/impressum")}>
+              Imressum
+            </p>
+          </div>
         </div>
       </div>
 
       <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        .animate-fade-in {
-          animation: fadeIn 0.5s ease-in-out;
-        }
-      `}</style>
+       @keyframes fadeIn {
+         from { opacity: 0; }
+         to { opacity: 1; }
+       }
+       .animate-fade-in {
+         animation: fadeIn 0.5s ease-in-out;
+       }
+     `}</style>
     </div>
   );
 }
