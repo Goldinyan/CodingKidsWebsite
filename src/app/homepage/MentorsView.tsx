@@ -10,9 +10,33 @@ import { useTheme } from "@/context/ThemeContext";
 
 export default function MentorsView() {
   const [mentors, setMentors] = useState<Mentor[]>([]);
+  const [orderedMentors, setOrderedMentors] = useState<Mentor[]>([]);
+  const [expanded, setExpanded] = useState<number>(0);
+
+
+
+
   const [loading, setLoading] = useState(true);
   const { user, userRole } = useAuth();
   const { theme } = useTheme();
+
+
+  const expandMentor = (id: number): void => {
+    const mentors: Mentor[] = [];
+
+    for(let i = 0; i < expanded; i++){
+      mentors.push(orderedMentors[i]);
+    }
+
+    mentors.push(orderedMentors[id]);
+
+
+    for(let i = expanded + 1; i < orderedMentors.length; i++){
+      mentors.push(orderedMentors[i]);
+    }
+
+    setOrderedMentors(mentors);
+  }
 
   useEffect(() => {
     const fetchMentors = async () => {
@@ -98,6 +122,7 @@ export default function MentorsView() {
               description1={mentor.des1}
               description2={mentor.des2}
               picture={mentor.pic}
+              theme={theme}
             />
           </motion.div>
         ))}

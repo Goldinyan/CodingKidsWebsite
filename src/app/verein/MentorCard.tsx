@@ -1,11 +1,7 @@
-import {
-  Card,
-  CardHeader,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
+import { Card, CardHeader, CardFooter } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { useTheme, Theme } from "@/context/ThemeContext";
 
 export function MentorCard({
   name,
@@ -15,6 +11,7 @@ export function MentorCard({
   onExpand,
   isFirst,
   isExpanded,
+  theme,
 }: {
   name: string;
   description1: string;
@@ -23,11 +20,20 @@ export function MentorCard({
   onExpand?: () => void;
   isFirst?: boolean;
   isExpanded?: boolean;
+  theme: Theme;
 }) {
   return (
     <Card
-      className={`!rounded-none 1:min-w-70 flex flex-col w-full ${isExpanded && isFirst ? "md:px-20 lg:px-30 col-span-full" : ""
-        } ${onExpand ? "min-h-50" : "h-60"} transition-all duration-300 hover:-translate-y-2 hover:shadow-lg bg-white/5 border border-white/10 hover:border-white/20 hover:bg-white/8`}
+      className={`
+        ${isExpanded && isFirst ? "md:px-20 lg:px-30 col-span-full" : ""} 
+        !rounded-none 1:min-w-70 flex flex-col w-full 
+        transition-all duration-300 
+        hover:-translate-y-2 hover:shadow-lg backdrop-blur-2xl border
+        ${theme === "dark"
+          ? "bg-white/5 hover:bg-white/8 border-white/10 hover:border-green-600"
+          : "bg-slate-100 hover:bg-green-50 border-green-300 hover:border-green-500"
+        }
+      `}
     >
       <CardHeader className="w-full flex flex-col items-center gap-4 pt-2">
         <div className="flex flex-row items-center gap-4 w-full">
@@ -36,23 +42,41 @@ export function MentorCard({
             <AvatarFallback>{name}</AvatarFallback>
           </Avatar>
           <div className="flex flex-col">
-            <h3 className="text-2xl font-bold text-white leading-tight">
+            <h3
+              className={`text-2xl font-bold leading-tight ${theme === "dark" ? "text-white" : "text-slate-900"
+                }`}
+            >
               {name}
             </h3>
-            <h3 className="text-xs font-normal text-gray2text">role</h3>
+            <h3
+              className={`text-xs font-normal ${theme === "dark" ? "text-gray2text" : "text-slate-500"
+                }`}
+            >
+              role
+            </h3>
           </div>
         </div>
 
         <div className="w-full flex flex-col gap-1">
-          <p className="text-sm text-gray-400">{description1}</p>
+          <p
+            className={`text-sm ${theme === "dark" ? "text-gray-400" : "text-slate-600"
+              }`}
+          >
+            {description1}
+          </p>
           {isExpanded && (
-            <p className="text-sm text-gray-400">{description2}</p>
+            <p
+              className={`text-sm ${theme === "dark" ? "text-gray-400" : "text-slate-600"
+                }`}
+            >
+              {description2}
+            </p>
           )}
         </div>
       </CardHeader>
 
-      <CardFooter className="mt-auto pb-6">
-        {onExpand ? (
+      <CardFooter className="mt-auto -pb-15">
+        {onExpand && (
           <Button
             variant="outline"
             onClick={() => {
@@ -70,12 +94,13 @@ export function MentorCard({
                 }
               }
             }}
-            className="bg-white text-black hover:bg-gray-100 border-white"
+            className={`transition-colors duration-300 ${theme === "dark"
+                ? "bg-white text-black hover:bg-gray-100 border-white"
+                : "bg-slate-900 text-white hover:bg-slate-800 border-slate-900"
+              }`}
           >
             {isExpanded ? "Weniger" : "Mehr erfahren"}
           </Button>
-        ) : (
-          <p className="text-gray-400">{description2}</p>
         )}
       </CardFooter>
     </Card>

@@ -125,27 +125,14 @@ export default function TopView({
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
         >
           {features.map(({ text, des, icon: Icon }, idx) => {
-            const isGreen = true;
-            const isPurple = false;
-
             return (
               <motion.div
                 key={text}
                 variants={itemVariants}
-                whileHover="hover" // Greift jetzt sauber auf itemVariants.hover zu!
-                className={`group relative z-10 p-6 backdrop-blur-sm border transition-colors duration-300 ${theme === "dark"
-                    ? `bg-white/5 ${isGreen
-                      ? "border-green-500/30 hover:border-green-500/60 hover:bg-white/10"
-                      : isPurple
-                        ? "border-purple-500/30 hover:border-purple-500/60 hover:bg-white/10"
-                        : "border-white/10 hover:border-white/20 hover:bg-white/10"
-                    }`
-                    : `bg-slate-100 ${isGreen
-                      ? "border-green-300 hover:border-green-500 hover:bg-green-50"
-                      : isPurple
-                        ? "border-purple-300 hover:border-purple-500 hover:bg-purple-50"
-                        : "border-slate-300 hover:border-slate-400 hover:bg-slate-200"
-                    }`
+                whileHover="hover"
+                className={`group relative z-10 p-6 backdrop-blur-2xl border transition-colors duration-300 ${theme === "dark"
+                    ? "bg-white/5 border-green-500/30 hover:border-green-500/60 hover:bg-white/10"
+                    : "bg-slate-100 border-green-300 hover:border-green-500 hover:bg-green-50"
                   }`}
                 style={{
                   boxShadow:
@@ -157,18 +144,8 @@ export default function TopView({
                 <div className="flex items-start gap-4 mb-4">
                   <Icon
                     className={`w-6 h-6 flex-shrink-0 mt-1 transition-colors duration-300 ${theme === "dark"
-                        ? `text-gray-300 ${isGreen
-                          ? "group-hover:text-green-400"
-                          : isPurple
-                            ? "group-hover:text-purple-400"
-                            : "group-hover:text-white"
-                        }`
-                        : `${isGreen
-                          ? "text-green-600"
-                          : isPurple
-                            ? "text-purple-600"
-                            : "text-slate-600"
-                        }`
+                        ? "text-gray-300 group-hover:text-green-400"
+                        : "text-green-600"
                       }`}
                   />
                   <h3
@@ -186,7 +163,7 @@ export default function TopView({
                 </p>
               </motion.div>
             );
-          })}
+          })}{" "}
         </motion.div>
       </div>
     </div>
