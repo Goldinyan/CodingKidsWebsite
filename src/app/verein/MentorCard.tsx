@@ -25,16 +25,17 @@ export function MentorCard({
   return (
     <Card
       className={`
-        ${isExpanded && isFirst ? "md:px-20 lg:px-30 col-span-full" : ""} 
-        !rounded-none 1:min-w-70 flex flex-col w-full 
-        transition-all duration-300 
-        hover:-translate-y-2 hover:shadow-lg backdrop-blur-2xl border
-        ${theme === "dark"
+    ${isExpanded && isFirst ? "md:px-20 lg:px-30 col-span-full" : ""} 
+    !rounded-none 1:min-w-70 flex flex-col w-full 
+    transition-all duration-300 
+    hover:-translate-y-2 hover:shadow-lg border backdrop-blur-2xl
+    ${theme === "dark"
           ? "bg-white/5 hover:bg-white/8 border-white/10 hover:border-green-600"
           : "bg-slate-100 hover:bg-green-50 border-green-300 hover:border-green-500"
         }
-      `}
+  `}
     >
+      {" "}
       <CardHeader className="w-full flex flex-col items-center gap-4 pt-2">
         <div className="flex flex-row items-center gap-4 w-full">
           <Avatar className="w-10 h-10 shrink-0">
@@ -74,7 +75,6 @@ export function MentorCard({
           )}
         </div>
       </CardHeader>
-
       <CardFooter className="mt-auto -pb-15">
         {onExpand && (
           <Button

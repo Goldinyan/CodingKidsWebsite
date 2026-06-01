@@ -52,7 +52,7 @@ export default function FeaturedCoursesView() {
   }
 
   const containerVariants = {
-    hidden: { opacity: 0 },
+    hidden: { opacity: 0.5 },
     visible: {
       opacity: 1,
       transition: { staggerChildren: 0.06, delayChildren: 0.05 },
@@ -60,7 +60,7 @@ export default function FeaturedCoursesView() {
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, scale: 0.92 },
+    hidden: { opacity: 0.5, scale: 0.92 },
     visible: { opacity: 1, scale: 1, transition: { duration: 0.5, ease: "easeOut" } },
   };
 
@@ -93,7 +93,7 @@ export default function FeaturedCoursesView() {
         initial="hidden"
         whileInView="visible"
         exit="hidden"
-        viewport={{ once: true, margin: "0px 0px -50px 0px" }}
+        viewport={{ once: false, margin: "0px 0px -50px 0px" }}
         className="grid grid-cols-1 md:grid-cols-3 gap-6"
       >
         {courses.map((course) => (
