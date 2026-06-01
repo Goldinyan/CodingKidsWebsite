@@ -57,131 +57,138 @@ export default function FeaturedEventsView() {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: { staggerChildren: 0.08, delayChildren: 0.05 },
+      transition: { staggerChildren: 0.06, delayChildren: 0.05 },
     },
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 16 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+    hidden: { opacity: 0, scale: 0.92 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: { duration: 0.5, ease: "easeOut" },
+    },
   };
 
   return (
     <div className={`w-full px-8 py-20 transition-colors duration-300 `}>
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        viewport={{ once: true }}
-        className="mb-12"
-      >
-        <h2
-          className={`text-4xl font-bold mb-3 ${theme === "dark" ? "text-white" : "text-slate-900"
-            }`}
+      <div className="mb-12">
+        <motion.div
+          initial={{ opacity: 0.5, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          viewport={{ once: true }}
         >
-          Kommende Events
-        </h2>
-        <p
-          className={`text-lg ${theme === "dark" ? "text-gray-400" : "text-slate-600"
-            }`}
-        >
-          Entdecke die nächsten Kurse und Workshops
-        </p>
-      </motion.div>
+          <h2
+            className={`text-4xl font-bold mb-3 ${theme === "dark" ? "text-white" : "text-slate-900"
+              }`}
+          >
+            Kommende Events
+          </h2>
+          <p
+            className={`text-lg ${theme === "dark" ? "text-gray-400" : "text-slate-600"
+              }`}
+          >
+            Entdecke die nächsten Kurse und Workshops
+          </p>
+        </motion.div>
+      </div>
 
       <motion.div
         variants={containerVariants}
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true, margin: "0px 0px -50px 0px" }}
+        exit="hidden"
+        viewport={{ once: false, margin: "0px 0px -50px 0px" }}
         className="grid grid-cols-1 md:grid-cols-3 gap-6"
       >
         {events.map((event) => {
           return (
-            <motion.div
+            <div
               key={event.uid}
-              variants={itemVariants}
-              className={`group backdrop-blur-sm p-6 border transition-all duration-300 ${theme === "dark"
+              className={`group backdrop-blur-2xl p-6 border transition-all duration-300 ${theme === "dark"
                   ? "bg-white/5 border-white/10 hover:border-green-500/50 hover:bg-white/8"
                   : "bg-slate-50 border-slate-300 hover:border-green-500 hover:bg-green-50"
                 }`}
             >
-              <div className="flex items-start justify-between mb-4">
-                <span
-                  className={`text-xs font-semibold px-3 py-1 transition-colors ${theme === "dark"
-                      ? "bg-white/10 text-gray-300 group-hover:text-white"
-                      : "bg-slate-200 text-slate-700 group-hover:text-slate-900"
-                    }`}
-                >
-                  {event.difficulty}
-                </span>
-                <span
-                  className={`text-xs transition-colors ${theme === "dark"
-                      ? "text-gray-500 group-hover:text-gray-400"
-                      : "text-slate-500 group-hover:text-slate-700"
-                    }`}
-                >
-                  {event.typeOfEvent}
-                </span>
-              </div>
-
-              <h3
-                className={`text-lg font-semibold mb-3 ${theme === "dark" ? "text-white" : "text-slate-900"
-                  }`}
-              >
-                {event.name}
-              </h3>
-              <p
-                className={`text-sm mb-6 line-clamp-2 ${theme === "dark" ? "text-gray-400" : "text-slate-600"
-                  }`}
-              >
-                {event.description}
-              </p>
-
-              <div
-                className={`space-y-2 mb-8 text-sm ${theme === "dark" ? "text-gray-400" : "text-slate-600"
-                  }`}
-              >
-                <div className="flex items-center gap-2">
-                  <Calendar
-                    className={`w-4 h-4 ${theme === "dark" ? "text-gray-500" : "text-slate-500"
+              <motion.div variants={itemVariants} layout>
+                <div className="flex items-start justify-between mb-4">
+                  <span
+                    className={`text-xs font-semibold px-3 py-1 transition-colors ${theme === "dark"
+                        ? "bg-white/10 text-gray-300 group-hover:text-white"
+                        : "bg-slate-200 text-slate-700 group-hover:text-slate-900"
                       }`}
-                  />
-                  <span>
-                    {toJsDate(event.date).toLocaleDateString("de-DE")}
+                  >
+                    {event.difficulty}
+                  </span>
+                  <span
+                    className={`text-xs transition-colors ${theme === "dark"
+                        ? "text-gray-500 group-hover:text-gray-400"
+                        : "text-slate-500 group-hover:text-slate-700"
+                      }`}
+                  >
+                    {event.typeOfEvent}
                   </span>
                 </div>
-                {event.place && (
+
+                <h3
+                  className={`text-lg font-semibold mb-3 ${theme === "dark" ? "text-white" : "text-slate-900"
+                    }`}
+                >
+                  {event.name}
+                </h3>
+                <p
+                  className={`text-sm mb-6 line-clamp-2 ${theme === "dark" ? "text-gray-400" : "text-slate-600"
+                    }`}
+                >
+                  {event.description}
+                </p>
+
+                <div
+                  className={`space-y-2 mb-8 text-sm ${theme === "dark" ? "text-gray-400" : "text-slate-600"
+                    }`}
+                >
                   <div className="flex items-center gap-2">
-                    <MapPin
+                    <Calendar
                       className={`w-4 h-4 ${theme === "dark" ? "text-gray-500" : "text-slate-500"
                         }`}
                     />
-                    <span>{event.place[0]}</span>
+                    <span>
+                      {toJsDate(event.date).toLocaleDateString("de-DE")}
+                    </span>
                   </div>
-                )}
-                <div className="flex items-center gap-2">
-                  <Users
-                    className={`w-4 h-4 ${theme === "dark" ? "text-gray-500" : "text-slate-500"
-                      }`}
-                  />
-                  <span>
-                    {event.users?.length + (event.queue?.length || 0)}/
-                    {event.memberCount} Plätze belegt
-                  </span>
+                  {event.place && (
+                    <div className="flex items-center gap-2">
+                      <MapPin
+                        className={`w-4 h-4 ${theme === "dark" ? "text-gray-500" : "text-slate-500"
+                          }`}
+                      />
+                      <span>{event.place[0]}</span>
+                    </div>
+                  )}
+                  <div className="flex items-center gap-2">
+                    <Users
+                      className={`w-4 h-4 ${theme === "dark" ? "text-gray-500" : "text-slate-500"
+                        }`}
+                    />
+                    <span>
+                      {event.users?.length + (event.queue?.length || 0)}/
+                      {event.memberCount} Plätze belegt
+                    </span>
+                  </div>
                 </div>
-              </div>
 
-              <button
-                onClick={() => router.push("/termine")}
-                className={`w-full px-4 py-2 font-medium border transition-all duration-200 hover:scale-105 active:scale-100 ${theme === "dark"
-                    ? "bg-white text-black border-white hover:bg-gray-100"
-                    : "bg-green-600 text-white border-green-600 hover:bg-green-700"
-                  }`}
-              >
-                Mehr erfahren
-              </button>
-            </motion.div>
+                <button
+                  onClick={() => router.push("/termine")}
+                  className={`w-full px-4 py-2 font-medium border transition-all duration-200 hover:scale-105 active:scale-100 ${theme === "dark"
+                      ? "bg-white text-black border-white hover:bg-gray-100"
+                      : "bg-green-600 text-white border-green-600 hover:bg-green-700"
+                    }`}
+                >
+                  Mehr erfahren
+                </button>
+              </motion.div>
+            </div>
           );
         })}
       </motion.div>

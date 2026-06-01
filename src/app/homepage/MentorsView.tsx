@@ -87,44 +87,48 @@ export default function MentorsView() {
 
   return (
     <div className={`w-full px-8 py-20 transition-colors duration-300 `}>
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        viewport={{ once: true }}
-        className="mb-12"
-      >
-        <h2
-          className={`text-4xl font-bold mb-3 ${theme === "dark" ? "text-white" : "text-slate-900"
-            }`}
+      <div className="mb-12">
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          viewport={{ once: true }}
         >
-          Unsere Mentoren
-        </h2>
-        <p
-          className={`text-lg ${theme === "dark" ? "text-gray-400" : "text-slate-600"
-            }`}
-        >
-          Lerne von erfahrenen Profis mit Leidenschaft für Informatik
-        </p>
-      </motion.div>
+          <h2
+            className={`text-4xl font-bold mb-3 ${theme === "dark" ? "text-white" : "text-slate-900"
+              }`}
+          >
+            Unsere Mentoren
+          </h2>
+          <p
+            className={`text-lg ${theme === "dark" ? "text-gray-400" : "text-slate-600"
+              }`}
+          >
+            Lerne von erfahrenen Profis mit Leidenschaft für Informatik
+          </p>
+        </motion.div>
+      </div>
 
       <motion.div
         variants={containerVariants}
         initial="hidden"
         whileInView="visible"
+        exit="hidden"
         viewport={{ once: true, margin: "0px 0px -50px 0px" }}
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xxxl:grid-cols-4 3xl:grid-cols-5 gap-10"
       >
         {mentors.map((mentor) => (
-          <motion.div key={mentor.uid} variants={itemVariants}>
-            <MentorCard
-              name={mentor.name}
-              description1={mentor.des1}
-              description2={mentor.des2}
-              picture={mentor.pic}
-              theme={theme}
-            />
-          </motion.div>
+          <div key={mentor.uid}>
+            <motion.div variants={itemVariants} layout>
+              <MentorCard
+                name={mentor.name}
+                description1={mentor.des1}
+                description2={mentor.des2}
+                picture={mentor.pic}
+                theme={theme}
+              />
+            </motion.div>
+          </div>
         ))}
       </motion.div>
     </div>

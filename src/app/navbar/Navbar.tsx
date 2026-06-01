@@ -1,13 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
-import {
-  NavigationMenu,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-} from "@/components/ui/navigation-menu";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/BackEnd/AuthContext";
 import { User, LogIn, MessageCircle } from "lucide-react";
@@ -16,7 +9,8 @@ import { Menu, X, LayoutDashboard, HeartHandshakeIcon } from "lucide-react";
 import NavbarMobile from "./NavbarMobile";
 import { getAllAnnouncements, getUserData } from "@/lib/db";
 import { UserData } from "@/BackEnd/type";
-import { useTheme } from "@/context/ThemeContext";
+import { useTheme, Theme } from "@/context/ThemeContext";
+import { title } from "process";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
@@ -83,20 +77,16 @@ export default function Navbar() {
           </div>
 
           <div className="flex-row items-center gap-3 ml-auto hidden md:flex">
-            {/* they normally have a  borderg-gray-400 */}
             <button
               onClick={() => router.push("/spenden")}
-              className={`${theme == "dark"
-                  ? "text-white hover:bg-base-white/10 border-gray-400 hover:border-white"
-                  : "text-black border-gray-400 hover:border-black hover:bg-black/10"
+              className={` ${theme == "dark"
+                  ? "text-gray-300 hover:text-white hover:bg-white/10 hover:border-white border-gray-400"
+                  : "text-gray-900 hover:text-black hover:bg-black/10 hover:border-black border-gray-800"
                 } 
-px-4 py-2 font-medium transition-all duration-200 active:scale-100 flex items-center gap-2`}
+
+                  p-2 border transition-all duration-200`}
             >
-              {isMobile ? (
-                <HeartHandshakeIcon className="w-5 h-5" />
-              ) : (
-                <p>Spenden</p>
-              )}
+              <HeartHandshakeIcon className="w-5 h-5" />
             </button>
             {user && (
               <div className="relative">
@@ -153,49 +143,7 @@ px-4 py-2 font-medium transition-all duration-200 active:scale-100 flex items-ce
               </button>
             )}
           </div>
-
-          <div className="absolute left-1/2 -translate-x-1/2">
-            <div className="hidden md:flex gap-6">
-              <p
-                className={`${theme == "dark"
-                    ? "text-white hover:text-white hover:bg-base-white/10 border-gray-400 hover:border-white"
-                    : "text-black hover:text-black border-gray-400 hover:border-black hover:bg-black/10"
-                  } 
-px-4 py-2 font-medium transition-all duration-200 active:scale-100 flex items-center gap-2`}
-                onClick={() => router.push("/")}
-              >
-                Startseite
-              </p>
-              <p
-                className={`${theme == "dark"
-                    ? "text-white hover:text-white hover:bg-base-white/10 border-gray-400 hover:border-white"
-                    : "text-black hover:text-black border-gray-400 hover:border-black hover:bg-black/10"
-                  } 
-px-4 py-2 font-medium transition-all duration-200 active:scale-100 flex items-center gap-2`}
-                onClick={() => router.push("/termine")}
-              >
-                Kurse
-              </p>
-              <p
-                className={`${theme == "dark"
-                    ? "text-white hover:text-white hover:bg-base-white/10 border-gray-400 hover:border-white"
-                    : "text-black hover:text-black border-gray-400 hover:border-black hover:bg-black/10"
-                  } 
-px-4 py-2 font-medium transition-all duration-200 active:scale-100 flex items-center gap-2`}
-                onClick={() => router.push("/verein")}
-              >
-                Über uns
-              </p>
-              {!user && (
-                <p
-                  className="font-bold text-white hover:text-gray-300 transition-colors cursor-pointer"
-                  onClick={() => router.push("/kontakt")}
-                >
-                  Kontakt
-                </p>
-              )}
-            </div>
-          </div>
+          <MainHeader theme={theme} user={user} router={router} />
         </div>
 
         <div className="flex flex-col w-full h-full md:hidden">
@@ -212,6 +160,60 @@ px-4 py-2 font-medium transition-all duration-200 active:scale-100 flex items-ce
             {open && <NavbarMobile setOpen={setOpen} />}
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function MainHeader({
+  theme,
+  user,
+  router,
+}: {
+  theme: Theme;
+  user: typeof User | null;
+  router: any;
+}) {
+  const headers: { title: string; domain: string }[] = [
+    {
+      title: "Startseite",
+      domain: "/",
+    },
+    {
+      title: "Kurse",
+      domain: "/termine",
+    },
+    {
+      title: "Über uns",
+      domain: "/verein",
+    },
+  ];
+
+  return (
+    <div className="absolute left-1/2 -translate-x-1/2">
+      <div className="hidden md:flex gap-6">
+        {headers.map((h) => (
+          <p
+            key={h.domain}
+            className={`${theme == "dark"
+                ? "text-white hover:text-white hover:bg-base-white/10 border-gray-400 hover:border-white"
+                : "text-black hover:text-black border-gray-400 hover:border-black hover:bg-black/10"
+              } 
+px-4 py-2 font-medium transition-all duration-200 active:scale-100 flex items-center gap-2`}
+            onClick={() => router.push(h.domain)}
+          >
+            {h.title}
+          </p>
+        ))}
+
+        {!user && (
+          <p
+            className="font-bold text-white hover:text-gray-300 transition-colors cursor-pointer"
+            onClick={() => router.push("/kontakt")}
+          >
+            Kontakt
+          </p>
+        )}
       </div>
     </div>
   );

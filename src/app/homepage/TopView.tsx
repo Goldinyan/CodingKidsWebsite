@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import type { UserData } from "@/BackEnd/type";
 import { GraduationCap, Rocket, Users } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useTheme } from "@/context/ThemeContext";
 
@@ -37,21 +37,21 @@ export default function TopView({
   ];
 
   const containerVariants = {
-    hidden: {},
+    hidden: { opacity: 0 },
     visible: {
-      transition: { staggerChildren: 0.12, delayChildren: 0.05 },
+      opacity: 1,
+      transition: { staggerChildren: 0.06, delayChildren: 0.05 },
     },
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
+    hidden: { opacity: 0, scale: 0.92 },
     visible: {
       opacity: 1,
-      y: 0,
-      transition: { duration: 0.6, ease: [0.215, 0.61, 0.355, 1.0] },
+      scale: 1,
+      transition: { duration: 0.5, ease: "easeOut" },
     },
     hover: {
-      y: -6,
       scale: 1.02,
       transition: { type: "spring", stiffness: 400, damping: 25 },
     },
@@ -62,66 +62,76 @@ export default function TopView({
       <div className="" />
 
       <div className="relative w-full px-8 pt-4 pb-20">
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          className="max-w-4xl"
-        >
-          <h1
-            className={`text-5xl md:text-6xl font-bold ${theme === "dark" ? "text-white" : "text-slate-900"
-              } tracking-tight mb-6 leading-tight`}
+        <div className="max-w-4xl">
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
           >
-            Die digitale Zukunft ihres Kindes beginnt hier.
-          </h1>
-          <p
-            className={`text-lg md:text-xl ${theme === "dark" ? "text-gray-300" : "text-slate-600"
-              } mb-12 leading-relaxed max-w-2xl font-light`}
-          >
-            Wir bieten unterhaltsame und lehrreiche Programmierkurse, um Kinder
-            mit den Fähigkeiten für eine bessere Zukunft auszustatten.
-          </p>
-        </motion.div>
+            <h1
+              className={`text-5xl md:text-6xl font-bold ${theme === "dark" ? "text-white" : "text-slate-900"
+                } tracking-tight mb-6 leading-tight`}
+            >
+              Die digitale Zukunft ihres Kindes beginnt hier.
+            </h1>
+            <p
+              className={`text-lg md:text-xl ${theme === "dark" ? "text-gray-300" : "text-slate-600"
+                } mb-12 leading-relaxed max-w-2xl font-light`}
+            >
+              Wir bieten unterhaltsame und lehrreiche Programmierkurse, um
+              Kinder mit den Fähigkeiten für eine bessere Zukunft auszustatten.
+            </p>
+          </motion.div>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="flex flex-col sm:flex-row gap-4 mb-20"
-        >
-          <motion.button
-            whileHover={{ scale: 1.03, y: -1 }}
-            whileTap={{ scale: 0.98 }}
-            transition={{ type: "spring", stiffness: 400, damping: 15 }}
-            className={`px-8 py-3 font-medium border ${theme === "dark"
-                ? "bg-white text-black border-white hover:bg-gray-100"
-                : "bg-green-600 text-white border-green-600 hover:bg-green-700"
-              }`}
+        <div className="flex flex-col sm:flex-row gap-4 mb-20">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
           >
-            Kurse entdecken
-          </motion.button>
-
-          {showRegisterButton && (
             <motion.button
-              onClick={() => router.push("/login")}
               whileHover={{ scale: 1.03, y: -1 }}
               whileTap={{ scale: 0.98 }}
               transition={{ type: "spring", stiffness: 400, damping: 15 }}
-              className={`px-8 py-3 font-medium border  ${theme === "dark"
-                  ? "bg-black text-white border-gray-400 hover:border-white hover:bg-white/5"
-                  : "bg-white text-slate-900 border-slate-400 hover:border-slate-900 hover:bg-slate-50"
+              className={`px-8 py-3 font-medium border ${theme === "dark"
+                  ? "bg-white text-black border-white hover:bg-gray-100"
+                  : "bg-green-600 text-white border-green-600 hover:bg-green-700"
                 }`}
             >
-              Jetzt registrieren
+              Kurse entdecken
             </motion.button>
-          )}
-        </motion.div>
+          </motion.div>
+
+          <AnimatePresence mode="wait">
+            {showRegisterButton && (
+              <motion.div
+                key="register-btn"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.3 }}
+              >
+                <motion.button
+                  onClick={() => router.push("/login")}
+                  className={`px-8 py-3 font-medium border  ${theme === "dark"
+                      ? "bg-black text-white border-gray-400 hover:border-white hover:bg-white/5"
+                      : "bg-white text-slate-900 border-slate-400 hover:border-slate-900 hover:bg-slate-50"
+                    }`}
+                >
+                  Jetzt registrieren
+                </motion.button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
 
         <motion.div
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: false, margin: "0px 0px -50px 0px" }}
+          exit="hidden"
+          viewport={{ once: true, margin: "0px 0px -50px 0px" }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
         >
           {features.map(({ text, des, icon: Icon }, idx) => {
@@ -130,6 +140,7 @@ export default function TopView({
                 key={text}
                 variants={itemVariants}
                 whileHover="hover"
+                layout
                 className={`group relative z-10 p-6 backdrop-blur-2xl border transition-colors duration-300 ${theme === "dark"
                     ? "bg-white/5 border-green-500/30 hover:border-green-500/60 hover:bg-white/10"
                     : "bg-slate-100 border-green-300 hover:border-green-500 hover:bg-green-50"

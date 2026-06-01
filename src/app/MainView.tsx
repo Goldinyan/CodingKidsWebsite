@@ -22,7 +22,10 @@ export default function MainView() {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!user) return;
+      if (!user) {
+        setUserData(undefined);
+        return;
+      }
 
       const data = await getUserData(user.uid);
 
@@ -32,7 +35,7 @@ export default function MainView() {
     };
 
     fetchData();
-  }, [user, loading]);
+  }, [user]);
 
   return (
     <div className={`w-full min-h-screen relative main-view-container`}>
