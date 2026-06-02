@@ -1,9 +1,10 @@
 import { Calendar, ChevronDown, ChevronUp, Edit2, Save, Trash2, X } from "lucide-react";
+import { motion } from "framer-motion";
+import { useTheme } from "@/context/ThemeContext";
 import { toJsDate } from "@/BackEnd/utils";
 import type { EventData, UserData } from "@/BackEnd/type";
 import { EVENT_FIELDS, EVENT_FIELD_LABELS } from "../constants";
 import { formatValue } from "../formatValue";
-import { Button } from "@/components/ui/button";
 
 export function EventCard(props: {
   event: EventData;
@@ -34,59 +35,96 @@ export function EventCard(props: {
     onRequestDelete,
   } = props;
 
+  const { theme } = useTheme();
+
   const full = event.users.length >= event.memberCount;
   const date = toJsDate(event.date);
 
   return (
-    <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-6 border border-gray-200">
+    <motion.div
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
+      transition={{ type: "spring", stiffness: 400, damping: 25 }}
+      className={`p-6 border transition-all duration-300 ${theme === "dark"
+        ? "bg-white/5 border-white/10 hover:border-white/20 hover:bg-white/10"
+        : "bg-slate-50 border-slate-300 hover:border-slate-400 hover:bg-slate-100"
+      }`}
+    >
       <div className="flex flex-row justify-between">
-        <p className="font-bold">
+        <p className={`font-bold ${theme === "dark" ? "text-white" : "text-slate-900"}`}>
           {event.name === "Coding Kids Workshop" ? "Scratch Workshop" : event.name}
         </p>
-        <p
-          className={`px-2 py-1 rounded-lg text-[12px] ${
-            !full ? "text-green-700 bg-lightGreenBg" : "text-blue-600 bg-blue-200"
+        <motion.p
+          whileHover={{ scale: 1.05 }}
+          className={`px-2 py-1 text-[12px] font-medium border transition-all duration-300 ${
+            !full
+              ? theme === "dark"
+                ? "bg-green-600/20 text-green-300 border-green-600/30"
+                : "bg-green-100 text-green-700 border-green-300"
+              : theme === "dark"
+                ? "bg-blue-600/20 text-blue-300 border-blue-600/30"
+                : "bg-blue-100 text-blue-700 border-blue-300"
           }`}
         >
           {full ? "Full" : "Published"}
-        </p>
+        </motion.p>
       </div>
 
       <div className="flex flex-row justify-start items-center">
-        <Calendar className="text-graytext h-4 " />
-        <p className="text-graytext text-sm ">
-          {date.toLocaleDateString("de-DE", { day: "2-digit", month: "short" })} @{" "}
-          {date.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" })}
+        <Calendar className={`h-4 ${theme === "dark" ? "text-gray-400" : "text-slate-500"}`} />
+        <p className={`text-sm ml-2 ${theme === "dark" ? "text-gray-400" : "text-slate-600"}`}>
+          {toJsDate(event.date).toLocaleDateString("de-DE", { day: "2-digit", month: "short" })} @{" "}
+          {toJsDate(event.date).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" })}
         </p>
-        <p
+        <motion.button
           onClick={onToggleExpanded}
-          className="cursor-pointer flex items-center gap-1 text-sm text-primaryOwn ml-auto "
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.95 }}
+          className={`cursor-pointer flex items-center gap-1 text-sm ml-auto transition-colors ${theme === "dark"
+            ? "text-green-400 hover:text-green-300"
+            : "text-green-600 hover:text-green-700"
+          }`}
         >
           {expanded ? (
             <ChevronUp className="w-5 h-5" />
           ) : (
             <ChevronDown className="w-5 h-5" />
           )}
-        </p>
+        </motion.button>
       </div>
 
       {expanded && (
-        <div className="mt-4 space-y-4 border-t pt-4">
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.2 }}
+          className={`mt-4 space-y-4 border-t pt-4 ${theme === "dark" ? "border-white/10" : "border-slate-300"}`}
+        >
           {EVENT_FIELDS.map((key, idx) => (
-            <div
+            <motion.div
               key={key}
-              className="bg-gray-50 p-4 rounded-lg border border-gray-200"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: idx * 0.05 }}
+              className={`p-4 border transition-colors duration-300 ${theme === "dark"
+                ? "bg-white/5 border-white/10 hover:bg-white/10"
+                : "bg-white border-slate-300 hover:bg-slate-50"
+              }`}
             >
-              <p className="text-sm font-bold text-primaryOwn uppercase tracking-wide mb-3">
-                {EVENT_FIELD_LABELS[idx] === "User"
+              <p className={`text-sm font-bold uppercase tracking-wide mb-3 ${theme === "dark"
+                ? "text-green-400"
+                : "text-green-600"
+              }`}>
+                {key === "users"
                   ? "Teilnehmer (" + event.users.length + ")"
-                  : EVENT_FIELD_LABELS[idx] === "Warteschlange"
+                  : key === "queue"
                     ? "Warteschlange (" + event.queue.length + ")"
                     : EVENT_FIELD_LABELS[idx]}
               </p>
 
               {key !== "users" && key !== "queue" && (
-                <p className="text-gray-700 text-sm py-2 whitespace-pre-wrap">
+                <p className={`text-sm py-2 whitespace-pre-wrap ${theme === "dark" ? "text-gray-300" : "text-slate-700"}`}>
                   {formatValue(event[key]) || "—"}
                 </p>
               )}
@@ -94,25 +132,40 @@ export function EventCard(props: {
               {key === "users" && (
                 <div>
                   {event.users.length > 0 ? (
-                    <div className="flex flex-col divide-y border border-gray-300 rounded-lg divide-gray-200 bg-white">
+                    <div className={`flex flex-col divide-y border transition-colors duration-300 ${theme === "dark"
+                      ? "border-white/10 divide-white/10 bg-white/5"
+                      : "border-slate-300 divide-slate-200 bg-white"
+                    }`}>
                       {users.map((u) => (
-                        <div
+                        <motion.div
                           key={u.uid}
-                          className="py-3 flex flex-row justify-between items-center px-4 hover:bg-gray-100 transition-colors"
+                          whileHover={{ x: 4 }}
+                          transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                          className={`py-3 flex flex-row justify-between items-center px-4 transition-colors ${theme === "dark"
+                            ? "hover:bg-white/10"
+                            : "hover:bg-slate-50"
+                          }`}
                         >
                           <div className="flex flex-col items-start flex-1">
-                            <p className="font-semibold text-gray-900">{u.name}</p>
-                            <p className="text-sm text-graytext">{u.role}</p>
+                            <p className={`font-semibold ${theme === "dark" ? "text-white" : "text-slate-900"}`}>{u.name}</p>
+                            <p className={`text-sm ${theme === "dark" ? "text-gray-400" : "text-slate-600"}`}>{u.role}</p>
                           </div>
-                          <Trash2
-                            className="cursor-pointer h-5 w-5 text-red-500 hover:text-red-700 hover:scale-110 transition-all ml-3"
+                          <motion.button
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.95 }}
                             onClick={() => onRemoveUser(u)}
-                          />
-                        </div>
+                            className={`h-5 w-5 ml-3 transition-colors cursor-pointer ${theme === "dark"
+                              ? "text-red-400 hover:text-red-300 hover:scale-110"
+                              : "text-red-500 hover:text-red-700 hover:scale-110"
+                            }`}
+                          >
+                            <Trash2 className="w-full h-full" />
+                          </motion.button>
+                        </motion.div>
                       ))}
                     </div>
                   ) : (
-                    <p className="text-gray-500 text-sm italic">Keine Teilnehmer</p>
+                    <p className={`text-sm italic ${theme === "dark" ? "text-gray-500" : "text-slate-500"}`}>Keine Teilnehmer</p>
                   )}
                 </div>
               )}
@@ -121,49 +174,77 @@ export function EventCard(props: {
                 <div>
                   <ul className="space-y-2">
                     {queueUsers.map((u) => (
-                      <li
+                      <motion.li
                         key={u.uid}
-                        className="text-gray-700 text-sm py-1 px-2 bg-white border-l-4 border-primaryOwn"
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        className={`text-sm py-1 px-2 border-l-4 transition-colors ${theme === "dark"
+                          ? "border-green-500 text-gray-300"
+                          : "border-green-600 text-slate-700"
+                        }`}
                       >
                         {u.name}
-                      </li>
+                      </motion.li>
                     ))}
                   </ul>
                 </div>
               )}
               {key === "queue" && event.queue.length === 0 && (
-                <p className="text-gray-500 text-sm italic">Keine Warteschlange</p>
+                <p className={`text-sm italic ${theme === "dark" ? "text-gray-500" : "text-slate-500"}`}>Keine Warteschlange</p>
               )}
-            </div>
+            </motion.div>
           ))}
 
           <div className="flex flex-row gap-3 items-center pt-2">
-            <Button
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.95 }}
               onClick={onToggleEdit}
-              className="flex-1 bg-amber-600 hover:bg-amber-700 text-white flex items-center justify-center gap-2"
+              className={`flex-1 px-4 py-2 font-medium border transition-all duration-300 flex items-center justify-center gap-2 ${theme === "dark"
+                ? "bg-amber-600/20 text-amber-300 border-amber-600/30 hover:bg-amber-600/30 hover:border-amber-600/50"
+                : "bg-amber-600 text-white border-amber-600 hover:bg-amber-700"
+              }`}
             >
               {isEditing ? <X className="w-4 h-4" /> : <Edit2 className="w-4 h-4" />}
               {isEditing ? "Abbrechen" : "Bearbeiten"}
-            </Button>
-            <Button
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.95 }}
               onClick={onRequestDelete}
-              variant="destructive"
-              className="flex-1 flex items-center justify-center gap-2"
+              className={`flex-1 px-4 py-2 font-medium border transition-all duration-300 flex items-center justify-center gap-2 ${theme === "dark"
+                ? "bg-red-600/20 text-red-300 border-red-600/30 hover:bg-red-600/30 hover:border-red-600/50"
+                : "bg-red-600 text-white border-red-600 hover:bg-red-700"
+              }`}
             >
               <Trash2 className="w-4 h-4" />
               Löschen
-            </Button>
+            </motion.button>
           </div>
 
           {isEditing && (
-            <div className="mt-4 p-4 bg-blue-50 border-2 border-blue-300 rounded-lg">
-              <p className="text-sm font-bold text-blue-900 mb-4">
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.2 }}
+              className={`mt-4 p-4 border-2 transition-colors ${theme === "dark"
+                ? "bg-blue-600/20 border-blue-500/30"
+                : "bg-blue-50 border-blue-300"
+              }`}
+            >
+              <p className={`text-sm font-bold mb-4 ${theme === "dark"
+                ? "text-blue-300"
+                : "text-blue-900"
+              }`}>
                 Bearbeite Event-Eigenschaften:
               </p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-semibold text-gray-700">
+                  <label className={`text-sm font-semibold transition-colors ${theme === "dark"
+                    ? "text-gray-300"
+                    : "text-slate-700"
+                  }`}>
                     Event-Name
                   </label>
                   <input
@@ -175,12 +256,18 @@ export function EventCard(props: {
                         name: e.target.value,
                       })
                     }
-                    className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className={`w-full mt-1 px-3 py-2 border focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors ${theme === "dark"
+                      ? "bg-white/10 border-white/20 text-white placeholder-gray-400"
+                      : "bg-white border-slate-300 text-slate-900 placeholder-slate-400"
+                    }`}
                   />
                 </div>
 
                 <div>
-                  <label className="text-sm font-semibold text-gray-700">
+                  <label className={`text-sm font-semibold transition-colors ${theme === "dark"
+                    ? "text-gray-300"
+                    : "text-slate-700"
+                  }`}>
                     Teilnehmerzahl
                   </label>
                   <input
@@ -192,12 +279,18 @@ export function EventCard(props: {
                         memberCount: parseInt(e.target.value) || 0,
                       })
                     }
-                    className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className={`w-full mt-1 px-3 py-2 border focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors ${theme === "dark"
+                      ? "bg-white/10 border-white/20 text-white placeholder-gray-400"
+                      : "bg-white border-slate-300 text-slate-900 placeholder-slate-400"
+                    }`}
                   />
                 </div>
 
                 <div>
-                  <label className="text-sm font-semibold text-gray-700">
+                  <label className={`text-sm font-semibold transition-colors ${theme === "dark"
+                    ? "text-gray-300"
+                    : "text-slate-700"
+                  }`}>
                     Dauer (Minuten)
                   </label>
                   <input
@@ -209,12 +302,18 @@ export function EventCard(props: {
                         length: parseInt(e.target.value) || 0,
                       })
                     }
-                    className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className={`w-full mt-1 px-3 py-2 border focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors ${theme === "dark"
+                      ? "bg-white/10 border-white/20 text-white placeholder-gray-400"
+                      : "bg-white border-slate-300 text-slate-900 placeholder-slate-400"
+                    }`}
                   />
                 </div>
 
                 <div>
-                  <label className="text-sm font-semibold text-gray-700">
+                  <label className={`text-sm font-semibold transition-colors ${theme === "dark"
+                    ? "text-gray-300"
+                    : "text-slate-700"
+                  }`}>
                     Event-Typ
                   </label>
                   <input
@@ -226,12 +325,18 @@ export function EventCard(props: {
                         typeOfEvent: e.target.value,
                       })
                     }
-                    className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className={`w-full mt-1 px-3 py-2 border focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors ${theme === "dark"
+                      ? "bg-white/10 border-white/20 text-white placeholder-gray-400"
+                      : "bg-white border-slate-300 text-slate-900 placeholder-slate-400"
+                    }`}
                   />
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="text-sm font-semibold text-gray-700">
+                  <label className={`text-sm font-semibold transition-colors ${theme === "dark"
+                    ? "text-gray-300"
+                    : "text-slate-700"
+                  }`}>
                     Beschreibung
                   </label>
                   <textarea
@@ -242,23 +347,31 @@ export function EventCard(props: {
                         description: e.target.value,
                       })
                     }
-                    className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[100px] resize-none"
+                    className={`w-full mt-1 px-3 py-2 border focus:outline-none focus:ring-2 focus:ring-green-500 min-h-[100px] resize-none transition-colors ${theme === "dark"
+                      ? "bg-white/10 border-white/20 text-white placeholder-gray-400"
+                      : "bg-white border-slate-300 text-slate-900 placeholder-slate-400"
+                    }`}
                   />
                 </div>
               </div>
 
-              <Button
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={onSaveChanges}
-                className="w-full mt-4 bg-green-600 hover:bg-green-700 text-white flex items-center justify-center gap-2"
+                className={`w-full mt-4 px-4 py-2 font-medium border transition-all duration-300 flex items-center justify-center gap-2 ${theme === "dark"
+                  ? "bg-green-600 text-white border-green-600 hover:bg-green-700"
+                  : "bg-green-600 text-white border-green-600 hover:bg-green-700"
+                }`}
               >
                 <Save className="w-4 h-4" />
                 Speichern
-              </Button>
-            </div>
+              </motion.button>
+            </motion.div>
           )}
-        </div>
+        </motion.div>
       )}
-    </div>
+    </motion.div>
   );
 }
 

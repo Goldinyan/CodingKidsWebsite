@@ -1,6 +1,8 @@
 "use client";
 
 import { Edit2, Trash2 } from "lucide-react";
+import { motion } from "framer-motion";
+import { useTheme } from "@/context/ThemeContext";
 import { Button } from "@/components/ui/button";
 import type { UserData } from "@/BackEnd/type";
 
@@ -11,12 +13,27 @@ export function UserCard(props: {
   onDelete: () => void;
 }) {
   const { user, roleLabel, onEdit, onDelete } = props;
+  const { theme } = useTheme();
 
   return (
-    <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-6 border border-gray-200">
-      <div className="mb-4">
-        <h3 className="text-xl font-bold text-gray-900 mb-2">{user.name}</h3>
-        <div className="space-y-1 text-sm text-gray-600">
+    <motion.div
+      whileHover={{ scale: 1.02, y: -4 }}
+      transition={{ type: "spring", stiffness: 400, damping: 25 }}
+      className={`p-6 border transition-all duration-300 ${
+        theme === "dark"
+          ? "bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20"
+          : "bg-slate-50 border-slate-300 hover:bg-white hover:border-slate-400"
+      }`}
+    >
+      <div className="mb-6">
+        <h3 className={`text-xl font-bold mb-3 ${
+          theme === "dark" ? "text-white" : "text-slate-900"
+        }`}>
+          {user.name}
+        </h3>
+        <div className={`space-y-2 text-sm ${
+          theme === "dark" ? "text-gray-400" : "text-slate-600"
+        }`}>
           <p>
             <strong>Email:</strong> {user.email}
           </p>
@@ -32,24 +49,35 @@ export function UserCard(props: {
         </div>
       </div>
 
-      <div className="flex gap-2">
-        <Button
+      <div className="flex gap-3">
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           onClick={onEdit}
-          className="flex-1 bg-amber-600 hover:bg-amber-700 text-white flex items-center justify-center gap-2"
+          className={`flex-1 px-4 py-2 font-medium border transition-all duration-300 flex items-center justify-center gap-2 ${
+            theme === "dark"
+              ? "bg-amber-600 text-white border-amber-600 hover:bg-amber-700"
+              : "bg-amber-600 text-white border-amber-600 hover:bg-amber-700"
+          }`}
         >
           <Edit2 className="w-4 h-4" />
           Bearbeiten
-        </Button>
-        <Button
+        </motion.button>
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           onClick={onDelete}
-          variant="destructive"
-          className="flex-1 flex items-center justify-center gap-2"
+          className={`flex-1 px-4 py-2 font-medium border transition-all duration-300 flex items-center justify-center gap-2 ${
+            theme === "dark"
+              ? "bg-red-600 text-white border-red-600 hover:bg-red-700"
+              : "bg-red-600 text-white border-red-600 hover:bg-red-700"
+          }`}
         >
           <Trash2 className="w-4 h-4" />
           Löschen
-        </Button>
+        </motion.button>
       </div>
-    </div>
+    </motion.div>
   );
 }
 

@@ -1,7 +1,9 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { Plus, Search, X } from "lucide-react";
+import { Plus, Search } from "lucide-react";
+import { motion } from "framer-motion";
+import { useTheme } from "@/context/ThemeContext";
 import { useAuth } from "@/BackEnd/AuthContext";
 import { removedFromEventByAdmin } from "@/BackEnd/email";
 import { deleteEvent, removeUserFromEvent, updateEvent } from "@/lib/db";
@@ -24,6 +26,7 @@ import { useEventUsersMap, useEventsData, useFilteredEvents } from "./events/hoo
 export default function EventDashboard() {
   const { user, userRole } = useAuth();
   const { toast } = useToast();
+  const { theme } = useTheme();
   const [deleteConfirmModal, setDeleteConfirmModal] = useState<{
     isOpen: boolean;
     eventId: string | null;
@@ -155,40 +158,58 @@ export default function EventDashboard() {
 
   return (
     <>
-      <div className="w-full p-6 bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen">
+      <div className={`w-full p-6 min-h-screen transition-colors duration-300 ${theme === "dark"
+        ? "bg-black"
+        : "bg-slate-50"
+      }`}>
         <div className="max-w-7xl mx-auto">
           <div className="mb-8">
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">
+            <h1 className={`text-4xl font-bold mb-2 ${theme === "dark" ? "text-white" : "text-slate-900"}`}>
               Event-Verwaltung
             </h1>
-            <p className="text-gray-600">
+            <p className={theme === "dark" ? "text-gray-400" : "text-slate-600"}>
               Verwalten Sie Veranstaltungen und Teilnehmer
             </p>
           </div>
 
           <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div className="flex items-center gap-3">
-              <div className="relative flex w-56 border border-gray-300 rounded-lg h-10 items-center overflow-hidden bg-white">
-                <button
+              <div className={`relative flex w-56 border h-10 items-center overflow-hidden transition-colors duration-300 ${theme === "dark"
+                ? "bg-white/5 border-white/10"
+                : "bg-white border-slate-300"
+              }`}>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   type="button"
                   onClick={() => setTime("Upcoming")}
                   className={`w-1/2 h-full text-sm font-medium transition-colors duration-200 z-10 ${
-                    time === "Upcoming" ? "text-white" : "text-gray-700"
+                    time === "Upcoming"
+                      ? theme === "dark" ? "text-black" : "text-white"
+                      : theme === "dark" ? "text-white" : "text-slate-700"
                   }`}
                 >
                   Upcoming
-                </button>
-                <button
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   type="button"
                   onClick={() => setTime("Past")}
                   className={`w-1/2 h-full text-sm font-medium transition-colors duration-200 z-10 ${
-                    time === "Past" ? "text-white" : "text-gray-700"
+                    time === "Past"
+                      ? theme === "dark" ? "text-black" : "text-white"
+                      : theme === "dark" ? "text-white" : "text-slate-700"
                   }`}
                 >
                   Past
-                </button>
-                <span
-                  className={`absolute top-0 left-0 w-1/2 h-full bg-blue-600 rounded-lg transition-transform duration-200 z-0 ${
+                </motion.button>
+                <motion.span
+                  layoutId="tab-bg"
+                  className={`absolute top-0 left-0 w-1/2 h-full transition-transform duration-200 z-0 ${theme === "dark"
+                    ? "bg-green-600"
+                    : "bg-green-600"
+                  } ${
                     time === "Past" ? "translate-x-full" : "translate-x-0"
                   }`}
                 />
@@ -196,46 +217,71 @@ export default function EventDashboard() {
             </div>
 
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
+              <Search className={`absolute left-3 top-3 w-5 h-5 ${theme === "dark" ? "text-gray-500" : "text-slate-400"}`} />
               <input
                 type="text"
                 placeholder="Events durchsuchen..."
                 value={searchBar}
                 onChange={(e) => setSearchBar(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                className={`w-full pl-10 pr-4 py-2 border transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-green-500 ${theme === "dark"
+                  ? "bg-white/5 border-white/10 text-white placeholder-gray-500 hover:bg-white/10 hover:border-white/20"
+                  : "bg-white border-slate-300 text-slate-900 placeholder-slate-400 hover:border-slate-400"
+                }`}
               />
             </div>
 
-            <Button
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => setIsAddingEvent(true)}
-              className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2"
+              className={`px-6 py-2 font-medium border transition-all duration-300 flex items-center gap-2 ${theme === "dark"
+                ? "bg-green-600 text-white border-green-600 hover:bg-green-700"
+                : "bg-green-600 text-white border-green-600 hover:bg-green-700"
+              }`}
             >
               <Plus className="w-5 h-5" />
               Neues Event
-            </Button>
+            </motion.button>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2 mt-5">
+          <motion.div
+            variants={{
+              hidden: {},
+              visible: {
+                opacity: 1,
+                transition: { staggerChildren: 0.05 },
+              },
+            }}
+            initial="hidden"
+            whileInView="visible"
+            className="grid gap-4 md:grid-cols-1 lg:grid-cols-2 mt-5"
+          >
             {filEvents.map((event) => (
-              <EventCard
+              <motion.div
                 key={event.uid}
-                event={event}
-                expanded={!!expandedTabs[event.uid]}
-                onToggleExpanded={() => toggleExpandedTabs(event.uid)}
-                users={userMap[event.uid] || []}
-                queueUsers={queueUserMap[event.uid] || []}
-                onRemoveUser={(u) => handleRemoveUser(event, u)}
-                isEditing={!!editStates[event.uid]}
-                editValue={editValues[event.uid]}
-                onToggleEdit={() => toggleEdit(event.uid, event)}
-                onEditValueChange={(next) =>
-                  setEditValues((prev) => ({ ...prev, [event.uid]: next }))
-                }
-                onSaveChanges={() => handleSaveEventChanges(event.uid)}
-                onRequestDelete={() => openDeleteConfirm(event.uid, event.name)}
-              />
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <EventCard
+                  event={event}
+                  expanded={!!expandedTabs[event.uid]}
+                  onToggleExpanded={() => toggleExpandedTabs(event.uid)}
+                  users={userMap[event.uid] || []}
+                  queueUsers={queueUserMap[event.uid] || []}
+                  onRemoveUser={(u) => handleRemoveUser(event, u)}
+                  isEditing={!!editStates[event.uid]}
+                  editValue={editValues[event.uid]}
+                  onToggleEdit={() => toggleEdit(event.uid, event)}
+                  onEditValueChange={(next) =>
+                    setEditValues((prev) => ({ ...prev, [event.uid]: next }))
+                  }
+                  onSaveChanges={() => handleSaveEventChanges(event.uid)}
+                  onRequestDelete={() => openDeleteConfirm(event.uid, event.name)}
+                />
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </div>
 

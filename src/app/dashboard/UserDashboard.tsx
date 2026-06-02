@@ -11,6 +11,8 @@ import {
   ArrowDownIcon,
   Search,
 } from "lucide-react";
+import { motion } from "framer-motion";
+import { useTheme } from "@/context/ThemeContext";
 import { Button } from "@/components/ui/button";
 import { useFilteredUsers, useUsersData } from "./users/hooks";
 import { DeleteUserDialog, EditUserDialog, UserCard } from "./users/components";
@@ -38,6 +40,7 @@ export default function UserDashboard() {
 
   const [data, setData] = useState<UserData | null>(null);
   const { user, userRole } = useAuth();
+  const { theme } = useTheme();
 
   const { users, setUsers } = useUsersData(user?.uid, userRole);
   const filteredUsers = useFilteredUsers(users, searchBar, filters, seeAll);
@@ -88,62 +91,113 @@ export default function UserDashboard() {
   };
 
   return (
-    <div className="w-full p-6 bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen">
+    <div className={`w-full px-6 py-8 transition-colors duration-300 ${
+      theme === "dark"
+        ? "bg-black"
+        : "bg-white"
+    }`}>
       <div className="max-w-7xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="mb-8"
+        >
+          <h1 className={`text-5xl font-bold mb-3 ${
+            theme === "dark" ? "text-white" : "text-slate-900"
+          }`}>
             Nutzerverwaltung
           </h1>
-          <p className="text-gray-600">
+          <p className={`text-lg ${
+            theme === "dark" ? "text-gray-400" : "text-slate-600"
+          }`}>
             Verwalten Sie Benutzer: Bearbeiten und Löschen
           </p>
-        </div>
+        </motion.div>
 
-        <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between"
+        >
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
+            <Search className={`absolute left-3 top-3 w-5 h-5 transition-colors ${
+              theme === "dark" ? "text-gray-600" : "text-slate-400"
+            }`} />
             <input
               type="text"
               placeholder="Nutzer durchsuchen..."
               value={searchBar}
               onChange={(e) => setSearchBar(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={`w-full pl-10 pr-4 py-2 border transition-all duration-300 focus:outline-none ${
+                theme === "dark"
+                  ? "bg-white/5 border-white/10 text-white placeholder-gray-500 focus:border-white/20 focus:bg-white/10"
+                  : "bg-slate-50 border-slate-300 text-slate-900 placeholder-slate-400 focus:border-green-600 focus:bg-white"
+              }`}
             />
           </div>
 
-          <div className="flex gap-2">
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="flex gap-2"
+          >
             {filters.name === "ascending" ? (
               <button
                 onClick={() =>
                   setFilters((prev) => ({ ...prev, name: "descending" }))
                 }
-                className="p-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+                className={`p-2 border transition-all duration-300 ${
+                  theme === "dark"
+                    ? "bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20"
+                    : "bg-slate-50 border-slate-300 hover:bg-white hover:border-slate-400"
+                }`}
               >
-                <SortAsc className="w-5 h-5 text-gray-600" />
+                <SortAsc className={`w-5 h-5 ${
+                  theme === "dark" ? "text-gray-400" : "text-slate-600"
+                }`} />
               </button>
             ) : (
               <button
                 onClick={() =>
                   setFilters((prev) => ({ ...prev, name: "ascending" }))
                 }
-                className="p-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+                className={`p-2 border transition-all duration-300 ${
+                  theme === "dark"
+                    ? "bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20"
+                    : "bg-slate-50 border-slate-300 hover:bg-white hover:border-slate-400"
+                }`}
               >
-                <SortDesc className="w-5 h-5 text-gray-600" />
+                <SortDesc className={`w-5 h-5 ${
+                  theme === "dark" ? "text-gray-400" : "text-slate-600"
+                }`} />
               </button>
             )}
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
-        <div className="mb-6 flex flex-wrap gap-2">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="mb-8 flex flex-wrap gap-2"
+        >
           {(["All", "Mentor", "Admin", "User", "Member"] as const).map(
             (role) => (
-              <button
+              <motion.button
                 key={role}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={() => setFilters((prev) => ({ ...prev, role }))}
-                className={`px-4 py-2 rounded-lg transition-colors ${
+                className={`px-4 py-2 border transition-all duration-300 font-medium ${
                   filters.role === role
-                    ? "bg-blue-600 text-white"
-                    : "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"
+                    ? theme === "dark"
+                      ? "bg-white text-black border-white"
+                      : "bg-green-600 text-white border-green-600"
+                    : theme === "dark"
+                      ? "bg-transparent text-white border-white/20 hover:border-white/40 hover:bg-white/5"
+                      : "bg-white text-slate-700 border-slate-300 hover:bg-slate-50 hover:border-slate-400"
                 }`}
               >
                 {role === "All"
@@ -153,11 +207,18 @@ export default function UserDashboard() {
                     : role === "Member"
                       ? "Mitglied"
                       : role}
-              </button>
+              </motion.button>
             ),
           )}
 
-          <label className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
+          <motion.label
+            whileHover={{ scale: 1.02 }}
+            className={`flex items-center gap-2 px-4 py-2 border cursor-pointer transition-all duration-300 ${
+              theme === "dark"
+                ? "bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20"
+                : "bg-white border-slate-300 hover:bg-slate-50 hover:border-slate-400"
+            }`}
+          >
             <input
               type="checkbox"
               checked={filters.birthYear !== "false"}
@@ -169,7 +230,9 @@ export default function UserDashboard() {
               }
               className="w-4 h-4"
             />
-            <span className="text-sm">Alter</span>
+            <span className={`text-sm font-medium ${
+              theme === "dark" ? "text-gray-300" : "text-slate-700"
+            }`}>Alter</span>
             {filters.birthYear !== "false" &&
               (filters.birthYear === "ascending" ? (
                 <ArrowUpIcon
@@ -180,7 +243,9 @@ export default function UserDashboard() {
                       birthYear: "descending",
                     }));
                   }}
-                  className="w-4 h-4 cursor-pointer text-blue-600"
+                  className={`w-4 h-4 cursor-pointer transition-colors ${
+                    theme === "dark" ? "text-green-400" : "text-green-600"
+                  }`}
                 />
               ) : (
                 <ArrowDownIcon
@@ -188,50 +253,75 @@ export default function UserDashboard() {
                     e.stopPropagation();
                     setFilters((prev) => ({ ...prev, birthYear: "ascending" }));
                   }}
-                  className="w-4 h-4 cursor-pointer text-blue-600"
+                  className={`w-4 h-4 cursor-pointer transition-colors ${
+                    theme === "dark" ? "text-green-400" : "text-green-600"
+                  }`}
                 />
               ))}
-          </label>
-        </div>
+          </motion.label>
+        </motion.div>
 
-        <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="grid gap-6 md:grid-cols-1 lg:grid-cols-2"
+        >
           {filteredUsers.length === 0 ? (
-            <div className="col-span-full text-center py-12">
-              <p className="text-gray-500 text-lg">
+            <div className="col-span-full text-center py-16">
+              <p className={`text-lg ${
+                theme === "dark" ? "text-gray-500" : "text-slate-500"
+              }`}>
                 {searchBar
                   ? "Keine Nutzer gefunden, die Ihrer Suche entsprechen"
                   : "Keine Nutzer vorhanden."}
               </p>
             </div>
           ) : (
-            filteredUsers.map((u) => (
-              <UserCard
+            filteredUsers.map((u, idx) => (
+              <motion.div
                 key={u.uid}
-                user={u}
-                roleLabel={presetRoleLabels[u.role] || u.role}
-                onEdit={() => handleEditStart(u)}
-                onDelete={() =>
-                  setDeleteConfirm({
-                    isOpen: true,
-                    userId: u.uid,
-                    userName: u.name,
-                  })
-                }
-              />
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.05 }}
+              >
+                <UserCard
+                  user={u}
+                  roleLabel={presetRoleLabels[u.role] || u.role}
+                  onEdit={() => handleEditStart(u)}
+                  onDelete={() =>
+                    setDeleteConfirm({
+                      isOpen: true,
+                      userId: u.uid,
+                      userName: u.name,
+                    })
+                  }
+                />
+              </motion.div>
             ))
           )}
-        </div>
+        </motion.div>
 
         {(filteredUsers.length > 10 || filters.role === "All") && (
-          <div className="flex items-center justify-center mt-8">
-            <Button
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
+            className="flex items-center justify-center mt-12"
+          >
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => setSeeAll(!seeAll)}
-              variant="outline"
-              className="px-6"
+              className={`px-8 py-3 font-medium border transition-all duration-300 ${
+                theme === "dark"
+                  ? "bg-white text-black border-white hover:bg-gray-100"
+                  : "bg-green-600 text-white border-green-600 hover:bg-green-700"
+              }`}
             >
               {seeAll ? "Weniger anzeigen" : "Mehr anzeigen"}
-            </Button>
-          </div>
+            </motion.button>
+          </motion.div>
         )}
       </div>
 
