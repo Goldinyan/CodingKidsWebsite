@@ -77,6 +77,7 @@ export default function Navbar() {
           </div>
 
           <div className="flex-row items-center gap-3 ml-auto hidden md:flex">
+            {/*
             <button
               onClick={() => router.push("/spenden")}
               className={` ${theme == "dark"
@@ -87,7 +88,7 @@ export default function Navbar() {
                   p-2 border transition-all duration-200`}
             >
               <HeartHandshakeIcon className="w-5 h-5" />
-            </button>
+            </button>*/}
             {user && (
               <div className="relative">
                 <button
@@ -148,10 +149,14 @@ export default function Navbar() {
 
         <div className="flex flex-col w-full h-full md:hidden">
           <div className="flex flex-row justify-between items-center w-full">
-            <p className="text-white font-bold pl-6">Coding Kids Niederrhein</p>
+            <p
+              className={`${theme == "dark" ? "text-white" : "text-black"} font-bold pl-6`}
+            >
+              Coding Kids Niederrhein
+            </p>
             <button
               onClick={() => setOpen(!open)}
-              className="focus:outline-none transition-all pr-6 text-white"
+              className={`${theme == "dark" ? "text-white" : "text-dark"} focus:outline-none transition-all pr-6`}
             >
               {!open ? <Menu className="w-6 h-6" /> : <X className="w-6 h-6" />}
             </button>

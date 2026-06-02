@@ -52,7 +52,7 @@ export default function FeaturedCoursesView() {
   }
 
   const containerVariants = {
-    hidden: { opacity: 0.5 },
+    hidden: {},
     visible: {
       opacity: 1,
       transition: { staggerChildren: 0.06, delayChildren: 0.05 },
@@ -60,18 +60,18 @@ export default function FeaturedCoursesView() {
   };
 
   const itemVariants = {
-    hidden: { opacity: 0.5, scale: 0.92 },
-    visible: { opacity: 1, scale: 1, transition: { duration: 0.5, ease: "easeOut" } },
+    hidden: { scale: 0.92 },
+    visible: { scale: 1, transition: { duration: 0.5, ease: "easeOut" } },
   };
 
   return (
     <div className={`w-full px-8 py-20 transition-colors duration-300 `}>
       <div className="mb-12">
         <motion.div
-          initial={{ opacity: 0, y: 12 }}
+          initial={{  y: 12 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          viewport={{ once: true }}
+          viewport={{ once: false }}
         >
           <h2
             className={`text-4xl font-bold mb-3 ${theme === "dark" ? "text-white" : "text-slate-900"

@@ -54,7 +54,7 @@ export default function FeaturedEventsView() {
   }
 
   const containerVariants = {
-    hidden: { opacity: 0 },
+    hidden: { },
     visible: {
       opacity: 1,
       transition: { staggerChildren: 0.06, delayChildren: 0.05 },
@@ -62,9 +62,8 @@ export default function FeaturedEventsView() {
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, scale: 0.92 },
+    hidden: { scale: 0.92 },
     visible: {
-      opacity: 1,
       scale: 1,
       transition: { duration: 0.5, ease: "easeOut" },
     },
@@ -74,7 +73,7 @@ export default function FeaturedEventsView() {
     <div className={`w-full px-8 py-20 transition-colors duration-300 `}>
       <div className="mb-12">
         <motion.div
-          initial={{ opacity: 0.5, y: 12 }}
+          initial={{ y: 12 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
           viewport={{ once: true }}

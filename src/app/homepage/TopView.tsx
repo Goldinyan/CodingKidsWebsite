@@ -37,7 +37,7 @@ export default function TopView({
   ];
 
   const containerVariants = {
-    hidden: { opacity: 0 },
+    hidden: {},
     visible: {
       opacity: 1,
       transition: { staggerChildren: 0.06, delayChildren: 0.05 },
@@ -45,9 +45,8 @@ export default function TopView({
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, scale: 0.92 },
+    hidden: { scale: 0.92 },
     visible: {
-      opacity: 1,
       scale: 1,
       transition: { duration: 0.5, ease: "easeOut" },
     },
@@ -64,7 +63,7 @@ export default function TopView({
       <div className="relative w-full px-8 pt-4 pb-20">
         <div className="max-w-4xl">
           <motion.div
-            initial={{ opacity: 0, y: 12 }}
+            initial={{ opacity: 1, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
           >
@@ -86,7 +85,7 @@ export default function TopView({
 
         <div className="flex flex-col sm:flex-row gap-4 mb-20">
           <motion.div
-            initial={{ opacity: 0 }}
+            initial={{ opacity: 1 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
@@ -131,7 +130,7 @@ export default function TopView({
           initial="hidden"
           whileInView="visible"
           exit="hidden"
-          viewport={{ once: true, margin: "0px 0px -50px 0px" }}
+          viewport={{ once: false, margin: "0px 0px -50px 0px" }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
         >
           {features.map(({ text, des, icon: Icon }, idx) => {

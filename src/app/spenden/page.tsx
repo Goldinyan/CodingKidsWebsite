@@ -4,6 +4,7 @@ import { getUserData } from "@/lib/db";
 import { useAuth } from "@/BackEnd/AuthContext";
 import GiftingMainView from "./GiftingMainView";
 import { UserData } from "@/BackEnd/type";
+import { notFound } from "next/navigation";
 
 export default function Home() {
   const [userData, setUserData] = useState<UserData | null>(null);
@@ -23,6 +24,9 @@ export default function Home() {
   if (loading) return <p>Lade...</p>;
   //if (!user) return <p>Kein Benutzer angemeldet</p>;
   //if (!userData) return <p>Benutzerdaten werden geladen...</p>;
+
+  notFound();
+  return;
 
   return (
     <div className="w-full h-full bg-otherbg ">

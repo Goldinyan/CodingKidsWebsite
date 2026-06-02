@@ -11,11 +11,11 @@ export default function CTAView() {
     <div className={`w-full py-20 transition-colors duration-300 `}>
       <div className="mx-auto px-8 max-w-4xl">
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.95 }}
+          initial={{ scale: 0.95 }}
+          whileInView={{ scale: 1 }}
+          exit={{ scale: 0.95 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
-          viewport={{ once: true }}
+          viewport={{ once: false }}
         >
           <div
             className={`backdrop-blur-sm p-12 md:p-16 border transition-all duration-300 ${theme === "dark"
