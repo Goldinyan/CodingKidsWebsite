@@ -91,11 +91,10 @@ export default function UserDashboard() {
   };
 
   return (
-    <div className={`w-full px-6 py-8 transition-colors duration-300 ${
-      theme === "dark"
-        ? "bg-black"
-        : "bg-white"
-    }`}>
+    <div
+      className={`w-full px-6 py-4 transition-colors duration-300 ${theme === "dark" ? "bg-black" : "bg-none"
+        }`}
+    >
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -103,14 +102,16 @@ export default function UserDashboard() {
           transition={{ duration: 0.5 }}
           className="mb-8"
         >
-          <h1 className={`text-5xl font-bold mb-3 ${
-            theme === "dark" ? "text-white" : "text-slate-900"
-          }`}>
+          <h1
+            className={`text-5xl font-bold mb-3 ${theme === "dark" ? "text-white" : "text-slate-900"
+              }`}
+          >
             Nutzerverwaltung
           </h1>
-          <p className={`text-lg ${
-            theme === "dark" ? "text-gray-400" : "text-slate-600"
-          }`}>
+          <p
+            className={`text-lg ${theme === "dark" ? "text-gray-400" : "text-slate-600"
+              }`}
+          >
             Verwalten Sie Benutzer: Bearbeiten und Löschen
           </p>
         </motion.div>
@@ -122,19 +123,19 @@ export default function UserDashboard() {
           className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between"
         >
           <div className="flex-1 relative">
-            <Search className={`absolute left-3 top-3 w-5 h-5 transition-colors ${
-              theme === "dark" ? "text-gray-600" : "text-slate-400"
-            }`} />
+            <Search
+              className={`absolute left-3 top-3 w-5 h-5 transition-colors ${theme === "dark" ? "text-gray-600" : "text-slate-400"
+                }`}
+            />
             <input
               type="text"
               placeholder="Nutzer durchsuchen..."
               value={searchBar}
               onChange={(e) => setSearchBar(e.target.value)}
-              className={`w-full pl-10 pr-4 py-2 border transition-all duration-300 focus:outline-none ${
-                theme === "dark"
+              className={`w-full pl-10 pr-4 py-2 border transition-all duration-300 focus:outline-none ${theme === "dark"
                   ? "bg-white/5 border-white/10 text-white placeholder-gray-500 focus:border-white/20 focus:bg-white/10"
-                  : "bg-slate-50 border-slate-300 text-slate-900 placeholder-slate-400 focus:border-green-600 focus:bg-white"
-              }`}
+                  : "bg-white border-slate-300 text-slate-900 placeholder-slate-400 focus:border-green-600 focus:bg-white"
+                }`}
             />
           </div>
 
@@ -148,30 +149,30 @@ export default function UserDashboard() {
                 onClick={() =>
                   setFilters((prev) => ({ ...prev, name: "descending" }))
                 }
-                className={`p-2 border transition-all duration-300 ${
-                  theme === "dark"
+                className={`p-2 border transition-all duration-300 ${theme === "dark"
                     ? "bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20"
                     : "bg-slate-50 border-slate-300 hover:bg-white hover:border-slate-400"
-                }`}
+                  }`}
               >
-                <SortAsc className={`w-5 h-5 ${
-                  theme === "dark" ? "text-gray-400" : "text-slate-600"
-                }`} />
+                <SortAsc
+                  className={`w-5 h-5 ${theme === "dark" ? "text-gray-400" : "text-slate-600"
+                    }`}
+                />
               </button>
             ) : (
               <button
                 onClick={() =>
                   setFilters((prev) => ({ ...prev, name: "ascending" }))
                 }
-                className={`p-2 border transition-all duration-300 ${
-                  theme === "dark"
+                className={`p-2 border transition-all duration-300 ${theme === "dark"
                     ? "bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20"
                     : "bg-slate-50 border-slate-300 hover:bg-white hover:border-slate-400"
-                }`}
+                  }`}
               >
-                <SortDesc className={`w-5 h-5 ${
-                  theme === "dark" ? "text-gray-400" : "text-slate-600"
-                }`} />
+                <SortDesc
+                  className={`w-5 h-5 ${theme === "dark" ? "text-gray-400" : "text-slate-600"
+                    }`}
+                />
               </button>
             )}
           </motion.div>
@@ -190,15 +191,14 @@ export default function UserDashboard() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setFilters((prev) => ({ ...prev, role }))}
-                className={`px-4 py-2 border transition-all duration-300 font-medium ${
-                  filters.role === role
+                className={`px-4 py-2 border transition-all duration-300 font-medium ${filters.role === role
                     ? theme === "dark"
                       ? "bg-white text-black border-white"
                       : "bg-green-600 text-white border-green-600"
                     : theme === "dark"
                       ? "bg-transparent text-white border-white/20 hover:border-white/40 hover:bg-white/5"
                       : "bg-white text-slate-700 border-slate-300 hover:bg-slate-50 hover:border-slate-400"
-                }`}
+                  }`}
               >
                 {role === "All"
                   ? "Alle"
@@ -210,55 +210,6 @@ export default function UserDashboard() {
               </motion.button>
             ),
           )}
-
-          <motion.label
-            whileHover={{ scale: 1.02 }}
-            className={`flex items-center gap-2 px-4 py-2 border cursor-pointer transition-all duration-300 ${
-              theme === "dark"
-                ? "bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20"
-                : "bg-white border-slate-300 hover:bg-slate-50 hover:border-slate-400"
-            }`}
-          >
-            <input
-              type="checkbox"
-              checked={filters.birthYear !== "false"}
-              onChange={(e) =>
-                setFilters((prev) => ({
-                  ...prev,
-                  birthYear: e.target.checked ? "ascending" : "false",
-                }))
-              }
-              className="w-4 h-4"
-            />
-            <span className={`text-sm font-medium ${
-              theme === "dark" ? "text-gray-300" : "text-slate-700"
-            }`}>Alter</span>
-            {filters.birthYear !== "false" &&
-              (filters.birthYear === "ascending" ? (
-                <ArrowUpIcon
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setFilters((prev) => ({
-                      ...prev,
-                      birthYear: "descending",
-                    }));
-                  }}
-                  className={`w-4 h-4 cursor-pointer transition-colors ${
-                    theme === "dark" ? "text-green-400" : "text-green-600"
-                  }`}
-                />
-              ) : (
-                <ArrowDownIcon
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setFilters((prev) => ({ ...prev, birthYear: "ascending" }));
-                  }}
-                  className={`w-4 h-4 cursor-pointer transition-colors ${
-                    theme === "dark" ? "text-green-400" : "text-green-600"
-                  }`}
-                />
-              ))}
-          </motion.label>
         </motion.div>
 
         <motion.div
@@ -269,9 +220,10 @@ export default function UserDashboard() {
         >
           {filteredUsers.length === 0 ? (
             <div className="col-span-full text-center py-16">
-              <p className={`text-lg ${
-                theme === "dark" ? "text-gray-500" : "text-slate-500"
-              }`}>
+              <p
+                className={`text-lg ${theme === "dark" ? "text-gray-500" : "text-slate-500"
+                  }`}
+              >
                 {searchBar
                   ? "Keine Nutzer gefunden, die Ihrer Suche entsprechen"
                   : "Keine Nutzer vorhanden."}
@@ -313,11 +265,10 @@ export default function UserDashboard() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setSeeAll(!seeAll)}
-              className={`px-8 py-3 font-medium border transition-all duration-300 ${
-                theme === "dark"
+              className={`px-8 py-3 font-medium border transition-all duration-300 ${theme === "dark"
                   ? "bg-white text-black border-white hover:bg-gray-100"
                   : "bg-green-600 text-white border-green-600 hover:bg-green-700"
-              }`}
+                }`}
             >
               {seeAll ? "Weniger anzeigen" : "Mehr anzeigen"}
             </motion.button>
@@ -327,6 +278,7 @@ export default function UserDashboard() {
 
       <EditUserDialog
         open={editingId !== null}
+        theme={theme}
         onOpenChange={(open) => {
           if (!open) setEditingId(null);
         }}

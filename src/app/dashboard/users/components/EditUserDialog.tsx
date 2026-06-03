@@ -1,11 +1,21 @@
 "use client";
 
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import type { PresetRoles, UserData } from "@/BackEnd/type";
+import type { Theme } from "@/context/ThemeContext";
+import { toJsDate } from "@/BackEnd/utils";
 
 export function EditUserDialog(props: {
   open: boolean;
+  theme: Theme;
   onOpenChange: (open: boolean) => void;
   editValues: Partial<UserData>;
   onEditValuesChange: (next: Partial<UserData>) => void;
@@ -16,6 +26,7 @@ export function EditUserDialog(props: {
 }) {
   const {
     open,
+    theme,
     onOpenChange,
     editValues,
     onEditValuesChange,
@@ -43,13 +54,17 @@ export function EditUserDialog(props: {
 
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              className={`block text-sm font-medium mb-1 ${theme == "dark" ? "text-gray-700" : "text-gray-700"}`}
+            >
               Name
             </label>
             <input
               type="text"
               value={editValues.name || ""}
-              onChange={(e) => onEditValuesChange({ ...editValues, name: e.target.value })}
+              onChange={(e) =>
+                onEditValuesChange({ ...editValues, name: e.target.value })
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -61,7 +76,9 @@ export function EditUserDialog(props: {
             <input
               type="email"
               value={editValues.email || ""}
-              onChange={(e) => onEditValuesChange({ ...editValues, email: e.target.value })}
+              onChange={(e) =>
+                onEditValuesChange({ ...editValues, email: e.target.value })
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -74,7 +91,9 @@ export function EditUserDialog(props: {
               type="date"
               value={
                 editValues.birthdate
-                  ? new Date(editValues.birthdate).toISOString().split("T")[0]
+                  ? new Date(toJsDate(editValues.birthdate))
+                    .toISOString()
+                    .split("T")[0]
                   : ""
               }
               onChange={(e) =>
@@ -114,7 +133,10 @@ export function EditUserDialog(props: {
           <Button onClick={onCancel} variant="outline">
             Abbrechen
           </Button>
-          <Button onClick={onSave} className="bg-green-600 hover:bg-green-700 text-white">
+          <Button
+            onClick={onSave}
+            className="bg-green-600 hover:bg-green-700 text-white"
+          >
             Speichern
           </Button>
         </DialogFooter>
@@ -122,4 +144,3 @@ export function EditUserDialog(props: {
     </Dialog>
   );
 }
-

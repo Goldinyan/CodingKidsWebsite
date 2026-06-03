@@ -6,35 +6,36 @@ import { getUserData } from "@/lib/db";
 import { useAuth } from "@/BackEnd/AuthContext";
 import { UserData } from "@/BackEnd/type";
 import { MainOverlayAdminDashboard } from "./MainOverlayAdminDashboard";
+import { notFound } from "next/navigation";
 
 export default function ProfileMainView() {
-        const { user, loading } = useAuth();
-        const [userData, setUserData] = useState<UserData | null>(null);
+  const { user, loading } = useAuth();
+  const [userData, setUserData] = useState<UserData | null>(null);
 
-        useEffect(() => {
-                const fetchUserData = async () => {
-                        if (user?.uid) {
-                                const data = await getUserData(user.uid);
-                                setUserData(data);
-                        } else {
-                                setUserData(null);
-                        }
-                };
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (user?.uid) {
+        const data = await getUserData(user.uid);
+        setUserData(data);
+      } else {
+        setUserData(null);
+      }
+    };
 
-                fetchUserData();
-        }, [user?.uid]);
+    fetchUserData();
+  }, [user?.uid]);
 
-        if (loading) return <p>Lade...</p>;
-        if (!user) return <p>NO USER</p>;
-        if (!userData) return <p>Benutzerdaten werden geladen...</p>;
+  if (loading) return <p>Lade...</p>;
+  if (!user) return <p>NO USER</p>;
+  if (!userData) return <p>Benutzerdaten werden geladen...</p>;
 
-        if (userData.role === "admin") {
-                return (
-                        <div>
-                                <MainOverlayAdminDashboard />
-                        </div>
-                );
-        }
+  if (userData.role === "admin") {
+    return (
+      <div>
+        <MainOverlayAdminDashboard />
+      </div>
+    );
+  }
 
-        return <Dashboard />;
+  notFound();
 }
