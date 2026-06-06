@@ -10,13 +10,16 @@ import { useTheme } from "@/context/ThemeContext";
 export default function TopView({
   data,
   loading,
+  isRounded,
 }: {
   data: UserData | undefined;
   loading: boolean;
+  isRounded: boolean;
 }) {
   const router = useRouter();
   const { theme } = useTheme();
   const showRegisterButton = data === undefined && !loading;
+
 
   const features: { text: string; des: string; icon: React.ElementType }[] = [
     {
@@ -58,8 +61,6 @@ export default function TopView({
 
   return (
     <div className="">
-      <div className="" />
-
       <div className="relative w-full px-8 pt-4 pb-20">
         <div className="max-w-4xl">
           <motion.div
@@ -93,8 +94,8 @@ export default function TopView({
               whileHover={{ scale: 1.03, y: -1 }}
               whileTap={{ scale: 0.98 }}
               transition={{ type: "spring", stiffness: 400, damping: 15 }}
-              className={`px-8 py-3 font-medium border ${theme === "dark"
-                  ? "bg-white text-black border-white hover:bg-gray-100"
+              className={`px-8 py-3 font-medium border ${isRounded && "rounded-lg"} ${theme === "dark"
+                  ? "bg-white text-black border-white hover:bg-gray-200"
                   : "bg-green-600 text-white border-green-600 hover:bg-green-700"
                 }`}
             >
@@ -113,7 +114,7 @@ export default function TopView({
               >
                 <motion.button
                   onClick={() => router.push("/login")}
-                  className={`px-8 py-3 font-medium border  ${theme === "dark"
+                  className={`px-8 py-3 font-medium border ${isRounded && "rounded-lg"}  ${theme === "dark"
                       ? "bg-black text-white border-gray-400 hover:border-white hover:bg-white/5"
                       : "bg-white text-slate-900 border-slate-400 hover:border-slate-900 hover:bg-slate-50"
                     }`}
@@ -140,7 +141,7 @@ export default function TopView({
                 variants={itemVariants}
                 whileHover="hover"
                 layout
-                className={`group relative z-10 p-6 backdrop-blur-2xl border transition-colors duration-300 ${theme === "dark"
+                className={`group relative z-10 p-6 backdrop-blur-2xl border transition-colors duration-300 ${isRounded && "rounded-lg"} ${theme === "dark"
                     ? "bg-white/5 border-green-500/30 hover:border-green-500/60 hover:bg-white/10"
                     : "bg-slate-100 border-green-300 hover:border-green-500 hover:bg-green-50"
                   }`}
@@ -159,7 +160,7 @@ export default function TopView({
                       }`}
                   />
                   <h3
-                    className={`text-lg font-semibold ${theme === "dark" ? "text-white" : "text-slate-900"
+                    className={`text-lg font-semibold mt-1 ${theme === "dark" ? "text-white" : "text-slate-900"
                       } leading-tight`}
                   >
                     {text}
@@ -173,7 +174,7 @@ export default function TopView({
                 </p>
               </motion.div>
             );
-          })}{" "}
+          })}
         </motion.div>
       </div>
     </div>

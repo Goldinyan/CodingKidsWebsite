@@ -17,7 +17,7 @@ import {
 export default function MainView() {
   const [userData, setUserData] = useState<UserData>();
 
-  const { user, loading } = useAuth();
+  const { user, loading, userRoundedCorners } = useAuth();
   const { theme } = useTheme();
 
   useEffect(() => {
@@ -41,11 +41,15 @@ export default function MainView() {
     <div className={`w-full min-h-screen relative main-view-container`}>
       <div className="absolute inset-0 bg-grid-pattern   z-0" />
       <div className="relative w-full flex flex-col z-10">
-        <TopView data={userData} loading={loading} />
-        <MiddleView />
-        <FeaturedEventsView />
-        <FeaturedCoursesView />
-        <MentorsView />
+        <TopView
+          data={userData}
+          loading={loading}
+          isRounded={userRoundedCorners}
+        />
+        <MiddleView isRounded={userRoundedCorners} />
+        <FeaturedEventsView isRounded={userRoundedCorners} />
+        <FeaturedCoursesView isRounded={userRoundedCorners} />
+        <MentorsView isRounded={userRoundedCorners} />
         <CTAView />
       </div>
     </div>

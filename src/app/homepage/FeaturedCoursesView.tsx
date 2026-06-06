@@ -9,7 +9,11 @@ import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useTheme } from "@/context/ThemeContext";
 
-export default function FeaturedCoursesView() {
+export default function FeaturedCoursesView({
+  isRounded,
+}: {
+  isRounded: boolean;
+}) {
   const { user, userRole } = useAuth();
   const [courses, setCourses] = useState<CourseData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -68,7 +72,7 @@ export default function FeaturedCoursesView() {
     <div className={`w-full px-8 py-20 transition-colors duration-300 `}>
       <div className="mb-12">
         <motion.div
-          initial={{  y: 12 }}
+          initial={{ y: 12 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
           viewport={{ once: false }}
@@ -99,15 +103,12 @@ export default function FeaturedCoursesView() {
         {courses.map((course) => (
           <div
             key={course.uid}
-            className={`group backdrop-blur-sm p-6 border transition-all duration-300 flex flex-col ${theme === "dark"
+            className={`group backdrop-blur-sm p-6 border transition-all duration-300 flex flex-col ${isRounded && "rounded-lg"} ${theme === "dark"
                 ? "bg-white/5 border-white/10 hover:border-purple-500/50 hover:bg-white/8"
                 : "bg-slate-50 border-slate-300 hover:border-purple-500 hover:bg-purple-50"
               }`}
           >
-            <motion.div
-              variants={itemVariants}
-              layout
-            >
+            <motion.div variants={itemVariants} layout>
               <div className="flex items-center justify-between mb-4">
                 <div
                   className={`w-10 h-10 rounded flex items-center justify-center transition-colors ${theme === "dark"
@@ -127,7 +128,7 @@ export default function FeaturedCoursesView() {
                     {course.tags.slice(0, 2).map((tag) => (
                       <span
                         key={tag}
-                        className={`text-xs px-2 py-1 ${theme === "dark"
+                        className={`text-xs px-2 py-1 ${isRounded && "rounded-md"} ${theme === "dark"
                             ? "bg-white/10 text-gray-300"
                             : "bg-slate-200 text-slate-700"
                           }`}
@@ -165,7 +166,7 @@ export default function FeaturedCoursesView() {
 
               <button
                 onClick={() => router.push("/termine")}
-                className={`w-full px-4 py-2 font-medium border transition-all duration-200 hover:scale-105 active:scale-100 ${theme === "dark"
+                className={`w-full px-4 py-2 font-medium border transition-all duration-200 hover:scale-105 active:scale-100 ${isRounded && "rounded-lg"} ${theme === "dark"
                     ? "bg-white text-black border-white hover:bg-gray-100"
                     : "bg-purple-600 text-white border-purple-600 hover:bg-purple-700"
                   }`}

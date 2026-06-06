@@ -2,11 +2,8 @@ import { db } from "../firebase";
 import { collection, getDocs, deleteDoc } from "firebase/firestore";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { User } from "firebase/auth";
-import type { UserData } from "@/BackEnd/type";
-import {
-  RateLimitExceededError,
-  type UserRole,
-} from "../rate_limiting/rateLimiter";
+import type { UserData, UserRole } from "@/BackEnd/type";
+import { RateLimitExceededError } from "../rate_limiting/rateLimiter";
 import { enforceRateLimit } from "./db";
 
 export async function getUserData(
@@ -27,7 +24,17 @@ export async function getUserData(
       email: data.email ?? "",
       birthdate: data.birthday ?? "",
       createdAt: data.createdAt?.toDate?.() ?? new Date(),
+      theme: data.theme ?? "light",
+      roundedCorners: data.roundedCorners ?? true,
       role: data.role ?? "user",
+
+      settings: {
+        darkMode: data.settings?.darkMode ?? false,
+        notifications: {
+          newEvent: data.settings?.notifications?.newEvent ?? true,
+          logs: data.settings?.notifications?.logs ?? false,
+        },
+      },
     };
   } catch (error) {
     console.error("Error fetching user data:", error);

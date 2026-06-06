@@ -1,3 +1,4 @@
+import { Theme } from "@/context/ThemeContext";
 import { User } from "firebase/auth";
 import { Timestamp } from "firebase/firestore";
 import { BaseSyntheticEvent } from "react";
@@ -96,6 +97,8 @@ type BaseUserData = {
   email: string;
   birthdate: Timestamp;
   createdAt: Timestamp;
+  theme: Theme;
+  roundedCorners: boolean;
   courses?: string[];
   settings: {
     darkMode: boolean;

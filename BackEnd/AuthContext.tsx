@@ -12,6 +12,7 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [userRole, setUserRole] = useState<UserRole>("user");
+  const [userRoundedCorners, setUserRoundedCorners] = useState<boolean>(true);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -21,6 +22,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       userData.then((data) => {
         if (data) {
           setUserRole(data.role);
+          setUserRoundedCorners(data.roundedCorners);
         }
       });
       setLoading(false);

@@ -5,12 +5,13 @@ import { useAuth } from "@/BackEnd/AuthContext";
 import type { UserData, AnnouncementData, PresetRoles } from "@/BackEnd/type";
 import { getAllAnnouncements } from "@/lib/db";
 import { Bell, User, Zap, Shield, CheckCircle2, Clock } from "lucide-react";
-import { UserRole } from "@/lib/rate_limiting/rateLimiter";
+import { useTheme } from "@/context/ThemeContext";
 
 export default function AnnouncementView({ data }: { data: UserData }) {
   const [announcements, setAnnouncements] = useState<AnnouncementData[]>([]);
   const [filAn, setFilAn] = useState<Record<string, AnnouncementData[]>>({});
   const { user, userRole } = useAuth();
+  const {theme } = useTheme();
 
   useEffect(() => {
     const fetchAnnouncements = async () => {
@@ -100,7 +101,6 @@ export default function AnnouncementView({ data }: { data: UserData }) {
 
   return (
     <div>
-      {/* Section Header */}
       <div className="mb-6">
         <div className="flex items-center gap-3 mb-4">
           <Bell className="w-6 h-6 text-blue-400" />
@@ -113,7 +113,6 @@ export default function AnnouncementView({ data }: { data: UserData }) {
         </div>
       </div>
 
-      {/* Announcements List */}
       <div className="grid grid-cols-1 gap-4">
         {accessibleAnnouncements.length > 0 ? (
           accessibleAnnouncements.map((an) => (
@@ -121,7 +120,6 @@ export default function AnnouncementView({ data }: { data: UserData }) {
               key={an.uid}
               className="bg-gradient-to-r from-slate-800 to-slate-700 border border-slate-600 rounded-lg p-5 sm:p-6 hover:border-slate-500 transition-all duration-200 hover:shadow-lg"
             >
-              {/* Header */}
               <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-3">
                 <div className="flex-grow">
                   <h3 className="text-lg sm:text-xl font-bold text-white mb-2">
@@ -143,7 +141,6 @@ export default function AnnouncementView({ data }: { data: UserData }) {
                   </div>
                 </div>
 
-                {/* Date Badge */}
                 <div className="flex items-center gap-2 text-slate-400 text-sm whitespace-nowrap">
                   <Clock className="w-4 h-4" />
                   <span>
@@ -158,12 +155,10 @@ export default function AnnouncementView({ data }: { data: UserData }) {
                 </div>
               </div>
 
-              {/* Content */}
               <div className="text-slate-300 leading-relaxed text-sm sm:text-base mb-4 whitespace-pre-wrap break-words">
                 {an.content}
               </div>
 
-              {/* Footer - Read status */}
               <div className="flex items-center justify-between pt-3 border-t border-slate-600">
                 <div className="flex items-center gap-2 text-xs text-slate-400">
                   {an.readBy && an.readBy.length > 0 ? (
@@ -182,8 +177,9 @@ export default function AnnouncementView({ data }: { data: UserData }) {
             </div>
           ))
         ) : (
-          /* Empty State */
-          <div className="bg-gradient-to-r from-slate-800 to-slate-700 border border-slate-600 rounded-lg p-12 text-center">
+          <div
+            className={`rounded-lg p-12 text-center border ${theme == "dark" ? "border border-slate" : " "}`}
+          >
             <Bell className="w-12 h-12 text-slate-500 mx-auto mb-4 opacity-50" />
             <p className="text-slate-400 text-lg font-medium">
               Keine Ankündigungen verfügbar

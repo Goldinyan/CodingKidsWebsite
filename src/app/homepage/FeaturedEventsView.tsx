@@ -9,7 +9,11 @@ import { useRouter } from "next/navigation";
 import { toJsDate } from "@/BackEnd/utils";
 import { useTheme } from "@/context/ThemeContext";
 
-export default function FeaturedEventsView() {
+export default function FeaturedEventsView({
+  isRounded,
+}: {
+  isRounded: boolean;
+}) {
   const [events, setEvents] = useState<EventData[]>([]);
   const [loading, setLoading] = useState(true);
   const { theme } = useTheme();
@@ -54,7 +58,7 @@ export default function FeaturedEventsView() {
   }
 
   const containerVariants = {
-    hidden: { },
+    hidden: {},
     visible: {
       opacity: 1,
       transition: { staggerChildren: 0.06, delayChildren: 0.05 },
@@ -105,7 +109,7 @@ export default function FeaturedEventsView() {
           return (
             <div
               key={event.uid}
-              className={`group backdrop-blur-2xl p-6 border transition-all duration-300 ${theme === "dark"
+              className={`group ${isRounded && "rounded-lg"} backdrop-blur-2xl p-6 border transition-all duration-300 ${theme === "dark"
                   ? "bg-white/5 border-white/10 hover:border-green-500/50 hover:bg-white/8"
                   : "bg-slate-50 border-slate-300 hover:border-green-500 hover:bg-green-50"
                 }`}
@@ -179,7 +183,7 @@ export default function FeaturedEventsView() {
 
                 <button
                   onClick={() => router.push("/termine")}
-                  className={`w-full px-4 py-2 font-medium border transition-all duration-200 hover:scale-105 active:scale-100 ${theme === "dark"
+                  className={`w-full px-4 py-2 font-medium border transition-all duration-200 hover:scale-105 active:scale-100 ${isRounded && "rounded-lg"}  ${theme === "dark"
                       ? "bg-white text-black border-white hover:bg-gray-100"
                       : "bg-green-600 text-white border-green-600 hover:bg-green-700"
                     }`}

@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Mail, Phone, MapPin } from "lucide-react";
 import { sendEmailToSupport } from "@/BackEnd/email";
 import { useState } from "react";
+import { useTheme } from "@/context/ThemeContext";
 
 type EmailProps = {
   name: string;
@@ -38,6 +39,7 @@ export default function NoUserKontakt() {
     body?: boolean;
   }>({});
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const { theme } = useTheme();
 
   const stuff: { text: string; Icon: any }[] = [
     { text: "info@coding.com", Icon: Mail },
@@ -102,19 +104,45 @@ export default function NoUserKontakt() {
     }
   };
   return (
-    <div className="w-full h-full bg-otherbg min-h-screen">
+    <div
+      className={`w-full h-full min-h-screen transition-colors duration-300 ${
+        theme === "dark" ? "bg-black" : "bg-white"
+      }`}
+    >
       <div className="pt-25 flex flex-col gap-2">
-        <p className="text-3xl font-bold text-center">In Kontakt treten</p>
-        <p className="text-graytext text-center">
+        <p
+          className={`text-3xl font-bold text-center transition-colors duration-300 ${
+            theme === "dark" ? "text-white" : "text-slate-900"
+          }`}
+        >
+          In Kontakt treten
+        </p>
+        <p
+          className={`text-center transition-colors duration-300 ${
+            theme === "dark" ? "text-gray-400" : "text-slate-600"
+          }`}
+        >
           Füllen Sie das Formular aus oder melden Sie sich direkt. Wir freuen
           uns auf Sie.
         </p>
       </div>
       <div className="pb-20 pt-15 md:grid-cols-2 grid gap-10 grid-cols-1 mx-[5%]">
-        <div className="border bg-white border-secondaryOwn rounded-2xl">
+        <div
+          className={`border rounded-2xl transition-colors duration-300 ${
+            theme === "dark"
+              ? "bg-white/5 border-green-500/30"
+              : "bg-white border-green-300"
+          }`}
+        >
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 p-5">
             <div className="flex flex-col">
-              <label className="font-semibold">Dein Name</label>
+              <label
+                className={`font-semibold transition-colors duration-300 ${
+                  theme === "dark" ? "text-gray-200" : "text-slate-900"
+                }`}
+              >
+                Dein Name
+              </label>
               <input
                 value={emailProps?.name || ""}
                 onChange={(e) => {
@@ -126,13 +154,26 @@ export default function NoUserKontakt() {
                     setErrors((prev) => ({ ...prev, name: false }));
                   }
                 }}
-                className={`bg-white border p-2 rounded-lg mt-2 ${errors.name ? "border-red-500" : "border-gray-300"
-                  }`}
+                className={`border p-2 rounded-lg mt-2 transition-colors duration-300 ${
+                  theme === "dark"
+                    ? `bg-white/10 border-green-500/30 text-white placeholder-gray-500 ${
+                        errors.name ? "border-red-500" : "focus:border-green-500"
+                      }`
+                    : `bg-white border-gray-300 text-slate-900 placeholder-gray-400 ${
+                        errors.name ? "border-red-500" : "focus:border-green-600"
+                      }`
+                }`}
                 placeholder="Vollständiger Namen"
               />
             </div>
             <div className="flex flex-col">
-              <label className="font-semibold">Email Adresse</label>
+              <label
+                className={`font-semibold transition-colors duration-300 ${
+                  theme === "dark" ? "text-gray-200" : "text-slate-900"
+                }`}
+              >
+                Email Adresse
+              </label>
               <input
                 value={emailProps?.email || ""}
                 onChange={(e) => {
@@ -144,13 +185,24 @@ export default function NoUserKontakt() {
                     setErrors((prev) => ({ ...prev, email: false }));
                   }
                 }}
-                className={`bg-white border p-2 rounded-lg mt-2 ${errors.email ? "border-red-500" : "border-gray-300"
-                  }`}
+                className={`border p-2 rounded-lg mt-2 transition-colors duration-300 ${
+                  theme === "dark"
+                    ? `bg-white/10 border-green-500/30 text-white placeholder-gray-500 ${
+                        errors.email ? "border-red-500" : "focus:border-green-500"
+                      }`
+                    : `bg-white border-gray-300 text-slate-900 placeholder-gray-400 ${
+                        errors.email ? "border-red-500" : "focus:border-green-600"
+                      }`
+                }`}
                 placeholder="du@gmail.com"
               />
             </div>
             <div className="flex flex-col">
-              <label className="font-semibold">
+              <label
+                className={`font-semibold transition-colors duration-300 ${
+                  theme === "dark" ? "text-gray-200" : "text-slate-900"
+                }`}
+              >
                 {"Telofonnummer (optional)"}
               </label>
               <input
@@ -161,12 +213,22 @@ export default function NoUserKontakt() {
                     phone: e.target.value,
                   }))
                 }
-                className="border-gray-300 bg-white border p-2 rounded-lg mt-2"
+                className={`border p-2 rounded-lg mt-2 transition-colors duration-300 ${
+                  theme === "dark"
+                    ? "bg-white/10 border-green-500/30 text-white placeholder-gray-500"
+                    : "bg-white border-gray-300 text-slate-900 placeholder-gray-400"
+                }`}
                 placeholder="Handynummer"
               />
             </div>
             <div className="flex flex-col">
-              <label className="font-semibold">Betreff</label>
+              <label
+                className={`font-semibold transition-colors duration-300 ${
+                  theme === "dark" ? "text-gray-200" : "text-slate-900"
+                }`}
+              >
+                Betreff
+              </label>
               <select
                 value={emailProps?.subject || ""}
                 onChange={(e) =>
@@ -175,7 +237,11 @@ export default function NoUserKontakt() {
                     subject: e.target.value as Betreff,
                   }))
                 }
-                className="border-gray-300 bg-white border p-2 rounded-lg mt-2"
+                className={`border p-2 rounded-lg mt-2 transition-colors duration-300 ${
+                  theme === "dark"
+                    ? "bg-white/10 border-green-500/30 text-white"
+                    : "bg-white border-gray-300 text-slate-900"
+                }`}
               >
                 {Betreffe.map((b) => (
                   <option key={b} value={b}>
@@ -186,7 +252,13 @@ export default function NoUserKontakt() {
             </div>
           </div>
           <div className="flex flex-col p-5">
-            <label className="font-semibold">Deine Nachricht</label>
+            <label
+              className={`font-semibold transition-colors duration-300 ${
+                theme === "dark" ? "text-gray-200" : "text-slate-900"
+              }`}
+            >
+              Deine Nachricht
+            </label>
             <textarea
               value={emailProps?.body || ""}
               onChange={(e) => {
@@ -195,8 +267,15 @@ export default function NoUserKontakt() {
                   setErrors((prev) => ({ ...prev, body: false }));
                 }
               }}
-              className={`h-20 bg-white border p-2 rounded-lg mt-2 ${errors.body ? "border-red-500" : "border-gray-300"
-                }`}
+              className={`h-20 border p-2 rounded-lg mt-2 transition-colors duration-300 ${
+                theme === "dark"
+                  ? `bg-white/10 border-green-500/30 text-white placeholder-gray-500 ${
+                      errors.body ? "border-red-500" : "focus:border-green-500"
+                    }`
+                  : `bg-white border-gray-300 text-slate-900 placeholder-gray-400 ${
+                      errors.body ? "border-red-500" : "focus:border-green-600"
+                    }`
+              }`}
               placeholder="Sage uns wie wir dir helfen können"
             />
           </div>
@@ -207,27 +286,53 @@ export default function NoUserKontakt() {
               </p>
             )}
             <div onClick={() => handleEmailSending()}>
-              <Button className="py-6 w-full group bg-fourthOwn hover:bg-white border hover:border-fourthOwn transition-all duration-200 ">
-                <p className="group-hover:text-black">Nachricht senden</p>
+              <Button className={`py-6 w-full group transition-all duration-200 ${
+                theme === "dark"
+                  ? "bg-white text-black hover:bg-gray-100 border-white"
+                  : "bg-green-600 text-white hover:bg-green-700 border-green-600"
+              }`}>
+                <p className={theme === "dark" ? "group-hover:text-black" : ""}>Nachricht senden</p>
               </Button>
             </div>
           </div>
         </div>
 
-        <div className="flex flex-col ">
-          <p className="font-bold text-2xl">Andere Wege uns zu erreichen:</p>
+        <div className="flex flex-col">
+          <p
+            className={`font-bold text-2xl transition-colors duration-300 ${
+              theme === "dark" ? "text-white" : "text-slate-900"
+            }`}
+          >
+            Andere Wege uns zu erreichen:
+          </p>
           <div className="flex flex-col gap-5 pt-4">
             {stuff.map((s, idx) => (
               <div
                 key={idx}
                 className="flex items-center justify-start gap-2 flex-row"
               >
-                <s.Icon className="w-5 h-5 text-fourthOwn" />
-                <p>{s.text}</p>
+                <s.Icon
+                  className={`w-5 h-5 transition-colors duration-300 ${
+                    theme === "dark" ? "text-green-400" : "text-green-600"
+                  }`}
+                />
+                <p
+                  className={`transition-colors duration-300 ${
+                    theme === "dark" ? "text-gray-300" : "text-slate-900"
+                  }`}
+                >
+                  {s.text}
+                </p>
               </div>
             ))}
           </div>
-          <p className="pt-5 font-bold text-2xl pb-5">Finde uns hier</p>
+          <p
+            className={`pt-5 font-bold text-2xl pb-5 transition-colors duration-300 ${
+              theme === "dark" ? "text-white" : "text-slate-900"
+            }`}
+          >
+            Finde uns hier
+          </p>
           <iframe
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2474.59027887105!2d6.663062212202145!3d51.667337571732794!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47b88fe13e2b821d%3A0x1698a4fadd47ca72!2sRudolf-Diesel-Stra%C3%9Fe%20115%2C%2046485%20Wesel!5e0!3m2!1sde!2sde!4v1764428777335!5m2!1sde!2sde"
             width="w-full"

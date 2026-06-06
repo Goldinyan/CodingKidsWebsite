@@ -7,8 +7,9 @@ import { motion } from "framer-motion";
 import { MentorCard } from "../verein/MentorCard";
 import { useAuth } from "@/BackEnd/AuthContext";
 import { useTheme } from "@/context/ThemeContext";
+import { Github, Twitter } from "lucide-react";
 
-export default function MentorsView() {
+export default function MentorsView({ isRounded }: { isRounded: boolean }) {
   const [mentors, setMentors] = useState<Mentor[]>([]);
   const [orderedMentors, setOrderedMentors] = useState<Mentor[]>([]);
   const [expanded, setExpanded] = useState<number>(0);
@@ -137,6 +138,56 @@ export default function MentorsView() {
         >
           Lerne von erfahrenen Profis mit Leidenschaft für Informatik
         </p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {[1, 2, 3].map((i) => (
+          <div
+            key={i}
+            className="bg-white dark:bg-zinc-900 p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+          >
+            <div className="flex items-center gap-4 mb-4">
+              <img
+                src={`https://i.pravatar.cc/150?img=${i + 10}`}
+                className="w-16 h-16 rounded-full object-cover bg-zinc-100"
+              />
+              <div>
+                <h3 className="font-bold text-lg dark:text-white">
+                  Alex Morgan
+                </h3>
+                <p className="text-blue-600 font-medium text-sm">
+                  Full Stack Developer
+                </p>
+              </div>
+            </div>
+            <p className="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed mb-6">
+              Passionate about building scalable web applications and accessible
+              user interfaces. Loves coffee and open source.
+            </p>
+            <div className="flex justify-between items-center pt-4 border-t border-zinc-100 dark:border-zinc-800">
+              <div className="flex gap-2">
+                <a
+                  href="#"
+                  className="p-1.5 text-zinc-400 hover:text-blue-500 transition-colors"
+                >
+                  <Twitter size={16} />
+                </a>
+                <a
+                  href="#"
+                  className="p-1.5 text-zinc-400 hover:text-black dark:hover:text-white transition-colors"
+                >
+                  <Github size={16} />
+                </a>
+              </div>
+              <a
+                href="#"
+                className="text-xs font-bold text-zinc-500 hover:text-black dark:hover:text-white uppercase tracking-wider"
+              >
+                Portfolio
+              </a>
+            </div>
+          </div>
+        ))}
       </div>
 
       <motion.div

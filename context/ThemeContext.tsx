@@ -1,5 +1,7 @@
 "use client";
 
+import { useAuth } from "@/BackEnd/AuthContext";
+import { getUserData, updateUser } from "@/lib/db";
 import {
   ReactNode,
   createContext,
@@ -13,17 +15,35 @@ export type Theme = "light" | "dark";
 interface ThemeContextType {
   theme: Theme;
   toggleTheme: () => void;
-  setTheme: (theme: Theme) => void;
+  isRounded: boolean;
+  toggleRounded: () => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<Theme>("light");
+  const [isRounded, setIsRoundedState] = useState<boolean>(true);
   const [mounted, setMounted] = useState(false);
+  const { user, userRole } = useAuth();
 
   useEffect(() => {
     setMounted(true);
+
+    let userThemePreference = null;
+    const userRoundedPreference = null;
+
+    const checkUserPreference = async () => {
+      if (!user) return;
+
+      const data = await getUserData(user.uid, userRole);
+
+      if (data?.theme) {
+        userThemePreference = data.theme as Theme;
+      }
+    };
+
+    checkUserPreference();
 
     // Prüfe localStorage und System-Präferenz
     const storedTheme = localStorage.getItem("theme") as Theme | null;
@@ -31,9 +51,14 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       "(prefers-color-scheme: dark)",
     ).matches;
 
-    const initialTheme = storedTheme || (prefersDark ? "dark" : "light");
-    setThemeState(initialTheme);
-    applyTheme(initialTheme);
+    if (userThemePreference == null) {
+      const initialTheme = storedTheme || (prefersDark ? "dark" : "light");
+      setThemeState(initialTheme);
+      applyTheme(initialTheme);
+    } else {
+      setThemeState(userThemePreference);
+      applyTheme(userThemePreference);
+    }
   }, []);
 
   const applyTheme = (newTheme: Theme) => {
@@ -45,19 +70,45 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const setTheme = (newTheme: Theme) => {
+  const toggleTheme = () => {
+    const newTheme = theme === "light" ? "dark" : "light";
+
     setThemeState(newTheme);
     localStorage.setItem("theme", newTheme);
     applyTheme(newTheme);
+
+    if (!user) {
+      return;
+    }
+
+    const updateUserTheme = async () => {
+      await updateUser(user.uid, { theme: newTheme }, user.uid, userRole);
+    };
+
+    updateUserTheme();
   };
 
-  const toggleTheme = () => {
-    const newTheme = theme === "light" ? "dark" : "light";
-    setTheme(newTheme);
+  const toggleRounded = () => {
+    const newRounded = !isRounded;
+
+    setIsRoundedState(newRounded);
+    localStorage.setItem("isRounded", isRounded ? "true" : "false");
+
+    if (!user) {
+      return;
+    }
+
+    const updateUserRounded = async () => {
+      await updateUser(user.uid, { roundedCorners: newRounded}, user.uid, userRole);
+    };
+
+    updateUserRounded();
   };
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme, setTheme }}>
+    <ThemeContext.Provider
+      value={{ theme, toggleTheme, isRounded, toggleRounded }}
+    >
       {/* 
         Der Provider ist IMMER da. useTheme() stürzt niemals ab.
         Wenn die App noch nicht im Browser 'mounted' ist, verstecken wir die UI 
