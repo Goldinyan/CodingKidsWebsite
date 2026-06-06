@@ -36,6 +36,11 @@ export default function ThemeToggle() {
       <div className="absolute inset-0 rounded-full bg-gradient-to-br from-background/50 to-background/30 backdrop-blur-md border border-border/50 group-hover:border-border/70 transition-all duration-300" />
 
       <div
+        onClick={(e) => {
+          e.stopPropagation(); // Verhindert, dass der Klick das Theme toggelt
+          toggleRounded();
+          setExpanded(false);
+        }}
         className={` rounded-full transition-all flex items-center justify-center duration-300 ease-in-out ${expanded
             ? "w-14 h-14 opacity-100 scale-100 border-1 border-border/50"
             : "w-0 h-0 opacity-0 scale-75"
@@ -52,10 +57,6 @@ export default function ThemeToggle() {
             strokeLinecap="round"
             strokeLinejoin="round"
             className={`transition-all duration-300 cursor-pointer ${theme == "dark" ? "text-white" : "text-gray-800"}`}
-            onClick={(e) => {
-              e.stopPropagation(); // Verhindert, dass der Klick das Theme toggelt
-              toggleRounded();
-            }}
           >
             <path
               d={

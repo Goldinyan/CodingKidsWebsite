@@ -17,8 +17,8 @@ import {
 export default function MainView() {
   const [userData, setUserData] = useState<UserData>();
 
-  const { user, loading, userRoundedCorners } = useAuth();
-  const { theme } = useTheme();
+  const { user, loading} = useAuth();
+  const { theme, isRounded } = useTheme();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -44,12 +44,12 @@ export default function MainView() {
         <TopView
           data={userData}
           loading={loading}
-          isRounded={userRoundedCorners}
+          isRounded={isRounded}
         />
-        <MiddleView isRounded={userRoundedCorners} />
-        <FeaturedEventsView isRounded={userRoundedCorners} />
-        <FeaturedCoursesView isRounded={userRoundedCorners} />
-        <MentorsView isRounded={userRoundedCorners} />
+        {/*<MiddleView isRounded={isRounded} />*/}
+        <FeaturedEventsView isRounded={isRounded} />
+        <FeaturedCoursesView isRounded={isRounded} />
+        <MentorsView isRounded={isRounded} />
         <CTAView />
       </div>
     </div>

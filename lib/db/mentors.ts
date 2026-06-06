@@ -1,8 +1,7 @@
 import { db } from "../firebase";
 import { collection, getDocs } from "firebase/firestore";
 import { doc, updateDoc } from "firebase/firestore";
-import type { Mentor } from "@/BackEnd/type";
-import { type UserRole } from "../rate_limiting/rateLimiter";
+import type { Mentor, UserRole } from "@/BackEnd/type";
 
 import { enforceRateLimit } from "./db";
 

@@ -16,6 +16,7 @@
 html {
   scroll-behavior: smooth !important;
 }
+
 html {
   scrollbar-width: none; /* Firefox */
 }

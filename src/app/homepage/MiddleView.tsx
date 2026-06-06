@@ -20,7 +20,7 @@ export default function MiddleView({ isRounded }: { isRounded: boolean }) {
         onClick={() => {
           router.push("/verein");
         }}
-        className={`px-8 py-3 font-medium border ${isRounded && "rounded-lg"} ${theme === "dark"
+        className={`px-8 py-3 font-medium border  transition-all duration-300 ${isRounded ? "rounded-lg" : "rounded-none"} ${theme === "dark"
             ? "bg-white text-black border-white hover:bg-gray-200"
             : "bg-slate-900 text-white border-slate-900 hover:bg-slate-800"
           }`}

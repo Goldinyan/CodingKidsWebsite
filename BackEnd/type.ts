@@ -127,11 +127,15 @@ export type UserData =
 
 export type Mentor = {
   uid: string;
+  id: number; // for filtering and importance
+  role: string;
   name: string;
   des1: string;
   des2: string;
   pic: string;
-  id: number;
+  insta?: string;
+  linkedin?: string;
+  github?: string;
 };
 
 export type AuthContextType = {

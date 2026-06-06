@@ -85,7 +85,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       await updateUser(user.uid, { theme: newTheme }, user.uid, userRole);
     };
 
-    updateUserTheme();
+    //updateUserTheme();
   };
 
   const toggleRounded = () => {
@@ -102,7 +102,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       await updateUser(user.uid, { roundedCorners: newRounded}, user.uid, userRole);
     };
 
-    updateUserRounded();
+    //updateUserRounded();
   };
 
   return (

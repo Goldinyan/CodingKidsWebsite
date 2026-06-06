@@ -20,7 +20,6 @@ export default function TopView({
   const { theme } = useTheme();
   const showRegisterButton = data === undefined && !loading;
 
-
   const features: { text: string; des: string; icon: React.ElementType }[] = [
     {
       text: "Für alle Altersgruppen",
@@ -92,9 +91,10 @@ export default function TopView({
           >
             <motion.button
               whileHover={{ scale: 1.03, y: -1 }}
-              whileTap={{ scale: 0.98 }}
+              whileTap={{ scale: 0.90 }}
               transition={{ type: "spring", stiffness: 400, damping: 15 }}
-              className={`px-8 py-3 font-medium border ${isRounded && "rounded-lg"} ${theme === "dark"
+              onClick={() => router.push("/termine")}
+              className={`transition-colors duration-300 px-8 py-3 font-medium border ${isRounded ? "rounded-lg" : "rounded-none"} ${theme === "dark"
                   ? "bg-white text-black border-white hover:bg-gray-200"
                   : "bg-green-600 text-white border-green-600 hover:bg-green-700"
                 }`}
@@ -114,7 +114,7 @@ export default function TopView({
               >
                 <motion.button
                   onClick={() => router.push("/login")}
-                  className={`px-8 py-3 font-medium border ${isRounded && "rounded-lg"}  ${theme === "dark"
+                  className={`transition-all duration-300 px-8 py-3 font-medium border ${isRounded ? "rounded-lg" : "rounded-none"}  ${theme === "dark"
                       ? "bg-black text-white border-gray-400 hover:border-white hover:bg-white/5"
                       : "bg-white text-slate-900 border-slate-400 hover:border-slate-900 hover:bg-slate-50"
                     }`}
@@ -141,7 +141,7 @@ export default function TopView({
                 variants={itemVariants}
                 whileHover="hover"
                 layout
-                className={`group relative z-10 p-6 backdrop-blur-2xl border transition-colors duration-300 ${isRounded && "rounded-lg"} ${theme === "dark"
+                className={`group relative z-10 p-6 backdrop-blur-2xl border transition-all duration-300 ${isRounded ? "rounded-lg" : "rounde-none"}  ${theme === "dark"
                     ? "bg-white/5 border-green-500/30 hover:border-green-500/60 hover:bg-white/10"
                     : "bg-slate-100 border-green-300 hover:border-green-500 hover:bg-green-50"
                   }`}
