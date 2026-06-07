@@ -91,62 +91,127 @@ export default function WerWirSind() {
                   digitale Welt vorzubereiten.
                 </p>
               </div>
-
               <motion.div
                 initial={{ opacity: 0, x: 20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, delay: 0.1 }}
                 viewport={{ once: true }}
-                className="space-y-6"
+                className=""
               >
-                <div className="flex gap-4">
+                <div className="flex">
                   <div className="flex flex-col items-center">
-                    <div className="w-12 h-12 bg-white/10 border border-white/20 rounded-full flex items-center justify-center flex-shrink-0">
-                      <Sparkles className="w-5 h-5 text-white" />
+                    <div
+                      className={`w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 border transition-colors duration-300 ${theme === "dark"
+                          ? "bg-white/10 border-white/20"
+                          : "bg-green-50 border-green-200"
+                        }`}
+                    >
+                      <Sparkles
+                        className={`w-5 h-5 transition-colors duration-300 ${theme === "dark" ? "text-white" : "text-green-600"}`}
+                      />
                     </div>
-                    <div className="w-0.5 h-12 bg-white/10 my-2" />
+                    <div
+                      className={`w-0.5 h-12 my-2 transition-colors duration-300 ${theme === "dark" ? "bg-white/10" : "bg-slate-200"}`}
+                    />
                   </div>
                   <div className="pb-6">
-                    <h3 className="text-white font-semibold">Erfolg 1</h3>
-                    <p className="text-gray-400 text-sm">Datum 1</p>
+                    <h3
+                      className={`font-semibold transition-colors duration-300 ${theme === "dark" ? "text-white" : "text-slate-900"}`}
+                    >
+                      Erfolg 1
+                    </h3>
+                    <p
+                      className={`text-sm transition-colors duration-300 ${theme === "dark" ? "text-gray-400" : "text-slate-500"}`}
+                    >
+                      Datum 1
+                    </p>
                   </div>
                 </div>
 
-                <div className="flex gap-4">
+                <div className="flex">
                   <div className="flex flex-col items-center">
-                    <div className="w-12 h-12 bg-white/10 border border-white/20 rounded-full flex items-center justify-center flex-shrink-0">
-                      <Presentation className="w-5 h-5 text-white" />
+                    <div
+                      className={`w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 border transition-colors duration-300 ${theme === "dark"
+                          ? "bg-white/10 border-white/20"
+                          : "bg-green-50 border-green-200"
+                        }`}
+                    >
+                      <Presentation
+                        className={`w-5 h-5 transition-colors duration-300 ${theme === "dark" ? "text-white" : "text-green-600"}`}
+                      />
                     </div>
-                    <div className="w-0.5 h-12 bg-white/10 my-2" />
+                    <div
+                      className={`w-0.5 h-12 my-2 transition-colors duration-300 ${theme === "dark" ? "bg-white/10" : "bg-slate-200"}`}
+                    />
                   </div>
                   <div className="pb-6">
-                    <h3 className="text-white font-semibold">Erfolg 2</h3>
-                    <p className="text-gray-400 text-sm">Datum 2</p>
+                    <h3
+                      className={`font-semibold transition-colors duration-300 ${theme === "dark" ? "text-white" : "text-slate-900"}`}
+                    >
+                      Erfolg 2
+                    </h3>
+                    <p
+                      className={`text-sm transition-colors duration-300 ${theme === "dark" ? "text-gray-400" : "text-slate-500"}`}
+                    >
+                      Datum 2
+                    </p>
                   </div>
                 </div>
 
-                <div className="flex gap-4">
+                <div className="flex">
                   <div className="flex flex-col items-center">
-                    <div className="w-12 h-12 bg-white/10 border border-white/20 rounded-full flex items-center justify-center flex-shrink-0">
-                      <MapPinned className="w-5 h-5 text-white" />
+                    <div
+                      className={`w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 border transition-colors duration-300 ${theme === "dark"
+                          ? "bg-white/10 border-white/20"
+                          : "bg-green-50 border-green-200"
+                        }`}
+                    >
+                      <MapPinned
+                        className={`w-5 h-5 transition-colors duration-300 ${theme === "dark" ? "text-white" : "text-green-600"}`}
+                      />
                     </div>
-                    <div className="w-0.5 h-12 bg-white/10 my-2" />
+                    <div
+                      className={`w-0.5 h-12 my-2 transition-colors duration-300 ${theme === "dark" ? "bg-white/10" : "bg-slate-200"}`}
+                    />
                   </div>
                   <div className="pb-6">
-                    <h3 className="text-white font-semibold">Erfolg 3</h3>
-                    <p className="text-gray-400 text-sm">Datum 3</p>
+                    <h3
+                      className={`font-semibold transition-colors duration-300 ${theme === "dark" ? "text-white" : "text-slate-900"}`}
+                    >
+                      Erfolg 3
+                    </h3>
+                    <p
+                      className={`text-sm transition-colors duration-300 ${theme === "dark" ? "text-gray-400" : "text-slate-500"}`}
+                    >
+                      Datum 3
+                    </p>
                   </div>
                 </div>
 
-                <div className="flex gap-4">
+                <div className="flex">
                   <div className="flex flex-col items-center">
-                    <div className="w-12 h-12 bg-white/10 border border-white/20 rounded-full flex items-center justify-center flex-shrink-0">
-                      <School className="w-5 h-5 text-white" />
+                    <div
+                      className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 border transition-colors duration-300 ${theme === "dark"
+                          ? "bg-white/10 border-white/20"
+                          : "bg-green-50 border-green-200"
+                        }`}
+                    >
+                      <School
+                        className={`w-5 h-5 transition-colors duration-300 ${theme === "dark" ? "text-white" : "text-green-600"}`}
+                      />
                     </div>
                   </div>
                   <div>
-                    <h3 className="text-white font-semibold">Erfolg 4</h3>
-                    <p className="text-gray-400 text-sm">Datum 4</p>
+                    <h3
+                      className={`font-semibold transition-colors duration-300 ${theme === "dark" ? "text-white" : "text-slate-900"}`}
+                    >
+                      Erfolg 4
+                    </h3>
+                    <p
+                      className={`text-sm transition-colors duration-300 ${theme === "dark" ? "text-gray-400" : "text-slate-500"}`}
+                    >
+                      Datum 4
+                    </p>
                   </div>
                 </div>
               </motion.div>
@@ -154,9 +219,7 @@ export default function WerWirSind() {
           </div>
         </div>
 
-        {/* Values Section */}
         <div className="w-full px-8 py-20 bg-gradient-to-b from-black via-zinc-950 to-black relative">
-          {/* Subtle background grid */}
           <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.02)_1px,transparent_1px)] bg-[size:50px_50px] pointer-events-none opacity-30" />
 
           <div className="max-w-5xl mx-auto relative">

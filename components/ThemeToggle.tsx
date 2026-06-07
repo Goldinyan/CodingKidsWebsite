@@ -33,18 +33,19 @@ export default function ThemeToggle() {
 
   return (
     <button className="fixed bottom-6 right-6 z-50 group">
-      <div className="absolute inset-0 rounded-full bg-gradient-to-br from-background/50 to-background/30 backdrop-blur-md border border-border/50 group-hover:border-border/70 transition-all duration-300" />
+      <div className="absolute inset-0 rounded-full bg-gradient-to-br from-background/50 to-background/30 backdrop-blur-md border border-border/90 group-hover:border-border/99 transition-all duration-300" />
 
       <div
         onClick={(e) => {
           e.stopPropagation(); // Verhindert, dass der Klick das Theme toggelt
           toggleRounded();
-          setExpanded(false);
+          /*setExpanded(false);*/
         }}
-        className={` rounded-full transition-all flex items-center justify-center duration-300 ease-in-out ${expanded
-            ? "w-14 h-14 opacity-100 scale-100 border-1 border-border/50"
+        className={` rounded-full transition-all flex items-center justify-center duration-300 ease-in-out ${
+          expanded
+            ? "w-14 h-14 -mb-2 opacity-100 scale-100 border border-border/90"
             : "w-0 h-0 opacity-0 scale-75"
-          }`}
+        }`}
       >
         {expanded && (
           <svg
@@ -76,18 +77,20 @@ export default function ThemeToggle() {
       >
         <Sun
           size={24}
-          className={`absolute transition-all duration-500 transform ${theme === "light"
+          className={`absolute transition-all duration-500 transform ${
+            theme === "light"
               ? "opacity-100 scale-100 rotate-0"
               : "opacity-0 scale-0 rotate-90"
-            } text-amber-500`}
+          } text-amber-500`}
         />
 
         <Moon
           size={24}
-          className={`absolute transition-all duration-500 transform ${theme === "dark"
+          className={`absolute transition-all duration-500 transform ${
+            theme === "dark"
               ? "opacity-100 scale-100 rotate-0"
               : "opacity-0 scale-0 -rotate-90"
-            } text-slate-300`}
+          } text-slate-300`}
         />
       </div>
 
