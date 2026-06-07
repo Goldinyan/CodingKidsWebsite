@@ -50,7 +50,7 @@ export default function MainView() {
         <FeaturedEventsView isRounded={isRounded} />
         <FeaturedCoursesView isRounded={isRounded} />
         <MentorsView isRounded={isRounded} />
-        <CTAView />
+        <CTAView isRounded={isRounded}/>
       </div>
     </div>
   );
