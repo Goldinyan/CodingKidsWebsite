@@ -12,6 +12,8 @@ import {
   School,
 } from "lucide-react";
 import MentorenView from "./MentorView";
+import { useTheme } from "@/context/ThemeContext";
+
 const values = [
   {
     title: "Möglichkeiten",
@@ -34,24 +36,26 @@ const values = [
 ] as const;
 
 export default function WerWirSind() {
+  const { theme, isRounded } = useTheme();
+
   return (
     <>
-      {/* Hero Section */}
       <div className="w-full">
-        <div className="flex items-center justify-center flex-col min-h-80 gap-6 bg-gradient-to-b from-black via-zinc-950 to-black relative">
-          {/* Subtle background grid */}
-          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.02)_1px,transparent_1px)] bg-[size:50px_50px] pointer-events-none opacity-30" />
-
+        <div className="flex items-center justify-center flex-col min-h-80 gap-6 ">
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             className="relative flex items-center flex-col text-center px-6"
           >
-            <h1 className="text-5xl md:text-6xl font-bold text-white tracking-tight mb-6 leading-tight">
+            <h1
+              className={` text-5xl md:text-6xl font-bold tracking-tight mb-6 leading-tight ${theme == "dark" ? "text-white" : "text-black"}`}
+            >
               Wir gestalten die digitale Zukunft.
             </h1>
-            <p className="text-lg md:text-xl text-gray-300 max-w-2xl font-light leading-relaxed">
+            <p
+              className={`text-lg md:text-xl max-w-2xl font-light leading-relaxed ${theme == "dark" ? "text-gray-300" : "text-gray-800"}`}
+            >
               Unsere Mission ist es, Kinder für Technologie zu begeistern, ihre
               Kreativität zu fördern und sie zu den Innovatoren von morgen zu
               machen.
@@ -59,8 +63,7 @@ export default function WerWirSind() {
           </motion.div>
         </div>
 
-        {/* History + Timeline Section */}
-        <div className="w-full px-8 py-20 bg-black">
+        <div className={`w-full px-8 py-20 `}>
           <div className="max-w-5xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 8 }}
@@ -69,24 +72,26 @@ export default function WerWirSind() {
               viewport={{ once: true }}
               className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"
             >
-              {/* History Text */}
               <div>
-                <h2 className="text-4xl font-bold text-white mb-6">
+                <h2
+                  className={`text-4xl font-bold mb-6 ${theme == "dark" ? "text-white" : "text-black"}`}
+                >
                   Von einer kleinen Idee zu einer regionalen Bewegung
                 </h2>
-                <p className="text-gray-400 text-lg leading-relaxed font-light">
-                  Coding Kids Niederrhein begann mit einer einfachen Überzeugung:
-                  Jedes Kind verdient die Chance, die Sprache der Zukunft zu lernen.
-                  Was als kleiner Wochenend-Workshop anfing, hat sich zu einer
-                  blühenden Gemeinschaft entwickelt, die Hunderte von jungen Köpfen
-                  in der gesamten Region erreicht. Wir widmen uns der Bereitstellung
-                  zugänglicher, unterhaltsamer und hochwertiger
-                  Programmierausbildung, um Kinder auf eine digitale Welt
-                  vorzubereiten.
+                <p
+                  className={`text-lg leading-relaxed font-light ${theme == "dark" ? "text-gray-400" : "text-gray-800"}`}
+                >
+                  Coding Kids Niederrhein begann mit einer einfachen
+                  Überzeugung: Jedes Kind verdient die Chance, die Sprache der
+                  Zukunft zu lernen. Was als kleiner Wochenend-Workshop anfing,
+                  hat sich zu einer blühenden Gemeinschaft entwickelt, die
+                  Hunderte von jungen Köpfen in der gesamten Region erreicht.
+                  Wir widmen uns der Bereitstellung zugänglicher, unterhaltsamer
+                  und hochwertiger Programmierausbildung, um Kinder auf eine
+                  digitale Welt vorzubereiten.
                 </p>
               </div>
 
-              {/* Timeline */}
               <motion.div
                 initial={{ opacity: 0, x: 20 }}
                 whileInView={{ opacity: 1, x: 0 }}
@@ -166,9 +171,10 @@ export default function WerWirSind() {
                 Was uns antreibt
               </h2>
               <p className="text-xl text-gray-400 max-w-2xl mx-auto font-light leading-relaxed">
-                Unsere Mission ist es, digitale Bildung zugänglich und unterhaltsam
-                zu machen und Kreativität, kritisches Denken und Zusammenarbeit für
-                jedes Kind in unserer Gemeinschaft zu fördern.
+                Unsere Mission ist es, digitale Bildung zugänglich und
+                unterhaltsam zu machen und Kreativität, kritisches Denken und
+                Zusammenarbeit für jedes Kind in unserer Gemeinschaft zu
+                fördern.
               </p>
             </motion.div>
 

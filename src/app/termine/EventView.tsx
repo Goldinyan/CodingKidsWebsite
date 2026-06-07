@@ -38,7 +38,7 @@ interface termineProps {
   };
 }
 
-export default function EventView({ searchParams }: termineProps) {
+export default function EventView() {
   const [upcomingEvents, setUpcomingEvents] = useState<EventData[]>([]);
   const [pastEvents, setPastEvents] = useState<EventData[]>([]);
   const { user, loading, userRole } = useAuth();
@@ -55,6 +55,7 @@ export default function EventView({ searchParams }: termineProps) {
     dateSort: "",
   });
 
+  /*
   useEffect(() => {
     if (!searchParams.selectedCourse) return;
 
@@ -66,6 +67,7 @@ export default function EventView({ searchParams }: termineProps) {
       course: searchParams.selectedCourse ?? "",
     }));
   }, [searchParams.selectedCourse]);
+  */
 
   useEffect(() => {
     if (!user) return;

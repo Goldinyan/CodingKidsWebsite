@@ -7,11 +7,10 @@ interface termineProps {
   };
 }
 
-export default function Home({ searchParams }: termineProps) {
-  console.log("searchParams:", searchParams);
+export default function Home() {
   return (
     <div className="flex flex-col ">
-      <EventView searchParams={searchParams} />
+      <EventView />
     </div>
   );
 }
