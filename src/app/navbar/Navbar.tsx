@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/BackEnd/AuthContext";
 import { User, LogIn, MessageCircle } from "lucide-react";
@@ -18,7 +19,7 @@ export default function Navbar() {
   const [userData, setUserData] = useState<null | UserData>(null);
   const [unreadMessages, setUnreadMessages] = useState(0);
   const router = useRouter();
-  const { theme } = useTheme();
+  const { theme, isRounded } = useTheme();
 
   useEffect(() => {
     if (!user) return;
@@ -93,7 +94,7 @@ export default function Navbar() {
               <div className="relative">
                 <button
                   onClick={() => router.push("/kontakt")}
-                  className={` ${theme == "dark"
+                  className={` ${isRounded ? "rounded-md" : "rounded-none"} ${theme == "dark"
                       ? "text-gray-300 hover:text-white hover:bg-white/10 hover:border-white border-gray-400"
                       : "text-gray-900 hover:text-black hover:bg-black/10 hover:border-black border-gray-800"
                     } 
@@ -115,7 +116,7 @@ export default function Navbar() {
             <div className="relative">
               <button
                 onClick={() => router.push(user ? "/profile" : "/login")}
-                className={` ${theme == "dark"
+                className={` ${isRounded ? "rounded-md" : "rounded-none"} ${theme == "dark"
                     ? "text-gray-300 hover:text-white hover:bg-white/10 hover:border-white border-gray-400"
                     : "text-gray-900 hover:text-black hover:bg-black/10 hover:border-black border-gray-800"
                   } 
@@ -133,7 +134,7 @@ export default function Navbar() {
             {userData?.role === "admin" && (
               <button
                 onClick={() => router.push("/dashboard")}
-                className={` ${theme == "dark"
+                className={`${isRounded ? "rounded-md" : "rounded-none"} ${theme == "dark"
                     ? "text-gray-300 hover:text-white hover:bg-white/10 hover:border-white border-gray-400"
                     : "text-gray-900 hover:text-black hover:bg-black/10 hover:border-black border-gray-800"
                   } 
@@ -144,7 +145,12 @@ export default function Navbar() {
               </button>
             )}
           </div>
-          <MainHeader theme={theme} user={user} router={router} />
+          <MainHeader
+            theme={theme}
+            user={user}
+            router={router}
+            isRounded={isRounded}
+          />
         </div>
 
         <div className="flex flex-col w-full h-full md:hidden">
@@ -169,15 +175,16 @@ export default function Navbar() {
     </div>
   );
 }
-
 function MainHeader({
   theme,
   user,
   router,
+  isRounded,
 }: {
   theme: Theme;
   user: typeof User | null;
   router: any;
+  isRounded: boolean;
 }) {
   const headers: { title: string; domain: string }[] = [
     {
@@ -194,26 +201,33 @@ function MainHeader({
     },
   ];
 
+  const pathname = usePathname();
+
   return (
     <div className="absolute left-1/2 -translate-x-1/2">
-      <div className="hidden md:flex gap-6">
-        {headers.map((h) => (
-          <p
-            key={h.domain}
-            className={`${theme == "dark"
-                ? "text-white hover:text-white hover:bg-base-white/10 border-gray-400 hover:border-white"
-                : "text-black hover:text-black border-gray-400 hover:border-black hover:bg-black/10"
-              } 
-px-4 py-2 font-medium transition-all duration-200 active:scale-100 flex items-center gap-2`}
-            onClick={() => router.push(h.domain)}
-          >
-            {h.title}
-          </p>
-        ))}
+      <div className="hidden md:flex gap-6 items-center">
+        {headers.map((h) => {
+          return (
+            <p
+              key={h.domain}
+              className={`px-4 py-2 font-medium transition-all duration-200 active:scale-100 flex items-center gap-2 cursor-pointer  ${isRounded ? "rounded-md" : "rounded-none"
+                } ${theme === "dark"
+                  ? `text-white hover:bg-base-white/10`
+                  : `text-black hover:bg-black/10 `
+                }`}
+              onClick={() => router.push(h.domain)}
+            >
+              {h.title}
+            </p>
+          );
+        })}
 
         {!user && (
           <p
-            className="font-bold text-white hover:text-gray-300 transition-colors cursor-pointer"
+            className={`font-bold transition-colors cursor-pointer ${theme === "dark"
+                ? "text-white hover:text-gray-300"
+                : "text-black hover:text-slate-600"
+              }`}
             onClick={() => router.push("/kontakt")}
           >
             Kontakt

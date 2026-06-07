@@ -4,9 +4,7 @@
 
 @custom-variant dark (&:is(.dark *));
 
-
-
-/* for people with diseases i have to include based on WCAG 2.3.3 */
+/* for people with diseases i have to include based on WCAG 2.3.3 
 @media (prefers-reduced-motion: reduce) {
   *,
   ::before,
@@ -20,6 +18,9 @@
     transition-delay: 0s !important;
   }
 }
+  THIS DOES NOT WORK IT JUST DISABLES EVEN IF YOU DONT HAVE IT IDK
+
+ */
 
 * {
   apply: transition-all, duration-200;
