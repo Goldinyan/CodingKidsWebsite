@@ -11,12 +11,11 @@ export type SimpleMentorCardProps = Mentor & {
 };
 
 export function SimpleMentorCard({ props }: { props: SimpleMentorCardProps }) {
-
   console.log(props);
 
   return (
     <div
-      className={`bg-white dark:bg-white/5 backdrop-blur-xl p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ${props.isRounded ? "rounded-2xl" : "rounded-none"}`}
+      className={`bg-white  dark:bg-white/5 backdrop-blur-2xl p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ${props.isRounded ? "rounded-2xl" : "rounded-none"}`}
     >
       <div className="flex items-center gap-4 mb-4">
         <img
@@ -25,12 +24,12 @@ export function SimpleMentorCard({ props }: { props: SimpleMentorCardProps }) {
         />
         <div>
           <h3 className="font-bold text-lg dark:text-white">{props.name}</h3>
-          <p className="w-full text-graytext font-light text-sm">
+          <p className="w-full text-gray2text font-light text-sm">
             {props.role}
           </p>
         </div>
       </div>
-      <p className="min-h-18 text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed mb-6">
+      <p className="min-h-24 mb-4 text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed ">
         {props.des1}
       </p>
       <div className="flex justify-between items-center pt-4 border-t border-zinc-100 dark:border-zinc-800">

@@ -141,7 +141,7 @@ export default function TopView({
                 variants={itemVariants}
                 whileHover="hover"
                 layout
-                className={`group relative z-10 p-6 backdrop-blur-2xl border transition-all duration-300 ${isRounded ? "rounded-lg" : "rounde-none"}  ${theme === "dark"
+                className={`group relative z-10 p-6 backdrop-blur-2xl border transition-colors duration-300 ${isRounded ? "rounded-lg" : "rounde-none"}  ${theme === "dark"
                     ? "bg-white/5 border-green-500/30 hover:border-green-500/60 hover:bg-white/10"
                     : "bg-slate-100 border-green-300 hover:border-green-500 hover:bg-green-50"
                   }`}

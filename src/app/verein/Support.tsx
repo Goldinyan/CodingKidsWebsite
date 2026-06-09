@@ -20,8 +20,7 @@ export default function Support() {
   const router = useRouter();
 
   return (
-    <div className="w-full bg-black">
-      {/* Header Section */}
+    <div className="w-full">
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -44,10 +43,8 @@ export default function Support() {
         </div>
       </motion.div>
 
-      {/* Cards Section */}
       <div className="w-full px-8 py-20">
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10">
-          {/* Membership Card */}
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}

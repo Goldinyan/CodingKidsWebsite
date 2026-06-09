@@ -122,7 +122,7 @@ export default function FeaturedEventsView({
               variants={itemVariants}
               layout
               key={event.uid}
-              className={`group ${isRounded && "rounded-lg"} backdrop-blur-2xl p-6 border transition-colors duration-300 ${theme === "dark"
+              className={`group ${isRounded ? "rounded-lg" : "rounded-none"} backdrop-blur-2xl p-6 border transition-colors duration-300 ${theme === "dark"
                   ? "bg-white/5 border-white/10 hover:border-green-500/50 hover:bg-white/8"
                   : "bg-slate-50 border-slate-300 hover:border-green-500 hover:bg-green-50"
                 }`}
