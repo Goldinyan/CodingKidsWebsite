@@ -15,7 +15,9 @@ export function SimpleMentorCard({ props }: { props: SimpleMentorCardProps }) {
 
   return (
     <div
-      className={`bg-white  dark:bg-white/5 backdrop-blur-2xl p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ${props.isRounded ? "rounded-2xl" : "rounded-none"}`}
+      className={`bg-white w-full h-full dark:bg-white/5 backdrop-blur-2xl p-6 border border-zinc-200 dark:border-zinc-800 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col ${
+        props.isRounded ? "rounded-2xl" : "rounded-none"
+      }`}
     >
       <div className="flex items-center gap-4 mb-4">
         <img
@@ -24,15 +26,19 @@ export function SimpleMentorCard({ props }: { props: SimpleMentorCardProps }) {
         />
         <div>
           <h3 className="font-bold text-lg dark:text-white">{props.name}</h3>
-          <p className="w-full text-gray2text font-light text-sm">
+          <p className="w-full text-zinc-500 font-light text-sm">
             {props.role}
           </p>
         </div>
       </div>
-      <p className="min-h-24 mb-4 text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed ">
+
+      <p className="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed">
         {props.des1}
       </p>
-      <div className="flex justify-between items-center pt-4 border-t border-zinc-100 dark:border-zinc-800">
+
+      <div className="flex-grow" />
+
+      <div className="flex justify-between items-center pt-4 mt-4 border-t border-zinc-100 dark:border-zinc-800">
         <div className="flex gap-2">
           {props.insta && (
             <a
@@ -59,6 +65,7 @@ export function SimpleMentorCard({ props }: { props: SimpleMentorCardProps }) {
             </a>
           )}
         </div>
+        
         <a
           href="#"
           className="text-xs font-bold text-zinc-500 hover:text-black dark:hover:text-white uppercase tracking-wider"
