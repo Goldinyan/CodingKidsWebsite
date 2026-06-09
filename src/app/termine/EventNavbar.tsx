@@ -1,9 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { addCourse, getUserData } from "@/lib/db";
+import { getUserData } from "@/lib/db";
 import { useAuth } from "@/BackEnd/AuthContext";
-import { UserData, CourseData, EventData } from "@/BackEnd/type";
+import { UserData, CourseData } from "@/BackEnd/type";
+import { useTheme } from "@/context/ThemeContext";
+import { motion } from "framer-motion";
+import { ArrowUp } from "lucide-react"; // Nur noch ArrowUp nötig, da wir es rotieren
 
 interface EventNavbarProps {
   callback: (key: string, value: boolean | string) => void;
@@ -21,155 +24,193 @@ const toggleFilters: { name: string; value: string; states: string[] }[] = [
   { name: "Datum", value: "dateSort", states: ["Datum ↑", "Datum ↓"] },
 ];
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.06,
+      delayChildren: 0.05,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: {
+    scale: 0.95,
+    y: 30,
+    opacity: 0,
+  },
+  visible: {
+    scale: 1,
+    y: 0,
+    opacity: 1,
+    transition: {
+      type: "tween",
+      ease: "easeOut",
+      duration: 0.55,
+    },
+  },
+};
+
 export default function EventNavbar({
   callback,
   filters,
   courses,
 }: EventNavbarProps) {
-  const { user } = useAuth();
-  const [userData, setUserData] = useState<UserData>();
+  const { theme, isRounded } = useTheme();
+  const [showDetailedCourseView, setShowDetailedCourseView] = useState<boolean>(false);
 
-  useEffect(() => {
-    if (!user) return;
-    const fetchUserData = async () => {
-      const data = await getUserData(user.uid);
-      if (!data) return;
-      setUserData(data);
-    };
-    fetchUserData();
-  }, [user]);
+  // Basis-Styling für den Arrow-Button (flex/items-center fixen das Icon-Centering)
+  const arrowClass =
+    theme === "dark"
+      ? "ml-2 w-10 h-10 p-2 border backdrop-blur-2xl bg-white/5 border-zinc-800 text-white hover:bg-white/10 hover:border-zinc-700 flex items-center justify-center"
+      : "ml-2 w-10 h-10 p-2 border backdrop-blur-2xl bg-zinc-50 border-zinc-200 text-black hover:bg-zinc-100/70 hover:border-zinc-300 flex items-center justify-center";
+
+  const activeClass =
+    theme === "dark"
+      ? "bg-white/5 text-white border-white shadow-sm font-semibold"
+      : "bg-zinc-50 text-black border-black shadow-sm font-semibold";
+
+  const inactiveCardClass =
+    theme === "dark"
+      ? "bg-white/5 border-zinc-800 text-white hover:bg-white/10 hover:border-zinc-700"
+      : "bg-zinc-50 border-zinc-200 text-black hover:bg-zinc-100/70 hover:border-zinc-300";
+
+  const tagClass =
+    theme === "dark"
+      ? "bg-white/10 text-zinc-300"
+      : "bg-zinc-200/60 text-zinc-700";
+
+  const activeTagClass =
+    theme === "dark"
+      ? "bg-white/10 text-zinc-300"
+      : "bg-zinc-200/60 text-zinc-700";
 
   return (
-    <div className="w-full flex flex-col">
-      <div className="w-full flex md:flex-row flex-col">
-        <div className="mb-6 pb-6 border-b md:border-r md:border-b-0 md:mr-10 border-gray-200">
-          <h3 className="text-sm font-semibold text-gray-700 mb-3">Filter</h3>
-          <div className="flex flex-row gap-2 md:mr-10 flex-wrap">
-            {baseTags.map((tag) => (
-              <button
-                key={tag.value}
-                onClick={() => {
-                  callback(tag.value, !filters[tag.value]);
-                }}
-                className={`px-4 py-2 rounded-lg border-2 bg-gray-100 hover:bg-gray-200 font-medium transition-all duration-200 ${filters[tag.value]
-                    ? "text-black border-secondaryOwn "
-                    : "text-gray-800 border-gray-300"
-                  }`}
-              >
-                {tag.name}
-              </button>
-            ))}
-
-            {toggleFilters.map((filter) => {
-              const currentState = (filters[filter.value] as string) || "";
-              const stateIndex = currentState
-                ? currentState === "asc"
-                  ? 0
-                  : 1
-                : -1;
-              const nextState =
-                stateIndex === -1 ? "asc" : stateIndex === 0 ? "desc" : "";
-              const displayText =
-                stateIndex === -1 ? filter.name : filter.states[stateIndex];
-
+    <div className="w-full flex flex-col space-y-8">
+      <div className="w-full flex flex-col md:flex-row">
+        <div className="w-full pb-2 scrollbar-none">
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            exit="hidden"
+            viewport={{ once: false }}
+            className="flex flex-wrap items-center gap-2.5 w-full"
+          >
+            {courses.map((course) => {
+              const isSelected = filters["course"] === course.name;
               return (
-                <button
-                  key={filter.value}
-                  onClick={() => {
-                    callback(filter.value, nextState);
-                  }}
-                  className={`px-4 py-2 rounded-lg bg-gray-100 border-2 hover:bg-gray-200 font-medium transition-all duration-200 ${currentState
-                      ? "text-black border-secondaryOwn"
-                      : "text-gray-800 border-gray-300 "
-                    }`}
+                <motion.button
+                  variants={itemVariants}
+                  initial="hidden"
+                  whileInView="visible"
+                  exit="hidden"
+                  viewport={{ once: false }}
+                  key={`tab-${course.uid}`}
+                  onClick={() =>
+                    callback("course", isSelected ? "" : course.name)
+                  }
+                  className={`backdrop-blur-2xl px-4 py-2 border text-sm font-medium hover:scale-[1.02] active:scale-100 transition-all duration-200 ${
+                    isSelected ? activeClass : inactiveCardClass
+                  } ${isRounded ? "rounded-lg" : "rounded-none"}`}
                 >
-                  {displayText}
-                </button>
+                  {course.name}
+                </motion.button>
               );
             })}
-          </div>
-        </div>
 
-        <div className="mb-10 md:mt-7">
-          <div className="flex flex-wrap gap-2 min-w-max">
-            {courses.map((course) => (
-              <button
-                key={`tab-${course.uid}`}
-                onClick={() => {
-                  if (filters["course"] === course.name) {
-                    callback("course", "");
-                  } else {
-                    callback("course", course.name);
-                  }
-                }}
-                className={`px-4 py-2 bg-gray-100 border-2 rounded-lg hover:bg-gray-200 font-medium whitespace-nowrap transition-all duration-200 ${filters["course"] === course.name
-                    ? " text-black border-fifthOwn shadow-md"
-                    : " text-gray-800 border-gray-300 "
-                  }`}
-              >
-                {course.name}
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {courses.map((course) => (
-          <button
-            key={course.uid}
-            onClick={() => {
-              if (filters["course"] === course.name) {
-                callback("course", "");
-              } else {
-                callback("course", course.name);
-              }
-            }}
-            className={`text-left p-4 rounded-lg border-2 transition-all duration-200 hover:shadow-lg ${filters["course"] === course.name
-                ? "border-fifthOwn text-black shadow-md"
-                : "border-gray-200 bg-white text-black"
-              }`}
-          >
-            <p className="font-bold text-lg mb-1">{course.name}</p>
-            <p
-              className={`text-sm mb-3 ${filters["course"] === course.name ? "opacity-90" : "text-gray-600"}`}
+            <motion.button
+              variants={itemVariants}
+              onClick={() => setShowDetailedCourseView(!showDetailedCourseView)}
+              className={`${arrowClass} ${isRounded ? "rounded-lg" : "rounded-none"}`}
+              animate={{ rotate: showDetailedCourseView ? 180 : 0 }}
+              transition={{ type: "tween", ease: "easeInOut", duration: 0.3 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
-              {course.des}
-            </p>
-
-            {course.tags && course.tags.length > 0 && (
-              <div className="flex flex-wrap gap-2 mb-3">
-                {course.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className={`text-xs px-2 py-1 rounded font-medium ${filters["course"] === course.name
-                        ? "bg-gray-100"
-                        : "bg-gray-100 text-gray-700"
-                      }`}
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            )}
-
-            {course.mentors && course.mentors.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {course.mentors.map((mentor) => (
-                  <span
-                    key={mentor.uid}
-                    className={`text-xs px-2 py-1 rounded font-medium ${filters["course"] === course.name
-                        ? "bg-white/20 text-white"
-                        : "bg-blue-50 text-blue-700"
-                      }`}
-                  >
-                    👤 {mentor.name}
-                  </span>
-                ))}
-              </div>
-            )}
-          </button>
-        ))}
+              <ArrowUp className="w-full h-full" />
+            </motion.button>
+          </motion.div>
+        </div>
       </div>
+
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        whileInView="visible"
+        exit="hidden"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+      >
+        {showDetailedCourseView &&
+          courses.map((course) => {
+            const isSelected = filters["course"] === course.name;
+            return (
+              <motion.button
+                variants={itemVariants}
+                initial="hidden"
+                whileInView="visible"
+                exit="hidden"
+                viewport={{ once: false }}
+                key={course.uid}
+                onClick={() => callback("course", isSelected ? "" : course.name)}
+                className={`backdrop-blur-2xl text-left p-6 border flex flex-col justify-between group h-full ${
+                  isSelected ? activeClass : inactiveCardClass
+                } ${isRounded ? "rounded-2xl" : "rounded-none"}`}
+              >
+                <div>
+                  <p className="font-bold text-lg mb-2 tracking-tight">
+                    {course.name}
+                  </p>
+                  <p
+                    className={`text-sm mb-4 font-light leading-relaxed ${
+                      isSelected
+                        ? "opacity-90"
+                        : theme === "dark"
+                          ? "text-zinc-400"
+                          : "text-zinc-600"
+                    }`}
+                  >
+                    {course.des}
+                  </p>
+                </div>
+
+                <div className="space-y-3 pt-2 w-full">
+                  {course.tags && course.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5">
+                      {course.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className={`text-xs px-2 py-1 font-medium transition-colors ${
+                            isSelected ? activeTagClass : tagClass
+                          } ${isRounded ? "rounded" : "rounded-none"}`}
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  {course.mentors && course.mentors.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 border-t border-current/10 pt-3">
+                      {course.mentors.map((mentor) => (
+                        <span
+                          key={mentor.uid}
+                          className={`text-xs px-2 py-1 duration-300 font-medium flex items-center gap-1 transition-colors ${
+                            isSelected ? activeTagClass : tagClass
+                          } ${isRounded ? "rounded" : "rounded-none"}`}
+                        >
+                          {mentor.name}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </motion.button>
+            );
+          })}
+      </motion.div>
     </div>
   );
 }

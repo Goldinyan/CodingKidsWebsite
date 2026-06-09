@@ -32,11 +32,7 @@ import {
 import { toJsDate } from "@/BackEnd/utils";
 import { motion } from "framer-motion";
 
-interface termineProps {
-  searchParams: {
-    selectedCourse?: string;
-  };
-}
+
 
 export default function EventView() {
   const [upcomingEvents, setUpcomingEvents] = useState<EventData[]>([]);
@@ -345,7 +341,7 @@ export default function EventView() {
   };
 
   return (
-    <div className="flex items-center flex-col gap-4 p-6 pt-20">
+    <div className="flex items-center flex-col gap-4 p-6 pt-5">
       <EventNavbar
         callback={(key, value) =>
           setFilters((prev) => ({ ...prev, [key]: value }))
