@@ -224,7 +224,7 @@ function MainHeader({
 
         {!user && (
           <p
-            className={`font-bold transition-colors cursor-pointer ${theme === "dark"
+            className={`font-medium transition-colors cursor-pointer ${theme === "dark"
                 ? "text-white hover:text-gray-300"
                 : "text-black hover:text-slate-600"
               }`}

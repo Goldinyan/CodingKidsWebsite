@@ -1,9 +1,10 @@
 "use client";
-import { Button } from "@/components/ui/button";
-import { Mail, Phone, MapPin } from "lucide-react";
+
+import { motion } from "framer-motion";
+import { Mail, Phone, MapPin, ArrowRight } from "lucide-react";
 import { sendEmailToSupport } from "@/BackEnd/email";
 import { useState } from "react";
-import { useTheme } from "@/context/ThemeContext";
+import { Theme, useTheme } from "@/context/ThemeContext";
 
 type EmailProps = {
   name: string;
@@ -21,7 +22,6 @@ const Betreffe = [
   "Sonstiges",
 ] as const;
 
-// Type automatisch aus dem Array abgeleitet
 type Betreff = (typeof Betreffe)[number];
 
 export default function NoUserKontakt() {
@@ -33,13 +33,14 @@ export default function NoUserKontakt() {
     body: "",
   });
 
+  const { theme, isRounded } = useTheme();
+
   const [errors, setErrors] = useState<{
     name?: boolean;
     email?: boolean;
     body?: boolean;
   }>({});
   const [errorMessage, setErrorMessage] = useState<string>("");
-  const { theme } = useTheme();
 
   const stuff: { text: string; Icon: any }[] = [
     { text: "info@coding.com", Icon: Mail },
@@ -103,246 +104,253 @@ export default function NoUserKontakt() {
       );
     }
   };
+
+  const borderClass = theme === "dark" ? "border-zinc-800" : "border-zinc-200";
+  const bgCardClass = theme === "dark" ? "bg-white/5" : "bg-zinc-50";
+  const textTitleClass = theme === "dark" ? "text-white" : "text-black";
+  const textMutedClass = theme === "dark" ? "text-gray-400" : "text-gray-600";
+
+  const inputBgClass = theme === "dark" ? "bg-white/5" : "bg-white";
+  const inputBorderClass =
+    theme === "dark" ? "border-zinc-800" : "border-zinc-300";
+  const inputFocusClass =
+    theme === "dark" ? "focus:border-zinc-400" : "focus:border-zinc-900";
+
   return (
     <div
-      className={`w-full h-full min-h-screen transition-colors duration-300 ${
-        theme === "dark" ? "bg-black" : "bg-white"
-      }`}
+      className={`w-full min-h-screen transition-colors duration-300 ${theme === "dark" ? "bg-black" : "bg-white"}`}
     >
-      <div className="pt-25 flex flex-col gap-2">
-        <p
-          className={`text-3xl font-bold text-center transition-colors duration-300 ${
-            theme === "dark" ? "text-white" : "text-slate-900"
-          }`}
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        viewport={{ once: true }}
+        className="pt-32 pb-12 flex flex-col items-center text-center px-6"
+      >
+        <span
+          className={`text-xs font-mono tracking-widest uppercase mb-3 ${theme === "dark" ? "text-zinc-500" : "text-zinc-400"}`}
+        >
+          Kontakt aufnehmen
+        </span>
+        <h2
+          className={`text-4xl md:text-5xl font-bold tracking-tight mb-4 ${textTitleClass}`}
         >
           In Kontakt treten
+        </h2>
+        <p className={`text-lg max-w-2xl font-light ${textMutedClass}`}>
+          Füllen Sie das Formular aus oder melden Sie sich direkt bei uns. Wir
+          freuen uns auf den Austausch.
         </p>
-        <p
-          className={`text-center transition-colors duration-300 ${
-            theme === "dark" ? "text-gray-400" : "text-slate-600"
-          }`}
-        >
-          Füllen Sie das Formular aus oder melden Sie sich direkt. Wir freuen
-          uns auf Sie.
-        </p>
-      </div>
-      <div className="pb-20 pt-15 md:grid-cols-2 grid gap-10 grid-cols-1 mx-[5%]">
+      </motion.div>
+
+      <div className="pb-24 pt-8 max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 px-6 items-stretch">
         <div
-          className={`border rounded-2xl transition-colors duration-300 ${
-            theme === "dark"
-              ? "bg-white/5 border-green-500/30"
-              : "bg-white border-green-300"
-          }`}
+          className={`border p-6 md:p-8 backdrop-blur-2xl flex flex-col justify-between ${borderClass} ${bgCardClass} ${isRounded ? "rounded-2xl" : "rounded-none"
+            }`}
         >
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 p-5">
-            <div className="flex flex-col">
-              <label
-                className={`font-semibold transition-colors duration-300 ${
-                  theme === "dark" ? "text-gray-200" : "text-slate-900"
-                }`}
-              >
-                Dein Name
-              </label>
-              <input
-                value={emailProps?.name || ""}
-                onChange={(e) => {
-                  setEmailProps((prev) => ({
-                    ...prev,
-                    name: e.target.value,
-                  }));
-                  if (errors.name) {
-                    setErrors((prev) => ({ ...prev, name: false }));
+          <div className="space-y-5">
+            <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+              <div className="flex flex-col">
+                <label
+                  className={`text-xs font-mono uppercase tracking-wider mb-2 ${theme === "dark" ? "text-gray-400" : "text-zinc-700"}`}
+                >
+                  Dein Name
+                </label>
+                <input
+                  type="text"
+                  value={emailProps.name}
+                  onChange={(e) => {
+                    setEmailProps((prev) => ({
+                      ...prev,
+                      name: e.target.value,
+                    }));
+                    if (errors.name)
+                      setErrors((prev) => ({ ...prev, name: false }));
+                  }}
+                  className={`border p-3 outline-none transition-all duration-200 text-sm ${inputBgClass} ${inputFocusClass} ${errors.name
+                      ? "border-red-500 focus:border-red-500"
+                      : inputBorderClass
+                    } ${isRounded ? "rounded-lg" : "rounded-none"}`}
+                  placeholder="Vollständiger Name"
+                />
+              </div>
+
+              <div className="flex flex-col">
+                <label
+                  className={`text-xs font-mono uppercase tracking-wider mb-2 ${theme === "dark" ? "text-gray-400" : "text-zinc-700"}`}
+                >
+                  E-Mail Adresse
+                </label>
+                <input
+                  type="email"
+                  value={emailProps.email}
+                  onChange={(e) => {
+                    setEmailProps((prev) => ({
+                      ...prev,
+                      email: e.target.value,
+                    }));
+                    if (errors.email)
+                      setErrors((prev) => ({ ...prev, email: false }));
+                  }}
+                  className={`border p-3 outline-none transition-all duration-200 text-sm ${inputBgClass} ${inputFocusClass} ${errors.email
+                      ? "border-red-500 focus:border-red-500"
+                      : inputBorderClass
+                    } ${isRounded ? "rounded-lg" : "rounded-none"}`}
+                  placeholder="name@beispiel.de"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+              <div className="flex flex-col">
+                <label
+                  className={`text-xs font-mono uppercase tracking-wider mb-2 ${theme === "dark" ? "text-gray-400" : "text-zinc-700"}`}
+                >
+                  Telefonnummer <span className="opacity-50">(optional)</span>
+                </label>
+                <input
+                  type="tel"
+                  value={emailProps.phone}
+                  onChange={(e) =>
+                    setEmailProps((prev) => ({
+                      ...prev,
+                      phone: e.target.value,
+                    }))
                   }
-                }}
-                className={`border p-2 rounded-lg mt-2 transition-colors duration-300 ${
-                  theme === "dark"
-                    ? `bg-white/10 border-green-500/30 text-white placeholder-gray-500 ${
-                        errors.name ? "border-red-500" : "focus:border-green-500"
-                      }`
-                    : `bg-white border-gray-300 text-slate-900 placeholder-gray-400 ${
-                        errors.name ? "border-red-500" : "focus:border-green-600"
-                      }`
-                }`}
-                placeholder="Vollständiger Namen"
-              />
-            </div>
-            <div className="flex flex-col">
-              <label
-                className={`font-semibold transition-colors duration-300 ${
-                  theme === "dark" ? "text-gray-200" : "text-slate-900"
-                }`}
-              >
-                Email Adresse
-              </label>
-              <input
-                value={emailProps?.email || ""}
-                onChange={(e) => {
-                  setEmailProps((prev) => ({
-                    ...prev,
-                    email: e.target.value,
-                  }));
-                  if (errors.email) {
-                    setErrors((prev) => ({ ...prev, email: false }));
+                  className={`border p-3 outline-none transition-all duration-200 text-sm ${inputBgClass} ${inputFocusClass} ${inputBorderClass} ${isRounded ? "rounded-lg" : "rounded-none"
+                    }`}
+                  placeholder="Handy- oder Festnetz"
+                />
+              </div>
+
+              <div className="flex flex-col">
+                <label
+                  className={`text-xs font-mono uppercase tracking-wider mb-2 ${theme === "dark" ? "text-gray-400" : "text-zinc-700"}`}
+                >
+                  Betreff
+                </label>
+                <select
+                  value={emailProps.subject}
+                  onChange={(e) =>
+                    setEmailProps((prev) => ({
+                      ...prev,
+                      subject: e.target.value as Betreff,
+                    }))
                   }
+                  className={`border p-3 outline-none transition-all duration-200 text-sm appearance-none cursor-pointer ${inputBgClass} ${inputFocusClass} ${inputBorderClass} ${isRounded ? "rounded-lg" : "rounded-none"
+                    }`}
+                >
+                  {Betreffe.map((b) => (
+                    <option
+                      key={b}
+                      value={b}
+                      className={theme === "dark" ? "bg-zinc-900" : "bg-white"}
+                    >
+                      {b}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="flex flex-col">
+              <label
+                className={`text-xs font-mono uppercase tracking-wider mb-2 ${theme === "dark" ? "text-gray-400" : "text-zinc-700"}`}
+              >
+                Deine Nachricht
+              </label>
+              <textarea
+                value={emailProps.body}
+                onChange={(e) => {
+                  setEmailProps((prev) => ({ ...prev, body: e.target.value }));
+                  if (errors.body)
+                    setErrors((prev) => ({ ...prev, body: false }));
                 }}
-                className={`border p-2 rounded-lg mt-2 transition-colors duration-300 ${
-                  theme === "dark"
-                    ? `bg-white/10 border-green-500/30 text-white placeholder-gray-500 ${
-                        errors.email ? "border-red-500" : "focus:border-green-500"
-                      }`
-                    : `bg-white border-gray-300 text-slate-900 placeholder-gray-400 ${
-                        errors.email ? "border-red-500" : "focus:border-green-600"
-                      }`
-                }`}
-                placeholder="du@gmail.com"
+                rows={5}
+                className={`border p-3 outline-none transition-all duration-200 text-sm resize-none ${inputBgClass} ${inputFocusClass} ${errors.body
+                    ? "border-red-500 focus:border-red-500"
+                    : inputBorderClass
+                  } ${isRounded ? "rounded-lg" : "rounded-none"}`}
+                placeholder="Wie können wir Ihnen weiterhelfen?"
               />
-            </div>
-            <div className="flex flex-col">
-              <label
-                className={`font-semibold transition-colors duration-300 ${
-                  theme === "dark" ? "text-gray-200" : "text-slate-900"
-                }`}
-              >
-                {"Telofonnummer (optional)"}
-              </label>
-              <input
-                value={emailProps?.phone || ""}
-                onChange={(e) =>
-                  setEmailProps((prev) => ({
-                    ...prev,
-                    phone: e.target.value,
-                  }))
-                }
-                className={`border p-2 rounded-lg mt-2 transition-colors duration-300 ${
-                  theme === "dark"
-                    ? "bg-white/10 border-green-500/30 text-white placeholder-gray-500"
-                    : "bg-white border-gray-300 text-slate-900 placeholder-gray-400"
-                }`}
-                placeholder="Handynummer"
-              />
-            </div>
-            <div className="flex flex-col">
-              <label
-                className={`font-semibold transition-colors duration-300 ${
-                  theme === "dark" ? "text-gray-200" : "text-slate-900"
-                }`}
-              >
-                Betreff
-              </label>
-              <select
-                value={emailProps?.subject || ""}
-                onChange={(e) =>
-                  setEmailProps((prev) => ({
-                    ...prev,
-                    subject: e.target.value as Betreff,
-                  }))
-                }
-                className={`border p-2 rounded-lg mt-2 transition-colors duration-300 ${
-                  theme === "dark"
-                    ? "bg-white/10 border-green-500/30 text-white"
-                    : "bg-white border-gray-300 text-slate-900"
-                }`}
-              >
-                {Betreffe.map((b) => (
-                  <option key={b} value={b}>
-                    {b}
-                  </option>
-                ))}
-              </select>
             </div>
           </div>
-          <div className="flex flex-col p-5">
-            <label
-              className={`font-semibold transition-colors duration-300 ${
-                theme === "dark" ? "text-gray-200" : "text-slate-900"
-              }`}
-            >
-              Deine Nachricht
-            </label>
-            <textarea
-              value={emailProps?.body || ""}
-              onChange={(e) => {
-                setEmailProps((prev) => ({ ...prev, body: e.target.value }));
-                if (errors.body) {
-                  setErrors((prev) => ({ ...prev, body: false }));
-                }
-              }}
-              className={`h-20 border p-2 rounded-lg mt-2 transition-colors duration-300 ${
-                theme === "dark"
-                  ? `bg-white/10 border-green-500/30 text-white placeholder-gray-500 ${
-                      errors.body ? "border-red-500" : "focus:border-green-500"
-                    }`
-                  : `bg-white border-gray-300 text-slate-900 placeholder-gray-400 ${
-                      errors.body ? "border-red-500" : "focus:border-green-600"
-                    }`
-              }`}
-              placeholder="Sage uns wie wir dir helfen können"
-            />
-          </div>
-          <div className="p-5">
+
+          <div className="pt-6">
             {errorMessage && (
-              <p className="text-red-500 text-sm mb-3 text-center">
+              <p className="text-red-500 text-xs mb-3 text-center font-medium">
                 {errorMessage}
               </p>
             )}
-            <div onClick={() => handleEmailSending()}>
-              <Button className={`py-6 w-full group transition-all duration-200 ${
-                theme === "dark"
-                  ? "bg-white text-black hover:bg-gray-100 border-white"
-                  : "bg-green-600 text-white hover:bg-green-700 border-green-600"
-              }`}>
-                <p className={theme === "dark" ? "group-hover:text-black" : ""}>Nachricht senden</p>
-              </Button>
-            </div>
+            <button
+              onClick={handleEmailSending}
+              className={`w-full py-4 text-sm font-medium tracking-wide transition-all duration-200 hover:scale-[1.01] active:scale-100 flex items-center justify-center gap-2 group/btn ${theme === "dark"
+                  ? "bg-white text-black hover:bg-zinc-200 shadow-sm"
+                  : "bg-black text-white hover:bg-zinc-800 shadow-sm"
+                } ${isRounded ? "rounded-lg" : "rounded-none"}`}
+            >
+              <span>Nachricht senden</span>
+              <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+            </button>
           </div>
         </div>
 
-        <div className="flex flex-col">
-          <p
-            className={`font-bold text-2xl transition-colors duration-300 ${
-              theme === "dark" ? "text-white" : "text-slate-900"
-            }`}
-          >
-            Andere Wege uns zu erreichen:
-          </p>
-          <div className="flex flex-col gap-5 pt-4">
-            {stuff.map((s, idx) => (
-              <div
-                key={idx}
-                className="flex items-center justify-start gap-2 flex-row"
-              >
-                <s.Icon
-                  className={`w-5 h-5 transition-colors duration-300 ${
-                    theme === "dark" ? "text-green-400" : "text-green-600"
-                  }`}
-                />
-                <p
-                  className={`transition-colors duration-300 ${
-                    theme === "dark" ? "text-gray-300" : "text-slate-900"
-                  }`}
-                >
-                  {s.text}
-                </p>
-              </div>
-            ))}
+        <div className="flex flex-col justify-between space-y-10">
+          <div>
+            <h3
+              className={`font-bold text-2xl tracking-tight mb-6 ${textTitleClass}`}
+            >
+              Direkte Erreichbarkeit
+            </h3>
+            <div className="flex flex-col gap-6">
+              {stuff.map((s, idx) => (
+                <div key={idx} className="flex items-center gap-4 group">
+                  <div
+                    className={`w-10 h-10 border flex items-center justify-center flex-shrink-0 ${borderClass} ${theme === "dark" ? "bg-white/5" : "bg-zinc-50"
+                      } ${isRounded ? "rounded-lg" : "rounded-none"}`}
+                  >
+                    <s.Icon
+                      className={`w-4 h-4 ${theme === "dark" ? "text-zinc-400" : "text-zinc-600"}`}
+                    />
+                  </div>
+                  <p
+                    className={`text-sm tracking-wide font-light ${theme === "dark" ? "text-gray-300" : "text-zinc-800"}`}
+                  >
+                    {s.text}
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
-          <p
-            className={`pt-5 font-bold text-2xl pb-5 transition-colors duration-300 ${
-              theme === "dark" ? "text-white" : "text-slate-900"
-            }`}
-          >
-            Finde uns hier
-          </p>
-          <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2474.59027887105!2d6.663062212202145!3d51.667337571732794!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47b88fe13e2b821d%3A0x1698a4fadd47ca72!2sRudolf-Diesel-Stra%C3%9Fe%20115%2C%2046485%20Wesel!5e0!3m2!1sde!2sde!4v1764428777335!5m2!1sde!2sde"
-            width="w-full"
-            height="200"
-            style={{ border: "0" }}
-            allowFullScreen
-            className="rounded-2xl"
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-          ></iframe>
+
+          <div className="flex flex-col flex-grow pt-4">
+            <h3
+              className={`font-bold text-2xl tracking-tight mb-4 ${textTitleClass}`}
+            >
+              Standort
+            </h3>
+            <div
+              className={`w-full flex-grow border overflow-hidden relative min-h-[220px] ${borderClass} ${isRounded ? "rounded-2xl" : "rounded-none"
+                }`}
+            >
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2474.59027887105!2d6.663062212202145!3d51.667337571732794!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47b88fe13e2b821d%3A0x1698a4fadd47ca72!2sRudolf-Diesel-Stra%C3%9Fe%20115%2C%2046485%20Wesel!5e0!3m2!1sde!2sde!4v1764428777335!5m2!1sde!2sde"
+                width="100%"
+                height="100%"
+                style={{
+                  border: "0",
+                  filter:
+                    theme === "dark"
+                      ? "grayscale(1) invert(0.9) contrast(1.2)"
+                      : "none",
+                }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                className="absolute inset-0 w-full h-full"
+              ></iframe>
+            </div>
+          </div>
         </div>
       </div>
     </div>
