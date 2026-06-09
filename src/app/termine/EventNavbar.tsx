@@ -61,7 +61,6 @@ export default function EventNavbar({
   const { theme, isRounded } = useTheme();
   const [showDetailedCourseView, setShowDetailedCourseView] = useState<boolean>(false);
 
-  // Basis-Styling für den Arrow-Button (flex/items-center fixen das Icon-Centering)
   const arrowClass =
     theme === "dark"
       ? "ml-2 w-10 h-10 p-2 border backdrop-blur-2xl bg-white/5 border-zinc-800 text-white hover:bg-white/10 hover:border-zinc-700 flex items-center justify-center"
@@ -69,8 +68,8 @@ export default function EventNavbar({
 
   const activeClass =
     theme === "dark"
-      ? "bg-white/5 text-white border-white shadow-sm font-semibold"
-      : "bg-zinc-50 text-black border-black shadow-sm font-semibold";
+      ? "bg-white/5 text-white border-green-800 shadow-sm font-semibold"
+      : "bg-zinc-50 text-black border-green-600 shadow-sm font-semibold";
 
   const inactiveCardClass =
     theme === "dark"
