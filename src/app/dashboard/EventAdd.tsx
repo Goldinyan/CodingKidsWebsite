@@ -252,7 +252,7 @@ export default function EventAdd(props: {
         />
       </div>
 
-      <div className="col-span-1 md:col-span-2 grid gap-2">
+      {/*<div className="col-span-1 md:col-span-2 grid gap-2">
         <Label htmlFor="requirements" className="font-semibold text-gray-700">
           Voraussetzungen
         </Label>
@@ -265,7 +265,7 @@ export default function EventAdd(props: {
             setEventInfo({ ...EventInfo, requirements: e.target.value })
           }
         />
-      </div>
+      </div>*/}
 
       <div className="col-span-1 md:col-span-2 grid gap-2">
         <Label htmlFor="description" className="font-semibold text-gray-700">
@@ -273,7 +273,7 @@ export default function EventAdd(props: {
         </Label>
         <textarea
           id="description"
-          className="border border-gray-300 rounded-lg p-3 resize-none min-h-[140px] focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="border border-gray-300 rounded-lg p-3 resize-none min-h-[100px] focus:outline-none focus:ring-2 focus:ring-blue-500"
           placeholder="Geben Sie eine detaillierte Beschreibung des Events ein..."
           value={EventInfo.description}
           onChange={(e) =>

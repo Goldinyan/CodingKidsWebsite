@@ -30,9 +30,8 @@ import {
   ArrowDown,
 } from "lucide-react";
 import { toJsDate } from "@/BackEnd/utils";
-import { motion } from "framer-motion";
-
-
+import { motion, AnimatePresence } from "framer-motion";
+import { useTheme } from "@/context/ThemeContext";
 
 export default function EventView() {
   const [upcomingEvents, setUpcomingEvents] = useState<EventData[]>([]);
@@ -51,6 +50,7 @@ export default function EventView() {
     dateSort: "",
   });
 
+  const { theme, isRounded } = useTheme();
   /*
   useEffect(() => {
     if (!searchParams.selectedCourse) return;
@@ -223,52 +223,102 @@ export default function EventView() {
     isPast = false,
   }: {
     event: EventData;
-    isPast?: boolean;
+    isPast: boolean;
   }) => {
-    const status = statuses[event.uid];
-    const statusIcon = {
-      loading: <Loader2 className="animate-spin w-5 h-5" />,
-      User: <Check className="text-green-400 w-5 h-5" />,
-      Queue: <Clock className="text-yellow-400 w-5 h-5" />,
-      false: <UserRoundX className="text-red-400 w-5 h-5" />,
-      error: <AlertTriangle className="text-orange-400 w-5 h-5" />,
-    }[status];
+    const [showAllPlaces, setShowAllPlaces] = useState(false);
 
+    const status = statuses[event.uid];
     const isInEvent = status === "User" || status === "Queue";
     const tooEarly = !checkIfEventIsInRange(toJsDate(event.date));
     const EndOfEvent = toJsDate(event.date);
 
-    const [showAllPlaces, setShowAllPlaces] = useState(false);
+    const statusIcon = {
+      loading: <Loader2 className="animate-spin w-5 h-5 text-zinc-400" />,
+      User: (
+        <Check className="text-emerald-500 dark:text-emerald-400 w-5 h-5" />
+      ),
+      Queue: <Clock className="text-amber-500 dark:text-amber-400 w-5 h-5" />,
+      false: (
+        <UserRoundX className="text-rose-500 dark:text-rose-400 w-5 h-5" />
+      ),
+      error: (
+        <AlertTriangle className="text-orange-500 dark:text-orange-400 w-5 h-5" />
+      ),
+    }[status];
+
+    const cardClass =
+      theme === "dark"
+        ? "bg-white/5 border-zinc-800 text-white"
+        : "bg-zinc-50 border-zinc-200 text-black";
+
+    const badgeClass =
+      theme === "dark"
+        ? "bg-white/10 text-zinc-300"
+        : "bg-zinc-200/60 text-zinc-700";
+
+    const textMutedClass = theme === "dark" ? "text-zinc-400" : "text-zinc-500";
+    const textBodyClass = theme === "dark" ? "text-white" : "text-zinc-700";
+    const iconClass = theme === "dark" ? "text-zinc-500" : "text-zinc-400";
+
+    const getButtonClass = () => {
+      if (tooEarly)
+        return "bg-zinc-300 dark:bg-zinc-800 text-zinc-500 cursor-not-allowed opacity-50";
+      if (isInEvent) {
+        return theme === "dark"
+          ? "bg-rose-950/40 text-rose-400 border border-rose-900/50 hover:bg-rose-900/30"
+          : "bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-100";
+      }
+      return theme === "dark"
+        ? "bg-white text-black hover:bg-zinc-200"
+        : "bg-black text-white hover:bg-zinc-800";
+    };
 
     return (
-      <div className="flex flex-col h-full  ">
+      <div
+        className={`flex flex-col h-full p-6 border backdrop-blur-2xl transition-colors duration-200 ${cardClass} ${isRounded ? "rounded-2xl" : "rounded-none"}`}
+      >
         <div className="flex items-start justify-between mb-4">
-          <span className="bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full">
+          <span
+            className={`text-xs font-semibold px-3 py-1 ${badgeClass} ${isRounded ? "rounded-full" : "rounded-none"}`}
+          >
             {event.difficulty}
           </span>
-          <span className="ml-auto mr-10 mt-3 text-sm text-gray-500">
-            {event.typeOfEvent}
-          </span>
+          {isPast && (
+            <span className={`ml-auto mr-4 mt-1 text-sm ${textMutedClass}`}>
+              {event.typeOfEvent}
+            </span>
+          )}
           {!isPast && (
             <div className="group relative">
-              <div className="rounded-full p-2 bg-white border border-gray-400">
+              <div
+                className={`p-2 border backdrop-blur-md bg-transparent ${theme === "dark" ? "border-zinc-800" : "border-zinc-300"} ${isRounded ? "rounded-full" : "rounded-none"}`}
+              >
                 {statusIcon}
               </div>
-              <div className="absolute left-1/4 -translate-x-1/2 w-48 mt-2 hidden group-hover:flex bg-white p-2 rounded-md shadow-md z-10 text-xs">
+              <div
+                className={`absolute right-0 top-full mt-2 hidden group-hover:flex min-w-50 p-5 border text-xs shadow-xl z-10 backdrop-blur-md ${theme === "dark"
+                    ? "bg-zinc-950 border-zinc-800 text-zinc-300"
+                    : "bg-white border-zinc-200 text-zinc-600"
+                  } ${isRounded ? "rounded-md" : "rounded-none"}`}
+              >
                 {getHoverMessage(status)}
               </div>
             </div>
           )}
         </div>
 
-        <h3 className="text-lg font-semibold mb-3">{event.name}</h3>
-        <p className="text-sm text-gray-600 mb-4 ">{event.description}</p>
+        <h3 className="text-lg font-bold mb-2 tracking-tight">{event.name}</h3>
+        <p
+          className={`text-sm font-light mb-4 leading-relaxed ${textMutedClass}`}
+        >
+          {event.description}
+        </p>
 
         <div className="flex-grow" />
 
-        <div className="space-y-2 mb-6 text-sm text-gray-700">
-          <div className="flex items-center gap-2">
-            <Calendar className="w-4 h-4 text-fourthOwn" />
+        <div className={`space-y-3 mb-6 text-sm font-light ${textBodyClass}`}>
+          <div className="flex items-center gap-2.5">
+            <Calendar className={`w-4 h-4 shrink-0 ${iconClass}`} />
             <p>
               {toJsDate(event.date).toLocaleString("de-DE", {
                 weekday: "short",
@@ -285,37 +335,67 @@ export default function EventView() {
             </p>
           </div>
 
-          {event.place && (
-            <div className="flex justify-start items-start gap-2">
-              <MapPin className="w-4 h-4 text-fourthOwn" />
-              <div className="flex flex-col flex-1">
-                {showAllPlaces ? (
-                  <div>
-                    {event.place.map((line, index) => (
-                      <p key={index}>{line}</p>
-                    ))}
-                  </div>
-                ) : (
-                  <p>{event.place[0]}</p>
-                )}
+          {event.place && event.place.length > 0 && (
+            <div className="flex justify-start items-start gap-2.5">
+              <MapPin className={`w-4 h-4 mt-0.5 shrink-0 ${iconClass}`} />
+              <div className="flex flex-col flex-1 overflow-hidden">
+                <AnimatePresence initial={false} mode="wait">
+                  {showAllPlaces ? (
+                    <motion.div
+                      key="all-places"
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{
+                        type: "tween",
+                        ease: "easeInOut",
+                        duration: 0.2,
+                      }}
+                      className="space-y-0.5"
+                    >
+                      {event.place.map((line: string, index: number) => (
+                        <p key={index}>{line}</p>
+                      ))}
+                    </motion.div>
+                  ) : (
+                    <motion.p
+                      key="single-place"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="truncate"
+                    >
+                      {event.place[0]}
+                    </motion.p>
+                  )}
+                </AnimatePresence>
               </div>
-              <button
-                onClick={() => setShowAllPlaces(!showAllPlaces)}
-                className="hover:bg-gray-100 p-1 rounded"
-              >
-                {showAllPlaces ? (
-                  <ChevronLeft className="w-4 h-4 text-fourthOwn" />
-                ) : (
-                  <ChevronRight className="w-4 h-4 text-fourthOwn" />
-                )}
-              </button>
+
+              {event.place.length > 1 && (
+                <motion.button
+                  onClick={() => setShowAllPlaces(!showAllPlaces)}
+                  className={`p-1 border flex items-center justify-center transition-colors duration-200 ${theme === "dark"
+                      ? "border-zinc-800 hover:bg-white/5"
+                      : "border-zinc-200 hover:bg-zinc-100"
+                    } ${isRounded ? "rounded" : "rounded-none"}`}
+                  animate={{ rotate: showAllPlaces ? 90 : 0 }}
+                  transition={{
+                    type: "tween",
+                    ease: "easeInOut",
+                    duration: 0.2,
+                  }}
+                  whileTap={{ scale: 0.9 }}
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </motion.button>
+              )}
             </div>
           )}
 
-          <div className="flex items-center gap-2">
-            <Users className="w-4 h-4 text-fourthOwn" />
+          <div className="flex items-center gap-2.5">
+            <Users className={`w-4 h-4 shrink-0 ${iconClass}`} />
             <span>
-              {event.users?.length + (event.queue?.length || 0)}/
+              {event.users?.length + (event.queue?.length || 0)} /{" "}
               {event.memberCount} Plätze belegt
             </span>
           </div>
@@ -323,15 +403,13 @@ export default function EventView() {
 
         {!isPast && (
           <Button
-            className={`w-full ${tooEarly ? "cursor-not-allowed border border-primaryOwn" : ""}`}
             disabled={tooEarly}
-            variant={
-              !tooEarly ? (isInEvent ? "destructive" : "default") : "secondary"
-            }
             onClick={() => {
               if (!tooEarly)
                 handleEvents(event.uid, isInEvent ? "leave" : "join");
             }}
+            className={`w-full py-2.5 font-medium transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] shadow-none ${getButtonClass()} ${isRounded ? "rounded-xl" : "rounded-none"
+              }`}
           >
             {!tooEarly ? (isInEvent ? "Verlassen" : "Beitreten") : "Zu früh"}
           </Button>
@@ -365,7 +443,7 @@ export default function EventView() {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: idx * 0.1 }}
-                className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow"
+                className=""
               >
                 <EventCard key={event.uid} event={event} isPast={false} />
               </motion.div>
@@ -389,7 +467,7 @@ export default function EventView() {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: idx * 0.1 }}
-                className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow"
+                className=""
               >
                 <EventCard key={event.uid} event={event} isPast={true} />
               </motion.div>

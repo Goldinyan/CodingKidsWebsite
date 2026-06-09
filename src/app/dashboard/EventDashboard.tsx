@@ -125,7 +125,7 @@ export default function EventDashboard() {
       setEditStates((prev) => ({ ...prev, [uid]: false }));
 
       toast({
-        title: "✓ Event aktualisiert",
+        title: "Event aktualisiert",
         description: "Die Änderungen wurden erfolgreich gespeichert.",
         variant: "success",
       });
