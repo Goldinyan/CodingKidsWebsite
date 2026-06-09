@@ -1,10 +1,5 @@
 # TODOs
-- [ ] Email System
-- [x] Kontakt Page
-- [ ] Spenden Page
-- [ ] User Dashboard filter reworken dass nicht jede einzelnd sind
-
-
-
-
-SEACRH PARAMS FÜR TERMINE VIEW ABER MUSST ROOT LAYOUT ÄNDERN WEIL CLIENT COMPONENT 
+- [ ] termine view mobile kann nicht hovern musst du fixen mit klick maybe
+- [ ] dashboard add fixen zu groß
+- [ ] login and register isRounded adden
+- [ ] mobile kriegen updates nicht und keine ux bei knopf bei termine mach toast oder so
