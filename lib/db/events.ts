@@ -15,12 +15,13 @@ import {
   Timestamp,
 } from "firebase/firestore";
 import { User } from "firebase/auth";
-import type {
+import {
   Mentor,
   EventData,
   UserData,
   AnnouncementData,
   CourseData,
+  EventStatus,
 } from "@/BackEnd/type";
 import {
   checkRateLimit,
@@ -198,7 +199,7 @@ export async function isUserInEvent(
   userId: string,
   requesterId: string = "anonymous",
   requesterRole: UserRole = "user",
-) {
+): Promise<EventStatus> {
   enforceRateLimit("isUserInEvent", requesterId, requesterRole);
 
   try {
@@ -206,7 +207,8 @@ export async function isUserInEvent(
     const eventSnapshot = await getDoc(eventRef);
 
     if (!eventSnapshot.exists()) {
-      throw new Error("Event does not exist");
+      console.error("Event does not exist");
+      return EventStatus.Error;
     }
 
     const eventData = eventSnapshot.data();
@@ -214,17 +216,17 @@ export async function isUserInEvent(
     const currentQueue: string[] = eventData.queue;
 
     if (currentUsers.includes(userId)) {
-      return "User";
+      return EventStatus.User;
     }
 
     if (currentQueue.includes(userId)) {
-      return "Queue";
+      return EventStatus.Queue;
     }
 
-    return "false";
+    return EventStatus.NotRegistered;
   } catch (error) {
     console.error("Error checking if user in event:", error);
-    throw error;
+    return EventStatus.Error;
   }
 }
 

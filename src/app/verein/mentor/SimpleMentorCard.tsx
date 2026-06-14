@@ -11,7 +11,6 @@ export type SimpleMentorCardProps = Mentor & {
 };
 
 export function SimpleMentorCard({ props }: { props: SimpleMentorCardProps }) {
-  console.log(props);
 
   return (
     <div

@@ -13,4 +13,3 @@ export function formatValue(v: unknown): string {
   }
   return String(v);
 }
-

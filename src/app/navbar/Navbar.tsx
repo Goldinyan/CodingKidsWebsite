@@ -34,10 +34,11 @@ export default function Navbar() {
       const announcements = await getAllAnnouncements(user.uid, userRole);
       const unread = announcements.filter(
         (announcement) =>
-          !announcement.readBy || !announcement.readBy.includes(user.uid),
+          (!announcement.readBy || !announcement.readBy.includes(user.uid)) &&
+          announcement.author !== user.uid,
       ).length;
+      console.log(announcements);
       setUnreadMessages(unread);
-      console.log("Unread messages:", unread);
     };
 
     fetchData();

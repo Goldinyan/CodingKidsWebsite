@@ -59,7 +59,8 @@ export default function EventNavbar({
   courses,
 }: EventNavbarProps) {
   const { theme, isRounded } = useTheme();
-  const [showDetailedCourseView, setShowDetailedCourseView] = useState<boolean>(false);
+  const [showDetailedCourseView, setShowDetailedCourseView] =
+    useState<boolean>(false);
 
   const arrowClass =
     theme === "dark"
@@ -108,12 +109,12 @@ export default function EventNavbar({
                   exit="hidden"
                   viewport={{ once: false }}
                   key={`tab-${course.uid}`}
-                  onClick={() =>
-                    callback("course", isSelected ? "" : course.name)
-                  }
-                  className={`backdrop-blur-2xl px-4 py-2 border text-sm font-medium hover:scale-[1.02] active:scale-100 transition-all duration-200 ${
-                    isSelected ? activeClass : inactiveCardClass
-                  } ${isRounded ? "rounded-lg" : "rounded-none"}`}
+                  onClick={() => {
+                    callback("course", isSelected ? "" : course.name);
+                    console.log("adding course: " + course.name);
+                  }}
+                  className={`backdrop-blur-2xl px-4 py-2 border text-sm font-medium hover:scale-[1.02] active:scale-100 transition-colors duration-200 ${isSelected ? activeClass : inactiveCardClass
+                    } ${isRounded ? "rounded-lg" : "rounded-none"}`}
                 >
                   {course.name}
                 </motion.button>
@@ -153,23 +154,23 @@ export default function EventNavbar({
                 exit="hidden"
                 viewport={{ once: false }}
                 key={course.uid}
-                onClick={() => callback("course", isSelected ? "" : course.name)}
-                className={`backdrop-blur-2xl text-left p-6 border flex flex-col justify-between group h-full ${
-                  isSelected ? activeClass : inactiveCardClass
-                } ${isRounded ? "rounded-2xl" : "rounded-none"}`}
+                onClick={() =>
+                  callback("course", isSelected ? "" : course.name)
+                }
+                className={`backdrop-blur-2xl text-left p-6 border flex flex-col justify-between group h-full ${isSelected ? activeClass : inactiveCardClass
+                  } ${isRounded ? "rounded-2xl" : "rounded-none"}`}
               >
                 <div>
                   <p className="font-bold text-lg mb-2 tracking-tight">
                     {course.name}
                   </p>
                   <p
-                    className={`text-sm mb-4 font-light leading-relaxed ${
-                      isSelected
+                    className={`text-sm mb-4 font-light leading-relaxed ${isSelected
                         ? "opacity-90"
                         : theme === "dark"
                           ? "text-zinc-400"
                           : "text-zinc-600"
-                    }`}
+                      }`}
                   >
                     {course.des}
                   </p>
@@ -181,9 +182,8 @@ export default function EventNavbar({
                       {course.tags.map((tag) => (
                         <span
                           key={tag}
-                          className={`text-xs px-2 py-1 font-medium transition-colors ${
-                            isSelected ? activeTagClass : tagClass
-                          } ${isRounded ? "rounded" : "rounded-none"}`}
+                          className={`text-xs px-2 py-1 font-medium transition-colors ${isSelected ? activeTagClass : tagClass
+                            } ${isRounded ? "rounded" : "rounded-none"}`}
                         >
                           {tag}
                         </span>
@@ -196,9 +196,8 @@ export default function EventNavbar({
                       {course.mentors.map((mentor) => (
                         <span
                           key={mentor.uid}
-                          className={`text-xs px-2 py-1 duration-300 font-medium flex items-center gap-1 transition-colors ${
-                            isSelected ? activeTagClass : tagClass
-                          } ${isRounded ? "rounded" : "rounded-none"}`}
+                          className={`text-xs px-2 py-1 duration-300 font-medium flex items-center gap-1 transition-colors ${isSelected ? activeTagClass : tagClass
+                            } ${isRounded ? "rounded" : "rounded-none"}`}
                         >
                           {mentor.name}
                         </span>

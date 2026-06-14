@@ -3,6 +3,14 @@ import { User } from "firebase/auth";
 import { Timestamp } from "firebase/firestore";
 import { BaseSyntheticEvent } from "react";
 
+export enum EventStatus {
+  User = "user",
+  Queue = "queue",
+  Loading = "loading",
+  Error = "error",
+  NotRegistered = "notRegistered",
+}
+
 export type UserRole = "anonymous" | "user" | "member" | "admin" | "mentor";
 
 export type PresetRoles = UserRole;

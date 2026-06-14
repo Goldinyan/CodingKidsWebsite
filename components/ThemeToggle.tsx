@@ -21,7 +21,6 @@ export default function ThemeToggle() {
     // Falls es ein Rechtsklick oder das ContextMenu-Event ist
     if (e.type === "contextmenu" || e.button === 2) {
       e.preventDefault(); // verindert das Browser-Kontextmenü
-      console.log("Rechtsklick erkannt!");
 
       setExpanded(!expanded);
       return;

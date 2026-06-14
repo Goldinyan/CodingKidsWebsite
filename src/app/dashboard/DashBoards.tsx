@@ -7,52 +7,52 @@ import { useAuth } from "@/BackEnd/AuthContext";
 import type { UserData } from "@/BackEnd/type";
 
 export function Dashboard() {
-        const { user } = useAuth();
-        const [data, setData] = useState<UserData | null>(null);
+  const { user } = useAuth();
+  const [data, setData] = useState<UserData | null>(null);
 
-        const changeRole = async () => {
-                if (!user) return;
-                const userData = await getUserData(user.uid);
-        };
+  const changeRole = async () => {
+    if (!user) return;
+    const userData = await getUserData(user.uid);
+  };
 
-        useEffect(() => {
-                const fetchData = async () => {
-                        if (!user) return;
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!user) return;
 
-                        const data = await getUserData(user.uid);
+      const data = await getUserData(user.uid);
 
-                        if (data) {
-                                setData(data);
-                                console.log("Rohdaten aus Firestore:", data);
-                                console.log("Extrahierte Rolle:", data.role);
-                        }
-                };
+      if (data) {
+        setData(data);
+        console.log("Rohdaten aus Firestore:", data);
+        console.log("Extrahierte Rolle:", data.role);
+      }
+    };
 
-                fetchData();
-        }, [user]);
+    fetchData();
+  }, [user]);
 
-        const deleteMyUser = async () => {
-                if (user) {
-                        deleteUser(user)
-                                .then(() => {
-                                        console.log("User deleted");
-                                })
-                                .catch((error) => {
-                                        console.log("Error deleting user", error);
-                                });
-                }
-        };
+  const deleteMyUser = async () => {
+    if (user) {
+      deleteUser(user)
+        .then(() => {
+          console.log("User deleted");
+        })
+        .catch((error) => {
+          console.log("Error deleting user", error);
+        });
+    }
+  };
 
-        return (
-                <div>
-                        <p onClick={deleteMyUser}> Delete My Account</p>
-                        <h1>Dashboard</h1>
-                        <p>Name: {data?.name}</p>
-                        <p>Email: {data?.email}</p>
-                        <p>Birthday: {data?.birthdate}</p>
-                        <p>{data?.role}</p>
-                        <p onClick={() => deleteMyUser()}> DELETE </p>
-                        <p onClick={() => changeRole()}>Change to Admin</p>
-                </div>
-        );
+  return (
+    <div>
+      <p onClick={deleteMyUser}> Delete My Account</p>
+      <h1>Dashboard</h1>
+      <p>Name: {data?.name}</p>
+      <p>Email: {data?.email}</p>
+      <p>Birthday: {data?.birthdate}</p>
+      <p>{data?.role}</p>
+      <p onClick={() => deleteMyUser()}> DELETE </p>
+      <p onClick={() => changeRole()}>Change to Admin</p>
+    </div>
+  );
 }
