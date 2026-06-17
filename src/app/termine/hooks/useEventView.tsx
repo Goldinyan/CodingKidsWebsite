@@ -99,7 +99,8 @@ export function useEventView() {
     const nameSort = filters["nameSort"];
     const dateSort = filters["dateSort"];
 
-    if (filters.courses && filters.courses !== "") {
+    
+    if (filters.course && filters.course !== "") {
       sorted = sorted.filter((a) => a.course === filters.course);
     }
 
@@ -123,7 +124,7 @@ export function useEventView() {
   useEffect(() => {
     setFilteredUpcomingEvents(getSortedEvents(upcomingEvents));
   }, [
-    filters.courses,
+    filters.course,
     filters.course,
     filters.nameSort,
     filters.dateSort,

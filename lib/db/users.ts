@@ -22,11 +22,13 @@ export async function getUserData(
       uid: userId,
       name: data.name ?? "",
       email: data.email ?? "",
-      birthdate: data.birthday ?? "",
+      birthdate: data.birthdate ?? "",
       createdAt: data.createdAt?.toDate?.() ?? new Date(),
       theme: data.theme ?? "light",
       roundedCorners: data.roundedCorners ?? true,
+      avatar: data.avatar ?? "",
       role: data.role ?? "user",
+      
 
       settings: {
         darkMode: data.settings?.darkMode ?? false,

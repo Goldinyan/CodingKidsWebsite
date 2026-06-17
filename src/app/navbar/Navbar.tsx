@@ -63,7 +63,7 @@ export default function Navbar() {
     <div
       className={`w-full  ${theme == "dark" ? "bg-black" : "bg-base-white"} backdrop-blur-sm border-b-2 transition-all duration-300 border-white/10`}
     >
-      <div className="w-full h-16 pt-5 md:pt-0">
+      <div className="max-w-7xl mx-auto flex  justify-center items-center h-16 pt-5 md:pt-0">
         <div className="w-full flex items-center pr-5 pl-5">
           <div className="flex-row items-center gap-3 hidden md:flex">
             <img

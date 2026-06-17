@@ -4,42 +4,26 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/BackEnd/AuthContext";
 import type { UserData } from "@/BackEnd/type";
 import { deleteUser, getUserData } from "@/lib/db";
-import { logOutUser } from "@/lib/auth";
-import { LogOut, Mail, Cake, Calendar, BookOpen, Shield } from "lucide-react";
+import AccountDetails from "./components/AccountDetails";
 import { toJsDate } from "@/BackEnd/utils";
 import { Timestamp } from "firebase/firestore";
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import { useTheme } from "@/context/ThemeContext";
-import { getInstance } from "next/dist/compiled/amphtml-validator";
-import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
+import { Theme, useTheme } from "@/context/ThemeContext";
+import UIConfig from "./components/UIConfig";
+import AccountDeletion from "./components/AccountDeletion";
+import ProfileHeader from "./components/ProfileHeader";
+import { notFound } from "next/navigation";
 
 export default function ProfileView() {
   const [userData, setUserData] = useState<UserData>();
   const [loading, setLoading] = useState(true);
 
   const { user, userRole } = useAuth();
-  const { theme } = useTheme();
-
-  const [deleteConfirm, setDeleteConfirm] = useState<{
-    isOpen: boolean;
-  }>({
-    isOpen: false,
-  });
+  const { theme, isRounded } = useTheme();
 
   useEffect(() => {
     const fetchData = async () => {
       if (!user) return;
-
       const data = await getUserData(user.uid);
-
       if (data) {
         setUserData(data);
       }
@@ -51,281 +35,47 @@ export default function ProfileView() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-otherbg">
-        <div className="text-graytext">Lädt...</div>
+      <div
+        className={`flex items-center justify-center min-h-screen transition-colors duration-300 ${theme === "dark" ? " text-gray-400" : " text-slate-600"
+          }`}
+      >
+        <div className="font-mono text-xs tracking-widest uppercase animate-pulse">
+          Lädt...
+        </div>
       </div>
     );
   }
 
-  if (!userData) {
-    return <div></div>;
-  }
-
-  const getInitials = (name: string) => {
-    return name
-      .split(" ")
-      .map((n) => n[0]) // first char
-      .join("")
-      .toUpperCase();
-  };
-
-  // Avatars by Pablo Stanley (Bottts) - Free for personal and commercial use
-  //
-  // Muss ich benutzen im impressum
-
-  const getAvatar = (name: string) => {
-    return "/avatars/fun-1.png";
-  };
-
-  console.log();
-
-  const calculateAge = (birthdate: Timestamp) => {
-    const birth = toJsDate(birthdate);
-    const today = new Date();
-    let age = today.getFullYear() - birth.getFullYear();
-    const monthDiff = today.getMonth() - birth.getMonth();
-    if (
-      monthDiff < 0 ||
-      (monthDiff === 0 && today.getDate() < birth.getDate())
-    ) {
-      age--;
-    }
-    return age;
-  };
-
-  const getMember = (t: Timestamp | null) =>
-    t ? Math.floor((Date.now() - toJsDate(t).getTime()) / 86400000) : -1;
-
-  const getRoleColor = (role: string) => {
-    switch (role) {
-      case "Admin":
-        return "bg-red-100 text-red-800";
-      case "Mentor":
-        return "bg-blue-100 text-blue-800";
-      case "Member":
-        return "bg-green-100 text-green-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
-
-  const getRoleIcon = (role: string) => {
-    switch (role) {
-      case "admin":
-        return <Shield className="w-4 h-4" />;
-      case "mentor":
-        return <BookOpen className="w-4 h-4" />;
-      default:
-        return null;
-    }
-  };
-
-  const deleteAccount = () => {
-    if (!user) return;
-
-    if (confirm("Möchtest du wirklich deinen Account löschen?")) {
-      deleteUser(user, user.uid, userRole);
-    }
-  };
-
-  if (user) {
-    console.log(user.uid);
-  }
+  if (!userData) return notFound;
 
   return (
-    <div className={`min-h-screen main-view-container relative -m-t-16`}>
-      <button
-        className="text-black h-20 w-100"
-        onClick={() => {
-          logOutUser();
-          console.log("logging out");
-        }}
-      >
-        LOG OUT
-      </button>
-      <div className="bg-grid-pattern ">
-        <div className="flex w-full mx-auto justify-center flex-col gap-5">
-          <div className="flex flex-row mt-10  items-center px-10 h-40 border-1  border-gray-900 rounded-xl">
-            <div className="w-28 h-28 rounded-full flex border-gray-900 border-1 items-center justify-center">
-              <Avatar>
-                {/*
-                <AvatarImage
-                  src={getAvatar(userData.name)}
-                  className="object-cover rounded-full"
-                />*/}
-              </Avatar>
-
-              {/*
-              <span className="text-4xl font-bold text-white">
-                {getInitials(userData.name)}
-              </span>
-              */}
-            </div>
+    <div
+      className={`min-h-screen py-12 px-4 transition-colors duration-300 ${theme === "dark" ? "text-gray-300" : "text-slate-600"
+        }`}
+    >
+      <div className="max-w-4xl mx-auto space-y-6">
+        <ProfileHeader
+          theme={theme}
+          isRounded={isRounded}
+          userData={userData}
+        />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <AccountDetails
+            theme={theme}
+            isRounded={isRounded}
+            userData={userData}
+          />
+          <div className="flex flex-col gap-6">
+            <UIConfig theme={theme} isRounded={isRounded} userData={userData} />
+            <AccountDeletion
+              theme={theme}
+              isRounded={isRounded}
+              user={user}
+              userRole={userRole}
+            />
           </div>
         </div>
       </div>
     </div>
   );
-  return (
-    <div className={`min-h-screen main-view-container relative -m-t-16`}>
-      <div className="bg-grid-pattern">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="bg-white rounded-xl shadow-md p-6 sm:p-8 border border-lightborder mb-8">
-            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 mb-8">
-              <div className="flex-shrink-0">
-                <div className="w-32 h-32 rounded-full bg-gradient-to-br from-primaryOwn to-fourthOwn flex items-center justify-center shadow-lg">
-                  <span className="text-4xl font-bold text-white">
-                    {getInitials(userData.name)}
-                  </span>
-                </div>
-              </div>
-
-              <div className="flex-grow text-center sm:text-left">
-                <h2 className="text-3xl sm:text-4xl font-bold text-primaryOwn mb-2">
-                  {userData.name}
-                </h2>
-                <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 items-center sm:items-start">
-                  <span
-                    className={`inline-flex items-center gap-2 px-4 py-1 rounded-full font-semibold text-sm ${getRoleColor(userData.role)}`}
-                  >
-                    {getRoleIcon(userData.role)}
-                    {userData.role}
-                  </span>
-                  <span className="text-graytext text-sm">
-                    Mitglied seit {getMember(userData.createdAt)} Tagen
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-              <div className="bg-lightPinkBg rounded-lg p-4 border border-lightborder">
-                <div className="flex items-center gap-3 mb-2">
-                  <Mail className="w-5 h-5 text-primaryOwn" />
-                  <span className="text-graytext font-medium">E-Mail</span>
-                </div>
-                <p className="text-foreground text-lg break-all">
-                  {userData.email}
-                </p>
-              </div>
-
-              <div className="bg-lightGreenBg rounded-lg p-4 border border-lightborder">
-                <div className="flex items-center gap-3 mb-2">
-                  <Cake className="w-5 h-5 text-secondaryOwn" />
-                  <span className="text-graytext font-medium">Geburtstag</span>
-                </div>
-                <div className="flex items-baseline gap-2">
-                  <p className="text-foreground text-lg">
-                    {toJsDate(userData.birthdate).toLocaleDateString("de-DE")}
-                  </p>
-                  <span className="text-graytext text-sm">
-                    ({calculateAge(userData.birthdate)} Jahre)
-                  </span>
-                </div>
-              </div>
-
-              <div className="bg-lightRedBg rounded-lg p-4 border border-lightborder">
-                <div className="flex items-center gap-3 mb-2">
-                  <Shield className="w-5 h-5 text-fourthOwn" />
-                  <span className="text-graytext font-medium">Benutzer ID</span>
-                </div>
-                <p className="text-foreground text-sm font-mono break-all">
-                  {userData.uid}
-                </p>
-              </div>
-
-              <div className="bg-lightPinkBg rounded-lg p-4 border border-lightborder">
-                <div className="flex items-center gap-3 mb-2">
-                  <BookOpen className="w-5 h-5 text-primaryOwn" />
-                  <span className="text-graytext font-medium">Kurse</span>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {userData.courses && userData.courses.length > 0 ? (
-                    userData.courses.map((course, idx) => (
-                      <span
-                        key={idx}
-                        className="bg-secondaryOwn text-white px-3 py-1 rounded-full text-sm"
-                      >
-                        {course}
-                      </span>
-                    ))
-                  ) : (
-                    <span className="text-graytext italic">
-                      Noch keine Kurse
-                    </span>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div>
-          <div className="flex gap-10">
-            <button
-              onClick={() => logoutUser()}
-              className="flex items-center gap-2 px-4 py-2 bg-fourthOwn hover:bg-fifthOwn text-white rounded-lg transition-colors duration-200 font-medium"
-            >
-              <LogOut className="w-4 h-4" />
-              <span className="hidden sm:inline">Abmelden</span>
-            </button>
-            <button
-              onClick={() => deleteAccount()}
-              className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg transition-colors duration-200 font-medium"
-            >
-              <LogOut className="w-4 h-4" />
-              <span className="hidden sm:inline">Account löschen</span>
-            </button>
-          </div>
-        </div>
-
-        <Dialog
-          open={deleteConfirm.isOpen}
-          onOpenChange={(open) =>
-            setDeleteConfirm({
-              isOpen: open,
-            })
-          }
-        >
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Kurs löschen?</DialogTitle>
-              <DialogDescription>
-                Sind Sie sicher, dass Sie ihren Account löschen möchten? Diese
-                Aktion kann nicht rückgängig gemacht werden.
-              </DialogDescription>
-            </DialogHeader>
-
-            <DialogFooter>
-              <Button
-                onClick={() =>
-                  setDeleteConfirm({
-                    isOpen: false,
-                  })
-                }
-                variant="outline"
-              >
-                Abbrechen
-              </Button>
-              <Button onClick={deleteAccount} variant="destructive">
-                Löschen
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      </div>
-    </div>
-  );
-}
-
-function UserSettingsView() {
-  return <div></div>;
-}
-
-function MentorSettingsView() {
-  return <div></div>;
-}
-
-function AdminSettingsView() {
-  return <div></div>;
 }

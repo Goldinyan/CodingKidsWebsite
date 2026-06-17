@@ -201,7 +201,7 @@ export function MainOverlayAdminDashboard() {
                   </button>
                   <button
                     onClick={() => {
-                      router.push("/profile");
+                      router.push("/");
                     }}
                     className="w-full px-4 py-3 rounded-lg border border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-all duration-300 flex items-center gap-3 group"
                   >

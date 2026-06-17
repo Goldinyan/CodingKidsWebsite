@@ -135,7 +135,6 @@ export default function EventCard(props: {
       >
         {event.description}
       </p>
-      <p>COURSE: {event.course}</p>
       <div className="grow" />
       <div className={`space-y-3 mb-6 text-sm font-light ${textBodyClass}`}>
         <div className="flex items-center gap-2.5">

@@ -100,6 +100,11 @@ export default function MentorsView({ isRounded }: { isRounded: boolean }) {
   return (
     <div className={`w-full px-8 py-20 transition-colors duration-300 `}>
       <div className="mb-12">
+        <span
+          className={`text-xs font-mono tracking-widest uppercase block mb-3 ${theme === "dark" ? "text-zinc-500" : "text-zinc-400"}`}
+        >
+          Das Team
+        </span>
         <h2
           className={`text-4xl font-bold mb-3 ${theme === "dark" ? "text-white" : "text-slate-900"
             }`}
@@ -120,7 +125,7 @@ export default function MentorsView({ isRounded }: { isRounded: boolean }) {
         whileInView="visible"
         exit="hidden"
         viewport={{ once: false, margin: "0px 0px -50px 0px" }}
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xxxl:grid-cols-4 3xl:grid-cols-5 gap-10"
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  gap-10"
       >
         {mentors.slice(0, 3).map((mentor) => (
           <motion.div

@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { toJsDate } from "@/BackEnd/utils";
 import { motion } from "framer-motion";
 import { useTheme } from "@/context/ThemeContext";
+// Importiere deinen neuen Custom Hook:
 import { useEventView } from "./hooks/useEventView";
 
 export default function EventView() {
@@ -25,7 +26,7 @@ export default function EventView() {
   } = useEventView();
 
   return (
-    <div className="flex items-center flex-col gap-4 p-6 pt-5">
+    <div className="flex max-w-7xl mx-auto items-center flex-col gap-4 p-6 pt-5">
       <EventNavbar
         callback={(key, value) =>
           setFilters((prev) => ({ ...prev, [key]: value }))
@@ -34,12 +35,15 @@ export default function EventView() {
         courses={courses}
       />
 
-      {upcomingEvents.length > 0 && (
+      {filteredUpcomingEvents.length > 0 && (
         <div className="w-full space-y-4">
           <div className="flex items-center gap-3 mt-6">
             <h2 className="text-2xl font-bold text-primary">Kommende Events</h2>
-            <Badge className="bg-primaryOwn text-white">
-              {upcomingEvents.length}
+            <Badge
+              variant="outline"
+              className="bg-primaryOwn text-white mt-1 rounded-full "
+            >
+              {filteredUpcomingEvents.length}
             </Badge>
           </div>
           <div className="grid min-h-100 grid-cols-1 md:grid-cols-2 gap-6">
@@ -74,24 +78,26 @@ export default function EventView() {
             <Badge variant="outline">{pastEvents.length}</Badge>
           </div>
           <div className="grid min-h-100 grid-cols-1 md:grid-cols-2 gap-6">
-            {getSortedEvents(pastEvents).map((event, idx) => (
-              <motion.div
-                key={event.uid}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: idx * 0.1 }}
-              >
-                <EventCard
-                  event={event}
-                  isPast={true}
-                  status={statuses[event.uid]}
-                  tooEarly={!checkIfEventIsInRange(toJsDate(event.date))}
-                  theme={theme}
-                  isRounded={isRounded}
-                  handleEvents={handleEvents}
-                />
-              </motion.div>
-            ))}
+            {pastEvents
+              .sort((a, b) => (a.date.seconds || 0)  - (b.date.seconds || 0))
+              .map((event, idx) => (
+                <motion.div
+                  key={event.uid}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: idx * 0.1 }}
+                >
+                  <EventCard
+                    event={event}
+                    isPast={true}
+                    status={statuses[event.uid]}
+                    tooEarly={!checkIfEventIsInRange(toJsDate(event.date))}
+                    theme={theme}
+                    isRounded={isRounded}
+                    handleEvents={handleEvents}
+                  />
+                </motion.div>
+              ))}
           </div>
         </div>
       )}

@@ -20,7 +20,7 @@ export default function CTAView({ isRounded }: { isRounded: boolean }) {
           viewport={{ once: false }}
         >
           <div
-            className={`backdrop-blur-sm p-12 md:p-16 border transition-all duration-300 ${isRounded ? "rounded-lg" : "rounded-none"} ${theme === "dark"
+            className={`backdrop-blur-2xl p-12 md:p-16 border transition-all duration-300 ${isRounded ? "rounded-lg" : "rounded-none"} ${theme === "dark"
                 ? "bg-white/5 border-white/10 hover:border-white/20"
                 : "bg-slate-50 border-slate-300 hover:border-slate-400"
               }`}

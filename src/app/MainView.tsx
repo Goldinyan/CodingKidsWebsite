@@ -17,7 +17,7 @@ import {
 export default function MainView() {
   const [userData, setUserData] = useState<UserData>();
 
-  const { user, loading} = useAuth();
+  const { user, loading } = useAuth();
   const { theme, isRounded } = useTheme();
 
   useEffect(() => {
@@ -39,18 +39,17 @@ export default function MainView() {
 
   return (
     <div className={`w-full min-h-screen relative main-view-container`}>
-      <div className="absolute inset-0 bg-grid-pattern   z-0" />
-      <div className="relative w-full flex flex-col z-10">
-        <TopView
-          data={userData}
-          loading={loading}
-          isRounded={isRounded}
-        />
+      {/*
+      <div className="absolute inset-0 bg-grid-pattern   z-0" />*/}
+      <div className="fixed inset-0 bg-grid-pattern bg-fixed z-0 pointer-events-none" />
+
+      <div className="relative max-w-7xl flex flex-col mx-auto z-10">
+        <TopView data={userData} loading={loading} isRounded={isRounded} />
         {/*<MiddleView isRounded={isRounded} />*/}
         <FeaturedEventsView isRounded={isRounded} />
         <FeaturedCoursesView isRounded={isRounded} />
         <MentorsView isRounded={isRounded} />
-        <CTAView isRounded={isRounded}/>
+        <CTAView isRounded={isRounded} />
       </div>
     </div>
   );

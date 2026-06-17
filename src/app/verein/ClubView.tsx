@@ -6,7 +6,7 @@ import Support from "./Support";
 
 export default function ClubViews() {
   return (
-    <div className=" ">
+    <div className="max-w-7xl mx-auto">
       <section id="wir">
         <WerWirSind />
       </section>

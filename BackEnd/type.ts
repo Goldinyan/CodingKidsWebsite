@@ -105,9 +105,11 @@ type BaseUserData = {
   email: string;
   birthdate: Timestamp;
   createdAt: Timestamp;
+  avatar: string;
   theme: Theme;
   roundedCorners: boolean;
   courses?: string[];
+  projects: string[];
   settings: {
     darkMode: boolean;
     notifications: {

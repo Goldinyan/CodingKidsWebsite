@@ -93,6 +93,9 @@ export default function FeaturedEventsView({
           transition={{ duration: 0.6, ease: "easeOut" }}
           viewport={{ once: true }}
         >
+          <span
+            className={`text-xs font-mono tracking-widest uppercase block mb-3 ${theme === "dark" ? "text-zinc-500" : "text-zinc-400"}`}
+          >Live dabei</span>
           <h2
             className={`text-4xl font-bold mb-3 ${theme === "dark" ? "text-white" : "text-slate-900"
               }`}
