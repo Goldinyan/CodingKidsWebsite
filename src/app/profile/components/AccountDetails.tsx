@@ -27,7 +27,7 @@ export default function AccountDetails({
 
   return (
     <div
-      className={`md:col-span-2 backdrop-blur-xl p-6 border transition-all duration-300 space-y-6 ${roundedClass} ${theme === "dark"
+      className={`backdrop-blur-xl p-6 border transition-all duration-300 space-y-6 ${roundedClass} ${theme === "dark"
           ? "bg-white/5 border-white/10"
           : "bg-slate-100 border-slate-200"
         }`}

@@ -3,11 +3,9 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/BackEnd/AuthContext";
 import type { UserData } from "@/BackEnd/type";
-import { deleteUser, getUserData } from "@/lib/db";
+import { getUserData } from "@/lib/db";
 import AccountDetails from "./components/AccountDetails";
-import { toJsDate } from "@/BackEnd/utils";
-import { Timestamp } from "firebase/firestore";
-import { Theme, useTheme } from "@/context/ThemeContext";
+import { useTheme } from "@/context/ThemeContext";
 import UIConfig from "./components/UIConfig";
 import AccountDeletion from "./components/AccountDeletion";
 import ProfileHeader from "./components/ProfileHeader";
@@ -18,7 +16,7 @@ export default function ProfileView() {
   const [loading, setLoading] = useState(true);
 
   const { user, userRole } = useAuth();
-  const { theme, isRounded } = useTheme();
+  const { theme, isRounded, toggleTheme, toggleRounded } = useTheme();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -53,20 +51,28 @@ export default function ProfileView() {
       className={`min-h-screen py-12 px-4 transition-colors duration-300 ${theme === "dark" ? "text-gray-300" : "text-slate-600"
         }`}
     >
-      <div className="max-w-4xl mx-auto space-y-6">
+      <div className="max-w-5xl mx-auto space-y-6">
         <ProfileHeader
           theme={theme}
           isRounded={isRounded}
           userData={userData}
         />
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <AccountDetails
-            theme={theme}
-            isRounded={isRounded}
-            userData={userData}
-          />
-          <div className="flex flex-col gap-6">
-            <UIConfig theme={theme} isRounded={isRounded} userData={userData} />
+        <div className="grid grid-cols-1 md:grid-cols-8 gap-6">
+          <div className="md:col-span-5">
+            <AccountDetails
+              theme={theme}
+              isRounded={isRounded}
+              userData={userData}
+            />
+          </div>
+          <div className="md:col-span-3 flex flex-col gap-6 ">
+            <UIConfig
+              theme={theme}
+              toggleTheme={toggleTheme}
+              isRounded={isRounded}
+              toggleRounded={toggleRounded}
+              userData={userData}
+            />
             <AccountDeletion
               theme={theme}
               isRounded={isRounded}

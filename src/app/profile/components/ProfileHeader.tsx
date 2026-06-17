@@ -32,11 +32,11 @@ export default function ProfileHeader({
               : "border-slate-300 bg-white"
             }`}
         >
-          <Avatar className="w-full h-full">
+          <Avatar className="w-full h-full">{/*
             <AvatarImage
               src={getAvatar(userData.avatar)}
               className={`object-cover w-full h-full ${isRounded ? "rounded-full" : "rounded-none"}`}
-            />
+            />*/}
           </Avatar>
         </div>
 
