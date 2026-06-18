@@ -1,22 +1,29 @@
 import type { UserData } from "@/BackEnd/type";
 import { logOutUser } from "@/lib/auth";
-import { LogOut, Cake, BookOpen, Shield } from "lucide-react";
+import { LogOut, Cake, BookOpen, Shield, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Theme } from "@/context/ThemeContext";
 import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
+import { useRouter } from "next/navigation";
 import { getAvatar, getRoleBadgeColor, calculateAge } from "../utils";
 
 export default function ProfileHeader({
   theme,
   isRounded,
   userData,
+  showAvatarView,
+  setShowAvatarView,
 }: {
   theme: Theme;
   isRounded: boolean;
   userData: UserData;
+  showAvatarView: boolean;
+  setShowAvatarView: (y: boolean) => void;
 }) {
   const roundedClass = isRounded ? "rounded-2xl" : "rounded-none";
   const innerRoundedClass = isRounded ? "rounded-xl" : "rounded-none";
+
+  const router = useRouter();
 
   return (
     <div
@@ -27,19 +34,30 @@ export default function ProfileHeader({
     >
       <div className="flex flex-col sm:flex-row items-center gap-6">
         <div
-          className={`w-24 h-24 flex items-center justify-center p-1 border overflow-hidden ${isRounded ? "rounded-full" : "rounded-none"} ${theme === "dark"
+          onClick={() => setShowAvatarView(!showAvatarView)}
+          className={`w-24 h-24 group relative flex items-center justify-center p-1 border overflow-hidden transition-all duration-300 ${isRounded ? "rounded-full" : "rounded-none"
+            } ${theme === "dark"
               ? "border-white/10 bg-black/40"
               : "border-slate-300 bg-white"
             }`}
         >
-          <Avatar className="w-full h-full">{/*
+          <Avatar className="w-full h-full">
             <AvatarImage
               src={getAvatar(userData.avatar)}
               className={`object-cover w-full h-full ${isRounded ? "rounded-full" : "rounded-none"}`}
-            />*/}
+            />
           </Avatar>
-        </div>
 
+          <div
+            className={`absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none ${isRounded ? "rounded-full" : "rounded-none"
+              }`}
+          />
+
+          <Pencil
+            className={`absolute w-8 h-8 opacity-0 scale-90 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300 pointer-events-none ${theme === "dark" ? "text-white" : "text-black"
+              }`}
+          />
+        </div>
         <div className="text-center sm:text-left space-y-2">
           <span
             className={`text-xs font-mono tracking-widest uppercase ${theme === "dark" ? "text-zinc-500" : "text-zinc-400"}`}
@@ -83,7 +101,10 @@ export default function ProfileHeader({
 
       <div className="flex gap-3 w-full sm:w-auto">
         <Button
-          onClick={() => logOutUser()}
+          onClick={() => {
+            logOutUser();
+            router.push("/");
+          }}
           variant="outline"
           className={`w-full sm:w-auto font-mono text-xs tracking-wider uppercase transition-all duration-300 flex items-center gap-2 ${innerRoundedClass} ${theme === "dark"
               ? "bg-white text-black hover:bg-gray-200 border-transparent"

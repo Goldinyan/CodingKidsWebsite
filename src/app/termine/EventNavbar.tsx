@@ -111,7 +111,6 @@ export default function EventNavbar({
                   key={`tab-${course.uid}`}
                   onClick={() => {
                     callback("course", isSelected ? "" : course.name);
-                    console.log("adding course: " + course.name);
                   }}
                   className={`backdrop-blur-2xl px-4 py-2 border text-sm font-medium hover:scale-[1.02] active:scale-100 transition-colors duration-200 ${isSelected ? activeClass : inactiveCardClass
                     } ${isRounded ? "rounded-lg" : "rounded-none"}`}

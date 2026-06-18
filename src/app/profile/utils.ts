@@ -1,3 +1,5 @@
+// src/app/profile/utils.ts
+
 import { Timestamp } from "firebase/firestore";
 import { toJsDate } from "@/BackEnd/utils";
 import { UserRole } from "@/BackEnd/type";
@@ -34,4 +36,3 @@ export function getRoleBadgeColor(role: UserRole, theme: Theme) {
         : "bg-green-50 text-green-700 border-green-200";
   }
 }
-

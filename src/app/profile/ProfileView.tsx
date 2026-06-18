@@ -10,10 +10,12 @@ import UIConfig from "./components/UIConfig";
 import AccountDeletion from "./components/AccountDeletion";
 import ProfileHeader from "./components/ProfileHeader";
 import { notFound } from "next/navigation";
+import AvatarView from "./components/AvatarView";
 
 export default function ProfileView() {
   const [userData, setUserData] = useState<UserData>();
   const [loading, setLoading] = useState(true);
+  const [showAvatarView, setShowAvatarView] = useState<boolean>(false);
 
   const { user, userRole } = useAuth();
   const { theme, isRounded, toggleTheme, toggleRounded } = useTheme();
@@ -56,7 +58,20 @@ export default function ProfileView() {
           theme={theme}
           isRounded={isRounded}
           userData={userData}
+          showAvatarView={showAvatarView}
+          setShowAvatarView={setShowAvatarView}
         />
+        {showAvatarView ? (
+          <AvatarView
+            theme={theme}
+            isRounded={isRounded}
+            userData={userData}
+            showAvatarView={showAvatarView}
+            setShowAvatarView={setShowAvatarView}
+          />
+        ) : (
+          ""
+        )}
         <div className="grid grid-cols-1 md:grid-cols-8 gap-6">
           <div className="md:col-span-5">
             <AccountDetails

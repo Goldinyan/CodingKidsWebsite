@@ -1,17 +1,12 @@
 import { Theme } from "@/context/ThemeContext";
 import { UserData } from "@/BackEnd/type";
-import {
-  Mail,
-  Calendar,
-  Code2,
-  Layers,
-} from "lucide-react";
+import { Mail, Calendar, Code2, Layers } from "lucide-react";
 import { toJsDate } from "@/BackEnd/utils";
 import { Timestamp } from "firebase/firestore";
 
-const getMemberDays = (t: Timestamp | null) =>
-  t ? Math.floor((Date.now() - toJsDate(t).getTime()) / 86400000) : -1;
-
+function getMemberDays(t: Timestamp | null): number {
+  return t ? Math.floor((Date.now() - toJsDate(t).getTime()) / 86400000) : -1;
+}
 
 export default function AccountDetails({
   theme,

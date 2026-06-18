@@ -23,7 +23,7 @@ export async function getUserData(
       name: data.name ?? "",
       email: data.email ?? "",
       birthdate: data.birthdate ?? "",
-      createdAt: data.createdAt?.toDate?.() ?? new Date(),
+      createdAt: data.createdAt ?? new Date(),
       theme: data.theme ?? "light",
       roundedCorners: data.roundedCorners ?? true,
       avatar: data.avatar ?? "",
