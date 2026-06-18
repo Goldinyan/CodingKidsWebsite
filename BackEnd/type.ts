@@ -151,6 +151,8 @@ export type Mentor = {
 export type AuthContextType = {
   user: User | null;
   userRole: UserRole;
+  userData: UserData | null;
+  updateProfile: (updates: Partial<UserData>) => void;
   loading: boolean;
 };
 

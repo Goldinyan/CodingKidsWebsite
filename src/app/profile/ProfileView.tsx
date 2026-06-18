@@ -13,25 +13,10 @@ import { notFound } from "next/navigation";
 import AvatarView from "./components/AvatarView";
 
 export default function ProfileView() {
-  const [userData, setUserData] = useState<UserData>();
-  const [loading, setLoading] = useState(true);
   const [showAvatarView, setShowAvatarView] = useState<boolean>(false);
 
-  const { user, userRole } = useAuth();
+  const { user, userData, loading, userRole } = useAuth();
   const { theme, isRounded, toggleTheme, toggleRounded } = useTheme();
-
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!user) return;
-      const data = await getUserData(user.uid);
-      if (data) {
-        setUserData(data);
-      }
-      setLoading(false);
-    };
-
-    fetchData();
-  }, [user]);
 
   if (loading) {
     return (

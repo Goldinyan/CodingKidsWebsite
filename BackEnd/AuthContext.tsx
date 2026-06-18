@@ -4,34 +4,61 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import type { AuthContextType } from "@/BackEnd/type";
-import { UserRole } from "@/lib/rate_limiting/rateLimiter";
-import { getUserData } from "@/lib/db/users";
+import { getUserData, updateUser } from "@/lib/db/users";
+import { UserData, UserRole } from "@/BackEnd/type";
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [userRole, setUserRole] = useState<UserRole>("user");
-  const [userRoundedCorners, setUserRoundedCorners] = useState<boolean>(true);
+  const [userData, setUserData] = useState<UserData | null>(null);
+  const [userRole, setUserRole] = useState<UserRole>("anonymous");
   const [loading, setLoading] = useState(true);
 
+  const updateProfile = async (updates: Partial<UserData>) => {
+    if (!user) return;
+
+    try {
+      await updateUser(user.uid, updates, user.uid, userRole);
+      setUserData((prev) => (prev ? { ...prev, ...updates } : null));
+
+      if (updates.role) {
+        setUserRole(updates.role);
+      }
+    } catch (error) {
+      console.error("Fehler beim Aktualisieren der Userdaten:", error);
+      throw error;
+    }
+  };
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      setLoading(true);
       setUser(firebaseUser);
-      const userData = getUserData(firebaseUser?.uid);
-      userData.then((data) => {
-        if (data) {
-          setUserRole(data.role);
-          setUserRoundedCorners(data.roundedCorners);
+
+      if (firebaseUser) {
+        try {
+          const data = await getUserData(firebaseUser.uid);
+          if (data) {
+            setUserData(data);
+            setUserRole(data.role);
+          }
+        } catch (error) {
+          console.error("Fehler beim Laden der DB-Userdaten:", error);
         }
-      });
+      } else {
+        setUserData(null);
+        setUserRole("anonymous");
+      }
+
       setLoading(false);
     });
+
     return () => unsubscribe();
   }, []);
-
   return (
-    <AuthContext.Provider value={{ user, userRole, loading }}>
+    <AuthContext.Provider
+      value={{ user, userRole, userData, updateProfile, loading }}
+    >
       {children}
     </AuthContext.Provider>
   );

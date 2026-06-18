@@ -88,7 +88,7 @@ export default function Support() {
             whileInView="visible"
             exit="hidden"
             viewport={{ once: false }}
-            className={`group p-8 border backdrop-blur-sm duration-300 flex flex-col justify-between ${cardBorderClass} ${cardBgClass} ${isRounded ? "rounded-2xl" : "rounded-none"
+            className={`group p-8 border backdrop-blur-xl duration-300 flex flex-col justify-between ${cardBorderClass} ${cardBgClass} ${isRounded ? "rounded-2xl" : "rounded-none"
               }`}
           >
             <div>
@@ -160,7 +160,7 @@ export default function Support() {
             whileInView="visible"
             exit="hidden"
             viewport={{ once: false }}
-            className={`group p-8 border backdrop-blur-sm duration-300 flex flex-col justify-between ${cardBorderClass} ${cardBgClass} ${isRounded ? "rounded-2xl" : "rounded-none"
+            className={`group p-8 border backdrop-blur-xl duration-300 flex flex-col justify-between ${cardBorderClass} ${cardBgClass} ${isRounded ? "rounded-2xl" : "rounded-none"
               }`}
           >
             <div>
@@ -273,7 +273,7 @@ export default function Support() {
         className="w-full px-8 py-16"
       >
         <div
-          className={`max-w-4xl mx-auto p-12 border backdrop-blur-sm duration-300 text-center flex flex-col items-center ${cardBorderClass} ${theme === "dark" ? "bg-white/5" : "bg-zinc-50"
+          className={`max-w-4xl mx-auto p-12 border backdrop-blur-xl duration-300 text-center flex flex-col items-center ${cardBorderClass} ${theme === "dark" ? "bg-white/5" : "bg-zinc-50"
             } ${isRounded ? "rounded-2xl" : "rounded-none"}`}
         >
           <span
