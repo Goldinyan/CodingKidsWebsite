@@ -5,9 +5,10 @@ const nextConfig: NextConfig = {
     EMAIL_USER: process.env.EMAIL_USER,
     EMAIL_PASS: process.env.EMAIL_PASS,
   },
+  reactStrictMode: false, // Schaltet das doppelte Rendern im Dev-Modus ab
 };
 
 module.exports = {
-  allowedDevOrigins: ['192.168.178.113'],
-}
+  allowedDevOrigins: ["192.168.178.113"],
+};
 export default nextConfig;

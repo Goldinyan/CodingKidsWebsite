@@ -125,7 +125,7 @@ export default function FeaturedCoursesView({
             key={course.uid}
             variants={itemVariants}
             layout
-            className={`group backdrop-blur-sm p-6 border transition-colors duration-300 flex flex-col ${isRounded && "rounded-lg"} ${theme === "dark"
+            className={`group backdrop-blur-xl p-6 border transition-colors duration-300 flex flex-col ${isRounded && "rounded-lg"} ${theme === "dark"
                 ? "bg-white/5 border-white/10 hover:border-purple-500/50 hover:bg-white/8"
                 : "bg-slate-50 border-slate-300 hover:border-purple-500 hover:bg-purple-50"
               }`}

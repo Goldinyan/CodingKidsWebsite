@@ -27,7 +27,7 @@ export default function ProfileHeader({
 
   return (
     <div
-      className={`backdrop-blur-xl p-6 border transition-all duration-300 flex flex-col sm:flex-row items-center justify-between gap-6 ${roundedClass} ${theme === "dark"
+      className={`backdrop-blur-xl w-full p-6 border transition-all duration-300 flex flex-col sm:flex-row items-center justify-between gap-6 ${roundedClass} ${theme === "dark"
           ? "bg-white/5 border-white/10 "
           : "bg-slate-100 border-slate-200 "
         }`}
@@ -97,27 +97,6 @@ export default function ProfileHeader({
             )}
           </div>
         </div>
-      </div>
-
-      <div className="flex gap-3 w-full sm:w-auto">
-        <Button
-          onClick={() => {
-            logOutUser();
-            router.push("/");
-          }}
-          variant="outline"
-          className={`w-full sm:w-auto font-mono text-xs tracking-wider uppercase transition-all duration-300 flex items-center gap-2 ${innerRoundedClass} ${theme === "dark"
-              ? "bg-white text-black hover:bg-gray-200 border-transparent"
-              : "bg-slate-900 text-white hover:bg-slate-800 border-transparent"
-            }`}
-        >
-          <LogOut
-            className={`${theme == "dark" ? "text-white" : "text-black"}`}
-          />
-          <p className={`${theme == "dark" ? "text-white" : "text-black"}`}>
-            Log Out
-          </p>
-        </Button>
       </div>
     </div>
   );

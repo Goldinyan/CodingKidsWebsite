@@ -6,13 +6,11 @@ export default function UIConfig({
   toggleTheme,
   isRounded,
   toggleRounded,
-  userData,
 }: {
   theme: Theme;
   toggleTheme: () => void;
   isRounded: boolean;
   toggleRounded: () => void;
-  userData: UserData;
 }) {
   const roundedClass = isRounded ? "rounded-2xl" : "rounded-none";
   const innerRoundedClass = isRounded ? "rounded-xl" : "rounded-none";
@@ -29,6 +27,12 @@ export default function UIConfig({
       >
         UI Config
       </h3>
+      <p
+        className={`text-xs font-mono tracking-normal ${theme === "dark" ? "text-gray-400" : "text-slate-500"
+          }`}
+      >
+        Konfiguration der optischen Parameter für das Interface.
+      </p>
       <div className="space-y-3 font-mono text-xs">
         <div className="flex items-center justify-between py-2 border-b border-white/5">
           <span className="text-gray-500 font-mono text-xs">Theme:</span>
@@ -74,7 +78,7 @@ export default function UIConfig({
             </button>
           </div>
         </div>
-        <div className="flex items-center justify-between py-2 border-b border-white/5">
+        <div className="flex items-center justify-between py-2 ">
           <span className="text-gray-500 font-mono text-xs">Borders:</span>
 
           <div

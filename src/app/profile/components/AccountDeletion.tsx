@@ -1,9 +1,7 @@
-import { func } from "joi";
-import AccountDetails from "./AccountDetails";
 import { Theme } from "@/context/ThemeContext";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
-import { UserData, UserRole } from "@/BackEnd/type";
+import { UserRole } from "@/BackEnd/type";
 import { deleteUser } from "lib/db/users";
 import { User } from "firebase/auth";
 

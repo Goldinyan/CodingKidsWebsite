@@ -2,8 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { useAuth } from "@/BackEnd/AuthContext";
-import type { UserData } from "@/BackEnd/type";
-import { getUserData } from "@/lib/db";
 import AccountDetails from "./components/AccountDetails";
 import { useTheme } from "@/context/ThemeContext";
 import UIConfig from "./components/UIConfig";
@@ -11,11 +9,12 @@ import AccountDeletion from "./components/AccountDeletion";
 import ProfileHeader from "./components/ProfileHeader";
 import { notFound } from "next/navigation";
 import AvatarView from "./components/AvatarView";
+import LogOut from "./components/LogOut";
 
 export default function ProfileView() {
   const [showAvatarView, setShowAvatarView] = useState<boolean>(false);
 
-  const { user, userData, loading, userRole } = useAuth();
+  const { user, userData, userRole, updateProfile, loading } = useAuth();
   const { theme, isRounded, toggleTheme, toggleRounded } = useTheme();
 
   if (loading) {
@@ -39,25 +38,41 @@ export default function ProfileView() {
         }`}
     >
       <div className="max-w-5xl mx-auto space-y-6">
-        <ProfileHeader
-          theme={theme}
-          isRounded={isRounded}
-          userData={userData}
-          showAvatarView={showAvatarView}
-          setShowAvatarView={setShowAvatarView}
-        />
-        {showAvatarView ? (
-          <AvatarView
-            theme={theme}
-            isRounded={isRounded}
-            userData={userData}
-            showAvatarView={showAvatarView}
-            setShowAvatarView={setShowAvatarView}
-          />
-        ) : (
-          ""
-        )}
         <div className="grid grid-cols-1 md:grid-cols-8 gap-6">
+          <div className="flex flex-row md:col-span-5">
+            <ProfileHeader
+              theme={theme}
+              isRounded={isRounded}
+              userData={userData}
+              showAvatarView={showAvatarView}
+              setShowAvatarView={setShowAvatarView}
+            />
+          </div>
+          <div className="flex flex-col gap-4 md:col-span-3">
+            <LogOut
+              theme={theme}
+              isRounded={isRounded}
+            />
+            <AccountDeletion
+              theme={theme}
+              isRounded={isRounded}
+              user={user}
+              userRole={userRole}
+            />
+          </div>
+
+          {showAvatarView ? (
+            <AvatarView
+              theme={theme}
+              isRounded={isRounded}
+              userData={userData}
+              updateProfile={updateProfile}
+              setShowAvatarView={setShowAvatarView}
+            />
+          ) : (
+            ""
+          )}
+
           <div className="md:col-span-5">
             <AccountDetails
               theme={theme}
@@ -71,13 +86,6 @@ export default function ProfileView() {
               toggleTheme={toggleTheme}
               isRounded={isRounded}
               toggleRounded={toggleRounded}
-              userData={userData}
-            />
-            <AccountDeletion
-              theme={theme}
-              isRounded={isRounded}
-              user={user}
-              userRole={userRole}
             />
           </div>
         </div>

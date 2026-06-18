@@ -152,7 +152,7 @@ export type AuthContextType = {
   user: User | null;
   userRole: UserRole;
   userData: UserData | null;
-  updateProfile: (updates: Partial<UserData>) => void;
+  updateProfile: (updates: Partial<UserData>) => Promise<void>;
   loading: boolean;
 };
 
