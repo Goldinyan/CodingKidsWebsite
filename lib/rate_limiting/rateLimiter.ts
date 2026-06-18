@@ -205,6 +205,7 @@ export function checkRateLimit(
 
   // If max requests is 0, deny access
   if (maxRequests === 0) {
+    console.error(`Acces denied for function: ${functionName}, role: ${userRole}`);
     return false;
   }
 

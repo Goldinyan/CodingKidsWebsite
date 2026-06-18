@@ -9,10 +9,11 @@ import {
   addUserToEvent,
   removeUserFromEvent,
 } from "@/lib/db";
+import { Timestamp } from "firebase/firestore";
 import { EventData, CourseData, EventStatus } from "@/BackEnd/type";
 
 export function useEventView() {
-  const { user, userRole } = useAuth();
+  const { user, userRole, userData, loading } = useAuth();
   const [upcomingEvents, setUpcomingEvents] = useState<EventData[]>([]);
   const [filteredUpcomingEvents, setFilteredUpcomingEvents] = useState<
     EventData[]
@@ -30,16 +31,13 @@ export function useEventView() {
   });
 
   useEffect(() => {
-    if (!user) return;
-    const checkPremiumStatus = async () => {
-      const userData = await getUserData(user.uid);
-      if (!userData) {
-        return;
-      }
-      setPremiumUser(userData && userData.role === "admin");
-    };
-    checkPremiumStatus();
-  }, [user]);
+    if (!user || !userData) return;
+    setPremiumUser(
+      userData.role === "admin" ||
+      userData.role == "mentor" ||
+      userData.role == "member",
+    );
+  }, [userData, user]);
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -60,11 +58,25 @@ export function useEventView() {
       )) as EventData[];
 
       const now = new Date();
-      const normalizeDate = (d: any) =>
-        d?.seconds ? new Date(d.seconds * 1000) : new Date(d);
+
+      const normalizeDate = (
+        d: Timestamp | Date | string | null | undefined,
+      ) => {
+        if (!d) return new Date(0);
+
+        if (typeof d === "object" && "seconds" in d) {
+          return new Date(d.seconds * 1000);
+        }
+
+        return new Date(d);
+      };
 
       const upcoming = events
         .filter((event) => normalizeDate(event.date) >= now)
+        .sort(
+          (a, b) =>
+            normalizeDate(a.date).getTime() - normalizeDate(b.date).getTime(),
+        )
         .slice(0, 10);
 
       const past = events.filter((event) => normalizeDate(event.date) < now);
@@ -75,13 +87,12 @@ export function useEventView() {
       const statusMap: Record<string, EventStatus> = {};
       for (const event of upcoming) {
         statusMap[event.uid] = EventStatus.Loading;
+        if (!user || loading) {
+          statusMap[event.uid] = EventStatus.NotRegistered;
+          return;
+        }
         try {
-          const status = await isUserInEvent(
-            event.uid,
-            user?.uid || "",
-            user?.uid || "anonymous",
-            userRole,
-          );
+          const status = await isUserInEvent(event.uid, user.uid, userRole);
           statusMap[event.uid] = status;
         } catch (error) {
           console.error(error);
@@ -92,14 +103,13 @@ export function useEventView() {
     };
 
     fetchEvents();
-  }, [userRole, user?.uid]);
+  }, [userRole, user?.uid, user, loading]);
 
   const getSortedEvents = (events: EventData[]): EventData[] => {
     let sorted = [...events];
     const nameSort = filters["nameSort"];
     const dateSort = filters["dateSort"];
 
-    
     if (filters.course && filters.course !== "") {
       sorted = sorted.filter((a) => a.course === filters.course);
     }

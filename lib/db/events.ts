@@ -197,10 +197,9 @@ export async function addUserToEvent(
 export async function isUserInEvent(
   eventId: string,
   userId: string,
-  requesterId: string = "anonymous",
-  requesterRole: UserRole = "user",
+  requesterRole: UserRole,
 ): Promise<EventStatus> {
-  enforceRateLimit("isUserInEvent", requesterId, requesterRole);
+  enforceRateLimit("isUserInEvent", userId, requesterRole);
 
   try {
     const eventRef = doc(db, "events", eventId);

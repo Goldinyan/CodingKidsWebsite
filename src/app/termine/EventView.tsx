@@ -50,7 +50,7 @@ export default function EventView() {
             {filteredUpcomingEvents.map((event, idx) => (
               <motion.div
                 key={event.uid}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 1, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: idx * 0.1 }}
               >
@@ -83,7 +83,7 @@ export default function EventView() {
               .map((event, idx) => (
                 <motion.div
                   key={event.uid}
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 1, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: idx * 0.1 }}
                 >
