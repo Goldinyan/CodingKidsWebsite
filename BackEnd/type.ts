@@ -165,7 +165,7 @@ export type AuthContextType = {
 export type Filter = {
   name: Preset;
   birthYear: Preset;
-  role: UserRole;
+  role: UserRole & "All";
 };
 
 export type CourseData = {

@@ -10,18 +10,20 @@ export function UserCard(props: {
   user: UserData;
   roleLabel: UserRole;
   onEdit: () => void;
-  onDelete: () => void;
+  //onDelete: () => void;
 }) {
-  const { user, roleLabel, onEdit, onDelete } = props;
+  const { user, roleLabel, onEdit } = props;
   const { theme, isRounded } = useTheme();
   const [label, setLabel] = useState<string>();
 
+  console.log(roleLabel)
 
   useEffect(() => {
     switch (roleLabel) {
       case "mentor":
         setLabel("Mentor");
         break;
+     
       case "user":
         setLabel("User");
         break;
@@ -72,13 +74,15 @@ export function UserCard(props: {
           whileTap={{ scale: 0.95 }}
           onClick={onEdit}
           className={`flex-1 px-4 py-2 font-medium border transition-colors duration-300 flex items-center justify-center gap-2 ${isRounded ? "rounded-lg" : "rounded-none"} ${theme === "dark"
-              ? "bg-amber-600 text-white border-amber-600 hover:bg-amber-700"
-              : "bg-amber-600 text-white border-amber-600 hover:bg-amber-700"
+              ? "bg-green-600 text-white border-green-600 hover:bg-green-700"
+              : "bg-green-600 text-white border-green-600 hover:bg-green-700"
             }`}
         >
           <Edit2 className="w-4 h-4" />
+          
           Bearbeiten
         </motion.button>
+        {/*
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
@@ -90,7 +94,8 @@ export function UserCard(props: {
         >
           <Trash2 className="w-4 h-4" />
           Löschen
-        </motion.button>
+
+        </motion.button> */}
       </div>
     </motion.div>
   );

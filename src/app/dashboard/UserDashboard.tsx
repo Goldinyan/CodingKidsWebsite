@@ -2,7 +2,12 @@
 
 import { getUserData, updateUser } from "@/lib/db";
 import { useState, useEffect } from "react";
-import { type PresetRoles, type UserData, type Filter, USER_ROLES_ARRAY } from "@/BackEnd/type";
+import {
+  type PresetRoles,
+  type UserData,
+  type Filter,
+  USER_ROLES_ARRAY,
+} from "@/BackEnd/type";
 import { useAuth } from "@/BackEnd/AuthContext";
 import {
   SortAsc,
@@ -31,7 +36,7 @@ export default function UserDashboard() {
   const [editValues, setEditValues] = useState<Partial<UserData>>({});
   const [deleteConfirm, setDeleteConfirm] = useState<{
     isOpen: boolean;
-    user: User | null;
+    user: User | null;
     userId: string | null;
     userName: string | null;
   }>({
@@ -47,8 +52,7 @@ export default function UserDashboard() {
   const { users, setUsers } = useUsersData(user?.uid, userRole);
   const filteredUsers = useFilteredUsers(users, searchBar, filters, seeAll);
 
-
-    const saveUserChanges = async (uid: string) => {
+  const saveUserChanges = async (uid: string) => {
     if (!editValues.name?.trim()) {
       return;
     }
@@ -165,7 +169,7 @@ export default function UserDashboard() {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="mb-8 flex flex-wrap gap-2"
         >
-          {(["All", "Mentor", "Admin", "User", "Member"] as const).map(
+          {(["All", "Mentor", "User", "Member"] as const).map(
             (role) => (
               <motion.button
                 key={role}
@@ -222,14 +226,14 @@ export default function UserDashboard() {
                   user={u}
                   roleLabel={u.role}
                   onEdit={() => handleEditStart(u)}
-                  onDelete={() =>
+                />
+                {/*onDelete={() =>
                     setDeleteConfirm({
+                      user: u
                       isOpen: true,
                       userId: u.uid,
                       userName: u.name,
-                    })
-                  }
-                />
+                    })*/}
               </motion.div>
             ))
           )}

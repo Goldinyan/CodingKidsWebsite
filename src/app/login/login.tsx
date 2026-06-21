@@ -121,7 +121,6 @@ export default function LoginView() {
         </div>
       </div>
 
-      {/* --- AB HIER: REMEMBER ME CHECKBOX --- */}
       <div className="flex items-center ml-[2px]">
         <label className="flex items-center gap-3 cursor-pointer select-none">
           <input
@@ -143,7 +142,6 @@ export default function LoginView() {
           </span>
         </label>
       </div>
-      {/* --- ENDE: REMEMBER ME CHECKBOX --- */}
 
       {errorMsg && (
         <div

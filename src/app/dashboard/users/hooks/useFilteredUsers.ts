@@ -1,5 +1,6 @@
 import { useMemo } from "react";
-import type { Filter, UserData } from "@/BackEnd/type";
+import type { Filter, UserData, UserRole } from "@/BackEnd/type";
+import { toJsDate } from "@/BackEnd/utils";
 
 export function useFilteredUsers(
   users: UserData[],
@@ -21,10 +22,10 @@ export function useFilteredUsers(
     }
 
     if (filters.role !== "All") {
-      const roleMap: Record<string, string> = {
+      const roleMap: Record<string, UserRole> = {
         Admin: "admin",
         Member: "member",
-        User: "notmember",
+        User: "user",
         Mentor: "mentor",
       };
       const role = roleMap[filters.role];
@@ -36,8 +37,8 @@ export function useFilteredUsers(
     if (filters.birthYear !== "false") {
       filusers = [...filusers].sort((a, b) =>
         filters.birthYear === "ascending"
-          ? new Date(a.birthdate).getTime() - new Date(b.birthdate).getTime()
-          : new Date(b.birthdate).getTime() - new Date(a.birthdate).getTime(),
+          ? toJsDate(a.birthdate).getTime() - toJsDate(b.birthdate).getTime()
+          : toJsDate(b.birthdate).getTime() - toJsDate(a.birthdate).getTime(),
       );
     }
 
@@ -56,4 +57,3 @@ export function useFilteredUsers(
     return filusers;
   }, [users, searchBar, filters, seeAll]);
 }
-

@@ -26,7 +26,7 @@ import { useEventUsersMap, useEventsData, useFilteredEvents } from "./events/hoo
 export default function EventDashboard() {
   const { user, userRole } = useAuth();
   const { toast } = useToast();
-  const { theme } = useTheme();
+  const { theme, isRounded } = useTheme();
   const [deleteConfirmModal, setDeleteConfirmModal] = useState<{
     isOpen: boolean;
     eventId: string | null;
@@ -174,7 +174,7 @@ export default function EventDashboard() {
 
           <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div className="flex items-center gap-3">
-              <div className={`relative flex w-56 border h-10 items-center overflow-hidden transition-colors duration-300 ${theme === "dark"
+              <div className={`relative flex w-56 border h-10 items-center overflow-hidden transition-colors duration-300 ${isRounded ? "rounded-xl" : "rounded-none"}  ${theme === "dark"
                 ? "bg-white/5 border-white/10"
                 : "bg-white border-slate-300"
               }`}>
