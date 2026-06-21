@@ -163,8 +163,7 @@ export default function EventDashboard() {
   return (
     <>
       <div
-        className={`w-full p-6 min-h-screen transition-colors duration-300 ${theme === "dark" ? "bg-black" : "bg-slate-50"
-          }`}
+        className={`w-full p-6  transition-colors duration-300 `}
       >
         <div className="max-w-7xl mx-auto">
           <div className="mb-8">
@@ -183,7 +182,7 @@ export default function EventDashboard() {
           <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div className="flex items-center gap-3">
               <div
-                className={`relative flex w-56 border h-10 items-center overflow-hidden transition-colors duration-300 ${isRounded ? "rounded-xl" : "rounded-none"} ${theme === "dark"
+                className={`relative backdrop-blur-2xl flex w-56 border h-10 items-center overflow-hidden transition-colors duration-300 ${isRounded ? "rounded-xl" : "rounded-none"} ${theme === "dark"
                     ? "bg-white/5 border-white/10"
                     : "bg-white border-slate-300"
                   }`}
@@ -237,7 +236,7 @@ export default function EventDashboard() {
                 placeholder="Events durchsuchen..."
                 value={searchBar}
                 onChange={(e) => setSearchBar(e.target.value)}
-                className={`w-full pl-10 pr-4 py-2 border transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-green-500 ${isRounded ? "rounded-xl" : "rounded-none"} ${theme === "dark"
+                className={`backdrop-blur-2xl w-full pl-10 pr-4 py-2 border transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-green-500 ${isRounded ? "rounded-xl" : "rounded-none"} ${theme === "dark"
                     ? "bg-white/5 border-white/10 text-white placeholder-gray-500 hover:bg-white/10 hover:border-white/20"
                     : "bg-white border-slate-300 text-slate-900 placeholder-slate-400 hover:border-slate-400"
                   }`}
@@ -273,7 +272,7 @@ export default function EventDashboard() {
             {filEvents.map((event) => (
               <motion.div
                 key={event.uid}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 1, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3 }}
               >

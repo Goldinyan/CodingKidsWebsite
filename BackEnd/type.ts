@@ -146,8 +146,7 @@ export type Mentor = {
   id: number; // for filtering and importance
   role: string;
   name: string;
-  des1: string;
-  des2: string;
+  des: string;
   pic: string;
   insta?: string;
   linkedin?: string;

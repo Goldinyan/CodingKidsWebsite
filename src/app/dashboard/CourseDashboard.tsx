@@ -179,9 +179,9 @@ export default function CourseDashboard() {
 
   if (isLoading) {
     return (
-      <div className={`flex items-center justify-center p-8 transition-colors duration-300 ${
-        theme === "dark" ? "bg-black" : "bg-white"
-      }`}>
+      <div
+        className={`flex items-center justify-center p-8 transition-colors duration-300 `}
+      >
         <div className={theme === "dark" ? "text-gray-500" : "text-slate-500"}>
           Kurse werden geladen...
         </div>
@@ -190,9 +190,7 @@ export default function CourseDashboard() {
   }
 
   return (
-    <div className={`w-full px-6 py-8 transition-colors duration-300 ${
-      theme === "dark" ? "bg-black" : "bg-white"
-    }`}>
+    <div className={`w-full px-6 py-8 transition-colors duration-300 `}>
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -200,14 +198,16 @@ export default function CourseDashboard() {
           transition={{ duration: 0.5 }}
           className="mb-8"
         >
-          <h1 className={`text-5xl font-bold mb-3 ${
-            theme === "dark" ? "text-white" : "text-slate-900"
-          }`}>
-            Kursverwaltung
+          <h1
+            className={`text-5xl font-bold mb-3 ${theme === "dark" ? "text-white" : "text-slate-900"
+              }`}
+          >
+            Kurs-Verwaltung
           </h1>
-          <p className={`text-lg ${
-            theme === "dark" ? "text-gray-400" : "text-slate-600"
-          }`}>
+          <p
+            className={`text-lg ${theme === "dark" ? "text-gray-400" : "text-slate-600"
+              }`}
+          >
             Verwalten Sie Ihre Kurse: Erstellen, Bearbeiten und Löschen
           </p>
         </motion.div>
@@ -219,19 +219,19 @@ export default function CourseDashboard() {
           className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between"
         >
           <div className="flex-1 relative">
-            <Search className={`absolute left-3 top-3 w-5 h-5 transition-colors ${
-              theme === "dark" ? "text-gray-600" : "text-slate-400"
-            }`} />
+            <Search
+              className={`absolute z-10 left-3 top-3 w-5 h-5 transition-colors ${theme === "dark" ? "text-gray-600" : "text-slate-400"
+                }`}
+            />
             <input
               type="text"
               placeholder="Kurse durchsuchen..."
               value={searchBar}
               onChange={(e) => setSearchBar(e.target.value)}
-              className={`w-full pl-10 pr-4 py-2 border transition-all duration-300 focus:outline-none ${
-                theme === "dark"
+              className={`backdrop-blur-2xl w-full pl-10 pr-4 py-2 border transition-all duration-300 focus:outline-none ${theme === "dark"
                   ? "bg-white/5 border-white/10 text-white placeholder-gray-500 focus:border-white/20 focus:bg-white/10"
                   : "bg-slate-50 border-slate-300 text-slate-900 placeholder-slate-400 focus:border-purple-600 focus:bg-white"
-              }`}
+                }`}
             />
           </div>
 
@@ -239,11 +239,10 @@ export default function CourseDashboard() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setIsAddingCourse(true)}
-            className={`flex items-center gap-2 px-8 py-3 font-medium border transition-all duration-300 ${
-              theme === "dark"
+            className={`flex items-center gap-2 px-8 py-3 font-medium border transition-colors duration-300 ${theme === "dark"
                 ? "bg-white text-black border-white hover:bg-gray-100"
                 : "bg-purple-600 text-white border-purple-600 hover:bg-purple-700"
-            }`}
+              }`}
           >
             <Plus className="w-5 h-5" />
             Neuer Kurs
@@ -258,9 +257,10 @@ export default function CourseDashboard() {
         >
           {filteredCourses.length === 0 ? (
             <div className="col-span-full text-center py-16">
-              <p className={`text-lg ${
-                theme === "dark" ? "text-gray-500" : "text-slate-500"
-              }`}>
+              <p
+                className={`text-lg ${theme === "dark" ? "text-gray-500" : "text-slate-500"
+                  }`}
+              >
                 {searchBar
                   ? "Keine Kurse gefunden, die Ihrer Suche entsprechen"
                   : "Keine Kurse vorhanden. Erstellen Sie einen neuen Kurs!"}

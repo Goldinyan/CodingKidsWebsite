@@ -76,12 +76,10 @@ export default function UserDashboard() {
   };
 
   return (
-    <div
-      className={`w-full px-6 py-4 transition-colors duration-300 `}
-    >
+    <div className={`w-full px-6 py-4 transition-colors duration-300 `}>
       <div className="max-w-7xl mx-auto">
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
+          initial={{ opacity: 1, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
           className="mb-8"
@@ -90,18 +88,12 @@ export default function UserDashboard() {
             className={`text-5xl font-bold mb-3 ${theme === "dark" ? "text-white" : "text-slate-900"
               }`}
           >
-            Nutzerverwaltung
+            Nutzer-Verwaltung
           </h1>
-          <p
-            className={`text-lg ${theme === "dark" ? "text-gray-400" : "text-slate-600"
-              }`}
-          >
-            Verwalten Sie Benutzer: Bearbeiten und Löschen
-          </p>
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0 }}
+          initial={{ opacity: 1 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.1 }}
           className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between"
@@ -163,41 +155,39 @@ export default function UserDashboard() {
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0 }}
+          initial={{ opacity: 1 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.2 }}
           className="mb-8 flex flex-wrap gap-2"
         >
-          {(["All", "Mentor", "User", "Member"] as const).map(
-            (role) => (
-              <motion.button
-                key={role}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setFilters((prev) => ({ ...prev, role }))}
-                className={`px-4 py-2 backdrop-blur-2xl border transition-colors duration-300 font-medium ${isRounded ? "rounded-lg" : "rounded-none"} ${filters.role === role
-                    ? theme === "dark"
-                      ? "bg-white text-black border-white"
-                      : "bg-green-600 text-white border-green-600"
-                    : theme === "dark"
-                      ? "bg-transparent text-white border-white/20 hover:border-white/40 hover:bg-white/5"
-                      : "bg-white text-slate-700 border-slate-300 hover:bg-slate-50 hover:border-slate-400"
-                  }`}
-              >
-                {role === "All"
-                  ? "Alle"
-                  : role === "User"
-                    ? "User"
-                    : role === "Member"
-                      ? "Mitglied"
-                      : role}
-              </motion.button>
-            ),
-          )}
+          {(["All", "Mentor", "User", "Member"] as const).map((role) => (
+            <motion.button
+              key={role}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setFilters((prev) => ({ ...prev, role }))}
+              className={`px-4 py-2 backdrop-blur-2xl border transition-colors duration-300 font-medium ${isRounded ? "rounded-lg" : "rounded-none"} ${filters.role === role
+                  ? theme === "dark"
+                    ? "bg-white text-black border-white"
+                    : "bg-green-600 text-white border-green-600"
+                  : theme === "dark"
+                    ? "bg-transparent text-white border-white/20 hover:border-white/40 hover:bg-white/5"
+                    : "bg-white text-slate-700 border-slate-300 hover:bg-slate-50 hover:border-slate-400"
+                }`}
+            >
+              {role === "All"
+                ? "Alle"
+                : role === "User"
+                  ? "User"
+                  : role === "Member"
+                    ? "Mitglied"
+                    : role}
+            </motion.button>
+          ))}
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0 }}
+          initial={{ opacity: 1 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.3 }}
           className="grid gap-6 md:grid-cols-1 lg:grid-cols-2"
@@ -217,9 +207,10 @@ export default function UserDashboard() {
             filteredUsers.map((u, idx) => (
               <motion.div
                 key={u.uid}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 1, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.05 }}
+                viewport={{ once: false }}
               >
                 <UserCard
                   user={u}
@@ -241,7 +232,7 @@ export default function UserDashboard() {
         {filteredUsers.length > 10 && (
           <motion.div
             layout
-            initial={{ opacity: 0 }}
+            initial={{ opacity: 1 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4 }}
             className="flex items-center justify-center mt-12"

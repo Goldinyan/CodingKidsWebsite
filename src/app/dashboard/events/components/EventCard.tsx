@@ -53,7 +53,7 @@ export function EventCard(props: {
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
       transition={{ type: "spring", stiffness: 400, damping: 25 }}
-      className={`p-6 border  transition-all duration-300 ${isRounded ? "rounded-xl" : "rounded-none"} ${theme === "dark"
+      className={`p-6 border backdrop-blur-2xl  transition-all duration-300 ${isRounded ? "rounded-xl" : "rounded-none"} ${theme === "dark"
           ? "bg-white/5 border-white/10 hover:border-white/20 hover:bg-white/10"
           : "bg-slate-50 border-slate-300 hover:border-slate-400 hover:bg-slate-100"
         }`}
