@@ -21,7 +21,11 @@ import {
 } from "@/components/ui/dialog";
 import type { EventTimeFilter } from "./events/constants";
 import { DeleteEventDialog, EventCard } from "./events/components";
-import { useEventUsersMap, useEventsData, useFilteredEvents } from "./events/hooks";
+import {
+  useEventUsersMap,
+  useEventsData,
+  useFilteredEvents,
+} from "./events/hooks";
 
 export default function EventDashboard() {
   const { user, userRole } = useAuth();
@@ -158,36 +162,45 @@ export default function EventDashboard() {
 
   return (
     <>
-      <div className={`w-full p-6 min-h-screen transition-colors duration-300 ${theme === "dark"
-        ? "bg-black"
-        : "bg-slate-50"
-      }`}>
+      <div
+        className={`w-full p-6 min-h-screen transition-colors duration-300 ${theme === "dark" ? "bg-black" : "bg-slate-50"
+          }`}
+      >
         <div className="max-w-7xl mx-auto">
           <div className="mb-8">
-            <h1 className={`text-4xl font-bold mb-2 ${theme === "dark" ? "text-white" : "text-slate-900"}`}>
+            <h1
+              className={`text-4xl font-bold mb-2 ${theme === "dark" ? "text-white" : "text-slate-900"}`}
+            >
               Event-Verwaltung
             </h1>
-            <p className={theme === "dark" ? "text-gray-400" : "text-slate-600"}>
+            <p
+              className={theme === "dark" ? "text-gray-400" : "text-slate-600"}
+            >
               Verwalten Sie Veranstaltungen und Teilnehmer
             </p>
           </div>
 
           <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div className="flex items-center gap-3">
-              <div className={`relative flex w-56 border h-10 items-center overflow-hidden transition-colors duration-300 ${isRounded ? "rounded-xl" : "rounded-none"}  ${theme === "dark"
-                ? "bg-white/5 border-white/10"
-                : "bg-white border-slate-300"
-              }`}>
+              <div
+                className={`relative flex w-56 border h-10 items-center overflow-hidden transition-colors duration-300 ${isRounded ? "rounded-xl" : "rounded-none"} ${theme === "dark"
+                    ? "bg-white/5 border-white/10"
+                    : "bg-white border-slate-300"
+                  }`}
+              >
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   type="button"
                   onClick={() => setTime("Upcoming")}
-                  className={`w-1/2 h-full text-sm font-medium transition-colors duration-200 z-10 ${
-                    time === "Upcoming"
-                      ? theme === "dark" ? "text-black" : "text-white"
-                      : theme === "dark" ? "text-white" : "text-slate-700"
-                  }`}
+                  className={`w-1/2 h-full text-sm font-medium transition-colors duration-200 z-10 ${isRounded ? "rounded-xl" : "rounded-none"} ${time === "Upcoming"
+                      ? theme === "dark"
+                        ? "text-black"
+                        : "text-white"
+                      : theme === "dark"
+                        ? "text-white"
+                        : "text-slate-700"
+                    }`}
                 >
                   Upcoming
                 </motion.button>
@@ -196,37 +209,38 @@ export default function EventDashboard() {
                   whileTap={{ scale: 0.98 }}
                   type="button"
                   onClick={() => setTime("Past")}
-                  className={`w-1/2 h-full text-sm font-medium transition-colors duration-200 z-10 ${
-                    time === "Past"
-                      ? theme === "dark" ? "text-black" : "text-white"
-                      : theme === "dark" ? "text-white" : "text-slate-700"
-                  }`}
+                  className={`w-1/2 h-full text-sm font-medium transition-colors duration-200 z-10 ${isRounded ? "rounded-xl" : "rounded-none"} ${time === "Past"
+                      ? theme === "dark"
+                        ? "text-black"
+                        : "text-white"
+                      : theme === "dark"
+                        ? "text-white"
+                        : "text-slate-700"
+                    }`}
                 >
                   Past
                 </motion.button>
                 <motion.span
                   layoutId="tab-bg"
-                  className={`absolute top-0 left-0 w-1/2 h-full transition-transform duration-200 z-0 ${theme === "dark"
-                    ? "bg-green-600"
-                    : "bg-green-600"
-                  } ${
-                    time === "Past" ? "translate-x-full" : "translate-x-0"
-                  }`}
+                  className={`absolute top-0 left-0 w-1/2 h-full transition-transform duration-200 z-0 ${isRounded ? "rounded-xl" : "rounded-none"} ${theme === "dark" ? "bg-green-600" : "bg-green-600"
+                    } ${time === "Past" ? "translate-x-full" : "translate-x-0"}`}
                 />
               </div>
             </div>
 
             <div className="flex-1 relative">
-              <Search className={`absolute left-3 top-3 w-5 h-5 ${theme === "dark" ? "text-gray-500" : "text-slate-400"}`} />
+              <Search
+                className={`absolute left-3 top-3 w-5 h-5 ${theme === "dark" ? "text-gray-500" : "text-slate-400"}`}
+              />
               <input
                 type="text"
                 placeholder="Events durchsuchen..."
                 value={searchBar}
                 onChange={(e) => setSearchBar(e.target.value)}
-                className={`w-full pl-10 pr-4 py-2 border transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-green-500 ${theme === "dark"
-                  ? "bg-white/5 border-white/10 text-white placeholder-gray-500 hover:bg-white/10 hover:border-white/20"
-                  : "bg-white border-slate-300 text-slate-900 placeholder-slate-400 hover:border-slate-400"
-                }`}
+                className={`w-full pl-10 pr-4 py-2 border transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-green-500 ${isRounded ? "rounded-xl" : "rounded-none"} ${theme === "dark"
+                    ? "bg-white/5 border-white/10 text-white placeholder-gray-500 hover:bg-white/10 hover:border-white/20"
+                    : "bg-white border-slate-300 text-slate-900 placeholder-slate-400 hover:border-slate-400"
+                  }`}
               />
             </div>
 
@@ -234,10 +248,10 @@ export default function EventDashboard() {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setIsAddingEvent(true)}
-              className={`px-6 py-2 font-medium border transition-all duration-300 flex items-center gap-2 ${theme === "dark"
-                ? "bg-green-600 text-white border-green-600 hover:bg-green-700"
-                : "bg-green-600 text-white border-green-600 hover:bg-green-700"
-              }`}
+              className={`px-6 py-2 font-medium border transition-all duration-300 flex items-center gap-2 ${isRounded ? "rounded-xl" : "rounded-none"} ${theme === "dark"
+                  ? "bg-green-600 text-white border-green-600 hover:bg-green-700"
+                  : "bg-green-600 text-white border-green-600 hover:bg-green-700"
+                }`}
             >
               <Plus className="w-5 h-5" />
               Neues Event
@@ -277,7 +291,9 @@ export default function EventDashboard() {
                     setEditValues((prev) => ({ ...prev, [event.uid]: next }))
                   }
                   onSaveChanges={() => handleSaveEventChanges(event.uid)}
-                  onRequestDelete={() => openDeleteConfirm(event.uid, event.name)}
+                  onRequestDelete={() =>
+                    openDeleteConfirm(event.uid, event.name)
+                  }
                 />
               </motion.div>
             ))}
@@ -290,7 +306,8 @@ export default function EventDashboard() {
           <DialogHeader>
             <DialogTitle>Neues Event</DialogTitle>
             <DialogDescription>
-              Erstellen Sie ein neues Event. Sie können auch ein Preset verwenden.
+              Erstellen Sie ein neues Event. Sie können auch ein Preset
+              verwenden.
             </DialogDescription>
           </DialogHeader>
 

@@ -136,7 +136,7 @@ export function MainOverlayAdminDashboard({
           </div>
 
           <div
-            className={` flex-1 pt-10 w-full px-6 md:ml-64 ${open ? "hidden" : "flex"
+            className={` flex-1 w-full  md:ml-64 ${open ? "hidden" : "flex"
               }`}
           >
             <MainOverlay />

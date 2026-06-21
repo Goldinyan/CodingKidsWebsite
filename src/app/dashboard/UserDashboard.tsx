@@ -77,8 +77,7 @@ export default function UserDashboard() {
 
   return (
     <div
-      className={`w-full px-6 py-4 transition-colors duration-300 ${theme === "dark" ? "bg-black" : "bg-none"
-        }`}
+      className={`w-full px-6 py-4 transition-colors duration-300 `}
     >
       <div className="max-w-7xl mx-auto">
         <motion.div
@@ -109,7 +108,7 @@ export default function UserDashboard() {
         >
           <div className="flex-1 relative">
             <Search
-              className={`absolute left-3 top-3 w-5 h-5 transition-colors  ${isRounded ? "rounded-lg" : "rounded-none"} ${theme === "dark" ? "text-gray-600" : "text-slate-400"
+              className={`z-10 absolute left-3 top-3 w-5 h-5 transition-colors  ${isRounded ? "rounded-lg" : "rounded-none"} ${theme === "dark" ? "text-gray-600" : "text-slate-400"
                 }`}
             />
             <input
@@ -117,7 +116,7 @@ export default function UserDashboard() {
               placeholder="Nutzer durchsuchen..."
               value={searchBar}
               onChange={(e) => setSearchBar(e.target.value)}
-              className={`w-full pl-10 pr-4 py-2 border transition-colors duration-300 focus:outline-none ${isRounded ? "rounded-lg" : "rounded-none"} ${theme === "dark"
+              className={`backdrop-blur-2xl w-full pl-10 pr-4 py-2 border transition-colors duration-300 focus:outline-none ${isRounded ? "rounded-lg" : "rounded-none"} ${theme === "dark"
                   ? "bg-white/5 border-white/10 text-white placeholder-gray-500 focus:border-white/20 focus:bg-white/10"
                   : "bg-white border-slate-300 text-slate-900 placeholder-slate-400 focus:border-green-600 focus:bg-white"
                 }`}
@@ -134,7 +133,7 @@ export default function UserDashboard() {
                 onClick={() =>
                   setFilters((prev) => ({ ...prev, name: "descending" }))
                 }
-                className={`p-2 border transition-colors duration-300 ${isRounded ? "rounded-lg" : "rounded-none"} ${theme === "dark"
+                className={`p-2 backdrop-blur-2xl border transition-colors duration-300 ${isRounded ? "rounded-lg" : "rounded-none"} ${theme === "dark"
                     ? "bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20"
                     : "bg-slate-50 border-slate-300 hover:bg-white hover:border-slate-400"
                   }`}
@@ -149,7 +148,7 @@ export default function UserDashboard() {
                 onClick={() =>
                   setFilters((prev) => ({ ...prev, name: "ascending" }))
                 }
-                className={`p-2 border transition-all duration-300 ${isRounded ? "rounded-lg" : "rounded-none"} ${theme === "dark"
+                className={`p-2 border backdrop-blur-2xl transition-all duration-300 ${isRounded ? "rounded-lg" : "rounded-none"} ${theme === "dark"
                     ? "bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20"
                     : "bg-slate-50 border-slate-300 hover:bg-white hover:border-slate-400"
                   }`}
@@ -176,7 +175,7 @@ export default function UserDashboard() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setFilters((prev) => ({ ...prev, role }))}
-                className={`px-4 py-2 border transition-colors duration-300 font-medium ${isRounded ? "rounded-lg" : "rounded-none"} ${filters.role === role
+                className={`px-4 py-2 backdrop-blur-2xl border transition-colors duration-300 font-medium ${isRounded ? "rounded-lg" : "rounded-none"} ${filters.role === role
                     ? theme === "dark"
                       ? "bg-white text-black border-white"
                       : "bg-green-600 text-white border-green-600"

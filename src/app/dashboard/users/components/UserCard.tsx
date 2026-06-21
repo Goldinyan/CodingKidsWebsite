@@ -37,7 +37,7 @@ export function UserCard(props: {
     <motion.div
       whileHover={{ scale: 1.02, y: -4 }}
       transition={{ type: "spring", stiffness: 400, damping: 25 }}
-      className={`p-6 border transition-colors duration-300  ${isRounded ? "rounded-lg" : "rounded-none"} ${theme === "dark"
+      className={`p-6 backdrop-blur-2xl border transition-colors duration-300  ${isRounded ? "rounded-lg" : "rounded-none"} ${theme === "dark"
           ? "bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20"
           : "bg-slate-50 border-slate-300 hover:bg-white hover:border-slate-400"
         }`}
