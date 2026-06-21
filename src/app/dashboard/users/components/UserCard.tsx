@@ -2,17 +2,34 @@ import { Edit2, Trash2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useTheme } from "@/context/ThemeContext";
 import { Button } from "@/components/ui/button";
-import type { UserData } from "@/BackEnd/type";
+import type { UserData, UserRole } from "@/BackEnd/type";
 import { toJsDate } from "@/BackEnd/utils";
+import { useEffect, useState } from "react";
 
 export function UserCard(props: {
   user: UserData;
-  roleLabel: string;
+  roleLabel: UserRole;
   onEdit: () => void;
   onDelete: () => void;
 }) {
   const { user, roleLabel, onEdit, onDelete } = props;
   const { theme, isRounded } = useTheme();
+  const [label, setLabel] = useState<string>();
+
+
+  useEffect(() => {
+    switch (roleLabel) {
+      case "mentor":
+        setLabel("Mentor");
+        break;
+      case "user":
+        setLabel("User");
+        break;
+      case "member":
+        setLabel("Member");
+        break;
+    }
+  }, []);
 
   return (
     <motion.div
@@ -38,7 +55,7 @@ export function UserCard(props: {
             <strong>Email:</strong> {user.email}
           </p>
           <p>
-            <strong>Rolle:</strong> {roleLabel}
+            <strong>Rolle:</strong> {label}
           </p>
           {user.birthdate && (
             <p>

@@ -2,13 +2,15 @@
 
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { deleteUser } from "@/lib/db";
 
 export function DeleteUserDialog(props: {
   open: boolean;
+  userId: string;
   userName: string | null;
   onOpenChange: (open: boolean) => void;
 }) {
-  const { open, userName, onOpenChange } = props;
+  const { open, userName, userId, onOpenChange } = props;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -25,9 +27,11 @@ export function DeleteUserDialog(props: {
           <Button onClick={() => onOpenChange(false)} variant="outline">
             Abbrechen
           </Button>
-          <Button variant="destructive" disabled>
+          {/*
+          <Button onClick={() => deleteUser(, userId, "admin")} variant="destructive" >
             Löschen
           </Button>
+          */}
         </DialogFooter>
       </DialogContent>
     </Dialog>

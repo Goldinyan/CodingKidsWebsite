@@ -1,7 +1,6 @@
 import { Theme } from "@/context/ThemeContext";
 import { User } from "firebase/auth";
 import { Timestamp } from "firebase/firestore";
-import { BaseSyntheticEvent } from "react";
 
 export enum EventStatus {
   User = "user",
@@ -11,9 +10,16 @@ export enum EventStatus {
   NotRegistered = "notRegistered",
 }
 
-export type UserRole = "anonymous" | "user" | "member" | "admin" | "mentor";
 
-export type PresetRoles = UserRole;
+export const USER_ROLES_ARRAY = [
+  "anonymous",
+  "user",
+  "member",
+  "admin",
+  "mentor",
+] as const;
+
+export type UserRole = (typeof USER_ROLES_ARRAY)[number];
 
 export type Preset = "false" | "ascending" | "descending";
 

@@ -18,6 +18,7 @@ import {
   updateEmail,
   reauthenticateWithCredential,
   EmailAuthProvider,
+  browserSessionPersistence,
 } from "firebase/auth";
 import type { User } from "firebase/auth";
 import { doc, getDoc, setDoc, updateDoc, arrayUnion } from "firebase/firestore";
@@ -72,9 +73,17 @@ export async function emailVerification(user: User) {
   }
 }
 
-export async function loginUser(email: string, password: string) {
+export async function loginUser(
+  email: string,
+  password: string,
+  rememberMe: boolean,
+) {
   try {
-    await setPersistence(auth, browserLocalPersistence);
+    const persistenceType = rememberMe
+      ? browserLocalPersistence
+      : browserSessionPersistence;
+
+    await setPersistence(auth, persistenceType);
     const userCredential = await signInWithEmailAndPassword(
       auth,
       email,

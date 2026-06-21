@@ -25,7 +25,7 @@ export default function LogOut({
           : "bg-purple-50 border-purple-200"
         }`}
     >
-      <p
+      <button
         onClick={() => {
           logOutUser();
           router.push("/");
@@ -33,7 +33,7 @@ export default function LogOut({
         className={`py-2.5 w-full font-mono text-xs tracking-wider uppercase transition-colors duration-300 flex items-center justify-center gap-2 ${innerRoundedClass} bg-purple-700 hover:bg-purple-700 text-white`}
       >
         <LogOutIcon className="w-4 h-4" /> Ausloggen
-      </p>
+      </button>
     </div>
   );
 }

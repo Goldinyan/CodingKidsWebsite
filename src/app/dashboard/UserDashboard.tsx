@@ -2,7 +2,7 @@
 
 import { getUserData, updateUser } from "@/lib/db";
 import { useState, useEffect } from "react";
-import type { PresetRoles, UserData, Filter } from "@/BackEnd/type";
+import { type PresetRoles, type UserData, type Filter, USER_ROLES_ARRAY } from "@/BackEnd/type";
 import { useAuth } from "@/BackEnd/AuthContext";
 import {
   SortAsc,
@@ -16,6 +16,7 @@ import { useTheme } from "@/context/ThemeContext";
 import { Button } from "@/components/ui/button";
 import { useFilteredUsers, useUsersData } from "./users/hooks";
 import { DeleteUserDialog, EditUserDialog, UserCard } from "./users/components";
+import { User } from "firebase/auth";
 
 export default function UserDashboard() {
   const [searchBar, setSearchBar] = useState<string>("");
@@ -30,44 +31,24 @@ export default function UserDashboard() {
   const [editValues, setEditValues] = useState<Partial<UserData>>({});
   const [deleteConfirm, setDeleteConfirm] = useState<{
     isOpen: boolean;
+    user: User | null;
     userId: string | null;
     userName: string | null;
   }>({
     isOpen: false,
+    user: null,
     userId: null,
     userName: null,
   });
 
-  const [data, setData] = useState<UserData | null>(null);
-  const { user, userRole } = useAuth();
+  const { user, userRole, userData } = useAuth();
   const { theme, isRounded } = useTheme();
 
   const { users, setUsers } = useUsersData(user?.uid, userRole);
   const filteredUsers = useFilteredUsers(users, searchBar, filters, seeAll);
 
-  const presetRoles: string[] = ["admin", "member", "mentor", "notmember"];
 
-  const presetRoleLabels: Record<string, string> = {
-    admin: "Admin",
-    member: "Mitglied",
-    mentor: "Mentor",
-    notmember: "User",
-  };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!user) return;
-
-      const data = await getUserData(user.uid);
-      if (data) {
-        setData(data);
-      }
-    };
-
-    fetchData();
-  }, [user]);
-
-  const saveUserChanges = async (uid: string) => {
+    const saveUserChanges = async (uid: string) => {
     if (!editValues.name?.trim()) {
       return;
     }
@@ -239,7 +220,7 @@ export default function UserDashboard() {
               >
                 <UserCard
                   user={u}
-                  roleLabel={presetRoleLabels[u.role] || u.role}
+                  roleLabel={u.role}
                   onEdit={() => handleEditStart(u)}
                   onDelete={() =>
                     setDeleteConfirm({
@@ -254,7 +235,7 @@ export default function UserDashboard() {
           )}
         </motion.div>
 
-        {(filteredUsers.length > 10 || filters.role === "All") && (
+        {filteredUsers.length > 10 && (
           <motion.div
             layout
             initial={{ opacity: 0 }}
@@ -287,8 +268,6 @@ export default function UserDashboard() {
         }}
         editValues={editValues}
         onEditValuesChange={setEditValues}
-        presetRoles={presetRoles}
-        presetRoleLabels={presetRoleLabels}
         onCancel={() => {
           setEditingId(null);
           setEditValues({});
@@ -301,6 +280,7 @@ export default function UserDashboard() {
       <DeleteUserDialog
         open={deleteConfirm.isOpen}
         userName={deleteConfirm.userName}
+        userId={deleteConfirm.userId}
         onOpenChange={(open) =>
           setDeleteConfirm({ isOpen: open, userId: null, userName: null })
         }

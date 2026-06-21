@@ -9,7 +9,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import type { PresetRoles, UserData } from "@/BackEnd/type";
+import type { UserData, UserRole } from "@/BackEnd/type";
+import { USER_ROLES_ARRAY } from "@/BackEnd/type";
 import type { Theme } from "@/context/ThemeContext";
 import { toJsDate } from "@/BackEnd/utils";
 
@@ -19,8 +20,6 @@ export function EditUserDialog(props: {
   onOpenChange: (open: boolean) => void;
   editValues: Partial<UserData>;
   onEditValuesChange: (next: Partial<UserData>) => void;
-  presetRoles: string[];
-  presetRoleLabels: Record<string, string>;
   onCancel: () => void;
   onSave: () => void;
 }) {
@@ -30,8 +29,6 @@ export function EditUserDialog(props: {
     onOpenChange,
     editValues,
     onEditValuesChange,
-    presetRoles,
-    presetRoleLabels,
     onCancel,
     onSave,
   } = props;
@@ -44,10 +41,18 @@ export function EditUserDialog(props: {
         if (!o) onCancel();
       }}
     >
-      <DialogContent className="max-w-lg">
+      <DialogContent
+        className={`max-w-lg ${theme == "dark" ? "backdrop-blur-2xl bg-black/30" : ""}`}
+      >
         <DialogHeader>
-          <DialogTitle>Nutzer bearbeiten</DialogTitle>
-          <DialogDescription>
+          <DialogTitle
+            className={`${theme == "dark" ? "text-gray-200" : "text-gray-400"}`}
+          >
+            Nutzer bearbeiten
+          </DialogTitle>
+          <DialogDescription
+            className={`${theme == "dark" ? "text-gray-400" : "text-gray-400"}`}
+          >
             Aktualisieren Sie die Benutzerinformationen
           </DialogDescription>
         </DialogHeader>
@@ -55,7 +60,7 @@ export function EditUserDialog(props: {
         <div className="space-y-4">
           <div>
             <label
-              className={`block text-sm font-medium mb-1 ${theme == "dark" ? "text-gray-700" : "text-gray-700"}`}
+              className={`block text-sm font-medium mb-1 ${theme == "dark" ? "text-gray-300" : "text-gray-700"}`}
             >
               Name
             </label>
@@ -70,7 +75,9 @@ export function EditUserDialog(props: {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              className={`block text-sm font-medium mb-1 ${theme == "dark" ? "text-gray-300" : "text-gray-700"}`}
+            >
               Email
             </label>
             <input
@@ -84,7 +91,9 @@ export function EditUserDialog(props: {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              className={`block text-sm font-medium mb-1 ${theme == "dark" ? "text-gray-300" : "text-gray-700"}`}
+            >
               Geburtsdatum
             </label>
             <input
@@ -102,7 +111,7 @@ export function EditUserDialog(props: {
                   birthdate: new Date(e.target.value).toISOString(),
                 })
               }
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700"
+              className={`w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${theme == "dark" ? " text-white" : "text-black "}`}
             />
           </div>
 
@@ -115,16 +124,21 @@ export function EditUserDialog(props: {
               onChange={(e) =>
                 onEditValuesChange({
                   ...editValues,
-                  role: e.target.value as PresetRoles,
+                  role: e.target.value as UserRole,
                 })
               }
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700"
             >
-              {presetRoles.map((role) => (
-                <option key={role} value={role}>
-                  {presetRoleLabels[role]}
-                </option>
-              ))}
+              {USER_ROLES_ARRAY.map((role) => {
+                if(role == "anonymous" || role == "admin"){
+                  return
+                }
+                return (
+                  <option key={role} value={role}>
+                    {role}
+                  </option>
+                );
+              })}
             </select>
           </div>
         </div>

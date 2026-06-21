@@ -18,6 +18,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const updateProfile = async (updates: Partial<UserData>) => {
     if (!user) return;
 
+    
+
     try {
       await updateUser(user.uid, updates, user.uid, userRole);
       setUserData((prev) => (prev ? { ...prev, ...updates } : null));
