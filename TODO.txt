@@ -3,3 +3,7 @@
 - [ ] dashboard add fixen zu groß
 - [ ] login and register isRounded adden
 - [ ] mobile kriegen updates nicht und keine ux bei knopf bei termine mach toast oder so
+
+
+
+theoretische swr hinzufügen für 0 latency und cache der daten, weniger calls aber kein bock lowkey

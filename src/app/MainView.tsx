@@ -15,27 +15,8 @@ import {
 } from "./homepage";
 
 export default function MainView() {
-  const [userData, setUserData] = useState<UserData>();
-
-  const { user, loading } = useAuth();
+  const { user, loading, userData } = useAuth();
   const { theme, isRounded } = useTheme();
-
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!user) {
-        setUserData(undefined);
-        return;
-      }
-
-      const data = await getUserData(user.uid);
-
-      if (data) {
-        setUserData(data);
-      }
-    };
-
-    fetchData();
-  }, [user]);
 
   return (
     <div className={`w-full min-h-screen relative main-view-container`}>
@@ -46,9 +27,9 @@ export default function MainView() {
       <div className="relative max-w-7xl flex flex-col mx-auto z-10">
         <TopView data={userData} loading={loading} isRounded={isRounded} />
         {/*<MiddleView isRounded={isRounded} />*/}
-        <FeaturedEventsView isRounded={isRounded} />
-        <FeaturedCoursesView isRounded={isRounded} />
-        <MentorsView isRounded={isRounded} />
+        <FeaturedEventsView data={data} loading={loading} isRounded={isRounded} />
+        <FeaturedCoursesView data={data} loading={loading} isRounded={isRounded} />
+        <MentorsView data={data} loading={loading} isRounded={isRounded} />
         <CTAView isRounded={isRounded} />
       </div>
     </div>

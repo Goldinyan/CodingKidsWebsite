@@ -17,9 +17,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const updateProfile = async (updates: Partial<UserData>) => {
     if (!user) return;
-
-    
-
     try {
       await updateUser(user.uid, updates, user.uid, userRole);
       setUserData((prev) => (prev ? { ...prev, ...updates } : null));
@@ -32,27 +29,28 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       throw error;
     }
   };
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       setLoading(true);
       setUser(firebaseUser);
 
-      if (firebaseUser) {
-        try {
+      try {
+        if (firebaseUser) {
           const data = await getUserData(firebaseUser.uid);
           if (data) {
             setUserData(data);
-            setUserRole(data.role);
+            setUserRole(data.role); 
           }
-        } catch (error) {
-          console.error("Fehler beim Laden der DB-Userdaten:", error);
+        } else {
+          setUserData(null);
+          setUserRole("anonymous");
         }
-      } else {
-        setUserData(null);
-        setUserRole("anonymous");
+      } catch (error) {
+        console.error("Fehler beim Laden der DB-Userdaten:", error);
+      } finally {
+        setLoading(false); // erst wenn sicher alles fertig ist
       }
-
-      setLoading(false);
     });
 
     return () => unsubscribe();

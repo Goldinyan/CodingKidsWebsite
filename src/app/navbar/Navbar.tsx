@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/BackEnd/AuthContext";
@@ -15,34 +15,32 @@ import { title } from "process";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
-  const { user, userRole } = useAuth();
-  const [userData, setUserData] = useState<null | UserData>(null);
+  const { user, userRole, userData, loading } = useAuth();
   const [unreadMessages, setUnreadMessages] = useState(0);
   const router = useRouter();
   const { theme, isRounded } = useTheme();
 
+  const hasFetched = useRef<string | null>(null);
+
   useEffect(() => {
-    if (!user) return;
+    if (!user?.uid || loading) return;
+
+    // wenn schon mal daten geholt dann nicht
+    const currentKey = `${user.uid}-${userRole}`;
+    if (hasFetched.current === currentKey) return;
 
     const fetchData = async () => {
-      const data = await getUserData(user.uid);
-
-      if (data) {
-        setUserData(data);
-      }
-
       const announcements = await getAllAnnouncements(user.uid, userRole);
       const unread = announcements.filter(
         (announcement) =>
           (!announcement.readBy || !announcement.readBy.includes(user.uid)) &&
           announcement.author !== user.uid,
       ).length;
-      console.log(announcements);
       setUnreadMessages(unread);
     };
 
     fetchData();
-  }, [user, userRole]);
+  }, [user?.uid, userRole]);
 
   useEffect(() => {
     if (open) {

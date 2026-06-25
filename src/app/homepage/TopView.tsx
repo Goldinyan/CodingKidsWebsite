@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import type { UserData } from "@/BackEnd/type";
 import { GraduationCap, Rocket, Users } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -12,13 +11,13 @@ export default function TopView({
   loading,
   isRounded,
 }: {
-  data: UserData | undefined;
+  data: UserData | null;
   loading: boolean;
   isRounded: boolean;
 }) {
   const router = useRouter();
   const { theme } = useTheme();
-  const showRegisterButton = data === undefined && !loading;
+  const showRegisterButton = data === null && !loading;
 
   const features: { text: string; des: string; icon: React.ElementType }[] = [
     {

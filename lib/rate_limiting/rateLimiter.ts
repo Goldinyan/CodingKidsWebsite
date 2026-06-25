@@ -2,6 +2,8 @@
 // In-memory rate limiting for database operations
 
 import { UserRole } from "@/BackEnd/type";
+import { useEffect } from "react";
+import { getAllAnnouncements } from "../db";
 
 interface RateLimitEntry {
   count: number;
@@ -186,6 +188,12 @@ export function checkRateLimit(
   const now = Date.now();
   const key = `${functionName}:${userId}`;
 
+  const status = getRateLimitStatus(functionName, userId);
+
+  console.log("New call from: " + functionName.toUpperCase());
+  console.log("Current Status:");
+  console.log("count:" + status?.count);
+
   // Get the rate limit config for this function and role
   const config = rateLimitConfig[functionName];
   if (!config) {
@@ -205,7 +213,9 @@ export function checkRateLimit(
 
   // If max requests is 0, deny access
   if (maxRequests === 0) {
-    console.error(`Acces denied for function: ${functionName}, role: ${userRole}`);
+    console.error(
+      `Acces denied for function: ${functionName}, role: ${userRole}`,
+    );
     return false;
   }
 

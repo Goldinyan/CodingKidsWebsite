@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getAllEvents } from "@/lib/db";
 import { EventData } from "@/BackEnd/type";
 import { Calendar, MapPin, Users } from "lucide-react";
@@ -20,7 +20,14 @@ export default function FeaturedEventsView({
 
   const router = useRouter();
 
+  const hasFetched = useRef<string | null>(null);
+
   useEffect(() => {
+    if (!user?.uid) return;
+
+    const currentKey = `${user.uid}-${userRole}`;
+    if (hasFetched.current === currentKey) return;
+
     const fetchEvents = async () => {
       try {
         const allEvents = (await getAllEvents()) as EventData[];
@@ -95,7 +102,9 @@ export default function FeaturedEventsView({
         >
           <span
             className={`text-xs font-mono tracking-widest uppercase block mb-3 ${theme === "dark" ? "text-zinc-500" : "text-zinc-400"}`}
-          >Live dabei</span>
+          >
+            Live dabei
+          </span>
           <h2
             className={`text-4xl font-bold mb-3 ${theme === "dark" ? "text-white" : "text-slate-900"
               }`}
