@@ -17,10 +17,11 @@ export default function FeaturedEventsView() {
 
   const router = useRouter();
 
+
   const hasFetched = useRef<string | null>(null);
 
   useEffect(() => {
-    if (!user?.uid) return;
+    if (!user?.uid || loading) return;
 
     const currentKey = `${user.uid}-${userRole}`;
     if (hasFetched.current === currentKey) return;
@@ -37,9 +38,7 @@ export default function FeaturedEventsView() {
     };
 
     fetchEvents();
-  }, [user?.uid, userRole]);
-
-  
+  }, [user?.uid, userRole, loading]);
 
   if (loading) {
     return (

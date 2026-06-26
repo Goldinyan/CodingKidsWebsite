@@ -16,8 +16,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useViewportHeight } from "@/hooks/useViewportHeight";
-import { getAllAnnouncements, getUserData } from "@/lib/db";
-import { UserData } from "@/BackEnd/type";
+import { getAllAnnouncements } from "@/lib/db";
 import { useTheme } from "@/context/ThemeContext";
 
 interface NavbarMobileProps {

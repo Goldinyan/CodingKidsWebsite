@@ -1,7 +1,6 @@
 "use client";
 
-import { getUserData, updateUser } from "@/lib/db";
-import { useState, useEffect } from "react";
+import { updateUser } from "@/lib/db";
 import {
   type PresetRoles,
   type UserData,

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getUserData } from "@/lib/db";
 import { useAuth } from "@/BackEnd/AuthContext";
 import { UserData, CourseData } from "@/BackEnd/type";
 import { useTheme } from "@/context/ThemeContext";

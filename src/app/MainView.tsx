@@ -2,8 +2,6 @@
 
 import { useAuth } from "@/BackEnd/AuthContext";
 import type { UserData } from "@/BackEnd/type";
-import { useEffect, useState } from "react";
-import { getUserData } from "@/lib/db";
 import { useTheme } from "@/context/ThemeContext";
 import {
   TopView,
@@ -27,9 +25,9 @@ export default function MainView() {
       <div className="relative max-w-7xl flex flex-col mx-auto z-10">
         <TopView data={userData} loading={loading} />
         {/*<MiddleView isRounded={isRounded} />*/}
-        <FeaturedEventsView data={data} loading={loading} />
-        <FeaturedCoursesView data={data} loading={loading} />
-        <MentorsView data={data} loading={loading} isRounded={isRounded} />
+        <FeaturedEventsView />
+        <FeaturedCoursesView isRounded={isRounded} />
+        <MentorsView isRounded={isRounded} />
         <CTAView isRounded={isRounded} />
       </div>
     </div>

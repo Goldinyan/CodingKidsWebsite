@@ -191,8 +191,7 @@ export function checkRateLimit(
   const status = getRateLimitStatus(functionName, userId);
 
   console.log("New call from: " + functionName.toUpperCase());
-  console.log("Current Status:");
-  console.log("count:" + status?.count);
+  console.log("Amount of Calls: " + (status?.count ?? "0"));
 
   // Get the rate limit config for this function and role
   const config = rateLimitConfig[functionName];

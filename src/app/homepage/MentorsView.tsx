@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { getAllMentors } from "@/lib/db";
 import { Mentor } from "@/BackEnd/type";
 import { m, motion } from "framer-motion";
@@ -18,8 +18,10 @@ export default function MentorsView({ isRounded }: { isRounded: boolean }) {
   const [expanded, setExpanded] = useState<number>(0);
 
   const [loading, setLoading] = useState(true);
-  const { user, userRole } = useAuth();
+  const { user, userRole, loading: authLoading } = useAuth();
   const { theme } = useTheme();
+
+  const hasFetched = useRef<string | null>(null);
 
   const expandMentor = (id: number): void => {
     const mentors: Mentor[] = [];
@@ -38,12 +40,18 @@ export default function MentorsView({ isRounded }: { isRounded: boolean }) {
   };
 
   useEffect(() => {
+    if (!user?.uid || authLoading) {
+      setLoading(true);
+      return;
+    }
+
+    const currentKey = `${user.uid}-${userRole}`;
+    if (hasFetched.current === currentKey) return;
+
     const fetchMentors = async () => {
+      hasFetched.current = currentKey;
       try {
-        const allMentors = await getAllMentors(
-          user?.uid || "anonymous",
-          userRole,
-        );
+        const allMentors = await getAllMentors(user.uid, userRole);
         setMentors(allMentors.sort((a, b) => a.id - b.id));
       } catch (error) {
         console.error("Failed to fetch mentors:", error);
@@ -53,7 +61,7 @@ export default function MentorsView({ isRounded }: { isRounded: boolean }) {
     };
 
     fetchMentors();
-  }, [user?.uid, userRole]);
+  }, [user?.uid, userRole, authLoading]);
 
   if (loading) {
     return (

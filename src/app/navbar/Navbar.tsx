@@ -8,8 +8,7 @@ import { User, LogIn, MessageCircle } from "lucide-react";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { Menu, X, LayoutDashboard, HeartHandshakeIcon } from "lucide-react";
 import NavbarMobile from "./NavbarMobile";
-import { getAllAnnouncements, getUserData } from "@/lib/db";
-import { UserData } from "@/BackEnd/type";
+import { getAllAnnouncements } from "@/lib/db";
 import { useTheme, Theme } from "@/context/ThemeContext";
 import { title } from "process";
 
@@ -25,11 +24,11 @@ export default function Navbar() {
   useEffect(() => {
     if (!user?.uid || loading) return;
 
-    // wenn schon mal daten geholt dann nicht
     const currentKey = `${user.uid}-${userRole}`;
     if (hasFetched.current === currentKey) return;
 
     const fetchData = async () => {
+      hasFetched.current = currentKey;
       const announcements = await getAllAnnouncements(user.uid, userRole);
       const unread = announcements.filter(
         (announcement) =>
@@ -40,7 +39,7 @@ export default function Navbar() {
     };
 
     fetchData();
-  }, [user?.uid, userRole]);
+  }, [user?.uid, userRole, loading]);
 
   useEffect(() => {
     if (open) {

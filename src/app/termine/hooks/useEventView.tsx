@@ -1,10 +1,9 @@
 // hooks/useEventView.ts
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/BackEnd/AuthContext";
 import {
   getAllEvents,
   getAllCourses,
-  getUserData,
   isUserInEvent,
   addUserToEvent,
   removeUserFromEvent,
@@ -30,6 +29,8 @@ export function useEventView() {
     dateSort: "",
   });
 
+  const hasFetched = useRef<string | null>(null);
+
   useEffect(() => {
     if (!user || !userData) return;
     setPremiumUser(
@@ -40,20 +41,25 @@ export function useEventView() {
   }, [userData, user]);
 
   useEffect(() => {
+    if (!user?.uid || loading) return;
+
+    const currentKey = `${user.uid}-${userRole}`;
+    if (hasFetched.current === currentKey) return;
+
     const fetchCourses = async () => {
-      const allCourses = (await getAllCourses(
-        user?.uid || "anonymous",
-        userRole,
-      )) as CourseData[];
+      hasFetched.current = currentKey;
+      const allCourses = (await getAllCourses(user.uid, userRole)) as CourseData[];
       setCourses(allCourses);
     };
     fetchCourses();
-  }, [user?.uid, userRole]);
+  }, [user?.uid, userRole, loading]);
 
   useEffect(() => {
+    if (!user?.uid || loading) return;
+
     const fetchEvents = async () => {
       const events: EventData[] = (await getAllEvents(
-        user?.uid || "anonymous",
+        user.uid,
         userRole,
       )) as EventData[];
 
@@ -87,9 +93,9 @@ export function useEventView() {
       const statusMap: Record<string, EventStatus> = {};
       for (const event of upcoming) {
         statusMap[event.uid] = EventStatus.Loading;
-        if (!user || loading) {
+        if (!user) {
           statusMap[event.uid] = EventStatus.NotRegistered;
-          return;
+          continue;
         }
         try {
           const status = await isUserInEvent(event.uid, user.uid, userRole);

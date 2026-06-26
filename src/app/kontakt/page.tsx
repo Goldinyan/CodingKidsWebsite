@@ -1,29 +1,13 @@
 "use client";
 
 import { useAuth } from "@/BackEnd/AuthContext";
-import { useEffect } from "react";
-import { getUserData } from "@/lib/db";
-import { useState } from "react";
 import NoUserKontakt from "./NoUserKontakt";
 import AnnouncementView from "./AnnouncementView";
-import type { UserData } from "@/BackEnd/type";
 import { useTheme } from "@/context/ThemeContext";
 
 export default function Home() {
-  const { user, loading } = useAuth();
+  const { user, loading, userData } = useAuth();
   const { theme } = useTheme();
-  const [userData, setUserData] = useState<UserData>();
-
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!user) return;
-      const data = await getUserData(user.uid);
-      if (data) {
-        setUserData(data);
-      }
-    };
-    fetchData();
-  }, [user]);
 
   if (loading) {
     return (

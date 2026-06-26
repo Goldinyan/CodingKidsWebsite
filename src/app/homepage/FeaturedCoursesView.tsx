@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useAuth } from "@/BackEnd/AuthContext";
 import { getAllCourses } from "@/lib/db";
 import { CourseData } from "@/BackEnd/type";
@@ -14,32 +14,39 @@ export default function FeaturedCoursesView({
 }: {
   isRounded: boolean;
 }) {
-  const { user, userRole } = useAuth();
+  const { user, userRole, loading } = useAuth();
   const [courses, setCourses] = useState<CourseData[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loadingCourses, setLoadingCourses] = useState(true);
   const { theme } = useTheme();
 
   const router = useRouter();
+  const hasFetched = useRef<string | null>(null);
 
   useEffect(() => {
+    if (!user?.uid || loading) {
+      setLoadingCourses(true);
+      return;
+    }
+
+    const currentKey = `${user.uid}-${userRole}`;
+    if (hasFetched.current === currentKey) return;
+
     const fetchCourses = async () => {
+      hasFetched.current = currentKey;
       try {
-        const allCourses = await getAllCourses(
-          user?.uid || "anonymous",
-          userRole,
-        );
+        const allCourses = await getAllCourses(user.uid, userRole);
         setCourses(allCourses.slice(0, 3));
       } catch (error) {
         console.error("Failed to fetch courses:", error);
       } finally {
-        setLoading(false);
+        setLoadingCourses(false);
       }
     };
 
     fetchCourses();
-  }, [user?.uid, userRole]);
+  }, [user?.uid, userRole, loading]);
 
-  if (loading) {
+  if (loadingCourses) {
     return (
       <div className={`w-full px-8 py-16 transition-colors duration-300 `}>
         <p
