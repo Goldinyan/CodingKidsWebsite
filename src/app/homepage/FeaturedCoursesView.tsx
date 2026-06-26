@@ -9,15 +9,11 @@ import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useTheme } from "@/context/ThemeContext";
 
-export default function FeaturedCoursesView({
-  isRounded,
-}: {
-  isRounded: boolean;
-}) {
+export default function FeaturedCoursesView() {
   const { user, userRole, loading } = useAuth();
   const [courses, setCourses] = useState<CourseData[]>([]);
   const [loadingCourses, setLoadingCourses] = useState(true);
-  const { theme } = useTheme();
+  const { theme, isRounded } = useTheme();
 
   const router = useRouter();
   const hasFetched = useRef<string | null>(null);

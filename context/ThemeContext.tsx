@@ -1,7 +1,7 @@
 "use client";
 
 import { useAuth } from "@/BackEnd/AuthContext";
-import { getUserData, updateUser } from "@/lib/db";
+import { updateUser } from "@/lib/db";
 import {
   ReactNode,
   createContext,
@@ -51,42 +51,6 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
     initTheme();
   }, [userData?.theme, user]);
-
-  /*
-  useEffect(() => {
-    setMounted(true);
-
-    let userThemePreference = null;
-    const userRoundedPreference = null;
-
-    const checkUserPreference = async () => {
-      if (!user) return;
-
-      const data = await getUserData(user.uid, userRole);
-
-      if (data?.theme) {
-        userThemePreference = data.theme as Theme;
-      }
-    };
-
-    checkUserPreference();
-
-    // Prüfe localStorage und System-Präferenz
-    const storedTheme = localStorage.getItem("theme") as Theme | null;
-    const prefersDark = window.matchMedia(
-      "(prefers-color-scheme: dark)",
-    ).matches;
-
-    if (userThemePreference == null) {
-      const initialTheme = storedTheme || (prefersDark ? "dark" : "light");
-      setThemeState(initialTheme);
-      applyTheme(initialTheme);
-    } else {
-      setThemeState(userThemePreference);
-      applyTheme(userThemePreference);
-    }
-  }, []);
-  */
 
   const applyTheme = (newTheme: Theme) => {
     const root = document.documentElement;

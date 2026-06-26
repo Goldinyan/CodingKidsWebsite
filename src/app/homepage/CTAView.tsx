@@ -5,8 +5,8 @@ import { ArrowRight } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
 import { useRouter } from "next/navigation";
 
-export default function CTAView({ isRounded }: { isRounded: boolean }) {
-  const { theme } = useTheme();
+export default function CTAView() {
+  const { theme, isRounded } = useTheme();
   const router = useRouter();
 
   return (
@@ -43,7 +43,7 @@ export default function CTAView({ isRounded }: { isRounded: boolean }) {
 
               <div className="flex flex-col sm:flex-row gap-4">
                 <button
-                  onClick={()=> router.push("/termine")}
+                  onClick={() => router.push("/termine")}
                   className={`px-8 py-3 font-medium border transition-all duration-200 hover:scale-105 active:scale-100 flex items-center justify-center gap-2 group ${isRounded ? "rounded-lg" : "rounded-none"} ${theme === "dark"
                       ? "bg-white text-black border-white hover:bg-gray-100"
                       : "bg-green-600 text-white border-green-600 hover:bg-green-700"

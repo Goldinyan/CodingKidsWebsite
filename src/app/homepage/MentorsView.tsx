@@ -12,14 +12,14 @@ import {
   SimpleMentorCardProps,
 } from "../verein/mentor/SimpleMentorCard";
 
-export default function MentorsView({ isRounded }: { isRounded: boolean }) {
+export default function MentorsView() {
   const [mentors, setMentors] = useState<Mentor[]>([]);
   const [orderedMentors, setOrderedMentors] = useState<Mentor[]>([]);
   const [expanded, setExpanded] = useState<number>(0);
 
   const [loading, setLoading] = useState(true);
   const { user, userRole, loading: authLoading } = useAuth();
-  const { theme } = useTheme();
+  const { theme, isRounded } = useTheme();
 
   const hasFetched = useRef<string | null>(null);
 
@@ -147,8 +147,7 @@ export default function MentorsView({ isRounded }: { isRounded: boolean }) {
                 id: 0,
                 name: mentor.name,
                 role: mentor.role,
-                des1: mentor.des1,
-                des2: mentor.des2,
+                des: mentor.des,
                 insta: mentor.insta,
                 github: mentor.github,
                 linkedin: mentor.linkedin,
