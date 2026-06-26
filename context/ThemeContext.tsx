@@ -25,8 +25,34 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<Theme>("light");
   const [isRounded, setIsRoundedState] = useState<boolean>(true);
   const [mounted, setMounted] = useState(false);
-  const { user, userRole } = useAuth();
+  const { user, userRole, userData } = useAuth();
 
+  useEffect(() => {
+    setMounted(true);
+
+    const initTheme = async () => {
+      let userThemePreference: Theme | null = null;
+
+      if (user && userData?.theme) {
+        userThemePreference = userData.theme as Theme;
+      }
+
+      const storedTheme = localStorage.getItem("theme") as Theme | null;
+      const prefersDark = window.matchMedia(
+        "(prefers-color-scheme: dark)",
+      ).matches;
+
+      const finalTheme =
+        userThemePreference || storedTheme || (prefersDark ? "dark" : "light");
+
+      setThemeState(finalTheme);
+      applyTheme(finalTheme);
+    };
+
+    initTheme();
+  }, [userData?.theme, user]);
+
+  /*
   useEffect(() => {
     setMounted(true);
 
@@ -60,6 +86,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       applyTheme(userThemePreference);
     }
   }, []);
+  */
 
   const applyTheme = (newTheme: Theme) => {
     const root = document.documentElement;
@@ -99,7 +126,12 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     }
 
     const updateUserRounded = async () => {
-      await updateUser(user.uid, { roundedCorners: newRounded}, user.uid, userRole);
+      await updateUser(
+        user.uid,
+        { roundedCorners: newRounded },
+        user.uid,
+        userRole,
+      );
     };
 
     //updateUserRounded();

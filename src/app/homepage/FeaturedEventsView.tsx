@@ -8,15 +8,12 @@ import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { toJsDate } from "@/BackEnd/utils";
 import { useTheme } from "@/context/ThemeContext";
+import { useAuth } from "@/BackEnd/AuthContext";
 
-export default function FeaturedEventsView({
-  isRounded,
-}: {
-  isRounded: boolean;
-}) {
+export default function FeaturedEventsView() {
   const [events, setEvents] = useState<EventData[]>([]);
-  const [loading, setLoading] = useState(true);
-  const { theme } = useTheme();
+  const { theme, isRounded } = useTheme();
+  const { user, userData, userRole, loading } = useAuth();
 
   const router = useRouter();
 
@@ -29,24 +26,20 @@ export default function FeaturedEventsView({
     if (hasFetched.current === currentKey) return;
 
     const fetchEvents = async () => {
-      try {
-        const allEvents = (await getAllEvents()) as EventData[];
+      hasFetched.current = currentKey;
 
-        const upcomingEvents = allEvents
-          .sort(
-            (a, b) => toJsDate(a.date).getTime() - toJsDate(b.date).getTime(),
-          )
-          .slice(0, 3);
-        setEvents(upcomingEvents as EventData[]);
-      } catch (error) {
-        console.error("Failed to fetch events:", error);
-      } finally {
-        setLoading(false);
-      }
+      const allEvents = (await getAllEvents(user.uid, userRole)) as EventData[];
+
+      const upcomingEvents = allEvents
+        .sort((a, b) => toJsDate(a.date).getTime() - toJsDate(b.date).getTime())
+        .slice(0, 3);
+      setEvents(upcomingEvents as EventData[]);
     };
 
     fetchEvents();
-  }, []);
+  }, [user?.uid, userRole]);
+
+  
 
   if (loading) {
     return (

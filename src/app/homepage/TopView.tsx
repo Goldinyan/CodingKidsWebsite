@@ -9,14 +9,12 @@ import { useTheme } from "@/context/ThemeContext";
 export default function TopView({
   data,
   loading,
-  isRounded,
 }: {
   data: UserData | null;
   loading: boolean;
-  isRounded: boolean;
 }) {
   const router = useRouter();
-  const { theme } = useTheme();
+  const { theme, isRounded } = useTheme();
   const showRegisterButton = data === null && !loading;
 
   const features: { text: string; des: string; icon: React.ElementType }[] = [

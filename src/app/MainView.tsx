@@ -25,10 +25,10 @@ export default function MainView() {
       <div className="fixed inset-0 bg-grid-pattern bg-fixed z-0 pointer-events-none" />
 
       <div className="relative max-w-7xl flex flex-col mx-auto z-10">
-        <TopView data={userData} loading={loading} isRounded={isRounded} />
+        <TopView data={userData} loading={loading} />
         {/*<MiddleView isRounded={isRounded} />*/}
-        <FeaturedEventsView data={data} loading={loading} isRounded={isRounded} />
-        <FeaturedCoursesView data={data} loading={loading} isRounded={isRounded} />
+        <FeaturedEventsView data={data} loading={loading} />
+        <FeaturedCoursesView data={data} loading={loading} />
         <MentorsView data={data} loading={loading} isRounded={isRounded} />
         <CTAView isRounded={isRounded} />
       </div>

@@ -1,9 +1,43 @@
-# TODOs
-- [ ] termine view mobile kann nicht hovern musst du fixen mit klick maybe
-- [ ] dashboard add fixen zu groß
-- [ ] login and register isRounded adden
-- [ ] mobile kriegen updates nicht und keine ux bei knopf bei termine mach toast oder so
+## Todos
+
+
+[ ] - Überall wo getUserData verwendet wird, weg machen, und userData aus der useAuth() hook holen
+[ ] - bei jedem check, gucken ob loading true ist wenn ja dann return, loading bekommt man auch durch die useAuth hook
+[ ] - außerdem mit useRef hadFetched und checken
+
+Beispiel für das alles ist hier:
+
+```ts
+const { user, userData, userRole, loading } = useAuth();
+
+  const router = useRouter();
+
+  const hasFetched = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (!user?.uid) return;
+
+    const currentKey = `${user.uid}-${userRole}`;
+    if (hasFetched.current === currentKey) return;
+
+    const fetchEvents = async () => {
+      hasFetched.current = currentKey;
+
+      const allEvents = (await getAllEvents(user.uid, userRole)) as EventData[];
+
+      const upcomingEvents = allEvents
+        .sort((a, b) => toJsDate(a.date).getTime() - toJsDate(b.date).getTime())
+        .slice(0, 3);
+      setEvents(upcomingEvents as EventData[]);
+    };
+
+    fetchEvents();
+  }, [user?.uid, userRole]);
+```
 
 
 
-theoretische swr hinzufügen für 0 latency und cache der daten, weniger calls aber kein bock lowkey
+Theoretisch, aber noch nicht machen:
+
+[ ] - SWR hinzufügen für 0 latency und cache der Date, wäre weniger DB-calls aber momentan nicht mätog
+
