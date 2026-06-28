@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import WerWirSind from "./WerWirSind";
 import Support from "./Support";
+import Partners from "./Partners";
 
 export default function ClubViews() {
   return (
@@ -10,6 +10,7 @@ export default function ClubViews() {
       <section id="wir">
         <WerWirSind />
       </section>
+      <Partners />
       <section id="mitglied">
         <Support />
       </section>

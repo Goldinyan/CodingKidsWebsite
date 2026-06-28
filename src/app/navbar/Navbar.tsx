@@ -1,5 +1,6 @@
 "use client";
-
+import Image from "next/image";
+import logoTransparent from "@/public/Logo_aussen_Transparent.png";
 import { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
@@ -58,21 +59,30 @@ export default function Navbar() {
 
   return (
     <div
-      className={`w-full  ${theme == "dark" ? "bg-black" : "bg-base-white"} backdrop-blur-sm border-b-2 transition-all duration-300 border-white/10`}
+      className={`w-full fixed top-0 left-0 z-50 border-b transition-all duration-300 backdrop-blur-xl ${theme === "dark"
+          ? "bg-black/20 border-white/10"
+          : "bg-white/40 border-slate-200/80"
+        }`}
     >
-      <div className="max-w-7xl mx-auto flex  justify-center items-center h-16 pt-5 md:pt-0">
+      {" "}
+      <div className="max-w-7xl mx-auto flex  justify-center items-center h-12 pt-5 md:pt-0">
         <div className="w-full flex items-center pr-5 pl-5">
-          <div className="flex-row items-center gap-3 hidden md:flex">
-            <img
-              src="Logo_aussen_Transparent.png"
-              className="w-14 h-14 p-1 mt-1"
-            />
-            <p
-              onClick={() => router.push("/")}
-              className={`${theme == "dark" ? "text-white" : "text-black"} font-bold hidden cursor-pointer lg:flex -white text-sm transition-colors`}
-            >
-              Coding Kids Niederrhein
-            </p>
+          <div className="flex-row items-center gap-1 hidden md:flex">
+            <Image src={logoTransparent} alt="Logo" className="w-10 h-10 p-1" />
+            <div className="flex flex-col ">
+              <p
+                onClick={() => router.push("/")}
+                className={`${theme == "dark" ? "text-white" : "text-black"} font-bold hidden cursor-pointer lg:flex -white text-[12px] transition-colors`}
+              >
+                Coding Kids
+              </p>
+              <p
+                style={{ color: "#9da2ab" }}
+                className={`font-thin hidden cursor-pointer lg:flex  text-[12px] transition-colors`}
+              >
+                Niederrhein
+              </p>
+            </div>
           </div>
 
           <div className="flex-row items-center gap-3 ml-auto hidden md:flex">
@@ -208,7 +218,7 @@ function MainHeader({
           return (
             <p
               key={h.domain}
-              className={`px-4 py-2 font-medium transition-all duration-200 active:scale-100 flex items-center gap-2 cursor-pointer  ${isRounded ? "rounded-md" : "rounded-none"
+              className={`px-4 py-2 font-medium transition-all duration-200 active:scale-100 flex items-center gap-2 cursor-pointer text-[14px] font-normal ${isRounded ? "rounded-md" : "rounded-none"
                 } ${theme === "dark"
                   ? `text-white hover:bg-base-white/10`
                   : `text-black hover:bg-black/10 `

@@ -45,6 +45,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         } else {
           setUserData(null);
           setUserRole("anonymous");
+          setLoading(false); // wenn kein User, dann direkt auf false
         }
       } catch (error) {
         console.error("Fehler beim Laden der DB-Userdaten:", error);
