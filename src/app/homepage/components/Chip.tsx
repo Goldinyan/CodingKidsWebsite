@@ -7,9 +7,8 @@ export default function Chip({
 }) {
   return (
     <span
-      className="text-[10px] px-2 py-0.5 rounded-md border"
+      className="text-[10px] font-mono px-2 py-0.5 rounded-md border"
       style={{
-        fontFamily: "'JetBrains Mono', monospace",
         color,
         background: `${color}14`,
         borderColor: `${color}30`,

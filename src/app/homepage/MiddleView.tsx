@@ -101,9 +101,8 @@ export default function MiddleView() {
 
                 <div>
                   <div
-                    className={`font-bold mb-1.5 transition-colors duration-300 ${isDark ? "text-white" : "text-slate-900"
+                    className={`font-bold mb-1.5 font-gro transition-colors duration-300 ${isDark ? "text-white" : "text-slate-900"
                       }`}
-                    style={{ fontFamily: "'Familjen Grotesk', sans-serif" }}
                   >
                     {title}
                   </div>
@@ -142,9 +141,8 @@ export default function MiddleView() {
         </div>
         <div className="flex-1">
           <div
-            className={`font-bold mb-1 transition-colors duration-300 ${isDark ? "text-white" : "text-slate-900"
+            className={`font-bold mb-1 font-gro transition-colors duration-300 ${isDark ? "text-white" : "text-slate-900"
               }`}
-            style={{ fontFamily: "'Familjen Grotesk', sans-serif" }}
           >
             Du stellst vor, was du gebaut hast
           </div>
@@ -173,8 +171,7 @@ export default function MiddleView() {
               </div>
               <div>
                 <div
-                  className="font-bold text-white mb-0.5"
-                  style={{ fontFamily: "'Familjen Grotesk', sans-serif" }}
+                  className="font-bold font-gro text-white mb-0.5"
                 >
                   CUBES Wesel
                 </div>
@@ -189,8 +186,7 @@ export default function MiddleView() {
 
             <div className="rounded-xl p-4 mb-6 border bg-white/5 border-white/10">
               <p
-                className="text-[10px] uppercase tracking-widest mb-2 text-gray-500"
-                style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                className="text-[10px] font-mono uppercase tracking-widest mb-2 text-gray-500"
               >
                 Anfahrt
               </p>
@@ -215,20 +211,17 @@ export default function MiddleView() {
           <GlassCard className="w-full xl:col-span-2 p-6  flex flex-col gap-5 hover:!border-purple-400/40 ">
             <div>
               <div
-                className="text-[10px] uppercase tracking-widest mb-1 text-gray-500"
-                style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                className="text-[10px] uppercase font-mono tracking-widest mb-1 text-gray-500"
               >
                 Termin
               </div>
               <div
-                className="text-2xl font-black text-white leading-none"
-                style={{ fontFamily: "'Familjen Grotesk', sans-serif" }}
+                className="text-2xl font-black font-gro text-white leading-none"
               >
                 Jeden Mittwoch
               </div>
               <div
-                className="text-xl font-bold mt-1 text-purple-400"
-                style={{ fontFamily: "'Familjen Grotesk', sans-serif" }}
+                className="text-xl font-bold font-gro mt-1 text-purple-400"
               >
                 18:00 – 19:30 Uhr
               </div>
@@ -251,8 +244,7 @@ export default function MiddleView() {
 
             <button
               onClick={() => router.push("/termine")}
-              className="mt-auto w-full flex items-center justify-center gap-2 px-4 py-2 rounded-xl font-bold text-[14px] no-underline transition-colors bg-purple-500 hover:bg-purple-400 text-black"
-              style={{ fontFamily: "'Familjen Grotesk', sans-serif" }}
+              className="mt-auto w-full font-gro flex items-center justify-center gap-2 px-4 py-2 rounded-xl font-bold text-[14px] no-underline transition-colors bg-purple-500 hover:bg-purple-400 text-black"
             >
               Nächste Dojos ansehen <ArrowRight className="w-4 h-4" />
             </button>
@@ -274,8 +266,7 @@ export default function MiddleView() {
                 <Notebook className="w-4 h-4" style={{ color: "#4ade80" }} />
               </div>
               <div
-                className="font-bold text-white"
-                style={{ fontFamily: "'Familjen Grotesk', sans-serif" }}
+                className="font-bold font-gro text-white"
               >
                 Voraussetzungen
               </div>
@@ -297,17 +288,15 @@ export default function MiddleView() {
 
           <GlassCard className="p-6">
             <div
-              className="text-[10px] uppercase tracking-widest mb-3"
+              className="text-[10px] uppercase font-mono tracking-widest mb-3"
               style={{
-                fontFamily: "'JetBrains Mono', monospace",
                 color: "#4ade80",
               }}
             >
               Warum programmieren?
             </div>
             <div
-              className="text-lg font-black text-white leading-snug mb-3"
-              style={{ fontFamily: "'Familjen Grotesk', sans-serif" }}
+              className="text-lg font-black font-gro text-white leading-snug mb-3"
             >
               Deine Ideen. Deine Regeln. Deine Projekte.
             </div>

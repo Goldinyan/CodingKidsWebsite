@@ -53,7 +53,7 @@ export default function FeaturedEventsView() {
       if (hasFetched.current === currentKey) return;
       hasFetched.current = currentKey;
     }
-    
+
     const fetchEvents = async () => {
       const [allEvents, allCourses] = await Promise.all([
         getAllEvents(user?.uid, userRole),
@@ -83,7 +83,9 @@ export default function FeaturedEventsView() {
     courseMap[course.uid] = course;
   });
 
-  const validEvents = events.filter((ev) => toJsDate(ev.date).getTime() > Date.now());
+  const validEvents = events.filter(
+    (ev) => toJsDate(ev.date).getTime() > Date.now(),
+  );
 
   return (
     <section className="py-14 mx-4">
@@ -118,7 +120,8 @@ export default function FeaturedEventsView() {
                 Keine Termine geplant
               </h3>
               <p className="text-sm text-gray-500 max-w-sm leading-relaxed">
-                Aktuell sind keine neuen CoderDojos in der Pipeline. Schau einfach bald wieder vorbei oder kontaktiere uns!
+                Aktuell sind keine neuen CoderDojos in der Pipeline. Schau
+                einfach bald wieder vorbei oder kontaktiere uns!
               </p>
             </div>
           </motion.div>
@@ -137,17 +140,15 @@ export default function FeaturedEventsView() {
               transition={{ delay: i * 0.06, duration: 0.4 }}
             >
               <GlassCard
-                className={`flex items-center gap-4 p-5 hover:!border-purple-400/30 transition-colors ${
-                  full ? "opacity-60" : "opacity-100"
-                }`}
+                className={`flex items-center gap-4 p-5 hover:!border-purple-400/30 transition-colors ${full ? "opacity-60" : "opacity-100"
+                  }`}
               >
                 {/* Date */}
                 <div
-                  className={`shrink-0 rounded-xl border p-2.5 text-center w-14 ${
-                    full
+                  className={`shrink-0 rounded-xl border p-2.5 text-center w-14 ${full
                       ? "bg-white/[0.02] border-white/[0.06]"
                       : "bg-purple-500/[0.06] border-purple-500/20"
-                  }`}
+                    }`}
                 >
                   <div className="text-[9px] tracking-widest font-mono text-gray-500">
                     {fmtMonth(ev.date)}
@@ -180,11 +181,10 @@ export default function FeaturedEventsView() {
                   )}
                   <button
                     onClick={() => router.push("/termine")}
-                    className={`px-3 py-1.5 rounded-lg border text-xs font-bold bg-transparent transition-all font-mono ${
-                      full
+                    className={`px-3 py-1.5 rounded-lg border text-xs font-bold bg-transparent transition-all font-mono ${full
                         ? "bg-white/[0.03] border-white/[0.06] text-gray-500 cursor-not-allowed"
                         : "bg-purple-500/[0.08] border-purple-500/25 text-purple-400 hover:bg-purple-500/15 cursor-pointer"
-                    }`}
+                      }`}
                   >
                     Details →
                   </button>

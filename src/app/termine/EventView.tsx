@@ -1,16 +1,17 @@
 "use client";
 
+import { CalendarDays, Lock } from "lucide-react";
 import EventCard from "./EventCard";
 import EventNavbar from "./EventNavbar";
-import { Badge } from "@/components/ui/badge";
 import { toJsDate } from "@/BackEnd/utils";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "@/context/ThemeContext";
-// Importiere deinen neuen Custom Hook:
+import { useAuth } from "@/BackEnd/AuthContext";
 import { useEventView } from "./hooks/useEventView";
 
 export default function EventView() {
   const { theme, isRounded } = useTheme();
+  const { user, userData } = useAuth();
 
   const {
     upcomingEvents,
@@ -25,88 +26,118 @@ export default function EventView() {
     getSortedEvents,
   } = useEventView();
 
+  const isMember =
+    userData?.role === "admin" ||
+    userData?.role === "mentor" ||
+    userData?.role === "member";
+
   return (
-    <div className="flex max-w-7xl mx-auto items-center flex-col gap-4 p-6 pt-5">
-      <EventNavbar
-        callback={(key, value) =>
-          setFilters((prev) => ({ ...prev, [key]: value }))
-        }
-        filters={filters}
-        courses={courses}
-      />
-
-      {filteredUpcomingEvents.length > 0 && (
-        <div className="w-full space-y-4">
-          <div className="flex items-center gap-3 mt-6">
-            <h2 className="text-2xl font-bold text-primary">Kommende Events</h2>
-            <Badge
-              variant="outline"
-              className="bg-primaryOwn text-white mt-1 rounded-full "
-            >
-              {filteredUpcomingEvents.length}
-            </Badge>
-          </div>
-          <div className="grid min-h-100 grid-cols-1 md:grid-cols-2 gap-6">
-            {filteredUpcomingEvents.map((event, idx) => (
-              <motion.div
-                key={event.uid}
-                initial={{ opacity: 1, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: idx * 0.1 }}
-              >
-                <EventCard
-                  event={event}
-                  isPast={false}
-                  status={statuses[event.uid]}
-                  tooEarly={!checkIfEventIsInRange(toJsDate(event.date))}
-                  theme={theme}
-                  isRounded={isRounded}
-                  handleEvents={handleEvents}
-                />
-              </motion.div>
-            ))}
-          </div>
+    <div className="min-h-screen bg-black text-white">
+      <div className="max-w-6xl mx-auto px-6 pt-2 pb-20 relative">
+        <div className="mb-10 relative">
+          <p className="text-[10px] tracking-[0.22em] uppercase mb-2 text-purple-500 font-mono">
+            CoderDojo Niederrhein
+          </p>
+          <h1 className="text-4xl font-black tracking-tight text-white mb-3 font-grotesk">
+            Alle Termine
+          </h1>
+          <p className="text-sm text-gray-500 max-w-xl">
+            Jeden Mittwoch 18:00–19:30 Uhr · CUBES Wesel · Kostenlos und offen
+            für alle
+          </p>
         </div>
-      )}
 
-      {pastEvents.length > 0 && (
-        <div className="w-full space-y-4 mt-8">
-          <div className="flex items-center gap-3">
-            <h2 className="text-2xl font-bold text-muted-foreground">
-              Vergangene Events
-            </h2>
-            <Badge variant="outline">{pastEvents.length}</Badge>
+        <EventNavbar
+          callback={(key, value) =>
+            setFilters((prev) => ({ ...prev, [key]: value }))
+          }
+          filters={filters}
+          courses={courses}
+        />
+
+        <div className="mb-4 text-xs font-mono text-gray-700">
+          {filteredUpcomingEvents.length} Veranstaltung
+          {filteredUpcomingEvents.length !== 1 ? "en" : ""} gefunden
+        </div>
+
+        {!isMember && (
+          <div className="mb-6 flex items-start gap-3 px-4 py-3 rounded-xl border border-purple-500/20 bg-purple-500/[0.06] border-l-4 border-l-purple-500">
+            <Lock className="w-4 h-4 mt-0.5 shrink-0 text-purple-500" />
+            <p className="text-sm text-gray-400">
+              <span className="text-white font-semibold">
+                Vereinsmitglieder
+              </span>{" "}
+              können sich früher anmelden und haben reservierte Plätze.{" "}
+              {/*<a
+                href="/#mitmachen"
+                className="no-underline transition-colors text-green-500 hover:text-green-400"
+              >
+                Mehr erfahren →
+              </a>*/}
+            </p>
           </div>
-          <div className="grid min-h-100 grid-cols-1 md:grid-cols-2 gap-6">
-            {pastEvents
-              .sort((a, b) => (a.date.seconds || 0)  - (b.date.seconds || 0))
-              .map((event, idx) => (
-                <motion.div
-                  key={event.uid}
-                  initial={{ opacity: 1, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: idx * 0.1 }}
-                >
+        )}
+
+        {/* Event list */}
+        <div className="flex flex-col gap-3">
+          <AnimatePresence mode="popLayout">
+            {filteredUpcomingEvents.length === 0 ? (
+              <motion.div
+                key="empty"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="py-16 text-center"
+              >
+                <CalendarDays className="w-10 h-10 mx-auto mb-3 opacity-40" />
+                <p className="text-sm font-mono text-gray-700">
+                  Keine Veranstaltungen gefunden
+                </p>
+              </motion.div>
+            ) : (
+              filteredUpcomingEvents.map((event) => {
+                const course = courses.find((c) => c.uid === event.course);
+                return (
                   <EventCard
+                    key={event.uid}
                     event={event}
-                    isPast={true}
+                    isPast={false}
                     status={statuses[event.uid]}
                     tooEarly={!checkIfEventIsInRange(toJsDate(event.date))}
                     theme={theme}
                     isRounded={isRounded}
                     handleEvents={handleEvents}
                   />
-                </motion.div>
-              ))}
-          </div>
+                );
+              })
+            )}
+          </AnimatePresence>
         </div>
-      )}
 
-      {upcomingEvents.length === 0 && pastEvents.length === 0 && (
-        <div className="flex flex-col items-center justify-center gap-4 py-12">
-          <p className="text-lg text-muted-foreground">Keine Events gefunden</p>
-        </div>
-      )}
+        {/* Past events section */}
+        {pastEvents.length > 0 && filteredUpcomingEvents.length > 0 && (
+          <div className="w-full mt-12">
+            <h2 className="text-2xl font-bold text-gray-500 mb-6 font-grotesk">
+              Vergangene Events
+            </h2>
+            <div className="flex flex-col gap-3">
+              {pastEvents
+                .sort((a, b) => (b.date.seconds || 0) - (a.date.seconds || 0))
+                .map((event) => (
+                  <EventCard
+                    key={event.uid}
+                    event={event}
+                    isPast={true}
+                    status={statuses[event.uid]}
+                    tooEarly={false}
+                    theme={theme}
+                    isRounded={isRounded}
+                    handleEvents={handleEvents}
+                  />
+                ))}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

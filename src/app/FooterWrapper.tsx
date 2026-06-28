@@ -27,15 +27,13 @@ export default function FooterWrapper() {
           </div>
           <div>
             <span
-              className="font-black text-sm text-white "
-              style={{ fontFamily: "'Familjen Grotesk', sans-serif" }}
+              className="font-gro font-black text-sm text-white "
             >
               CodingKids
             </span>
             <span
-              className="text-[10px] ml-1.5"
+              className="text-[10px] font-mono ml-1.5"
               style={{
-                fontFamily: "'JetBrains Mono', monospace",
                 color: "#374151",
               }}
             >
@@ -44,9 +42,8 @@ export default function FooterWrapper() {
           </div>
         </button>
         <div
-          className="flex items-center gap-5 text-xs"
+          className="flex items-center font-mono gap-5 text-xs"
           style={{
-            fontFamily: "'JetBrains Mono', monospace",
             color: "#4b5563",
           }}
         >

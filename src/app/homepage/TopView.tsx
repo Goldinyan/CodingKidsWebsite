@@ -16,45 +16,6 @@ import { useTheme } from "@/context/ThemeContext";
 export default function TopView() {
   const router = useRouter();
   const { theme, isRounded } = useTheme();
-
-  const features: { text: string; des: string; icon: React.ElementType }[] = [
-    {
-      text: "Für alle Altersgruppen",
-      des: "Vom Einstieg mit blockbasierter Programmierung bis hin zu fortgeschrittenen textbasierten Sprachen wie JavaScript.",
-      icon: GraduationCap,
-    },
-    {
-      text: "Erfahrene Mentoren",
-      des: "Lerne von leidenschaftlichen Informatiklern mit Praxiserfahrung in Technologie und Informatik.",
-      icon: Users,
-    },
-    {
-      text: "Zukunftsorientiert",
-      des: "Wir vermitteln nicht nur Code, sondern auch Problemlösungskonzepte und kreatives Denken für die Welt von morgen.",
-      icon: Rocket,
-    },
-  ];
-
-  const containerVariants = {
-    hidden: {},
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.06, delayChildren: 0.05 },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { scale: 0.92 },
-    visible: {
-      scale: 1,
-      transition: { duration: 0.5, ease: "easeOut" },
-    },
-    hover: {
-      scale: 1.02,
-      transition: { type: "spring", stiffness: 400, damping: 25 },
-    },
-  };
-
   return (
     <div className="">
       <div className="relative w-full px-4 pt-20 pb-20">
@@ -82,8 +43,7 @@ export default function TopView() {
             </div>
           */}
             <h1
-              className="text-4xl md:text-5xl font-black tracking-medium leading-none mb-5"
-              style={{ fontFamily: "'Familjen Grotesk', sans-serif" }}
+              className="text-4xl font-gro md:text-5xl font-black tracking-medium leading-none mb-5"
             >
               Programmieren.
               <br />
@@ -156,15 +116,13 @@ export default function TopView() {
               <GlassCard className="p-5 flex flex-col gap-2">
                 <Icon className="w-4 h-4" style={{ color: "#4ade80" }} />
                 <div
-                  className="text-xl font-black tracking-tight text-white"
-                  style={{ fontFamily: "'Familjen Grotesk', sans-serif" }}
+                  className="text-xl font-gro font-black tracking-tight text-white"
                 >
                   {value}
                 </div>
                 <div
-                  className="text-[10px] uppercase tracking-widest"
+                  className="text-[10px] font-mono uppercase tracking-widest"
                   style={{
-                    fontFamily: "'JetBrains Mono', monospace",
                     color: "#6b7280",
                   }}
                 >

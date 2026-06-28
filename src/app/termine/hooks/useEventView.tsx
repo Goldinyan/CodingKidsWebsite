@@ -27,6 +27,7 @@ export function useEventView() {
     course: "",
     nameSort: "",
     dateSort: "",
+    joinableOnly: false,
   });
 
   const hasFetched = useRef<string | null>(null);
@@ -41,14 +42,20 @@ export function useEventView() {
   }, [userData, user]);
 
   useEffect(() => {
-    if (!user?.uid || loading) return;
+    if (loading) return;
 
-    const currentKey = `${user.uid}-${userRole}`;
-    if (hasFetched.current === currentKey) return;
+    if (user) {
+      const currentKey = `${user.uid}-${userRole}`;
+      if (hasFetched.current === currentKey) return;
+
+      hasFetched.current = currentKey;
+    }
 
     const fetchCourses = async () => {
-      hasFetched.current = currentKey;
-      const allCourses = (await getAllCourses(user.uid, userRole)) as CourseData[];
+      const allCourses = (await getAllCourses(
+        user?.uid,
+        userRole,
+      )) as CourseData[];
       setCourses(allCourses);
     };
     fetchCourses();
@@ -115,9 +122,18 @@ export function useEventView() {
     let sorted = [...events];
     const nameSort = filters["nameSort"];
     const dateSort = filters["dateSort"];
+    const joinableOnly = filters["joinableOnly"] as boolean;
 
     if (filters.course && filters.course !== "") {
       sorted = sorted.filter((a) => a.course === filters.course);
+    }
+
+    if (joinableOnly) {
+      sorted = sorted.filter((event) => {
+        const taken = (event.users?.length || 0) + (event.queue?.length || 0);
+        const left = event.memberCount - taken;
+        return left > 0;
+      });
     }
 
     if (nameSort === "asc") {
@@ -141,9 +157,9 @@ export function useEventView() {
     setFilteredUpcomingEvents(getSortedEvents(upcomingEvents));
   }, [
     filters.course,
-    filters.course,
     filters.nameSort,
     filters.dateSort,
+    filters.joinableOnly,
     upcomingEvents,
   ]);
 

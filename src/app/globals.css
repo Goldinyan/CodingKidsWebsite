@@ -2,6 +2,11 @@
 @import "tw-animate-css";
 @themecss;
 
+@theme {
+  --font-jet: var(--font-jetbrains-mono), monospace;
+  --font-gro: var(--font-familjen-grotesk), sans-serif;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 /* for people with diseases i have to include based on WCAG 2.3.3 

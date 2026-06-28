@@ -4,9 +4,8 @@ export default function SectionLabel({ children }: { children: string }) {
   const { theme } = useTheme();
   return (
     <p
-      className="text-[10px] tracking-[0.22em] uppercase mb-2"
+      className="text-[10px] font-mono tracking-[0.22em] uppercase mb-2"
       style={{
-        fontFamily: "'JetBrains Mono', monospace",
         color: theme === "dark" ? "#a78bfa" : "#7c3aed",
       }}
     >

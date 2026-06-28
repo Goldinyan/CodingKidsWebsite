@@ -52,9 +52,8 @@ export default function Partners() {
             style={{ borderColor: "rgba(255,255,255,0.07)" }}
           >
             <div
-              className="text-[10px] uppercase tracking-widest mb-3"
+              className="text-[10px] font-mono uppercase tracking-widest mb-3"
               style={{
-                fontFamily: "'JetBrains Mono', monospace",
                 color: "#6b7280",
               }}
             >
@@ -71,15 +70,13 @@ export default function Partners() {
                   }}
                 >
                   <div
-                    className="text-[14px] font-semibold text-white"
-                    style={{ fontFamily: "'Familjen Grotesk', sans-serif" }}
+                    className="text-[14px] font-gro font-semibold text-white"
                   >
                     {p.name}
                   </div>
                   <div
-                    className="text-[10px]"
+                    className="text-[10px] font-mono"
                     style={{
-                      fontFamily: "'JetBrains Mono', monospace",
                       color: "#6b7280",
                     }}
                   >
@@ -94,9 +91,8 @@ export default function Partners() {
         <div className="flex flex-col gap-4">
           <GlassCard className="p-5">
             <div
-              className="text-[10px] uppercase tracking-widest mb-3"
+              className="text-[10px] uppercase font-mono tracking-widest mb-3"
               style={{
-                fontFamily: "'JetBrains Mono', monospace",
                 color: "#6b7280",
               }}
             >
@@ -120,9 +116,8 @@ export default function Partners() {
 
           <GlassCard className="p-5">
             <div
-              className="text-[10px] uppercase tracking-widest mb-3"
+              className="text-[10px] uppercase font-mono tracking-widest mb-3"
               style={{
-                fontFamily: "'JetBrains Mono', monospace",
                 color: "#6b7280",
               }}
             >

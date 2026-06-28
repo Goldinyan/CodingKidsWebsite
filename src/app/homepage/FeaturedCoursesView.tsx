@@ -4,10 +4,13 @@ import { useEffect, useState, useRef } from "react";
 import { useAuth } from "@/BackEnd/AuthContext";
 import { getAllCourses } from "@/lib/db";
 import { CourseData } from "@/BackEnd/type";
-import { BookOpen, Users } from "lucide-react";
+import { Code2, ChevronRight, CalendarDays } from "lucide-react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useTheme } from "@/context/ThemeContext";
+import SectionLabel from "./components/SectionLabel";
+import SectionHeading from "./components/SectionHeading";
+
 
 export default function FeaturedCoursesView() {
   const { user, userRole, loading } = useAuth();
@@ -32,7 +35,7 @@ export default function FeaturedCoursesView() {
     const fetchCourses = async () => {
       try {
         const allCourses = await getAllCourses(user?.uid, userRole);
-        setCourses(allCourses.slice(0, 3));
+        setCourses(allCourses);
       } catch (error) {
         console.error("Failed to fetch courses:", error);
       }
@@ -43,162 +46,131 @@ export default function FeaturedCoursesView() {
 
   if (loading) {
     return (
-      <div className={`w-full px-8 py-16 transition-colors duration-300 `}>
-        <p
-          className={`text-2xl font-bold mb-8 ${theme === "dark" ? "text-white" : "text-slate-900"
-            }`}
-        >
-          Unsere Kurse
-        </p>
-        <p className={theme === "dark" ? "text-gray-500" : "text-slate-500"}>
-          Lädt...
-        </p>
-      </div>
+      <section className="py-14">
+        <p className="text-2xl font-bold mb-8">Lädt...</p>
+      </section>
     );
   }
 
-  const containerVariants = {
-    hidden: {},
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.06,
-        delayChildren: 0.05,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: {
-      scale: 0.95,
-      y: 30,
-    },
-    visible: {
-      scale: 1,
-      y: 0,
-      transition: {
-        type: "tween",
-        ease: "easeOut",
-        duration: 0.25,
-      },
-    },
-  };
-
   return (
-    <div className={`w-full px-8 py-20 transition-colors duration-300 `}>
-      <div className="mb-12">
-        <motion.div
-          initial={{ y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          viewport={{ once: false }}
-        >
-          <span
-            className={`text-xs font-mono tracking-widest uppercase block mb-3 ${theme === "dark" ? "text-zinc-500" : "text-zinc-400"
-              }`}
-          >
-            Lernplan
-          </span>
-          <h2
-            className={`text-4xl font-bold mb-3 ${theme === "dark" ? "text-white" : "text-slate-900"
-              }`}
-          >
-            Unsere Kurse
-          </h2>
-          <p
-            className={`text-lg ${theme === "dark" ? "text-gray-400" : "text-slate-600"
-              }`}
-          >
-            Von Anfänger bis Fortgeschrittene - für jeden Level das richtige
-          </p>
-        </motion.div>
+    <section className="py-14">
+      <div className="flex items-end justify-between mb-10">
+        <div>
+          <SectionLabel>Kurse &amp; Themen</SectionLabel>
+          <SectionHeading>Was wird angeboten?</SectionHeading>
+        </div>
+        <p className="hidden md:block text-sm max-w-xs text-right text-gray-500">
+          Jedes Dojo hat einen Kurs-Fokus. Such dir das aus, was dich
+          interessiert.
+        </p>
       </div>
 
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        whileInView="visible"
-        exit="hidden"
-        viewport={{ once: false, margin: "0px 0px -50px 0px" }}
-        className="grid grid-cols-1 md:grid-cols-3 gap-6"
-      >
-        {courses.map((course) => (
-          <motion.div
-            key={course.uid}
-            variants={itemVariants}
-            layout
-            className={`group backdrop-blur-xl p-6 border transition-colors duration-300 flex flex-col ${isRounded && "rounded-lg"} ${theme === "dark"
-                ? "bg-white/5 border-white/10 hover:border-purple-500/50 hover:bg-white/8"
-                : "bg-slate-50 border-slate-300 hover:border-purple-500 hover:bg-purple-50"
-              }`}
-          >
-            <div className="flex items-center justify-between mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {courses.map((course, i) => {
+          const isEven = i % 2 === 0;
+          const accentColor = isEven ? "green" : "purple";
+          const isGreen = accentColor === "green";
+
+          return (
+            <motion.div
+              key={course.uid}
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.07, duration: 0.4 }}
+              className="group"
+            >
               <div
-                className={`w-10 h-10 rounded flex items-center justify-center transition-colors ${theme === "dark"
-                    ? "bg-white/10 group-hover:bg-white/20"
-                    : "bg-slate-200 group-hover:bg-slate-300"
+                className={`rounded-2xl border p-6 cursor-pointer transition-all duration-200 h-full ${isGreen
+                    ? "bg-white/[0.025] border-white/[0.07] hover:bg-green-500/[0.07] hover:border-green-500/18"
+                    : "bg-white/[0.025] border-white/[0.07] hover:bg-purple-500/[0.07] hover:border-purple-500/18"
                   }`}
               >
-                <BookOpen
-                  className={`w-5 h-5 ${theme === "dark"
-                      ? "text-gray-300 group-hover:text-white"
-                      : "text-slate-600"
-                    }`}
-                />
-              </div>
-              {course.tags && (
-                <div className="flex gap-2">
-                  {course.tags.slice(0, 2).map((tag) => (
+                {/* Header row */}
+                <div className="flex items-start justify-between gap-3 mb-4">
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border ${isGreen
+                          ? "bg-green-500/12 border-green-500/25"
+                          : "bg-purple-500/[0.18] border-purple-500/30"
+                        }`}
+                    >
+                      <Code2
+                        className={`w-5 h-5 ${isGreen ? "text-green-500" : "text-purple-400"
+                          }`}
+                      />
+                    </div>
+                    <div>
+                      <div className="font-bold text-white leading-tight font-grotesk">
+                        {course.name}
+                      </div>
+                      <div className="text-[11px] mt-0.5 font-mono text-gray-500">
+                        {course.dates.length} Termin
+                        {course.dates.length !== 1 ? "e" : ""} geplant
+                      </div>
+                    </div>
+                  </div>
+                  <ChevronRight className="w-4 h-4 shrink-0 mt-1 text-gray-700" />
+                </div>
+
+                {/* Description */}
+                <p className="text-sm leading-relaxed mb-4 text-gray-500">
+                  {course.des}
+                </p>
+
+                {/* Tags */}
+                <div className="flex flex-wrap gap-1.5 mb-4">
+                  {course.tags.map((tag, ti) => (
                     <span
                       key={tag}
-                      className={`text-xs px-2 py-1 ${isRounded && "rounded-md"} ${theme === "dark"
-                          ? "bg-white/10 text-gray-300"
-                          : "bg-slate-200 text-slate-700"
+                      className={`text-[10px] px-2 py-0.5 rounded-md border font-mono ${ti === 0
+                          ? isGreen
+                            ? "text-green-500 bg-green-500/18 border-green-500/30"
+                            : "text-purple-400 bg-purple-500/18 border-purple-500/30"
+                          : "text-gray-400 bg-white/[0.04] border-white/[0.08]"
                         }`}
                     >
                       {tag}
                     </span>
                   ))}
                 </div>
-              )}
-            </div>
 
-            <h3
-              className={`text-lg font-semibold mb-2 ${theme === "dark" ? "text-white" : "text-slate-900"
-                }`}
-            >
-              {course.name}
-            </h3>
-            <p
-              className={`text-sm mb-6 line-clamp-2 flex-grow ${theme === "dark" ? "text-gray-400" : "text-slate-600"
-                }`}
-            >
-              {course.des}
-            </p>
+                <div className="flex items-center justify-between pt-4 border-t border-white/[0.06]">
+                  <div className="flex items-center gap-2">
+                    <div className="flex -space-x-1.5">
+                      {course.mentors?.slice(0, 3).map((m) => (
+                        <div
+                          key={m.uid}
+                          className={`w-6 h-6 rounded-full flex items-center justify-center border text-[9px] font-bold font-grotesk ${isGreen
+                              ? "bg-green-500 text-white border-green-600"
+                              : "bg-purple-500 text-white border-purple-600"
+                            }`}
+                        >
+                          {m.name.charAt(0)}
+                        </div>
+                      ))}
+                    </div>
+                    <span className="text-[11px] font-mono text-gray-500">
+                      {course.mentors?.length} Mentor
+                      {course.mentors?.length !== 1 ? "en" : ""}
+                    </span>
+                  </div>
 
-            <div
-              className={`flex items-center gap-2 text-sm mb-6 ${theme === "dark" ? "text-gray-400" : "text-slate-600"
-                }`}
-            >
-              <Users
-                className={`w-4 h-4 ${theme === "dark" ? "text-gray-500" : "text-slate-500"
-                  }`}
-              />
-              <span>{course.mentors?.length || 0} Mentoren</span>
-            </div>
-
-            <button
-              onClick={() => router.push("/termine")}
-              className={`w-full px-4 py-2 font-medium border transition-all duration-200 hover:scale-105 active:scale-100 ${isRounded && "rounded-lg"} ${theme === "dark"
-                  ? "bg-white text-black border-white hover:bg-gray-100"
-                  : "bg-purple-600 text-white border-purple-600 hover:bg-purple-700"
-                }`}
-            >
-              Zum Kurs
-            </button>
-          </motion.div>
-        ))}
-      </motion.div>
-    </div>
+                  {/* Next date chip */}
+                  {course.dates[0] && (
+                    <div className="flex items-center gap-1.5 text-[11px] font-mono text-gray-500">
+                      <CalendarDays className="w-3.5 h-3.5" />
+                      {new Date(course.dates[0]).toLocaleDateString("de-DE", {
+                        day: "2-digit",
+                        month: "short",
+                      })}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          );
+        })}
+      </div>
+    </section>
   );
 }
