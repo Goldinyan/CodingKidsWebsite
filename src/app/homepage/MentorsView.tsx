@@ -17,8 +17,7 @@ export default function MentorsView() {
   const [orderedMentors, setOrderedMentors] = useState<Mentor[]>([]);
   const [expanded, setExpanded] = useState<number>(0);
 
-  const [loading, setLoading] = useState(true);
-  const { user, userRole, loading: authLoading } = useAuth();
+  const { user, userRole, loading } = useAuth();
   const { theme, isRounded } = useTheme();
 
   const hasFetched = useRef<string | null>(null);
@@ -40,28 +39,28 @@ export default function MentorsView() {
   };
 
   useEffect(() => {
-    if (!user?.uid || authLoading) {
-      setLoading(true);
+    if (loading) {
       return;
     }
 
-    const currentKey = `${user.uid}-${userRole}`;
-    if (hasFetched.current === currentKey) return;
+    if (user) {
+      const currentKey = `${user.uid}-${userRole}`;
+      if (hasFetched.current === currentKey) return;
+
+      hasFetched.current = currentKey;
+    }
 
     const fetchMentors = async () => {
-      hasFetched.current = currentKey;
       try {
-        const allMentors = await getAllMentors(user.uid, userRole);
+        const allMentors = await getAllMentors(user?.uid, userRole);
         setMentors(allMentors.sort((a, b) => a.id - b.id));
       } catch (error) {
         console.error("Failed to fetch mentors:", error);
-      } finally {
-        setLoading(false);
       }
     };
 
     fetchMentors();
-  }, [user?.uid, userRole, authLoading]);
+  }, [user?.uid, userRole, loading, user]);
 
   if (loading) {
     return (

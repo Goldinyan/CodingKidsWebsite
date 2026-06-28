@@ -1,215 +1,208 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { getAllEvents } from "@/lib/db";
-import { EventData } from "@/BackEnd/type";
-import { Calendar, MapPin, Users } from "lucide-react";
+import { getAllEvents, getAllCourses } from "@/lib/db";
+import { EventData, CourseData } from "@/BackEnd/type";
+import { ArrowRight, CalendarX2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { toJsDate } from "@/BackEnd/utils";
 import { useTheme } from "@/context/ThemeContext";
 import { useAuth } from "@/BackEnd/AuthContext";
+import SectionLabel from "./components/SectionLabel";
+import SectionHeading from "./components/SectionHeading";
+import GlassCard from "./components/GlassCard";
+
+const fmtMonth = (date: any) => {
+  return toJsDate(date)
+    .toLocaleDateString("de-DE", { month: "short" })
+    .toUpperCase();
+};
+
+const fmtDay = (date: any) => {
+  return toJsDate(date).toLocaleDateString("de-DE", { day: "2-digit" });
+};
+
+const fmtDate = (date: any) => {
+  return toJsDate(date).toLocaleDateString("de-DE", {
+    weekday: "short",
+    day: "2-digit",
+    month: "short",
+  });
+};
+
+const spotsLeft = (event: EventData) => {
+  const taken = (event.users?.length || 0) + (event.queue?.length || 0);
+  return Math.max(0, event.memberCount - taken);
+};
 
 export default function FeaturedEventsView() {
   const [events, setEvents] = useState<EventData[]>([]);
+  const [courses, setCourses] = useState<CourseData[]>([]);
   const { theme, isRounded } = useTheme();
   const { user, userData, userRole, loading } = useAuth();
-
   const router = useRouter();
-
 
   const hasFetched = useRef<string | null>(null);
 
   useEffect(() => {
-    if (!user?.uid || loading) return;
+    if (loading) return;
 
-    const currentKey = `${user.uid}-${userRole}`;
-    if (hasFetched.current === currentKey) return;
-
-    const fetchEvents = async () => {
+    if (user) {
+      const currentKey = `${user.uid}-${userRole}`;
+      if (hasFetched.current === currentKey) return;
       hasFetched.current = currentKey;
+    }
+    
+    const fetchEvents = async () => {
+      const [allEvents, allCourses] = await Promise.all([
+        getAllEvents(user?.uid, userRole),
+        getAllCourses(),
+      ]);
 
-      const allEvents = (await getAllEvents(user.uid, userRole)) as EventData[];
-
-      const upcomingEvents = allEvents
+      const upcomingEvents = (allEvents as EventData[])
         .sort((a, b) => toJsDate(a.date).getTime() - toJsDate(b.date).getTime())
         .slice(0, 3);
       setEvents(upcomingEvents as EventData[]);
+      setCourses(allCourses as CourseData[]);
     };
 
     fetchEvents();
-  }, [user?.uid, userRole, loading]);
+  }, [user?.uid, userRole, loading, user]);
 
   if (loading) {
     return (
-      <div className={`w-full px-8 py-16 transition-colors duration-300 `}>
-        <p
-          className={`text-2xl font-bold mb-8 ${theme === "dark" ? "text-white" : "text-slate-900"
-            }`}
-        >
-          Kommende Events
-        </p>
-        <p className={theme === "dark" ? "text-gray-500" : "text-slate-500"}>
-          Lädt...
-        </p>
-      </div>
+      <section className="py-14">
+        <p className="text-2xl font-bold mb-8">Lädt...</p>
+      </section>
     );
   }
 
-  const containerVariants = {
-    hidden: {},
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.06,
-        delayChildren: 0.05,
-      },
-    },
-  };
+  const courseMap: Record<string, CourseData> = {};
+  courses.forEach((course) => {
+    courseMap[course.uid] = course;
+  });
 
-  const itemVariants = {
-    hidden: {
-      scale: 0.95,
-      y: 30,
-    },
-    visible: {
-      scale: 1,
-      y: 0,
-      transition: {
-        type: "tween",
-        ease: "easeOut",
-        duration: 0.25,
-      },
-    },
-  };
+  const validEvents = events.filter((ev) => toJsDate(ev.date).getTime() > Date.now());
 
   return (
-    <div className={`w-full px-8 py-20 transition-colors duration-300 `}>
-      <div className="mb-12">
-        <motion.div
-          initial={{ y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          viewport={{ once: true }}
-        >
-          <span
-            className={`text-xs font-mono tracking-widest uppercase block mb-3 ${theme === "dark" ? "text-zinc-500" : "text-zinc-400"}`}
+    <section className="py-14 mx-4">
+      <div className="flex items-end justify-between mb-8">
+        <div>
+          <SectionLabel>Nächste Termine</SectionLabel>
+          <SectionHeading>Kommende CoderDojos</SectionHeading>
+        </div>
+        {validEvents.length > 0 && (
+          <button
+            onClick={() => router.push("/termine")}
+            className="hidden md:flex items-center gap-1 text-sm no-underline transition-colors text-purple-400 hover:text-purple-300 bg-transparent border-0 cursor-pointer font-medium"
           >
-            Live dabei
-          </span>
-          <h2
-            className={`text-4xl font-bold mb-3 ${theme === "dark" ? "text-white" : "text-slate-900"
-              }`}
-          >
-            Kommende Events
-          </h2>
-          <p
-            className={`text-lg ${theme === "dark" ? "text-gray-400" : "text-slate-600"
-              }`}
-          >
-            Entdecke die nächsten Kurse und Workshops
-          </p>
-        </motion.div>
+            Alle Termine <ArrowRight className="w-4 h-4" />
+          </button>
+        )}
       </div>
 
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        whileInView="visible"
-        exit="hidden"
-        viewport={{ once: false, margin: "0px 0px -50px 0px" }}
-        className="grid grid-cols-1 md:grid-cols-3 gap-6"
-      >
-        {events.map((event) => {
+      <div className="flex flex-col gap-3 mb-6">
+        {/* Empty State UI */}
+        {validEvents.length === 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+          >
+            <div className="flex flex-col items-center justify-center p-8 text-center rounded-2xl border border-dashed border-white/10 bg-white/[0.01] min-h-[220px]">
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-purple-500/10 border border-purple-500/20 mb-4">
+                <CalendarX2 className="w-6 h-6 text-purple-400" />
+              </div>
+              <h3 className="text-white font-bold text-base font-grotesk mb-1">
+                Keine Termine geplant
+              </h3>
+              <p className="text-sm text-gray-500 max-w-sm leading-relaxed">
+                Aktuell sind keine neuen CoderDojos in der Pipeline. Schau einfach bald wieder vorbei oder kontaktiere uns!
+              </p>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Event List */}
+        {validEvents.slice(0, 5).map((ev, i) => {
+          const left = spotsLeft(ev);
+          const full = left <= 0;
+          const course = courseMap[ev.course];
           return (
             <motion.div
-              variants={itemVariants}
-              layout
-              key={event.uid}
-              className={`group ${isRounded ? "rounded-lg" : "rounded-none"} backdrop-blur-2xl p-6 border transition-colors duration-300 ${theme === "dark"
-                  ? "bg-white/5 border-white/10 hover:border-green-500/50 hover:bg-white/8"
-                  : "bg-slate-50 border-slate-300 hover:border-green-500 hover:bg-green-50"
-                }`}
+              key={ev.uid}
+              initial={{ opacity: 0, x: -12 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: i * 0.06, duration: 0.4 }}
             >
-              <div className="flex items-start justify-between mb-4">
-                <span
-                  className={`text-xs font-semibold px-3 py-1 transition-colors ${theme === "dark"
-                      ? "bg-white/10 text-gray-300 group-hover:text-white"
-                      : "bg-slate-200 text-slate-700 group-hover:text-slate-900"
-                    }`}
+              <GlassCard
+                className={`flex items-center gap-4 p-5 hover:!border-purple-400/30 transition-colors ${
+                  full ? "opacity-60" : "opacity-100"
+                }`}
+              >
+                {/* Date */}
+                <div
+                  className={`shrink-0 rounded-xl border p-2.5 text-center w-14 ${
+                    full
+                      ? "bg-white/[0.02] border-white/[0.06]"
+                      : "bg-purple-500/[0.06] border-purple-500/20"
+                  }`}
                 >
-                  {event.difficulty}
-                </span>
-                <span
-                  className={`text-xs transition-colors ${theme === "dark"
-                      ? "text-gray-500 group-hover:text-gray-400"
-                      : "text-slate-500 group-hover:text-slate-700"
-                    }`}
-                >
-                  {event.typeOfEvent}
-                </span>
-              </div>
-
-              <h3
-                className={`text-lg font-semibold mb-3 ${theme === "dark" ? "text-white" : "text-slate-900"
-                  }`}
-              >
-                {event.name}
-              </h3>
-              <p
-                className={`text-sm mb-6 line-clamp-2 ${theme === "dark" ? "text-gray-400" : "text-slate-600"
-                  }`}
-              >
-                {event.description}
-              </p>
-
-              <div
-                className={`space-y-2 mb-8 text-sm ${theme === "dark" ? "text-gray-400" : "text-slate-600"
-                  }`}
-              >
-                <div className="flex items-center gap-2">
-                  <Calendar
-                    className={`w-4 h-4 ${theme === "dark" ? "text-gray-500" : "text-slate-500"
-                      }`}
-                  />
-                  <span>
-                    {toJsDate(event.date).toLocaleDateString("de-DE")}
-                  </span>
-                </div>
-                {event.place && (
-                  <div className="flex items-center gap-2">
-                    <MapPin
-                      className={`w-4 h-4 ${theme === "dark" ? "text-gray-500" : "text-slate-500"
-                        }`}
-                    />
-                    <span>{event.place[0]}</span>
+                  <div className="text-[9px] tracking-widest font-mono text-gray-500">
+                    {fmtMonth(ev.date)}
                   </div>
-                )}
-                <div className="flex items-center gap-2">
-                  <Users
-                    className={`w-4 h-4 ${theme === "dark" ? "text-gray-500" : "text-slate-500"
-                      }`}
-                  />
-                  <span>
-                    {event.users?.length + (event.queue?.length || 0)}/
-                    {event.memberCount} Plätze belegt
-                  </span>
+                  <div className="text-xl font-black leading-tight text-white font-grotesk">
+                    {fmtDay(ev.date)}
+                  </div>
                 </div>
-              </div>
 
-              <button
-                onClick={() => router.push("/termine")}
-                className={`w-full px-4 py-2 font-medium border transition-all duration-200 hover:scale-105 active:scale-100 ${isRounded && "rounded-lg"}  ${theme === "dark"
-                    ? "bg-white text-black border-white hover:bg-gray-100"
-                    : "bg-green-600 text-white border-green-600 hover:bg-green-700"
-                  }`}
-              >
-                Mehr erfahren
-              </button>
+                <div className="w-px h-9 shrink-0 bg-white/[0.07]" />
+
+                <div className="flex-1 min-w-0">
+                  <div className="font-semibold text-sm text-white truncate font-grotesk">
+                    {ev.name}
+                  </div>
+                  <div className="text-[11px] mt-0.5 font-mono text-gray-500">
+                    {course?.name} · {fmtDate(ev.date)} · 18:00 Uhr
+                  </div>
+                </div>
+
+                <div className="shrink-0 flex items-center gap-3">
+                  {full ? (
+                    <span className="text-[10px] px-2 py-1 rounded-md hidden sm:inline font-mono bg-red-500/10 text-red-400">
+                      Ausgebucht
+                    </span>
+                  ) : (
+                    <span className="text-[10px] hidden sm:inline font-mono text-gray-500">
+                      {left} Plätze frei
+                    </span>
+                  )}
+                  <button
+                    onClick={() => router.push("/termine")}
+                    className={`px-3 py-1.5 rounded-lg border text-xs font-bold bg-transparent transition-all font-mono ${
+                      full
+                        ? "bg-white/[0.03] border-white/[0.06] text-gray-500 cursor-not-allowed"
+                        : "bg-purple-500/[0.08] border-purple-500/25 text-purple-400 hover:bg-purple-500/15 cursor-pointer"
+                    }`}
+                  >
+                    Details →
+                  </button>
+                </div>
+              </GlassCard>
             </motion.div>
           );
         })}
-      </motion.div>
-    </div>
+      </div>
+
+      {validEvents.length > 0 && (
+        <button
+          onClick={() => router.push("/termine")}
+          className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-xl border font-bold text-sm no-underline transition-all bg-purple-500/[0.06] border-purple-500/20 text-purple-400 hover:bg-purple-500/12 cursor-pointer"
+        >
+          Alle Termine &amp; Anmeldung <ArrowRight className="w-4 h-4" />
+        </button>
+      )}
+    </section>
   );
 }

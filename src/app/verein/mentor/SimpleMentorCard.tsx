@@ -32,7 +32,7 @@ export function SimpleMentorCard({ props }: { props: SimpleMentorCardProps }) {
       </div>
 
       <p className="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed">
-        {props.des1}
+        {props.des}
       </p>
 
       <div className="flex-grow" />

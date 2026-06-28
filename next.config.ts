@@ -12,7 +12,7 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
-        source: "/(.*)", // wildcard for all files
+        source: "/(.*)",
         headers: [
           {
             key: "X-Frame-Options", // verbietet das Einbetten der Seite in iframes
@@ -22,6 +22,7 @@ const nextConfig: NextConfig = {
             key: "X-Content-Type-Options", // verbietet optimizations von browser, damit keine malicious scripts ausgeführt werden, die als andere dateitypen getarnt sind
             value: "nosniff",
           },
+          
           {
             key: "Content-Security-Policy", // Skripte und Bilder und so nur von meiner domain laden, sonst blocken, und firebase
             value:

@@ -1,5 +1,4 @@
 import { db } from "../firebase";
-import { updateProfile } from "firebase/auth";
 import {
   arrayRemove,
   collection,
@@ -14,20 +13,11 @@ import {
   arrayUnion,
   Timestamp,
 } from "firebase/firestore";
-import { User } from "firebase/auth";
 import {
-  Mentor,
   EventData,
-  UserData,
-  AnnouncementData,
-  CourseData,
   EventStatus,
 } from "@/BackEnd/type";
-import {
-  checkRateLimit,
-  RateLimitExceededError,
-  type UserRole,
-} from "../rate_limiting/rateLimiter";
+import type { UserRole } from "@/BackEnd/type";
 import { enforceRateLimit } from "./db";
 import { getAllCourses, updateCourse } from "./courses";
 

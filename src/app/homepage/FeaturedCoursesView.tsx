@@ -12,37 +12,36 @@ import { useTheme } from "@/context/ThemeContext";
 export default function FeaturedCoursesView() {
   const { user, userRole, loading } = useAuth();
   const [courses, setCourses] = useState<CourseData[]>([]);
-  const [loadingCourses, setLoadingCourses] = useState(true);
   const { theme, isRounded } = useTheme();
 
   const router = useRouter();
   const hasFetched = useRef<string | null>(null);
 
   useEffect(() => {
-    if (!user?.uid || loading) {
-      setLoadingCourses(true);
+    if (loading) {
       return;
     }
 
-    const currentKey = `${user.uid}-${userRole}`;
-    if (hasFetched.current === currentKey) return;
+    if (user) {
+      const currentKey = `${user.uid}-${userRole}`;
+      if (hasFetched.current === currentKey) return;
+
+      hasFetched.current = currentKey;
+    }
 
     const fetchCourses = async () => {
-      hasFetched.current = currentKey;
       try {
-        const allCourses = await getAllCourses(user.uid, userRole);
+        const allCourses = await getAllCourses(user?.uid, userRole);
         setCourses(allCourses.slice(0, 3));
       } catch (error) {
         console.error("Failed to fetch courses:", error);
-      } finally {
-        setLoadingCourses(false);
       }
     };
 
     fetchCourses();
-  }, [user?.uid, userRole, loading]);
+  }, [user?.uid, userRole, loading, user]);
 
-  if (loadingCourses) {
+  if (loading) {
     return (
       <div className={`w-full px-8 py-16 transition-colors duration-300 `}>
         <p
