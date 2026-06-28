@@ -1,6 +1,5 @@
 import { useTheme } from "@/context/ThemeContext";
 
-
 export default function SectionLabel({ children }: { children: string }) {
   const { theme } = useTheme();
   return (
@@ -8,11 +7,10 @@ export default function SectionLabel({ children }: { children: string }) {
       className="text-[10px] tracking-[0.22em] uppercase mb-2"
       style={{
         fontFamily: "'JetBrains Mono', monospace",
-        color: theme === "dark" ? "#4ade80" : "#16a34a",
+        color: theme === "dark" ? "#a78bfa" : "#7c3aed",
       }}
     >
       {children}
     </p>
   );
 }
-

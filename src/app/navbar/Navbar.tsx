@@ -5,13 +5,12 @@ import { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/BackEnd/AuthContext";
-import { User, LogIn, MessageCircle } from "lucide-react";
+import { User, LogIn, MessageCircle, Contact, Mail } from "lucide-react";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { Menu, X, LayoutDashboard, HeartHandshakeIcon } from "lucide-react";
 import NavbarMobile from "./NavbarMobile";
 import { getAllAnnouncements } from "@/lib/db";
 import { useTheme, Theme } from "@/context/ThemeContext";
-import { title } from "process";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
@@ -121,21 +120,24 @@ export default function Navbar() {
               </div>
             )}
 
+            {!user && (
+              <p
+                className={`font-medium text-[12px] transition-colors cursor-pointer ${theme === "dark"
+                    ? "text-gray-400 hover:text-gray-300"
+                    : "text-black hover:text-slate-600"
+                  }`}
+                onClick={() => router.push("/kontakt")}
+              >
+                <Mail className="w-4 h-4 mr-1" />
+              </p>
+            )}
+
             <div className="relative">
               <button
                 onClick={() => router.push(user ? "/profile" : "/login")}
-                className={` ${isRounded ? "rounded-md" : "rounded-none"} ${theme == "dark"
-                    ? "text-gray-300 hover:text-white hover:bg-white/10 hover:border-white border-gray-400"
-                    : "text-gray-900 hover:text-black hover:bg-black/10 hover:border-black border-gray-800"
-                  } 
-
-                  p-2 border transition-all duration-200`}
+                className={`ml-2 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[14px] font-bold no-underline transition-all shrink-0 bg-purple-700 hover:bg-purple-600 text-white ${isRounded ? "rounded-md" : "rounded-none"}`}
               >
-                {!user ? (
-                  <LogIn className="w-5 h-5" />
-                ) : (
-                  <User className="w-5 h-5" />
-                )}
+                {!user ? <p>Anmelden</p> : <User className="w-5 h-5" />}
               </button>
             </div>
 
@@ -220,7 +222,7 @@ function MainHeader({
               key={h.domain}
               className={`px-4 py-2 font-medium transition-all duration-200 active:scale-100 flex items-center gap-2 cursor-pointer text-[14px] font-normal ${isRounded ? "rounded-md" : "rounded-none"
                 } ${theme === "dark"
-                  ? `text-white hover:bg-base-white/10`
+                  ? `text-gray-400 hover:text-white hover:bg-base-white/10`
                   : `text-black hover:bg-black/10 `
                 }`}
               onClick={() => router.push(h.domain)}
@@ -229,18 +231,6 @@ function MainHeader({
             </p>
           );
         })}
-
-        {!user && (
-          <p
-            className={`font-medium transition-colors cursor-pointer ${theme === "dark"
-                ? "text-white hover:text-gray-300"
-                : "text-black hover:text-slate-600"
-              }`}
-            onClick={() => router.push("/kontakt")}
-          >
-            Kontakt
-          </p>
-        )}
       </div>
     </div>
   );

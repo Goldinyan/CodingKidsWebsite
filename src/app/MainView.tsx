@@ -27,7 +27,7 @@ export default function MainView() {
         <FeaturedEventsView />
         <FeaturedCoursesView />
         <MentorsView />
-        <CTAView />
+        {/*<CTAView />*/}
       </div>
     </div>
   );

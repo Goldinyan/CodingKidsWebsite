@@ -64,6 +64,7 @@ export default function TopView() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
           >
+            {/*
             <div
               className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-[11px] mb-8"
               style={{
@@ -79,6 +80,7 @@ export default function TopView() {
               />
               CoderDojo Niederrhein · Wesel
             </div>
+          */}
             <h1
               className="text-4xl md:text-5xl font-black tracking-medium leading-none mb-5"
               style={{ fontFamily: "'Familjen Grotesk', sans-serif" }}

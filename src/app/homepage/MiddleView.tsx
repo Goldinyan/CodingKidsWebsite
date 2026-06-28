@@ -66,7 +66,6 @@ export default function MiddleView() {
           <SectionHeading>Was kannst du machen?</SectionHeading>
         </div>
       </div>
-
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {activities.map(({ Icon, title, desc, color }, i) => (
           <motion.div
@@ -120,7 +119,6 @@ export default function MiddleView() {
           </motion.div>
         ))}
       </div>
-
       <GlassCard
         className={`mt-4 p-6 flex flex-col md:flex-row items-start md:items-center gap-4 transition-colors duration-300 ${isRounded ? "rounded-2xl" : "rounded-none"
           } ${isDark ? "bg-white/5 border-white/10" : "bg-slate-100 border-slate-200"}`}
@@ -160,25 +158,18 @@ export default function MiddleView() {
           </p>
         </div>
       </GlassCard>
-
       {/* wann und wo*/}
-      <section className="py-14">
-        <div className="mb-8">
-          <SectionLabel>Wann &amp; Wo</SectionLabel>
+      <section className="py-14 w-full">
+        <div className="mb-8 w-full">
+          <SectionLabel>Wann & Wo</SectionLabel>
           <SectionHeading>Komm einfach vorbei</SectionHeading>
         </div>
 
-        <div className="grid grid-cols-1 xl:grid-cols-5 gap-4">
-          <GlassCard className="lg:col-span-3 p-6">
+        <div className="grid w-full grid-cols-1 xl:grid-cols-5 gap-4">
+          <GlassCard className="xl:col-span-3 p-6  hover:!border-purple-400/40 ">
             <div className="flex items-start gap-4 mb-6">
-              <div
-                className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
-                style={{
-                  background: "rgba(74,222,128,0.15)",
-                  border: "1px solid rgba(74,222,128,0.25)",
-                }}
-              >
-                <MapPin className="w-5 h-5" style={{ color: "#4ade80" }} />
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-purple-500/15 border border-purple-500/25">
+                <MapPin className="w-5 h-5 text-purple-400" />
               </div>
               <div>
                 <div
@@ -187,39 +178,27 @@ export default function MiddleView() {
                 >
                   CUBES Wesel
                 </div>
-                <div className="text-sm" style={{ color: "#6b7280" }}>
+                <div className="text-sm text-gray-500">
                   Rudolf-Diesel-Straße 115, 46485 Wesel
                 </div>
-                <div className="text-sm mt-0.5" style={{ color: "#6b7280" }}>
+                <div className="text-sm mt-0.5 text-gray-500">
                   Erster Konferenzraum links im EG · barrierefrei
                 </div>
               </div>
             </div>
 
-            <div
-              className="rounded-xl p-4 mb-6 border"
-              style={{
-                background: "rgba(255,255,255,0.02)",
-                borderColor: "rgba(255,255,255,0.06)",
-              }}
-            >
+            <div className="rounded-xl p-4 mb-6 border bg-white/5 border-white/10">
               <p
-                className="text-[10px] uppercase tracking-widest mb-2"
-                style={{
-                  fontFamily: "'JetBrains Mono', monospace",
-                  color: "#6b7280",
-                }}
+                className="text-[10px] uppercase tracking-widest mb-2 text-gray-500"
+                style={{ fontFamily: "'JetBrains Mono', monospace" }}
               >
                 Anfahrt
               </p>
-              <p
-                className="text-sm leading-relaxed"
-                style={{ color: "#9ca3af" }}
-              >
+              <p className="text-sm leading-relaxed text-gray-400">
                 B58 aus Schermbeck kommend Richtung Wesel → bei Polster Aktuell
-                rechts → gegenüber BlueCraft GmbH links (Schilder
-                &quot;LASE&quot;). Parkplatz am Ende der Straße rechts. Links
-                neben GUSTO Cubes befindet sich der Eingang.
+                rechts → gegenüber BlueCraft GmbH links (Schilder "LASE").
+                Parkplatz am Ende der Straße rechts. Links neben GUSTO Cubes
+                befindet sich der Eingang.
               </p>
             </div>
 
@@ -227,23 +206,17 @@ export default function MiddleView() {
               href="https://maps.google.com/?q=Rudolf-Diesel-Straße+115+46485+Wesel"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-sm no-underline transition-colors"
-              style={{ color: "#4ade80" }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = "#86efac")}
-              onMouseLeave={(e) => (e.currentTarget.style.color = "#4ade80")}
+              className="inline-flex items-center gap-1.5 text-sm no-underline transition-colors text-purple-400 hover:text-purple-300"
             >
               In Google Maps öffnen <ExternalLink className="w-3.5 h-3.5" />
             </a>
           </GlassCard>
 
-          <GlassCard className="lg:col-span-2 p-6 flex flex-col gap-5">
+          <GlassCard className="w-full xl:col-span-2 p-6  flex flex-col gap-5 hover:!border-purple-400/40 ">
             <div>
               <div
-                className="text-[10px] uppercase tracking-widest mb-1"
-                style={{
-                  fontFamily: "'JetBrains Mono', monospace",
-                  color: "#6b7280",
-                }}
+                className="text-[10px] uppercase tracking-widest mb-1 text-gray-500"
+                style={{ fontFamily: "'JetBrains Mono', monospace" }}
               >
                 Termin
               </div>
@@ -254,20 +227,14 @@ export default function MiddleView() {
                 Jeden Mittwoch
               </div>
               <div
-                className="text-xl font-bold mt-1"
-                style={{
-                  fontFamily: "'Familjen Grotesk', sans-serif",
-                  color: "#4ade80",
-                }}
+                className="text-xl font-bold mt-1 text-purple-400"
+                style={{ fontFamily: "'Familjen Grotesk', sans-serif" }}
               >
                 18:00 – 19:30 Uhr
               </div>
             </div>
 
-            <div
-              className="h-px w-full"
-              style={{ background: "rgba(255,255,255,0.06)" }}
-            />
+            <div className="h-px w-full bg-white/10" />
 
             <div className="flex flex-col gap-2.5">
               {[
@@ -276,38 +243,22 @@ export default function MiddleView() {
                 "Keine Anmeldung nötig — einfach kommen!",
               ].map((note) => (
                 <div key={note} className="flex items-start gap-2">
-                  <CheckCircle2
-                    className="w-4 h-4 mt-0.5 shrink-0"
-                    style={{ color: "#4ade80" }}
-                  />
-                  <span className="text-sm" style={{ color: "#9ca3af" }}>
-                    {note}
-                  </span>
+                  <CheckCircle2 className="w-4 h-4 mt-0.5 shrink-0 text-purple-400" />
+                  <span className="text-sm text-gray-400">{note}</span>
                 </div>
               ))}
             </div>
 
             <button
               onClick={() => router.push("/termine")}
-              className="mt-auto flex items-center justify-center gap-2 px-4 py-2 rounded-xl font-bold text-sm no-underline transition-colors"
-              style={{
-                background: "#4ade80",
-                color: "#000",
-                fontFamily: "'Familjen Grotesk', sans-serif",
-              }}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.background = "#86efac")
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.background = "#4ade80")
-              }
+              className="mt-auto w-full flex items-center justify-center gap-2 px-4 py-2 rounded-xl font-bold text-[14px] no-underline transition-colors bg-purple-500 hover:bg-purple-400 text-black"
+              style={{ fontFamily: "'Familjen Grotesk', sans-serif" }}
             >
               Nächste Dojos ansehen <ArrowRight className="w-4 h-4" />
             </button>
           </GlassCard>
         </div>
       </section>
-
       {/* ── Voraussetzungen ──────────────────────────────── */}
       <section className="py-10">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -360,7 +311,10 @@ export default function MiddleView() {
             >
               Deine Ideen. Deine Regeln. Deine Projekte.
             </div>
-            <p className="text-[14px] font-thin leading-relaxed" style={{ color: "#9ca3af" }}>
+            <p
+              className="text-[14px] font-thin leading-relaxed"
+              style={{ color: "#9ca3af" }}
+            >
               Eigene Spiele, Apps und Websites zu erstellen ist nicht nur cool —
               Programmieren und digitale Kreativität gehören heute zu den
               wichtigsten Fähigkeiten überhaupt. Und die CoderDojos sind kein
