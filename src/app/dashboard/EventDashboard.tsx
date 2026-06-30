@@ -8,17 +8,9 @@ import { useAuth } from "@/BackEnd/AuthContext";
 import { removedFromEventByAdmin } from "@/BackEnd/email";
 import { deleteEvent, removeUserFromEvent, updateEvent } from "@/lib/db";
 import type { EventData, UserData } from "@/BackEnd/type";
-import EventAdd from "./EventAdd";
+import EventCreationDialog from "./components/EventCreationDialog";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import type { EventTimeFilter } from "./events/constants";
 import { DeleteEventDialog, EventCard } from "./events/components";
 import {
@@ -300,29 +292,11 @@ export default function EventDashboard() {
         </div>
       </div>
 
-      <Dialog open={isAddingEvent} onOpenChange={setIsAddingEvent}>
-        <DialogContent className="max-w-3xl">
-          <DialogHeader>
-            <DialogTitle>Neues Event</DialogTitle>
-            <DialogDescription>
-              Erstellen Sie ein neues Event. Sie können auch ein Preset
-              verwenden.
-            </DialogDescription>
-          </DialogHeader>
-
-          <EventAdd
-            mode="dialog"
-            onCreated={() => refresh()}
-            onClose={() => setIsAddingEvent(false)}
-          />
-
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsAddingEvent(false)}>
-              Abbrechen
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <EventCreationDialog
+        open={isAddingEvent}
+        onOpenChange={setIsAddingEvent}
+        onCreated={() => refresh()}
+      />
 
       <DeleteEventDialog
         open={deleteConfirmModal.isOpen}

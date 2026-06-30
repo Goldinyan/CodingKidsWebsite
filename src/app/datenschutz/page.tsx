@@ -107,8 +107,6 @@ const Datenschutz = () => {
       className={`min-h-screen w-full relative main-view-container transition-all duration-300 px-4 py-22 ${theme === "dark" ? "bg-black" : "bg-slate-50"
         }`}
     >
-      <div className={`absolute inset-0 bg-grid-pattern z-0`} />
-
       <div
         onClick={() => scrollToSection("top")}
         className={`fixed w-14 h-14 bottom-25 border border-border/50 group-hover:border-border/70 transition-all duration-400 right-6   -full  z-20 bg-gradient-to-br from-background/50 to-background/30 backdrop-blur-md flex items-center justify-center ${theme == "dark" ? " text-slate-300 " : " text-amber-500"}`}

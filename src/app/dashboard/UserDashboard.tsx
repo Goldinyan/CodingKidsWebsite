@@ -1,26 +1,14 @@
 "use client";
 
-import { updateUser } from "@/lib/db";
-import {
-  type PresetRoles,
-  type UserData,
-  type Filter,
-  USER_ROLES_ARRAY,
-} from "@/BackEnd/type";
+import { getUserData, updateUser } from "@/lib/db";
+import { useState } from "react";
+import { type UserData, type Filter } from "@/BackEnd/type";
 import { useAuth } from "@/BackEnd/AuthContext";
-import {
-  SortAsc,
-  SortDesc,
-  ArrowUpIcon,
-  ArrowDownIcon,
-  Search,
-} from "lucide-react";
+import { SortAsc, SortDesc, Search } from "lucide-react";
 import { motion } from "framer-motion";
 import { useTheme } from "@/context/ThemeContext";
-import { Button } from "@/components/ui/button";
 import { useFilteredUsers, useUsersData } from "./users/hooks";
 import { DeleteUserDialog, EditUserDialog, UserCard } from "./users/components";
-import { User } from "firebase/auth";
 
 export default function UserDashboard() {
   const [searchBar, setSearchBar] = useState<string>("");
@@ -35,17 +23,15 @@ export default function UserDashboard() {
   const [editValues, setEditValues] = useState<Partial<UserData>>({});
   const [deleteConfirm, setDeleteConfirm] = useState<{
     isOpen: boolean;
-    user: User | null;
     userId: string | null;
     userName: string | null;
   }>({
     isOpen: false,
-    user: null,
     userId: null,
     userName: null,
   });
 
-  const { user, userRole, userData } = useAuth();
+  const { user, userRole } = useAuth();
   const { theme, isRounded } = useTheme();
 
   const { users, setUsers } = useUsersData(user?.uid, userRole);
@@ -75,10 +61,13 @@ export default function UserDashboard() {
   };
 
   return (
-    <div className={`w-full px-6 py-4 transition-colors duration-300 `}>
+    <div
+      className={`w-full px-6 py-4 transition-colors duration-300 ${theme === "dark" ? "bg-black" : "bg-none"
+        }`}
+    >
       <div className="max-w-7xl mx-auto">
         <motion.div
-          initial={{ opacity: 1, y: -20 }}
+          initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
           className="mb-8"
@@ -87,19 +76,25 @@ export default function UserDashboard() {
             className={`text-5xl font-bold mb-3 ${theme === "dark" ? "text-white" : "text-slate-900"
               }`}
           >
-            Nutzer-Verwaltung
+            Nutzerverwaltung
           </h1>
+          <p
+            className={`text-lg ${theme === "dark" ? "text-gray-400" : "text-slate-600"
+              }`}
+          >
+            Verwalten Sie Benutzer: Bearbeiten und Löschen
+          </p>
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 1 }}
+          initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.1 }}
           className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between"
         >
           <div className="flex-1 relative">
             <Search
-              className={`z-10 absolute left-3 top-3 w-5 h-5 transition-colors  ${isRounded ? "rounded-lg" : "rounded-none"} ${theme === "dark" ? "text-gray-600" : "text-slate-400"
+              className={`absolute left-3 top-3 w-5 h-5 transition-colors ${theme === "dark" ? "text-gray-600" : "text-slate-400"
                 }`}
             />
             <input
@@ -107,7 +102,8 @@ export default function UserDashboard() {
               placeholder="Nutzer durchsuchen..."
               value={searchBar}
               onChange={(e) => setSearchBar(e.target.value)}
-              className={`backdrop-blur-2xl w-full pl-10 pr-4 py-2 border transition-colors duration-300 focus:outline-none ${isRounded ? "rounded-lg" : "rounded-none"} ${theme === "dark"
+              className={`w-full pl-10 pr-4 py-2 border transition-colors duration-300 focus:outline-none ${isRounded ? "rounded-lg" : "rounded-none"
+                } ${theme === "dark"
                   ? "bg-white/5 border-white/10 text-white placeholder-gray-500 focus:border-white/20 focus:bg-white/10"
                   : "bg-white border-slate-300 text-slate-900 placeholder-slate-400 focus:border-green-600 focus:bg-white"
                 }`}
@@ -124,7 +120,8 @@ export default function UserDashboard() {
                 onClick={() =>
                   setFilters((prev) => ({ ...prev, name: "descending" }))
                 }
-                className={`p-2 backdrop-blur-2xl border transition-colors duration-300 ${isRounded ? "rounded-lg" : "rounded-none"} ${theme === "dark"
+                className={`p-2 border transition-colors duration-300 ${isRounded ? "rounded-lg" : "rounded-none"
+                  } ${theme === "dark"
                     ? "bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20"
                     : "bg-slate-50 border-slate-300 hover:bg-white hover:border-slate-400"
                   }`}
@@ -139,7 +136,8 @@ export default function UserDashboard() {
                 onClick={() =>
                   setFilters((prev) => ({ ...prev, name: "ascending" }))
                 }
-                className={`p-2 border backdrop-blur-2xl transition-all duration-300 ${isRounded ? "rounded-lg" : "rounded-none"} ${theme === "dark"
+                className={`p-2 border transition-all duration-300 ${isRounded ? "rounded-lg" : "rounded-none"
+                  } ${theme === "dark"
                     ? "bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20"
                     : "bg-slate-50 border-slate-300 hover:bg-white hover:border-slate-400"
                   }`}
@@ -154,39 +152,42 @@ export default function UserDashboard() {
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 1 }}
+          initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.2 }}
           className="mb-8 flex flex-wrap gap-2"
         >
-          {(["All", "Mentor", "User", "Member"] as const).map((role) => (
-            <motion.button
-              key={role}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setFilters((prev) => ({ ...prev, role }))}
-              className={`px-4 py-2 backdrop-blur-2xl border transition-colors duration-300 font-medium ${isRounded ? "rounded-lg" : "rounded-none"} ${filters.role === role
-                  ? theme === "dark"
-                    ? "bg-white text-black border-white"
-                    : "bg-green-600 text-white border-green-600"
-                  : theme === "dark"
-                    ? "bg-transparent text-white border-white/20 hover:border-white/40 hover:bg-white/5"
-                    : "bg-white text-slate-700 border-slate-300 hover:bg-slate-50 hover:border-slate-400"
-                }`}
-            >
-              {role === "All"
-                ? "Alle"
-                : role === "User"
-                  ? "User"
-                  : role === "Member"
-                    ? "Mitglied"
-                    : role}
-            </motion.button>
-          ))}
+          {(["All", "Mentor", "Admin", "User", "Member"] as const).map(
+            (role) => (
+              <motion.button
+                key={role}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setFilters((prev) => ({ ...prev, role }))}
+                className={`px-4 py-2 border transition-colors duration-300 font-medium ${isRounded ? "rounded-lg" : "rounded-none"
+                  } ${filters.role === role
+                    ? theme === "dark"
+                      ? "bg-white text-black border-white"
+                      : "bg-green-600 text-white border-green-600"
+                    : theme === "dark"
+                      ? "bg-transparent text-white border-white/20 hover:border-white/40 hover:bg-white/5"
+                      : "bg-white text-slate-700 border-slate-300 hover:bg-slate-50 hover:border-slate-400"
+                  }`}
+              >
+                {role === "All"
+                  ? "Alle"
+                  : role === "User"
+                    ? "User"
+                    : role === "Member"
+                      ? "Mitglied"
+                      : role}
+              </motion.button>
+            ),
+          )}
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 1 }}
+          initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.3 }}
           className="grid gap-6 md:grid-cols-1 lg:grid-cols-2"
@@ -206,23 +207,22 @@ export default function UserDashboard() {
             filteredUsers.map((u, idx) => (
               <motion.div
                 key={u.uid}
-                initial={{ opacity: 1, y: 20 }}
+                initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.05 }}
-                viewport={{ once: false }}
               >
                 <UserCard
                   user={u}
                   roleLabel={u.role}
                   onEdit={() => handleEditStart(u)}
-                />
-                {/*onDelete={() =>
+                  onDelete={() =>
                     setDeleteConfirm({
-                      user: u
                       isOpen: true,
                       userId: u.uid,
                       userName: u.name,
-                    })*/}
+                    })
+                  }
+                />
               </motion.div>
             ))
           )}
@@ -231,7 +231,7 @@ export default function UserDashboard() {
         {filteredUsers.length > 10 && (
           <motion.div
             layout
-            initial={{ opacity: 1 }}
+            initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4 }}
             className="flex items-center justify-center mt-12"
@@ -239,10 +239,9 @@ export default function UserDashboard() {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => {
-                setSeeAll(!seeAll);
-              }}
-              className={`px-8 py-3 font-medium border transition-colors duration-300 ${isRounded ? "rounded-lg" : "rounded-none"} ${theme === "dark"
+              onClick={() => setSeeAll(!seeAll)}
+              className={`px-8 py-3 font-medium border transition-colors duration-300 ${isRounded ? "rounded-lg" : "rounded-none"
+                } ${theme === "dark"
                   ? "bg-white text-black border-white hover:bg-gray-100"
                   : "bg-green-600 text-white border-green-600 hover:bg-green-700"
                 }`}

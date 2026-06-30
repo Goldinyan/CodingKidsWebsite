@@ -5,26 +5,32 @@ import EventDashboard from "../EventDashboard";
 import MentorDashboard from "../MentorDashboard";
 import AnnouncementDashboard from "../AnnouncementDashboard";
 import CourseDashboard from "../CourseDashboard";
+import AnalyticsDashboard from "../AnalyticsDashboard";
+import { useTheme } from "@/context/ThemeContext";
 
 export default function MainOverlay() {
+  const { theme } = useTheme();
+
   return (
-    <div className={`w-full min-h-screen relative main-view-container`}>
-      <div className="absolute inset-0 bg-grid-pattern   z-0" />
+    <div className={`w-full min-h-screen relative main-view-container ${theme === "dark" ? "bg-black" : "bg-white"}`}>
       <div className="relative w-full flex flex-col z-10">
-        <div className="flex flex-col w-full gap-10 max-w-7xl mx-auto">
-          <section id="user">
+        <div className="flex flex-col w-full gap-0 max-w-7xl mx-auto">
+          <section id="analytics" className={`py-10 px-6 border-b ${theme === "dark" ? "border-white/10" : "border-slate-200"}`}>
+            <AnalyticsDashboard />
+          </section>
+          <section id="user" className={`py-10 px-6 border-b ${theme === "dark" ? "border-white/10" : "border-slate-200"}`}>
             <UserDashboard />
           </section>
-          <section id="events">
+          <section id="events" className={`py-10 px-6 border-b ${theme === "dark" ? "border-white/10" : "border-slate-200"}`}>
             <EventDashboard />
           </section>
-          <section id="courses">
+          <section id="courses" className={`py-10 px-6 border-b ${theme === "dark" ? "border-white/10" : "border-slate-200"}`}>
             <CourseDashboard />
           </section>
-          <section id="mentor">
+          <section id="mentor" className={`py-10 px-6 border-b ${theme === "dark" ? "border-white/10" : "border-slate-200"}`}>
             <MentorDashboard />
           </section>
-          <section id="announce">
+          <section id="announce" className={`py-10 px-6`}>
             <AnnouncementDashboard />
           </section>
         </div>

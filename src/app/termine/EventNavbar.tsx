@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Filter, X } from "lucide-react";
 import { CourseData } from "@/BackEnd/type";
+import { useTheme } from "@/context/ThemeContext";
 import FilterPill from "./components/FilterPill";
 
 interface EventNavbarProps {
@@ -16,6 +17,7 @@ export default function EventNavbar({
   filters,
   courses,
 }: EventNavbarProps) {
+  const { theme } = useTheme();
   const [filterJoinable, setFilterJoinable] = useState(false);
 
   const handleToggleJoinable = () => {
@@ -47,13 +49,14 @@ export default function EventNavbar({
           ))}
         </div>
 
-        {/* Joinable only toggle */}
         <button
           onClick={handleToggleJoinable}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl border text-sm transition-all shrink-0 font-medium ${
             filterJoinable
               ? "bg-green-500/10 border-green-500/35 text-green-500"
-              : "bg-white/[0.03] border-white/[0.08] text-gray-500 hover:bg-white/[0.06] hover:border-white/[0.12]"
+              : theme === "dark"
+              ? "bg-white/[0.03] border-white/[0.08] text-gray-500 hover:bg-white/[0.06] hover:border-white/[0.12]"
+              : "bg-slate-100 border-slate-200 text-slate-600 hover:bg-slate-200 hover:border-slate-300"
           }`}
         >
           <Filter className="w-3.5 h-3.5" />

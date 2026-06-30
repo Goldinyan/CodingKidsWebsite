@@ -233,3 +233,84 @@ Light Mode Color Values:
 Last Updated: 2026-06-03
 Status: Active Design System
 ================================================================================
+
+ACTUAL IMPLEMENTATION NOTES
+===========================
+
+Based on analysis of TopView and EventView components:
+
+1. HARDCODED COLORS IN MAIN VIEW (TopView.tsx)
+   The TopView component currently has inline style props for colors:
+   - Green accent: style={{ color: "#4ade80" }}
+   - Gray text: style={{ color: "#9ca3af" }}
+   - These work but don't adapt to light mode
+   
+2. EVENT VIEW (EventView.tsx, EventCard.tsx, FilterPill.tsx)
+   - EventView was hardcoded to dark mode (bg-black text-white)
+   - Now updated to use theme and isRounded from useTheme()
+   - EventCard uses conditional styling with theme
+   - Filter pills now support both dark and light modes
+   
+3. KEY LEARNING - LIGHT MODE COLOR PALETTE
+   From updated components:
+   - Light background: bg-white or bg-slate-100
+   - Light text primary: text-slate-900
+   - Light text secondary: text-slate-600
+   - Light borders: border-slate-200
+   - Light hover backgrounds: bg-slate-100, bg-slate-200, bg-green-50
+   
+4. COMPONENT PATTERNS OBSERVED
+   - TopView: Uses inline styles (should be migrated to className approach)
+   - EventCard: Uses conditional classnames based on theme
+   - FilterPill: Uses theme from useTheme() hook
+   - All new components should follow FilterPill pattern
+
+5. ACCENT COLOR CONSISTENCY
+   - Green-400 for dark mode text accent
+   - Green-500 for dark mode borders
+   - Green-600 for light mode text accent
+   - Green-300 for light mode borders
+   - Green-500 for both modes in some contexts
+
+6. SHADOW AND BLUR PATTERNS
+   - Dark mode: "0 4px 20px -2px rgba(0,0,0,0.4)"
+   - Light mode: "0 4px 20px -2px rgba(0,0,0,0.05)"
+   - Both modes use backdrop-blur-2xl for glass effects
+
+7. ROUNDED CORNERS IMPLEMENTATION
+   - isRounded boolean from useTheme()
+   - When true: rounded-2xl or rounded-xl or rounded-lg
+   - When false: rounded-none
+   - Apply to containers, cards, buttons consistently
+
+MIGRATION CHECKLIST (VERIFIED)
+==============================
+✓ EventView - migrated from hardcoded dark to theme-aware
+✓ EventCard - already had theme support
+✓ EventNavbar - added theme support
+✓ FilterPill - added theme support
+✓ TopView - already using theme and isRounded
+✓ AccountSecurity - created with full theme support
+✓ AnalyticsDashboard - created with full theme support
+
+NEW FEATURES ADDED
+==================
+1. Account Security Component (profile/components/AccountSecurity.tsx)
+   - Email change with reauthentication
+   - Password change with confirmation
+   - Visible password toggle
+   - Error and success alerts
+   - Theme and isRounded support
+
+2. Firebase Auth Functions (lib/auth.ts)
+   - changeEmail(newEmail: string)
+   - changePassword(newPassword: string)
+   - reAuthenticate(email: string, password: string)
+   
+3. Analytics Dashboard (dashboard/AnalyticsDashboard.tsx)
+   - Total users, events, courses statistics
+   - 7-day trend charts for each metric
+   - Theme and isRounded support
+   - Mini chart visualization with hover support
+
+================================================================================

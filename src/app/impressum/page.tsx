@@ -10,8 +10,6 @@ export default function Impressum() {
       className={`min-h-screen w-full relative main-view-container px-4 py-22 ${theme === "dark" ? "bg-black" : "bg-slate-50"
         }`}
     >
-      <div className="absolute inset-0 bg-grid-pattern z-0" />
-
       <div className="relative z-10 max-w-4xl mx-auto">
         <div
           className={`${theme === "dark"

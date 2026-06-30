@@ -14,6 +14,7 @@ import {
   Home,
   ArrowRight,
   StepBack,
+  TrendingUp,
 } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
 import SectionCard from "./overlay/SectionCard";
@@ -22,6 +23,7 @@ import { isInSection, scrollToSection } from "./overlay/utils";
 import { useScrollSpy } from "./overlay/hooks";
 
 const SECTIONS = [
+  { id: "analytics", label: "Analytics", icon: TrendingUp },
   { id: "user", label: "Nutzerverwaltung", icon: Users },
   { id: "events", label: "Eventverwaltung", icon: CalendarCheck },
   { id: "mentor", label: "Mentoren", icon: UserCheck },

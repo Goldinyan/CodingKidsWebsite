@@ -18,7 +18,6 @@ export default function Home() {
      ${view == "Login" ? "min-h-220" : "min-h-270"}  
      w-full flex items-center justify-center relative main-view-container px-4`}
     >
-      <div className="absolute inset-0 bg-grid-pattern z-0" />
       <div className="w-full max-w-md relative z-10">
         <div
           className={` ${theme == "dark" ? "bg-base-white/5 border-base-white/10" : "bg-black/5 border-black/10 "}

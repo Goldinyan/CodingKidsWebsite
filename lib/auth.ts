@@ -16,6 +16,7 @@ import {
   sendEmailVerification,
   sendPasswordResetEmail,
   updateEmail,
+  updatePassword,
   reauthenticateWithCredential,
   EmailAuthProvider,
   browserSessionPersistence,
@@ -109,7 +110,6 @@ export async function changeEmail(newEmail: string) {
   if (user) {
     try {
       await updateEmail(user, newEmail);
-      console.log("E-Mail geändert");
     } catch (error) {
       console.error("Fehler beim Ändern der E-Mail:", error);
     }
@@ -132,6 +132,21 @@ export async function reAuthenticate(email: string, password: string) {
     }
   } else {
     console.log("Kein angemeldeter Nutzer");
+  }
+}
+
+export async function changePassword(newPassword: string) {
+  const user = auth.currentUser;
+  if (user) {
+    try {
+      await updatePassword(user, newPassword);
+      console.log("Passwort geändert");
+    } catch (error) {
+      console.error("Fehler beim Ändern des Passworts:", error);
+      throw error;
+    }
+  } else {
+    console.log("User is null");
   }
 }
 

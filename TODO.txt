@@ -1,9 +1,11 @@
 ## Todos
 
-[ ] - Intergrate Analytics from firebase into the Admin Dash board with good graph ui and everything one could like
 [ ] - in main view and termien folder and all their views we have a new design, i want you to include theme and isRounded from useTheme in there, i think you can see how to do it from the style.txt.
 BUT do not use the style from the style.txt only the impplementation of theme and is rounded, analyze the theme used in main view and termine and update the style.txt accordingly. 
+
 [ ] - I want you to do every new ui like the new style.txt you implemented before hand, but dont do main and termine view because they are already finished.
+
+[ ] - Intergrate Analytics from firebase into the Admin Dash board with good graph ui and everything one could like
 
 [ ] - Im using firebase and in the profile tab, the users cannot change their email,and passord yet implement this with good ui 
 
