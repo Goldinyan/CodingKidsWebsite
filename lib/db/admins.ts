@@ -1,7 +1,6 @@
 import { db } from "../firebase";
 import { collection, getDocs } from "firebase/firestore";
-import type { UserData } from "@/BackEnd/type";
-import { type UserRole } from "../rate_limiting/rateLimiter";
+import type { UserData, UserRole } from "@/BackEnd/type";
 import { enforceRateLimit } from "./db";
 
 export async function getAllAdmins(

@@ -1,7 +1,8 @@
-'use server';
+"use server";
 
-import { BetaAnalyticsDataClient } from '@google-analytics/data';
-import { MonitoringServiceV3 } from '@google-cloud/monitoring';
+import { BetaAnalyticsDataClient } from "@google-analytics/data";
+import { MonitoringServiceV3 } from "@google-cloud/monitoring";
+import { ServiceMonitoringServiceClient } from "@google-cloud/monitoring/build/src/v3";
 
 interface VisitorStatsData {
   date: string;
@@ -26,10 +27,10 @@ interface CombinedAnalytics {
 export async function getVisitorStats(): Promise<VisitorStatsData[]> {
   try {
     const analyticsDataClient = new BetaAnalyticsDataClient();
-    
+
     const propertyId = process.env.NEXT_PUBLIC_GA_PROPERTY_ID;
     if (!propertyId) {
-      console.warn('NEXT_PUBLIC_GA_PROPERTY_ID not set, returning mock data');
+      console.warn("NEXT_PUBLIC_GA_PROPERTY_ID not set, returning mock data");
       return getMockVisitorData();
     }
 
@@ -38,8 +39,8 @@ export async function getVisitorStats(): Promise<VisitorStatsData[]> {
 
     const formatDate = (date: Date): string => {
       const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
       return `${year}${month}${day}`;
     };
 
@@ -51,16 +52,13 @@ export async function getVisitorStats(): Promise<VisitorStatsData[]> {
           endDate: formatDate(endDate),
         },
       ],
-      dimensions: [{ name: 'date' }],
-      metrics: [
-        { name: 'activeUsers' },
-        { name: 'screenPageViews' },
-      ],
+      dimensions: [{ name: "date" }],
+      metrics: [{ name: "activeUsers" }, { name: "screenPageViews" }],
       orderBys: [
         {
           dimension: {
-            orderType: 'ALPHANUMERIC',
-            dimensionName: 'date',
+            orderType: "ALPHANUMERIC",
+            dimensionName: "date",
           },
         },
       ],
@@ -72,11 +70,14 @@ export async function getVisitorStats(): Promise<VisitorStatsData[]> {
 
     if (response.rows) {
       response.rows.forEach((row) => {
-        const dateStr = row.dimensionValues?.[0]?.value || '';
-        const formattedDate = dateStr.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3');
-        
-        const activeUsers = parseInt(row.metricValues?.[0]?.value || '0', 10);
-        const pageViews = parseInt(row.metricValues?.[1]?.value || '0', 10);
+        const dateStr = row.dimensionValues?.[0]?.value || "";
+        const formattedDate = dateStr.replace(
+          /(\d{4})(\d{2})(\d{2})/,
+          "$1-$2-$3",
+        );
+
+        const activeUsers = parseInt(row.metricValues?.[0]?.value || "0", 10);
+        const pageViews = parseInt(row.metricValues?.[1]?.value || "0", 10);
 
         visitorStats.push({
           date: formattedDate,
@@ -88,7 +89,7 @@ export async function getVisitorStats(): Promise<VisitorStatsData[]> {
 
     return visitorStats;
   } catch (error) {
-    console.error('Error fetching visitor stats:', error);
+    console.error("Error fetching visitor stats:", error);
     return getMockVisitorData();
   }
 }
@@ -96,10 +97,12 @@ export async function getVisitorStats(): Promise<VisitorStatsData[]> {
 export async function getFirestoreMetrics(): Promise<FirestoreMetricsData[]> {
   try {
     const monitoringClient = new MonitoringServiceV3.MetricServiceClient();
-    
+
     const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
     if (!projectId) {
-      console.warn('NEXT_PUBLIC_FIREBASE_PROJECT_ID not set, returning mock data');
+      console.warn(
+        "NEXT_PUBLIC_FIREBASE_PROJECT_ID not set, returning mock data",
+      );
       return getMockFirestoreData();
     }
 
@@ -126,8 +129,8 @@ export async function getFirestoreMetrics(): Promise<FirestoreMetricsData[]> {
     const metricsMap: { [key: string]: FirestoreMetricsData } = {};
 
     const metricTypes = [
-      'firestore.googleapis.com/document/read_count',
-      'firestore.googleapis.com/document/write_count',
+      "firestore.googleapis.com/document/read_count",
+      "firestore.googleapis.com/document/write_count",
     ];
 
     for (const metricType of metricTypes) {
@@ -152,7 +155,7 @@ export async function getFirestoreMetrics(): Promise<FirestoreMetricsData[]> {
               const timestamp = point.interval?.endTime;
               if (timestamp?.seconds) {
                 const date = new Date(timestamp.seconds * 1000);
-                const dateStr = date.toISOString().split('T')[0];
+                const dateStr = date.toISOString().split("T")[0];
 
                 if (!metricsMap[dateStr]) {
                   metricsMap[dateStr] = {
@@ -163,13 +166,13 @@ export async function getFirestoreMetrics(): Promise<FirestoreMetricsData[]> {
                 }
 
                 const value = parseInt(
-                  point.value?.doubleValue?.toString() || '0',
-                  10
+                  point.value?.doubleValue?.toString() || "0",
+                  10,
                 );
 
-                if (metricType.includes('read_count')) {
+                if (metricType.includes("read_count")) {
                   metricsMap[dateStr].reads += value;
-                } else if (metricType.includes('write_count')) {
+                } else if (metricType.includes("write_count")) {
                   metricsMap[dateStr].writes += value;
                 }
               }
@@ -180,12 +183,12 @@ export async function getFirestoreMetrics(): Promise<FirestoreMetricsData[]> {
     }
 
     const metrics = Object.values(metricsMap).sort((a, b) =>
-      a.date.localeCompare(b.date)
+      a.date.localeCompare(b.date),
     );
 
     return metrics;
   } catch (error) {
-    console.error('Error fetching Firestore metrics:', error);
+    console.error("Error fetching Firestore metrics:", error);
     return getMockFirestoreData();
   }
 }
@@ -219,7 +222,7 @@ export async function getCombinedAnalytics(): Promise<CombinedAnalytics[]> {
 
     return combined;
   } catch (error) {
-    console.error('Error fetching combined analytics:', error);
+    console.error("Error fetching combined analytics:", error);
     return getMockCombinedData();
   }
 }
@@ -230,7 +233,7 @@ function getMockVisitorData(): VisitorStatsData[] {
     const date = new Date();
     date.setDate(date.getDate() - i);
     data.push({
-      date: date.toISOString().split('T')[0],
+      date: date.toISOString().split("T")[0],
       activeUsers: Math.floor(Math.random() * 100) + 20,
       pageViews: Math.floor(Math.random() * 500) + 100,
     });
@@ -244,7 +247,7 @@ function getMockFirestoreData(): FirestoreMetricsData[] {
     const date = new Date();
     date.setDate(date.getDate() - i);
     data.push({
-      date: date.toISOString().split('T')[0],
+      date: date.toISOString().split("T")[0],
       reads: Math.floor(Math.random() * 1000) + 200,
       writes: Math.floor(Math.random() * 500) + 100,
     });
@@ -258,7 +261,7 @@ function getMockCombinedData(): CombinedAnalytics[] {
     const date = new Date();
     date.setDate(date.getDate() - i);
     data.push({
-      date: date.toISOString().split('T')[0],
+      date: date.toISOString().split("T")[0],
       activeUsers: Math.floor(Math.random() * 100) + 20,
       pageViews: Math.floor(Math.random() * 500) + 100,
       reads: Math.floor(Math.random() * 1000) + 200,

@@ -102,11 +102,11 @@ export default function Navbar() {
                 <button
                   onClick={() => router.push("/kontakt")}
                   className={` ${isRounded ? "rounded-md" : "rounded-none"} ${theme == "dark"
-                      ? "text-gray-300 hover:text-white hover:bg-white/10 hover:border-white border-gray-400"
-                      : "text-gray-900 hover:text-black hover:bg-black/10 hover:border-black border-gray-800"
+                      ? "text-gray-300 hover:text-white hover:bg-white/10"
+                      : "text-gray-900 hover:text-black hover:bg-black/10"
                     } 
 
-                  p-2 border transition-all duration-200`}
+                  p-2 transition-all duration-200`}
                 >
                   <MessageCircle className="w-5 h-5" />
                 </button>
@@ -135,7 +135,14 @@ export default function Navbar() {
             <div className="relative">
               <button
                 onClick={() => router.push(user ? "/profile" : "/login")}
-                className={`ml-2 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[14px] font-bold no-underline transition-all shrink-0 bg-purple-700 hover:bg-purple-600 text-white ${isRounded ? "rounded-md" : "rounded-none"}`}
+                className={`ml-2 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[14px] font-bold no-underline transition-all shrink-0 ${
+                  user 
+                    ? `${isRounded ? "rounded-md" : "rounded-none"} ${theme == "dark"
+                        ? "text-gray-300 hover:text-white hover:bg-white/10"
+                        : "text-gray-900 hover:text-black hover:bg-black/10"
+                      } p-2`
+                    : "bg-purple-700 hover:bg-purple-600 text-white px-3 py-1.5"
+                }`}
               >
                 {!user ? <p>Anmelden</p> : <User className="w-5 h-5" />}
               </button>
@@ -145,11 +152,11 @@ export default function Navbar() {
               <button
                 onClick={() => router.push("/dashboard")}
                 className={`${isRounded ? "rounded-md" : "rounded-none"} ${theme == "dark"
-                    ? "text-gray-300 hover:text-white hover:bg-white/10 hover:border-white border-gray-400"
-                    : "text-gray-900 hover:text-black hover:bg-black/10 hover:border-black border-gray-800"
+                    ? "text-gray-300 hover:text-white hover:bg-white/10"
+                    : "text-gray-900 hover:text-black hover:bg-black/10"
                   } 
 
-                  p-2 border transition-all duration-200`}
+                  p-2 transition-all duration-200`}
               >
                 <LayoutDashboard className="w-5 h-5" />
               </button>

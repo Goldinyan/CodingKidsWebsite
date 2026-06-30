@@ -51,12 +51,12 @@ export async function addEvent(
   try {
     let date: Date;
 
-    if (newEvent.date instanceof Timestamp) {
-      date = newEvent.date.toDate();
-    } else if (newEvent.date instanceof Date) {
-      date = newEvent.date;
+    if ((newEvent.date as any) instanceof Timestamp) {
+      date = (newEvent.date as unknown as Timestamp).toDate();
+    } else if ((newEvent.date as any) instanceof Date) {
+      date = newEvent.date as unknown as Date;
     } else {
-      date = new Date(newEvent.date);
+      date = new Date(newEvent.date as unknown as string);
     }
     const dateId = date.toISOString();
     await setDoc(doc(db, "events", dateId), {

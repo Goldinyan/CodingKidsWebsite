@@ -54,7 +54,7 @@ export default function EventCreationDialog(props: {
   const [error, setError] = useState<string>("");
   const [isCreating, setIsCreating] = useState(false);
 
-  const roundedClass = isRounded ? "rounded-2xl" : "rounded-lg";
+  const roundedClass = isRounded ? "rounded-xl" : "rounded-none";
 
   const steps = [
     {
@@ -211,34 +211,43 @@ export default function EventCreationDialog(props: {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 transition-colors duration-300 ${
+      theme === "dark" ? "bg-black/50" : "bg-white/50"
+    } backdrop-blur-sm`}>
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
-        className={`w-full max-w-2xl bg-${theme === "dark" ? "slate" : "white"}-900 border ${
-          theme === "dark" ? "border-white/10" : "border-slate-200"
-        } ${roundedClass} shadow-2xl`}
+        className={`w-full max-w-2xl ${roundedClass} transition-colors duration-300 overflow-hidden ${
+          theme === "dark" ? "bg-black border border-white/10" : "bg-white border border-slate-200"
+        }`}
       >
         {/* Header */}
         <div
-          className={`px-6 py-6 border-b ${
+          className={`px-8 py-8 border-b transition-colors duration-300 ${
             theme === "dark"
-              ? "border-white/10 bg-white/5"
+              ? "border-white/10 bg-black/50"
               : "border-slate-200 bg-slate-50"
           }`}
         >
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-start justify-between mb-6">
             <div>
+              <p
+                className={`text-xs tracking-[0.22em] uppercase font-mono mb-2 ${
+                  theme === "dark" ? "text-purple-400" : "text-purple-600"
+                }`}
+              >
+                Schritt {currentStep + 1} von {steps.length}
+              </p>
               <h2
-                className={`text-2xl font-bold ${
+                className={`text-3xl font-black tracking-tight ${
                   theme === "dark" ? "text-white" : "text-slate-900"
                 }`}
               >
                 {steps[currentStep].title}
               </h2>
               <p
-                className={`text-sm mt-1 ${
+                className={`text-sm mt-2 ${
                   theme === "dark" ? "text-gray-400" : "text-slate-600"
                 }`}
               >
@@ -247,26 +256,31 @@ export default function EventCreationDialog(props: {
             </div>
             <button
               onClick={() => onOpenChange(false)}
-              className="text-2xl font-light"
+              className={`text-2xl font-light p-1 ${
+                theme === "dark" ? "text-gray-400 hover:text-white" : "text-slate-600 hover:text-slate-900"
+              }`}
             >
               ×
             </button>
           </div>
 
-          {/* Progress indicator */}
+          {/* Progress bar */}
           <div className="flex gap-2">
             {steps.map((_, index) => (
-              <div
+              <motion.div
                 key={index}
-                className={`h-1 flex-1 rounded-full transition-colors ${
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{ delay: index * 0.1 }}
+                className={`h-1 flex-1 origin-left transition-colors duration-300 ${roundedClass} ${
                   index === currentStep
                     ? theme === "dark"
-                      ? "bg-green-400"
-                      : "bg-green-600"
+                      ? "bg-purple-500"
+                      : "bg-purple-600"
                     : index < currentStep
                       ? theme === "dark"
-                        ? "bg-green-500/40"
-                        : "bg-green-300/60"
+                        ? "bg-purple-500/40"
+                        : "bg-purple-300/60"
                       : theme === "dark"
                         ? "bg-white/10"
                         : "bg-slate-200"
@@ -278,8 +292,8 @@ export default function EventCreationDialog(props: {
 
         {/* Content */}
         <div
-          className={`px-6 py-8 min-h-96 max-h-96 overflow-y-auto ${
-            theme === "dark" ? "bg-black/20" : "bg-white"
+          className={`px-8 py-8 min-h-72 max-h-96 overflow-y-auto transition-colors duration-300 ${
+            theme === "dark" ? "bg-black" : "bg-white"
           }`}
         >
           <AnimatePresence mode="wait">
@@ -289,20 +303,22 @@ export default function EventCreationDialog(props: {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
-                className="space-y-4"
+                className="space-y-5"
               >
                 <div className="grid gap-2">
                   <Label
-                    className={theme === "dark" ? "text-gray-300" : "text-gray-700"}
+                    className={`text-xs font-semibold tracking-wide uppercase ${
+                      theme === "dark" ? "text-gray-300" : "text-gray-700"
+                    }`}
                   >
                     Event-Name *
                   </Label>
                   <Input
-                    className={`${
+                    className={`${roundedClass} px-4 py-2.5 text-sm transition-colors duration-300 ${
                       theme === "dark"
-                        ? "bg-white/5 border-white/10 text-white"
-                        : "bg-slate-50 border-slate-200"
-                    }`}
+                        ? "bg-white/5 border-white/10 text-white placeholder-gray-500 focus:bg-white/10 focus:border-purple-500/50"
+                        : "bg-slate-50 border-slate-200 placeholder-slate-400 focus:bg-white focus:border-purple-400"
+                    } border focus:outline-none`}
                     placeholder="z.B. Scratch Workshop"
                     value={EventInfo.name}
                     onChange={(e) =>
@@ -313,16 +329,18 @@ export default function EventCreationDialog(props: {
 
                 <div className="grid gap-2">
                   <Label
-                    className={theme === "dark" ? "text-gray-300" : "text-gray-700"}
+                    className={`text-xs font-semibold tracking-wide uppercase ${
+                      theme === "dark" ? "text-gray-300" : "text-gray-700"
+                    }`}
                   >
                     Datum *
                   </Label>
                   <Input
-                    className={`${
+                    className={`${roundedClass} px-4 py-2.5 text-sm transition-colors duration-300 ${
                       theme === "dark"
-                        ? "bg-white/5 border-white/10 text-white"
-                        : "bg-slate-50 border-slate-200"
-                    }`}
+                        ? "bg-white/5 border-white/10 text-white focus:bg-white/10 focus:border-purple-500/50"
+                        : "bg-slate-50 border-slate-200 focus:bg-white focus:border-purple-400"
+                    } border focus:outline-none`}
                     type="date"
                     value={EventInfo.date.toDate().toISOString().split("T")[0]}
                     onChange={(e) => {
@@ -337,16 +355,18 @@ export default function EventCreationDialog(props: {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="grid gap-2">
                     <Label
-                      className={theme === "dark" ? "text-gray-300" : "text-gray-700"}
+                      className={`text-xs font-semibold tracking-wide uppercase ${
+                        theme === "dark" ? "text-gray-300" : "text-gray-700"
+                      }`}
                     >
                       Dauer (Min.) *
                     </Label>
                     <Input
-                      className={`${
+                      className={`${roundedClass} px-4 py-2.5 text-sm transition-colors duration-300 ${
                         theme === "dark"
-                          ? "bg-white/5 border-white/10 text-white"
-                          : "bg-slate-50 border-slate-200"
-                      }`}
+                          ? "bg-white/5 border-white/10 text-white placeholder-gray-500 focus:bg-white/10 focus:border-purple-500/50"
+                          : "bg-slate-50 border-slate-200 placeholder-slate-400 focus:bg-white focus:border-purple-400"
+                      } border focus:outline-none`}
                       type="number"
                       placeholder="90"
                       value={EventInfo.length || ""}
@@ -361,16 +381,18 @@ export default function EventCreationDialog(props: {
 
                   <div className="grid gap-2">
                     <Label
-                      className={theme === "dark" ? "text-gray-300" : "text-gray-700"}
+                      className={`text-xs font-semibold tracking-wide uppercase ${
+                        theme === "dark" ? "text-gray-300" : "text-gray-700"
+                      }`}
                     >
                       Teilnehmerzahl *
                     </Label>
                     <Input
-                      className={`${
+                      className={`${roundedClass} px-4 py-2.5 text-sm transition-colors duration-300 ${
                         theme === "dark"
-                          ? "bg-white/5 border-white/10 text-white"
-                          : "bg-slate-50 border-slate-200"
-                      }`}
+                          ? "bg-white/5 border-white/10 text-white placeholder-gray-500 focus:bg-white/10 focus:border-purple-500/50"
+                          : "bg-slate-50 border-slate-200 placeholder-slate-400 focus:bg-white focus:border-purple-400"
+                      } border focus:outline-none`}
                       type="number"
                       placeholder="18"
                       value={EventInfo.memberCount || ""}
@@ -392,20 +414,22 @@ export default function EventCreationDialog(props: {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
-                className="space-y-4"
+                className="space-y-5"
               >
                 <div className="grid gap-2">
                   <Label
-                    className={theme === "dark" ? "text-gray-300" : "text-gray-700"}
+                    className={`text-xs font-semibold tracking-wide uppercase ${
+                      theme === "dark" ? "text-gray-300" : "text-gray-700"
+                    }`}
                   >
                     Veranstaltungsort *
                   </Label>
                   <Input
-                    className={`${
+                    className={`${roundedClass} px-4 py-2.5 text-sm transition-colors duration-300 ${
                       theme === "dark"
-                        ? "bg-white/5 border-white/10 text-white"
-                        : "bg-slate-50 border-slate-200"
-                    }`}
+                        ? "bg-white/5 border-white/10 text-white placeholder-gray-500 focus:bg-white/10 focus:border-purple-500/50"
+                        : "bg-slate-50 border-slate-200 placeholder-slate-400 focus:bg-white focus:border-purple-400"
+                    } border focus:outline-none`}
                     placeholder="z.B. CUBES Wesel"
                     value={EventInfo.place[0]}
                     onChange={(e) => {
@@ -418,16 +442,18 @@ export default function EventCreationDialog(props: {
 
                 <div className="grid gap-2">
                   <Label
-                    className={theme === "dark" ? "text-gray-300" : "text-gray-700"}
+                    className={`text-xs font-semibold tracking-wide uppercase ${
+                      theme === "dark" ? "text-gray-300" : "text-gray-700"
+                    }`}
                   >
                     Straße *
                   </Label>
                   <Input
-                    className={`${
+                    className={`${roundedClass} px-4 py-2.5 text-sm transition-colors duration-300 ${
                       theme === "dark"
-                        ? "bg-white/5 border-white/10 text-white"
-                        : "bg-slate-50 border-slate-200"
-                    }`}
+                        ? "bg-white/5 border-white/10 text-white placeholder-gray-500 focus:bg-white/10 focus:border-purple-500/50"
+                        : "bg-slate-50 border-slate-200 placeholder-slate-400 focus:bg-white focus:border-purple-400"
+                    } border focus:outline-none`}
                     placeholder="z.B. Rudolf-Diesel-Str. 115"
                     value={EventInfo.place[1]}
                     onChange={(e) => {
@@ -440,16 +466,18 @@ export default function EventCreationDialog(props: {
 
                 <div className="grid gap-2">
                   <Label
-                    className={theme === "dark" ? "text-gray-300" : "text-gray-700"}
+                    className={`text-xs font-semibold tracking-wide uppercase ${
+                      theme === "dark" ? "text-gray-300" : "text-gray-700"
+                    }`}
                   >
                     Stadt *
                   </Label>
                   <Input
-                    className={`${
+                    className={`${roundedClass} px-4 py-2.5 text-sm transition-colors duration-300 ${
                       theme === "dark"
-                        ? "bg-white/5 border-white/10 text-white"
-                        : "bg-slate-50 border-slate-200"
-                    }`}
+                        ? "bg-white/5 border-white/10 text-white placeholder-gray-500 focus:bg-white/10 focus:border-purple-500/50"
+                        : "bg-slate-50 border-slate-200 placeholder-slate-400 focus:bg-white focus:border-purple-400"
+                    } border focus:outline-none`}
                     placeholder="z.B. 46485 Wesel"
                     value={EventInfo.place[2]}
                     onChange={(e) => {
@@ -468,20 +496,22 @@ export default function EventCreationDialog(props: {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
-                className="space-y-4"
+                className="space-y-5"
               >
                 <div className="grid gap-2">
                   <Label
-                    className={theme === "dark" ? "text-gray-300" : "text-gray-700"}
+                    className={`text-xs font-semibold tracking-wide uppercase ${
+                      theme === "dark" ? "text-gray-300" : "text-gray-700"
+                    }`}
                   >
                     Event-Typ *
                   </Label>
                   <Input
-                    className={`${
+                    className={`${roundedClass} px-4 py-2.5 text-sm transition-colors duration-300 ${
                       theme === "dark"
-                        ? "bg-white/5 border-white/10 text-white"
-                        : "bg-slate-50 border-slate-200"
-                    }`}
+                        ? "bg-white/5 border-white/10 text-white placeholder-gray-500 focus:bg-white/10 focus:border-purple-500/50"
+                        : "bg-slate-50 border-slate-200 placeholder-slate-400 focus:bg-white focus:border-purple-400"
+                    } border focus:outline-none`}
                     placeholder="z.B. CoderDojo, Workshop"
                     value={EventInfo.typeOfEvent}
                     onChange={(e) =>
@@ -492,16 +522,18 @@ export default function EventCreationDialog(props: {
 
                 <div className="grid gap-2">
                   <Label
-                    className={theme === "dark" ? "text-gray-300" : "text-gray-700"}
+                    className={`text-xs font-semibold tracking-wide uppercase ${
+                      theme === "dark" ? "text-gray-300" : "text-gray-700"
+                    }`}
                   >
                     Tag / Thema
                   </Label>
                   <Input
-                    className={`${
+                    className={`${roundedClass} px-4 py-2.5 text-sm transition-colors duration-300 ${
                       theme === "dark"
-                        ? "bg-white/5 border-white/10 text-white"
-                        : "bg-slate-50 border-slate-200"
-                    }`}
+                        ? "bg-white/5 border-white/10 text-white placeholder-gray-500 focus:bg-white/10 focus:border-purple-500/50"
+                        : "bg-slate-50 border-slate-200 placeholder-slate-400 focus:bg-white focus:border-purple-400"
+                    } border focus:outline-none`}
                     placeholder="z.B. Scratch, Python"
                     value={EventInfo.tag}
                     onChange={(e) =>
@@ -512,16 +544,18 @@ export default function EventCreationDialog(props: {
 
                 <div className="grid gap-2">
                   <Label
-                    className={theme === "dark" ? "text-gray-300" : "text-gray-700"}
+                    className={`text-xs font-semibold tracking-wide uppercase ${
+                      theme === "dark" ? "text-gray-300" : "text-gray-700"
+                    }`}
                   >
                     Schwierigkeitsgrad
                   </Label>
                   <Input
-                    className={`${
+                    className={`${roundedClass} px-4 py-2.5 text-sm transition-colors duration-300 ${
                       theme === "dark"
-                        ? "bg-white/5 border-white/10 text-white"
-                        : "bg-slate-50 border-slate-200"
-                    }`}
+                        ? "bg-white/5 border-white/10 text-white placeholder-gray-500 focus:bg-white/10 focus:border-purple-500/50"
+                        : "bg-slate-50 border-slate-200 placeholder-slate-400 focus:bg-white focus:border-purple-400"
+                    } border focus:outline-none`}
                     placeholder="z.B. Anfänger, Fortgeschritten"
                     value={EventInfo.difficulty}
                     onChange={(e) =>
@@ -538,19 +572,21 @@ export default function EventCreationDialog(props: {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
-                className="space-y-4"
+                className="space-y-5"
               >
                 <div className="grid gap-2">
                   <Label
-                    className={theme === "dark" ? "text-gray-300" : "text-gray-700"}
+                    className={`text-xs font-semibold tracking-wide uppercase ${
+                      theme === "dark" ? "text-gray-300" : "text-gray-700"
+                    }`}
                   >
                     Beschreibung
                   </Label>
                   <textarea
-                    className={`rounded-lg p-3 resize-none min-h-[180px] focus:outline-none focus:ring-2 ${
+                    className={`${roundedClass} px-4 py-2.5 text-sm resize-none min-h-[140px] transition-colors duration-300 focus:outline-none ${
                       theme === "dark"
-                        ? "bg-white/5 border-white/10 text-white focus:ring-green-400"
-                        : "bg-slate-50 border-slate-200 focus:ring-green-600"
+                        ? "bg-white/5 border-white/10 text-white placeholder-gray-500 focus:bg-white/10 focus:border-purple-500/50"
+                        : "bg-slate-50 border-slate-200 placeholder-slate-400 focus:bg-white focus:border-purple-400"
                     } border`}
                     placeholder="Geben Sie eine detaillierte Beschreibung des Events ein..."
                     value={EventInfo.description}
@@ -563,56 +599,55 @@ export default function EventCreationDialog(props: {
             )}
           </AnimatePresence>
 
-          {/* Error message */}
           {error && (
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className={`mt-4 flex items-center gap-2 p-3 rounded-lg ${
+              className={`mt-6 flex items-center gap-2 p-3 ${roundedClass} text-sm ${
                 theme === "dark"
                   ? "bg-red-500/10 border border-red-500/20 text-red-400"
                   : "bg-red-50 border border-red-200 text-red-600"
               }`}
             >
               <AlertCircle className="w-4 h-4 flex-shrink-0" />
-              <span className="text-sm">{error}</span>
+              {error}
             </motion.div>
           )}
         </div>
 
         {/* Footer */}
         <div
-          className={`px-6 py-4 border-t flex flex-col gap-4 ${
+          className={`px-8 py-6 border-t transition-colors duration-300 ${
             theme === "dark"
-              ? "border-white/10 bg-white/5"
+              ? "border-white/10 bg-black/50"
               : "border-slate-200 bg-slate-50"
           }`}
         >
           {currentStep === steps.length - 1 && (
-            <div className="flex gap-2">
+            <div className="flex gap-2 mb-4">
               <Button
                 onClick={presetEvent1}
                 variant="outline"
-                className="flex-1 text-xs"
+                className={`flex-1 text-xs ${roundedClass}`}
               >
                 Preset: Scratch
               </Button>
               <Button
                 onClick={presetEvent2}
                 variant="outline"
-                className="flex-1 text-xs"
+                className={`flex-1 text-xs ${roundedClass}`}
               >
                 Preset: Versammlung
               </Button>
             </div>
           )}
 
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             <Button
               onClick={handlePrev}
               disabled={currentStep === 0}
               variant="outline"
-              className="flex-1"
+              className={`flex-1 ${roundedClass}`}
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Zurück
@@ -621,11 +656,7 @@ export default function EventCreationDialog(props: {
             {currentStep < steps.length - 1 ? (
               <Button
                 onClick={handleNext}
-                className={`flex-1 ${
-                  theme === "dark"
-                    ? "bg-green-600 hover:bg-green-700"
-                    : "bg-green-600 hover:bg-green-700"
-                } text-white`}
+                className={`flex-1 bg-purple-600 hover:bg-purple-700 text-white transition-colors duration-300 ${roundedClass}`}
               >
                 Weiter
                 <ArrowRight className="w-4 h-4 ml-2" />
@@ -634,11 +665,7 @@ export default function EventCreationDialog(props: {
               <Button
                 onClick={handleEventCreate}
                 disabled={isCreating}
-                className={`flex-1 ${
-                  theme === "dark"
-                    ? "bg-green-600 hover:bg-green-700"
-                    : "bg-green-600 hover:bg-green-700"
-                } text-white`}
+                className={`flex-1 bg-purple-600 hover:bg-purple-700 text-white transition-colors duration-300 ${roundedClass} disabled:opacity-50`}
               >
                 {isCreating ? (
                   <>

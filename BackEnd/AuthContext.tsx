@@ -19,7 +19,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (!user) return;
     try {
       await updateUser(user.uid, updates, user.uid, userRole);
-      setUserData((prev) => (prev ? { ...prev, ...updates } : null));
+      setUserData((prev) => (prev ? { ...prev, ...updates } as UserData : null));
 
       if (updates.role) {
         setUserRole(updates.role);

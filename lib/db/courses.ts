@@ -6,8 +6,7 @@ import {
   deleteDoc,
 } from "firebase/firestore";
 import { doc, getDoc, setDoc, updateDoc, arrayUnion } from "firebase/firestore";
-import type { CourseData } from "@/BackEnd/type";
-import { type UserRole } from "../rate_limiting/rateLimiter";
+import type { CourseData, UserRole } from "@/BackEnd/type";
 import { enforceRateLimit } from "./db";
 
 export async function getAllCourses(

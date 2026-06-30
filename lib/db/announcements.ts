@@ -1,8 +1,7 @@
 import { db } from "../firebase";
 import { collection, getDocs, deleteDoc } from "firebase/firestore";
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
-import type { AnnouncementData } from "@/BackEnd/type";
-import { type UserRole } from "../rate_limiting/rateLimiter";
+import type { AnnouncementData, UserRole } from "@/BackEnd/type";
 import { enforceRateLimit } from "./db";
 
 export async function getAllAnnouncements(
