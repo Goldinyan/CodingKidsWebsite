@@ -79,8 +79,7 @@ input[type="number"] {
   --color-graytext: #686868;
   --color-gray2text: #9a9a9a;
 
-  --font-size-xxs: 0.625rem; /* 10px */
-  --font-size-xxs--line-height: 0.875rem; /* 14px */
+  --text-xxs: 0.650rem; /* 10.4px */
 }
 
 @theme inline {

@@ -11,6 +11,8 @@ import {
   SimpleMentorCard,
   SimpleMentorCardProps,
 } from "../verein/mentor/SimpleMentorCard";
+import SectionLabel from "./components/SectionLabel";
+import SectionHeading from "./components/SectionHeading";
 
 export default function MentorsView() {
   const [mentors, setMentors] = useState<Mentor[]>([]);
@@ -106,24 +108,11 @@ export default function MentorsView() {
   };
   return (
     <div className={`w-full px-8 py-20 transition-colors duration-300 `}>
-      <div className="mb-12">
-        <span
-          className={`text-xs font-mono tracking-widest uppercase block mb-3 ${theme === "dark" ? "text-zinc-500" : "text-zinc-400"}`}
-        >
-          Das Team
-        </span>
-        <h2
-          className={`text-4xl font-bold mb-3 ${theme === "dark" ? "text-white" : "text-slate-900"
-            }`}
-        >
-          Unser Vorstand
-        </h2>
-        <p
-          className={`text-lg ${theme === "dark" ? "text-gray-400" : "text-slate-600"
-            }`}
-        >
-          Wer wir sind, was uns antreibt und wer hier die Fäden zieht.{" "}
-        </p>
+      <div className="flex items-end justify-between mb-10">
+        <div>
+          <SectionLabel>Das Team</SectionLabel>
+          <SectionHeading>Unser Vorstand</SectionHeading>
+        </div>
       </div>
 
       <motion.div
@@ -132,7 +121,7 @@ export default function MentorsView() {
         whileInView="visible"
         exit="hidden"
         viewport={{ once: false, margin: "0px 0px -50px 0px" }}
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  gap-10"
+        className="grid grid-cols-1 md:grid-cols-2 gap-5"
       >
         {mentors.slice(0, 3).map((mentor) => (
           <motion.div

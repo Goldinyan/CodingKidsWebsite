@@ -1,43 +1,13 @@
 ## Todos
 
+[ ] - Intergrate Analytics from firebase into the Admin Dash board with good graph ui and everything one could like
+[ ] - in main view and termien folder and all their views we have a new design, i want you to include theme and isRounded from useTheme in there, i think you can see how to do it from the style.txt.
+BUT do not use the style from the style.txt only the impplementation of theme and is rounded, analyze the theme used in main view and termine and update the style.txt accordingly. 
+[ ] - I want you to do every new ui like the new style.txt you implemented before hand, but dont do main and termine view because they are already finished.
 
-[ ] - Überall wo getUserData verwendet wird, weg machen, und userData aus der useAuth() hook holen
-[ ] - bei jedem check, gucken ob loading true ist wenn ja dann return, loading bekommt man auch durch die useAuth hook
-[ ] - außerdem mit useRef hadFetched und checken
+[ ] - Im using firebase and in the profile tab, the users cannot change their email,and passord yet implement this with good ui 
 
-Beispiel für das alles ist hier:
+[ ] - Do not use comments in ui or anywhere except if its required for understanding or something
 
-```ts
-const { user, userData, userRole, loading } = useAuth();
-
-  const router = useRouter();
-
-  const hasFetched = useRef<string | null>(null);
-
-  useEffect(() => {
-    if (!user?.uid) return;
-
-    const currentKey = `${user.uid}-${userRole}`;
-    if (hasFetched.current === currentKey) return;
-
-    const fetchEvents = async () => {
-      hasFetched.current = currentKey;
-
-      const allEvents = (await getAllEvents(user.uid, userRole)) as EventData[];
-
-      const upcomingEvents = allEvents
-        .sort((a, b) => toJsDate(a.date).getTime() - toJsDate(b.date).getTime())
-        .slice(0, 3);
-      setEvents(upcomingEvents as EventData[]);
-    };
-
-    fetchEvents();
-  }, [user?.uid, userRole]);
-```
-
-
-
-Theoretisch, aber noch nicht machen:
-
-[ ] - SWR hinzufügen für 0 latency und cache der Date, wäre weniger DB-calls aber momentan nicht mätog
+[ ] - After you are finished write a good report on what you changed
 

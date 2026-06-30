@@ -58,7 +58,7 @@ export default function TopView() {
             >
               CoderDojos sind kostenlose, reale Veranstaltungen für Kinder und
               Jugendliche zwischen 8 und 17 Jahren. Lerne Programmieren, baue
-              Spiele, Webseiten und eigene Projekte — in deinem eigenen Tempo.
+              Spiele, Webseiten und eigene Projekte, in deinem eigenen Tempo.
             </p>
           </motion.div>
         </div>

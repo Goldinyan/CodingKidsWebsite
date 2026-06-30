@@ -46,7 +46,7 @@ export default function EventAdd(props: {
   const { mode = "card", onCreated, onClose } = props;
 
   const [EventInfo, setEventInfo] = useState<EventData>(defaultEvent);
-
+I
   const presetEvent1 = () => {
     setEventInfo({
       name: "Scratch Workshop",
@@ -56,7 +56,7 @@ export default function EventAdd(props: {
       length: 90,
       memberCount: 18,
       place: [
-        "CUBES Wesel – Konferenzraum EG links",
+        "CUBES Wesel - Konferenzraum EG links",
         "Rudolf-Diesel-Str. 115",
         "46485 Wesel",
       ],
@@ -67,7 +67,7 @@ export default function EventAdd(props: {
       tag: "Scratch",
       difficulty: "Einsteigerfreundlich",
       requirements:
-        "Keine Vorkenntnisse erforderlich – ideal für Kinder ab 8 Jahren",
+        "Keine Vorkenntnisse erforderlich. Ideal für Kinder ab 8 Jahren",
       description:
         "In diesem Workshop lernen Kinder spielerisch die Grundlagen des Programmierens mit Scratch. Gemeinsam entwickeln wir kleine interaktive Geschichten und Spiele.",
     });
@@ -92,7 +92,7 @@ export default function EventAdd(props: {
       typeOfEvent: "MemberOnly",
       tag: "Verein",
       difficulty: "Keine",
-      requirements: "Nur für registrierte Mitglieder – Anmeldung erforderlich",
+      requirements: "Nur für registrierte Mitglieder. Anmeldung erforderlich",
       description:
         "Jährliche Versammlung aller Vereinsmitglieder zur Abstimmung über aktuelle Themen, Finanzen und zukünftige Projekte. Es wird um pünktliches Erscheinen gebeten.",
     });

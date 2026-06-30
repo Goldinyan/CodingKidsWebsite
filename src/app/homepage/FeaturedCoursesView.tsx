@@ -11,13 +11,11 @@ import { useTheme } from "@/context/ThemeContext";
 import SectionLabel from "./components/SectionLabel";
 import SectionHeading from "./components/SectionHeading";
 
-
 export default function FeaturedCoursesView() {
   const { user, userRole, loading } = useAuth();
   const [courses, setCourses] = useState<CourseData[]>([]);
   const { theme, isRounded } = useTheme();
 
-  const router = useRouter();
   const hasFetched = useRef<string | null>(null);
 
   useEffect(() => {
@@ -53,16 +51,12 @@ export default function FeaturedCoursesView() {
   }
 
   return (
-    <section className="py-14">
+    <section className="py-14 mx-4">
       <div className="flex items-end justify-between mb-10">
         <div>
           <SectionLabel>Kurse &amp; Themen</SectionLabel>
           <SectionHeading>Was wird angeboten?</SectionHeading>
         </div>
-        <p className="hidden md:block text-sm max-w-xs text-right text-gray-500">
-          Jedes Dojo hat einen Kurs-Fokus. Such dir das aus, was dich
-          interessiert.
-        </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

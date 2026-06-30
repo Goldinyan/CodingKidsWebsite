@@ -28,7 +28,7 @@ export default function Partners() {
           >
             Wir verfolgen das Ziel, Kinder und Jugendliche zwischen 8 und 17
             Jahren näher an die IT zu bringen und Fähigkeiten im Umgang mit dem
-            Computer zu vermitteln — sowie eigenständige Soft- und
+            Computer zu vermitteln, sowie eigenständige Soft- und
             Hardwareprogrammierung zu lehren.
           </p>
           <p className="text-[14px] leading-relaxed" style={{ color: "#9ca3af" }}>
