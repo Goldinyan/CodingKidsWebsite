@@ -36,7 +36,7 @@ export default function ProfileView() {
     );
   }
 
-  if (!userData) return notFound;
+  if (!userData) return notFound();
 
   return (
     <div
@@ -44,7 +44,6 @@ export default function ProfileView() {
         }`}
     >
       <div className="max-w-7xl mx-auto space-y-10">
-        {/* Header Section */}
         <section className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-8 gap-6">
             <div className="flex flex-row md:col-span-5">
@@ -78,10 +77,8 @@ export default function ProfileView() {
           </div>
         </section>
 
-        {/* Main Details & Settings Grid */}
         <section className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-stretch">
-            {/* LINKER BLOCK (Spalten 1-7): Account Details & ProjectOverview darunter */}
             <div className="md:col-span-7 flex flex-col gap-6">
               <AccountDetails
                 theme={theme}

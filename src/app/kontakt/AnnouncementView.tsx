@@ -40,7 +40,7 @@ export default function AnnouncementView({ data }: { data: UserData }) {
   };
 
   const roles: UserRole[] = ["admin", "mentor", "member", "user"];
-
+  
   useEffect(() => {
     if (announcements.length > 0) {
       const filtered: Record<string, AnnouncementData[]> = {};
