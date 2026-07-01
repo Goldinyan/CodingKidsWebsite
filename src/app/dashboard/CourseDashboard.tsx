@@ -65,13 +65,11 @@ export default function CourseDashboard() {
     });
   };
 
-  // Neuen Kurs erstellen
   const handleAddCourse = async () => {
     if (!user || !newCourse.name?.trim()) {
       toast({
         title: "Fehler",
         description: "Bitte füllen Sie alle erforderlichen Felder aus",
-        variant: "destructive",
       });
       return;
     }
@@ -107,12 +105,10 @@ export default function CourseDashboard() {
       toast({
         title: "Fehler",
         description: "Kurs konnte nicht erstellt werden",
-        variant: "destructive",
       });
     }
   };
 
-  // Kurs aktualisieren
   const handleSaveEdit = async (courseId: string) => {
     if (!user) return;
 
@@ -137,7 +133,6 @@ export default function CourseDashboard() {
       toast({
         title: "Fehler",
         description: "Kurs konnte nicht aktualisiert werden",
-        variant: "destructive",
       });
     }
   };
@@ -164,7 +159,6 @@ export default function CourseDashboard() {
       toast({
         title: "Fehler",
         description: "Kurs konnte nicht gelöscht werden",
-        variant: "destructive",
       });
     }
   };
