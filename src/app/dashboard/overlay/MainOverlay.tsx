@@ -13,7 +13,7 @@ export default function MainOverlay() {
 
   return (
     <div
-      className={`w-full min-h-screen relative main-view-container ${theme === "dark" ? "bg-black text-white" : "bg-white text-slate-900"}`}
+      className={`w-full min-h-screen relative main-view-container ${theme === "dark" ? "bg-black text-white" : "bg-slate-50 text-slate-900"}`}
     >
       <div className="relative w-full flex flex-col z-10">
         <div className="flex flex-col w-full gap-0 max-w-7xl mx-auto">

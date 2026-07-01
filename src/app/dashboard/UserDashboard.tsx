@@ -60,7 +60,7 @@ export default function UserDashboard() {
     <div
       className={`w-full min-h-screen py-14 px-6 font-['DM_Sans'] transition-colors duration-300 ${theme === "dark"
           ? "bg-black text-[#f4f4f5]"
-          : "bg-slate-50 text-slate-700"
+          : "text-slate-700"
         }`}
     >
       <div className="max-w-6xl mx-auto">

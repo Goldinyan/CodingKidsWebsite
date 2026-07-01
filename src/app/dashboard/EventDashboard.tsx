@@ -1,16 +1,20 @@
 "use client";
 
-import { useCallback, useState } from "react";
-import { Plus, Search } from "lucide-react";
-import { motion } from "framer-motion";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Plus, Search, CalendarX } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "@/context/ThemeContext";
 import { useAuth } from "@/BackEnd/AuthContext";
 import { removedFromEventByAdmin } from "@/BackEnd/email";
-import { deleteEvent, removeUserFromEvent, updateEvent } from "@/lib/db";
-import type { EventData, UserData } from "@/BackEnd/type";
+import {
+  deleteEvent,
+  getAllCourses,
+  removeUserFromEvent,
+  updateEvent,
+} from "@/lib/db";
+import { CourseData, type EventData, type UserData } from "@/BackEnd/type";
 import EventCreationDialog from "./components/EventCreationDialog";
 import { useToast } from "@/components/ui/use-toast";
-import { Button } from "@/components/ui/button";
 import type { EventTimeFilter } from "./events/constants";
 import { DeleteEventDialog, EventCard } from "./events/components";
 import {
@@ -20,9 +24,10 @@ import {
 } from "./events/hooks";
 
 export default function EventDashboard() {
-  const { user, userRole } = useAuth();
+  const { user, userRole, loading } = useAuth();
   const { toast } = useToast();
   const { theme, isRounded } = useTheme();
+
   const [deleteConfirmModal, setDeleteConfirmModal] = useState<{
     isOpen: boolean;
     eventId: string | null;
@@ -36,14 +41,40 @@ export default function EventDashboard() {
   const [time, setTime] = useState<EventTimeFilter>("Upcoming");
   const [searchBar, setSearchBar] = useState<string>("");
   const [isAddingEvent, setIsAddingEvent] = useState<boolean>(false);
+  const [courses, setCourses] = useState<CourseData[]>();
   const [expandedTabs, setExpandedTabs] = useState<Record<string, boolean>>({});
   const [editStates, setEditStates] = useState<Record<string, boolean>>({});
   const [editValues, setEditValues] = useState<
     Record<string, Partial<EventData>>
-  >({});
+  >( {});
+
+  const hasFetched = useRef<string | null>(null);
+  useEffect(() => {
+    if (loading) return;
+
+    if (user) {
+      const currentKey = `${user.uid}-${userRole}`;
+      if (hasFetched.current === currentKey) return;
+      hasFetched.current = currentKey;
+    }
+    const fetchCourses = async () => {
+      try {
+        const coursesData = await getAllCourses(
+          user?.uid || "anonymous",
+          userRole,
+        );
+        setCourses(coursesData);
+      } catch (error) {
+        console.error("Error fetching courses:", error);
+      }
+    };
+
+    fetchCourses();
+  }, [user?.uid, userRole]);
 
   const { events: eventsData, refresh } = useEventsData(user?.uid, userRole);
   const filEvents = useFilteredEvents(eventsData, time, searchBar, 10);
+
   const userMap = useEventUsersMap(
     eventsData,
     user?.uid,
@@ -56,6 +87,8 @@ export default function EventDashboard() {
     userRole,
     useCallback((e) => e.queue, []),
   );
+
+  const radiusClass = isRounded ? "rounded-[12px]" : "rounded-none";
 
   const toggleExpandedTabs = (uid: string) => {
     setExpandedTabs((prev) => ({ ...prev, [uid]: !prev[uid] }));
@@ -96,16 +129,16 @@ export default function EventDashboard() {
       setDeleteConfirmModal({ isOpen: false, eventId: null, eventName: null });
 
       toast({
-        title: "Event gelöscht",
+        title: "EVENT_GELOESCHT",
         description: `"${eventName}" wurde erfolgreich gelöscht.`,
         variant: "success",
       });
 
       await refresh();
     } catch (error) {
-      console.error("Fehler beim Löschen des Events:", error);
+      console.error(error);
       toast({
-        title: "Fehler",
+        title: "SYS_ERR",
         description: "Das Event konnte nicht gelöscht werden.",
         variant: "destructive",
       });
@@ -121,16 +154,16 @@ export default function EventDashboard() {
       setEditStates((prev) => ({ ...prev, [uid]: false }));
 
       toast({
-        title: "Event aktualisiert",
+        title: "EVENT_AKTUALISIERT",
         description: "Die Änderungen wurden erfolgreich gespeichert.",
         variant: "success",
       });
 
       await refresh();
     } catch (error) {
-      console.error("Fehler beim Aktualisieren des Events:", error);
+      console.error(error);
       toast({
-        title: "Fehler",
+        title: "SYS_ERR",
         description: "Das Event konnte nicht aktualisiert werden.",
         variant: "destructive",
       });
@@ -143,9 +176,9 @@ export default function EventDashboard() {
       await removedFromEventByAdmin(u.email, event.name);
       await refresh();
     } catch (e) {
-      console.error("Fehler beim Entfernen des Users:", e);
+      console.error(e);
       toast({
-        title: "Fehler",
+        title: "SYS_ERR",
         description: "Der User konnte nicht entfernt werden.",
         variant: "destructive",
       });
@@ -154,141 +187,185 @@ export default function EventDashboard() {
 
   return (
     <>
-      <div
-        className={`w-full p-6 transition-colors duration-300 ${theme === "dark" ? "bg-black text-white" : "bg-white text-slate-900"}`}
-      >
+      <div className="w-full p-6 transition-colors duration-200">
         <div className="max-w-7xl mx-auto">
           <div className="mb-8">
             <h1
-              className={`text-4xl font-bold mb-2 ${theme === "dark" ? "text-white" : "text-slate-900"}`}
+              className={`text-4xl font-black font-['Familjen_Grotesk'] tracking-tight uppercase mb-1.5 ${
+                theme === "dark" ? "text-white" : "text-slate-900"
+              }`}
             >
-              Event-Verwaltung
+              EventVerwaltung
             </h1>
             <p
-              className={theme === "dark" ? "text-gray-400" : "text-slate-600"}
+              className={`font-['JetBrains_Mono'] text-[10px] tracking-wider uppercase ${
+                theme === "dark" ? "text-zinc-500" : "text-slate-400"
+              }`}
             >
-              Verwalten Sie Veranstaltungen und Teilnehmer
+              Administration der System-Veranstaltungen und Teilnehmer-Matrizen
             </p>
           </div>
 
-          <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <div className="flex items-center gap-3">
+          <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div className="flex items-center">
               <div
-                className={`relative backdrop-blur-2xl flex w-56 border h-10 items-center overflow-hidden transition-colors duration-300 ${isRounded ? "rounded-xl" : "rounded-none"} ${theme === "dark"
-                    ? "bg-white/5 border-white/10"
-                    : "bg-white border-slate-300"
-                  }`}
+                className={`relative flex w-60 h-11 border items-center overflow-hidden transition-colors duration-200 ${radiusClass} ${
+                  theme === "dark"
+                    ? "bg-zinc-950 border-zinc-800"
+                    : "bg-slate-50 border-slate-200"
+                }`}
               >
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                <button
                   type="button"
                   onClick={() => setTime("Upcoming")}
-                  className={`w-1/2 h-full text-sm font-medium transition-colors duration-200 z-10 ${isRounded ? "rounded-xl" : "rounded-none"} ${time === "Upcoming"
-                      ? theme === "dark"
-                        ? "text-black"
-                        : "text-white"
+                  className={`w-1/2 h-full font-['JetBrains_Mono'] text-xs tracking-widest uppercase transition-colors duration-200 z-10 ${
+                    time === "Upcoming"
+                      ? "text-white font-bold"
                       : theme === "dark"
-                        ? "text-white"
-                        : "text-slate-700"
-                    }`}
+                        ? "text-zinc-500 hover:text-zinc-300"
+                        : "text-slate-400 hover:text-slate-600"
+                  }`}
                 >
-                  Upcoming
-                </motion.button>
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                  UPCOMING
+                </button>
+                <button
                   type="button"
                   onClick={() => setTime("Past")}
-                  className={`w-1/2 h-full text-sm font-medium transition-colors duration-200 z-10 ${isRounded ? "rounded-xl" : "rounded-none"} ${time === "Past"
-                      ? theme === "dark"
-                        ? "text-black"
-                        : "text-white"
+                  className={`w-1/2 h-full font-['JetBrains_Mono'] text-xs tracking-widest uppercase transition-colors duration-200 z-10 ${
+                    time === "Past"
+                      ? "text-white font-bold"
                       : theme === "dark"
-                        ? "text-white"
-                        : "text-slate-700"
-                    }`}
+                        ? "text-zinc-500 hover:text-zinc-300"
+                        : "text-slate-400 hover:text-slate-600"
+                  }`}
                 >
-                  Past
-                </motion.button>
+                  PAST
+                </button>
                 <motion.span
-                  layoutId="tab-bg"
-                  className={`absolute top-0 left-0 w-1/2 h-full transition-transform duration-200 z-0 ${isRounded ? "rounded-xl" : "rounded-none"} ${theme === "dark" ? "bg-green-600" : "bg-green-600"
-                    } ${time === "Past" ? "translate-x-full" : "translate-x-0"}`}
+                  layoutId="activeTabIndicator"
+                  transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                  className={`absolute top-0 left-0 w-1/2 h-full z-0 bg-green-600 ${radiusClass} ${
+                    time === "Past" ? "translate-x-full" : "translate-x-0"
+                  }`}
                 />
               </div>
             </div>
 
             <div className="flex-1 relative">
               <Search
-                className={`absolute left-3 top-3 w-5 h-5 ${theme === "dark" ? "text-gray-500" : "text-slate-400"}`}
+                className={`absolute left-4 top-3.5 w-4 h-4 ${
+                  theme === "dark" ? "text-zinc-600" : "text-slate-400"
+                }`}
               />
               <input
                 type="text"
-                placeholder="Events durchsuchen..."
+                placeholder="EVENTS_DURCHSUCHEN..."
                 value={searchBar}
                 onChange={(e) => setSearchBar(e.target.value)}
-                className={`backdrop-blur-2xl w-full pl-10 pr-4 py-2 border transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-green-500 ${isRounded ? "rounded-xl" : "rounded-none"} ${theme === "dark"
-                    ? "bg-white/5 border-white/10 text-white placeholder-gray-500 hover:bg-white/10 hover:border-white/20"
-                    : "bg-white border-slate-300 text-slate-900 placeholder-slate-400 hover:border-slate-400"
-                  }`}
+                className={`w-full pl-11 pr-4 py-3 font-['JetBrains_Mono'] text-xs uppercase tracking-wider transition-all duration-200 focus:outline-none ${radiusClass} ${
+                  theme === "dark"
+                    ? "bg-zinc-950 border border-zinc-800 text-white placeholder-zinc-700 focus:border-green-600"
+                    : "bg-white border border-slate-200 text-slate-900 placeholder-slate-300 focus:border-green-600 shadow-sm"
+                }`}
               />
             </div>
 
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.95 }}
+            <button
               onClick={() => setIsAddingEvent(true)}
-              className={`px-6 py-2 font-medium border transition-all duration-300 flex items-center gap-2 ${isRounded ? "rounded-xl" : "rounded-none"} ${theme === "dark"
-                  ? "bg-green-600 text-white border-green-600 hover:bg-green-700"
-                  : "bg-green-600 text-white border-green-600 hover:bg-green-700"
-                }`}
+              className={`px-6 py-3 font-['JetBrains_Mono'] text-[10px] tracking-widest uppercase text-white transition-all duration-200 flex items-center justify-center gap-2 border border-transparent ${radiusClass} ${
+                theme === "dark"
+                  ? "bg-green-600 hover:bg-green-700"
+                  : "bg-green-600 hover:bg-green-700 shadow-sm"
+              }`}
             >
-              <Plus className="w-5 h-5" />
-              Neues Event
-            </motion.button>
+              <Plus className="w-4 h-4" />
+              ADD_EVENT
+            </button>
           </div>
 
-          <motion.div
-            variants={{
-              hidden: {},
-              visible: {
-                opacity: 1,
-                transition: { staggerChildren: 0.05 },
-              },
-            }}
-            initial="hidden"
-            whileInView="visible"
-            className="grid gap-4 md:grid-cols-1 lg:grid-cols-2 mt-5"
-          >
-            {filEvents.map((event) => (
+          {/* Bedingtes Rendering für Empty State oder Grid */}
+          <AnimatePresence mode="wait">
+            {filEvents.length === 0 ? (
               <motion.div
-                key={event.uid}
-                initial={{ opacity: 1, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
+                key="empty-state"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2 }}
+                className={`w-full min-h-[400px] flex flex-col items-center justify-center border p-8 text-center transition-all duration-200 ${radiusClass} ${
+                  theme === "dark"
+                    ? "bg-zinc-950/40 border-zinc-900"
+                    : "bg-white border-slate-100 shadow-sm"
+                }`}
               >
-                <EventCard
-                  event={event}
-                  expanded={!!expandedTabs[event.uid]}
-                  onToggleExpanded={() => toggleExpandedTabs(event.uid)}
-                  users={userMap[event.uid] || []}
-                  queueUsers={queueUserMap[event.uid] || []}
-                  onRemoveUser={(u) => handleRemoveUser(event, u)}
-                  isEditing={!!editStates[event.uid]}
-                  editValue={editValues[event.uid]}
-                  onToggleEdit={() => toggleEdit(event.uid, event)}
-                  onEditValueChange={(next) =>
-                    setEditValues((prev) => ({ ...prev, [event.uid]: next }))
-                  }
-                  onSaveChanges={() => handleSaveEventChanges(event.uid)}
-                  onRequestDelete={() =>
-                    openDeleteConfirm(event.uid, event.name)
-                  }
-                />
+                <div
+                  className={`p-4 mb-4 border ${radiusClass} ${
+                    theme === "dark"
+                      ? "bg-zinc-900/50 border-zinc-800 text-zinc-500"
+                      : "bg-slate-50 border-slate-200 text-slate-400"
+                  }`}
+                >
+                  <CalendarX className="w-8 h-8 stroke-[1.5]" />
+                </div>
+                <h3
+                  className={`font-['Familjen_Grotesk'] text-lg font-bold uppercase tracking-tight mb-1 ${
+                    theme === "dark" ? "text-zinc-200" : "text-slate-800"
+                  }`}
+                >
+                  Keine Events gefunden
+                </h3>
+                <p
+                  className={`font-['JetBrains_Mono'] text-[11px] uppercase tracking-wide max-w-sm ${
+                    theme === "dark" ? "text-zinc-600" : "text-slate-400"
+                  }`}
+                >
+                  {searchBar
+                    ? `Der Filter lieferte keine Matrix-Einträge für "${searchBar}"`
+                    : `Es sind aktuell keine ${time.toLowerCase()} Veranstaltungen im System hinterlegt.`}
+                </p>
               </motion.div>
-            ))}
-          </motion.div>
+            ) : (
+              <motion.div
+                key="events-grid"
+                layout="position"
+                className="grid gap-6 grid-cols-1 lg:grid-cols-2 mt-2"
+              >
+                {filEvents.map((event) => (
+                  <motion.div
+                    key={event.uid}
+                    layout="position"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <EventCard
+                      event={event}
+                      expanded={expandedTabs[event.uid]}
+                      onToggleExpanded={() => toggleExpandedTabs(event.uid)}
+                      courses={courses}
+                      users={userMap[event.uid] || []}
+                      queueUsers={queueUserMap[event.uid] || []}
+                      onRemoveUser={(u) => handleRemoveUser(event, u)}
+                      isEditing={!!editStates[event.uid]}
+                      editValue={editValues[event.uid]}
+                      onToggleEdit={() => toggleEdit(event.uid, event)}
+                      onEditValueChange={(next) =>
+                        setEditValues((prev) => ({
+                          ...prev,
+                          [event.uid]: next,
+                        }))
+                      }
+                      onSaveChanges={() => handleSaveEventChanges(event.uid)}
+                      onRequestDelete={() =>
+                        openDeleteConfirm(event.uid, event.name)
+                      }
+                    />
+                  </motion.div>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 
@@ -296,6 +373,7 @@ export default function EventDashboard() {
         open={isAddingEvent}
         onOpenChange={setIsAddingEvent}
         onCreated={() => refresh()}
+        courses={courses}
       />
 
       <DeleteEventDialog
