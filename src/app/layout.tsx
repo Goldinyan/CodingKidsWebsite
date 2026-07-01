@@ -3,6 +3,7 @@ import { AuthProvider } from "@/BackEnd/AuthContext";
 import ClientLayout from "./ClientLayout";
 import { JetBrains_Mono, Familjen_Grotesk } from "next/font/google";
 import "./globals.css";
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
@@ -26,6 +27,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <AuthProvider>
           <ClientLayout>{children}</ClientLayout>
         </AuthProvider>
+        <SpeedInsights />
       </body>
     </html>
   );
