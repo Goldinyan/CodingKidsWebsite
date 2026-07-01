@@ -7,19 +7,21 @@ interface SecurityButtonProps {
   theme: Theme;
   isRounded: boolean;
   onClick: () => void;
+  className?: string;
 }
 
 export default function SecurityButton({
   theme,
   isRounded,
   onClick,
+  className
 }: SecurityButtonProps) {
   const roundedClass = isRounded ? "rounded-2xl" : "rounded-none";
 
   return (
     <button
       onClick={onClick}
-      className={`w-full p-6 border transition-all duration-300 backdrop-blur-xl hover:scale-105 ${roundedClass} ${
+      className={`w-full p-6 border transition-all duration-300 backdrop-blur-xl hover:scale-105 ${roundedClass} ${className} ${
         theme === "dark"
           ? "bg-white/5 border-white/10 hover:bg-white/10 hover:border-green-500/30"
           : "bg-slate-100 border-slate-200 hover:bg-slate-200 hover:border-green-300"

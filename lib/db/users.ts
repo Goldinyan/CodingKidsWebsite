@@ -17,27 +17,68 @@ export async function getUserData(
     if (!snapshot.exists()) return null;
 
     const data = snapshot.data();
+    const role = data.role ?? "user";
 
-    return {
+    const baseUserData = {
       uid: userId,
       name: data.name ?? "",
       email: data.email ?? "",
       birthdate: data.birthdate ?? "",
       createdAt: data.createdAt ?? new Date(),
-      theme: data.theme ?? "light",
-      roundedCorners: data.roundedCorners ?? true,
       avatar: data.avatar ?? "",
-      role: data.role ?? "user",
-      
-
-      settings: {
-        darkMode: data.settings?.darkMode ?? false,
-        notifications: {
-          newEvent: data.settings?.notifications?.newEvent ?? true,
-          logs: data.settings?.notifications?.logs ?? false,
-        },
-      },
+      courses: data.courses ?? [],
+      projects: data.projects ?? [],
     };
+
+    const baseSettings = {
+      theme: (data.settings?.theme ?? "light") as "light" | "dark",
+      isRounded: data.settings?.isRounded ?? true,
+    };
+
+    if (role === "admin") {
+      return {
+        ...baseUserData,
+        role,
+        children: data.children ?? [],
+        settings: {
+          ...baseSettings,
+          notifications: {
+            newEvent: data.settings?.notifications?.newEvent ?? true,
+            kicked: data.settings?.notifications?.kicked ?? true,
+            queueToUser: data.settings?.notifications?.queueToUser ?? true,
+            understaffedWarning: data.settings?.notifications?.understaffedWarning ?? true,
+            logs: data.settings?.notifications?.logs ?? false,
+            systemAlerts: data.settings?.notifications?.systemAlerts ?? false,
+          },
+        },
+      };
+    } else if (role === "mentor") {
+      return {
+        ...baseUserData,
+        role,
+        children: data.children ?? [],
+        settings: {
+          ...baseSettings,
+          notifications: {
+            newEvent: data.settings?.notifications?.newEvent ?? true,
+            understaffedWarning: data.settings?.notifications?.understaffedWarning ?? true,
+          },
+        },
+      };
+    } else {
+      return {
+        ...baseUserData,
+        role: role as "anonymous" | "user" | "member",
+        settings: {
+          ...baseSettings,
+          notifications: {
+            newEvent: data.settings?.notifications?.newEvent ?? true,
+            kicked: data.settings?.notifications?.kicked ?? true,
+            queueToUser: data.settings?.notifications?.queueToUser ?? true,
+          },
+        },
+      };
+    }
   } catch (error) {
     console.error("Error fetching user data:", error);
     throw error;

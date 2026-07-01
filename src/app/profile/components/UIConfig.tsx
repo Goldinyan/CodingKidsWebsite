@@ -6,18 +6,20 @@ export default function UIConfig({
   toggleTheme,
   isRounded,
   toggleRounded,
+  className,
 }: {
   theme: Theme;
   toggleTheme: () => void;
   isRounded: boolean;
   toggleRounded: () => void;
+  className?: string;
 }) {
   const roundedClass = isRounded ? "rounded-2xl" : "rounded-none";
   const innerRoundedClass = isRounded ? "rounded-xl" : "rounded-none";
 
   return (
     <div
-      className={`backdrop-blur-xl  p-6 border transition-all duration-300 space-y-4 flex-1 ${roundedClass} ${theme === "dark"
+      className={`backdrop-blur-xl  p-6 border transition-all duration-300 space-y-4 flex-1 ${roundedClass} ${className} ${theme === "dark"
           ? "bg-white/5 border-white/10"
           : "bg-slate-100 border-slate-200"
         }`}
@@ -25,7 +27,7 @@ export default function UIConfig({
       <h3
         className={`text-sm font-mono tracking-widest uppercase ${theme === "dark" ? "text-green-400" : "text-green-600"}`}
       >
-        UI Config
+        UI Konfiguration
       </h3>
       <p
         className={`text-xs font-mono tracking-normal ${theme === "dark" ? "text-gray-400" : "text-slate-500"

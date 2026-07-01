@@ -190,7 +190,7 @@ export default function CourseDashboard() {
   }
 
   return (
-    <div className={`w-full px-6 py-8 transition-colors duration-300 `}>
+    <div className={`w-full px-6 py-8 transition-colors duration-300 ${theme === "dark" ? "bg-black text-white" : "bg-white text-slate-900"}`}>
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: -20 }}

@@ -120,8 +120,8 @@ export default function AnnouncementDashboard() {
 
         return (
                 <div className={`w-full p-6 min-h-screen transition-colors duration-300 ${theme === "dark"
-                        ? "bg-black"
-                        : "bg-slate-50"
+                        ? "bg-black text-white"
+                        : "bg-white text-slate-900"
                 }`}>
                         <div className="max-w-7xl mx-auto">
                                 <div className="mb-8">

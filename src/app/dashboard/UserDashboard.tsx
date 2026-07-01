@@ -62,7 +62,7 @@ export default function UserDashboard() {
 
   return (
     <div
-      className={`w-full px-6 py-4 transition-colors duration-300 ${theme === "dark" ? "bg-black" : "bg-none"
+      className={`w-full px-6 py-4 transition-colors duration-300 ${theme === "dark" ? "bg-black text-white" : "bg-white text-slate-900"
         }`}
     >
       <div className="max-w-7xl mx-auto">

@@ -155,7 +155,7 @@ export default function EventDashboard() {
   return (
     <>
       <div
-        className={`w-full p-6  transition-colors duration-300 `}
+        className={`w-full p-6 transition-colors duration-300 ${theme === "dark" ? "bg-black text-white" : "bg-white text-slate-900"}`}
       >
         <div className="max-w-7xl mx-auto">
           <div className="mb-8">

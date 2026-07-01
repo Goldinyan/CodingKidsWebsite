@@ -16,6 +16,7 @@ import {
 import {
   EventData,
   EventStatus,
+  type Log,
 } from "@/BackEnd/type";
 import type { UserRole } from "@/BackEnd/type";
 import { enforceRateLimit } from "./db";
@@ -59,6 +60,19 @@ export async function addEvent(
       date = new Date(newEvent.date as unknown as string);
     }
     const dateId = date.toISOString();
+
+    const initialLog: Log = {
+      type: "eventChanged",
+      date: Timestamp.now(),
+      mentor: userId,
+      reason: "Event erstellt",
+      updates: {
+        name: newEvent.name,
+        course: newEvent.course,
+        date: newEvent.date,
+      },
+    };
+
     await setDoc(doc(db, "events", dateId), {
       name: newEvent.name,
       course: newEvent.course,
@@ -71,6 +85,7 @@ export async function addEvent(
       mentors: [],
       users: [],
       queue: [],
+      logs: [initialLog],
     });
 
     const course = (await getAllCourses(userId, userRole)).find(
@@ -102,6 +117,18 @@ export async function deleteEvent(
       console.log("No event to delete");
       return;
     }
+
+    // Log deletion before deleting
+    const deleteLog: Log = {
+      type: "eventDeleted",
+      date: Timestamp.now(),
+      user: userId,
+    };
+
+    await updateDoc(ref, {
+      logs: arrayUnion(deleteLog),
+    });
+
     await deleteDoc(ref);
     console.log("Event deleted");
 
@@ -131,7 +158,23 @@ export async function updateEvent(
 
   try {
     const ref = doc(db, "events", uid);
-    await updateDoc(ref, updates);
+
+    // Create update log
+    const updateLog: Log = {
+      type: "eventChanged",
+      date: Timestamp.now(),
+      mentor: userId,
+      reason: "Event aktualisiert",
+      updates: updates,
+    };
+
+    // Remove logs from updates to prevent circular updates
+    const { logs, ...updatesWithoutLogs } = updates;
+
+    await updateDoc(ref, {
+      ...updatesWithoutLogs,
+      logs: arrayUnion(updateLog),
+    });
   } catch (err) {
     console.log(err);
   }
@@ -157,25 +200,27 @@ export async function addUserToEvent(
 
     const currentUsers: string[] = eventData.users || [];
 
-    if (currentUsers.length >= 18) {
+    if (currentUsers.length >= eventData.memberCount) {
+      const log: Log = {
+        type: "userJoinedQueue",
+        date: Timestamp.now(),
+        user: userId,
+      };
+
       await updateDoc(eventRef, {
         queue: arrayUnion(userId),
-      });
-
-      await updateDoc(eventRef, {
-        log: arrayUnion({ date: Date.now(), type: "userJoined", user: userId }),
+        logs: arrayUnion(log),
       });
     } else {
-      await updateDoc(eventRef, {
-        users: arrayUnion(userId),
-      });
+      const log: Log = {
+        type: "userJoined",
+        date: Timestamp.now(),
+        user: userId,
+      };
 
       await updateDoc(eventRef, {
-        log: arrayUnion({
-          date: Date.now(),
-          type: "userJoinedQueue",
-          user: userId,
-        }),
+        users: arrayUnion(userId),
+        logs: arrayUnion(log),
       });
     }
   } catch (error) {
@@ -240,23 +285,46 @@ export async function removeUserFromEvent(
     const currentQueue: string[] = eventData.queue;
 
     if (currentUsers.includes(userId)) {
+      const log: Log = {
+        type: "userLeft",
+        date: Timestamp.now(),
+        user: userId,
+        reason: "Benutzer wurde entfernt",
+      };
+
       await updateDoc(eventRef, {
         users: arrayRemove(userId),
+        logs: arrayUnion(log),
       });
 
       if (currentQueue.length > 0) {
         const nextUser = currentQueue[0];
 
+        const moveLog: Log = {
+          type: "userJoined",
+          date: Timestamp.now(),
+          user: nextUser,
+        };
+
         await updateDoc(eventRef, {
           users: arrayUnion(nextUser),
           queue: arrayRemove(nextUser),
+          logs: arrayUnion(moveLog),
         });
       }
     }
 
     if (currentQueue.includes(userId)) {
+      const log: Log = {
+        type: "userLeftQueue",
+        date: Timestamp.now(),
+        user: userId,
+        reason: "Von Warteschlange entfernt",
+      };
+
       await updateDoc(eventRef, {
         queue: arrayRemove(userId),
+        logs: arrayUnion(log),
       });
     }
   } catch (error) {

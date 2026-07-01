@@ -1,10 +1,10 @@
 "use client";
 
 import { Timestamp } from "firebase/firestore";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/BackEnd/AuthContext";
-import { addEvent } from "@/lib/db";
-import type { EventData } from "@/BackEnd/type";
+import { addEvent, getAllCourses } from "@/lib/db";
+import type { EventData, CourseData } from "@/BackEnd/type";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -46,12 +46,36 @@ export default function EventAdd(props: {
   const { mode = "card", onCreated, onClose } = props;
 
   const [EventInfo, setEventInfo] = useState<EventData>(defaultEvent);
-I
+  const [courses, setCourses] = useState<CourseData[]>([]);
+  const [isLoadingCourses, setIsLoadingCourses] = useState(true);
+
+  useEffect(() => {
+    const loadCourses = async () => {
+      try {
+        const courseList = await getAllCourses(
+          user?.uid || "anonymous",
+          userRole,
+        );
+        setCourses(courseList);
+      } catch (error) {
+        console.error("Error loading courses:", error);
+      } finally {
+        setIsLoadingCourses(false);
+      }
+    };
+
+    loadCourses();
+  }, [user?.uid, userRole]);
+
+  useEffect(() => {
+    presetEvent1();
+  }, []);
+
   const presetEvent1 = () => {
     setEventInfo({
       name: "Scratch Workshop",
       uid: "",
-      course: "",
+      course: "Scratch & Spieleenwicklung",
       date: Timestamp.fromDate(getNextWednesday()),
       length: 90,
       memberCount: 18,
@@ -72,37 +96,16 @@ I
         "In diesem Workshop lernen Kinder spielerisch die Grundlagen des Programmierens mit Scratch. Gemeinsam entwickeln wir kleine interaktive Geschichten und Spiele.",
     });
   };
-
-  const presetEvent2 = () => {
-    setEventInfo({
-      name: "Mitgliederversammlung",
-      uid: "",
-      date: Timestamp.fromDate(getNextWednesday()),
-      course: "DA",
-      length: 180,
-      memberCount: 50,
-      place: [
-        "CUBES Wesel – Hauptraum",
-        "Rudolf-Diesel-Str. 115",
-        "46485 Wesel",
-      ],
-      users: [],
-      queue: [],
-      leftUsers: [],
-      typeOfEvent: "MemberOnly",
-      tag: "Verein",
-      difficulty: "Keine",
-      requirements: "Nur für registrierte Mitglieder. Anmeldung erforderlich",
-      description:
-        "Jährliche Versammlung aller Vereinsmitglieder zur Abstimmung über aktuelle Themen, Finanzen und zukünftige Projekte. Es wird um pünktliches Erscheinen gebeten.",
-    });
-  };
-
   const handleEventAddcustom = async () => {
     if (!user) return;
 
     if (!EventInfo.name.trim()) {
       alert("Event-Name ist erforderlich");
+      return;
+    }
+
+    if (!EventInfo.course.trim()) {
+      alert("Kurs auswählen ist erforderlich");
       return;
     }
 
@@ -130,6 +133,32 @@ I
           value={EventInfo.name}
           onChange={(e) => setEventInfo({ ...EventInfo, name: e.target.value })}
         />
+      </div>
+
+      <div className="grid gap-2">
+        <Label htmlFor="course" className="font-semibold text-gray-700">
+          Kurs *
+        </Label>
+        <select
+          id="course"
+          value={EventInfo.course}
+          onChange={(e) =>
+            setEventInfo({ ...EventInfo, course: e.target.value })
+          }
+          className="border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+          disabled={isLoadingCourses}
+        >
+          <option value="">
+            {isLoadingCourses
+              ? "Kurse werden geladen..."
+              : "Wählen Sie einen Kurs"}
+          </option>
+          {courses.map((course) => (
+            <option key={course.uid} value={course.uid}>
+              {course.name}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div className="grid gap-2">
@@ -252,21 +281,6 @@ I
         />
       </div>
 
-      {/*<div className="col-span-1 md:col-span-2 grid gap-2">
-        <Label htmlFor="requirements" className="font-semibold text-gray-700">
-          Voraussetzungen
-        </Label>
-        <textarea
-          id="requirements"
-          className="border border-gray-300 rounded-lg p-3 resize-none min-h-[100px] focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="z.B. Keine Vorkenntnisse erforderlich"
-          value={EventInfo.requirements}
-          onChange={(e) =>
-            setEventInfo({ ...EventInfo, requirements: e.target.value })
-          }
-        />
-      </div>*/}
-
       <div className="col-span-1 md:col-span-2 grid gap-2">
         <Label htmlFor="description" className="font-semibold text-gray-700">
           Beschreibung
@@ -307,7 +321,6 @@ I
     );
   }
 
-  // legacy/card mode (falls an anderer Stelle noch verwendet)
   return (
     <div className="w-full bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-6 border border-gray-200">
       <div className="mb-4">

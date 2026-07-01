@@ -1,8 +1,7 @@
 "use server";
 
 import { BetaAnalyticsDataClient } from "@google-analytics/data";
-import { MonitoringServiceV3 } from "@google-cloud/monitoring";
-import { ServiceMonitoringServiceClient } from "@google-cloud/monitoring/build/src/v3";
+import { MetricServiceClient } from "@google-cloud/monitoring";
 
 interface VisitorStatsData {
   date: string;
@@ -57,19 +56,20 @@ export async function getVisitorStats(): Promise<VisitorStatsData[]> {
       orderBys: [
         {
           dimension: {
-            orderType: "ALPHANUMERIC",
             dimensionName: "date",
           },
+          desc: false,
         },
       ],
     };
 
-    const [response] = await analyticsDataClient.runReport(request);
+    const response = await analyticsDataClient.runReport(request);
+    const analyticsResponse = Array.isArray(response) ? response[0] : response;
 
     const visitorStats: VisitorStatsData[] = [];
 
-    if (response.rows) {
-      response.rows.forEach((row) => {
+    if (analyticsResponse.rows) {
+      analyticsResponse.rows.forEach((row) => {
         const dateStr = row.dimensionValues?.[0]?.value || "";
         const formattedDate = dateStr.replace(
           /(\d{4})(\d{2})(\d{2})/,
@@ -96,7 +96,8 @@ export async function getVisitorStats(): Promise<VisitorStatsData[]> {
 
 export async function getFirestoreMetrics(): Promise<FirestoreMetricsData[]> {
   try {
-    const monitoringClient = new MonitoringServiceV3.MetricServiceClient();
+    // FIX 2: Korrekte Instanziierung des Clients
+    const monitoringClient = new MetricServiceClient();
 
     const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
     if (!projectId) {
@@ -140,9 +141,9 @@ export async function getFirestoreMetrics(): Promise<FirestoreMetricsData[]> {
         interval,
         aggregation: {
           alignmentPeriod: {
-            seconds: 86400,
+            seconds: 86400, // Daten pro Tag aggregieren
           },
-          perSeriesAligner: 2,
+          perSeriesAligner: 2, // 2 entspricht ALIGN_SUM
         },
       };
 
@@ -165,8 +166,9 @@ export async function getFirestoreMetrics(): Promise<FirestoreMetricsData[]> {
                   };
                 }
 
+                // FIX 1: int64Value statt doubleValue nutzen
                 const value = parseInt(
-                  point.value?.doubleValue?.toString() || "0",
+                  point.value?.int64Value?.toString() || "0",
                   10,
                 );
 

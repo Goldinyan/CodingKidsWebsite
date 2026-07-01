@@ -33,8 +33,8 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     const initTheme = async () => {
       let userThemePreference: Theme | null = null;
 
-      if (user && userData?.theme) {
-        userThemePreference = userData.theme as Theme;
+      if (user && userData?.settings?.theme) {
+        userThemePreference = userData.settings.theme as Theme;
       }
 
       const storedTheme = localStorage.getItem("theme") as Theme | null;
@@ -50,7 +50,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     };
 
     initTheme();
-  }, [userData?.theme, user]);
+  }, [userData?.settings?.theme, user]);
 
   const applyTheme = (newTheme: Theme) => {
     const root = document.documentElement;
@@ -68,12 +68,22 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     localStorage.setItem("theme", newTheme);
     applyTheme(newTheme);
 
-    if (!user) {
+    if (!user || !userData) {
       return;
     }
 
     const updateUserTheme = async () => {
-      await updateUser(user.uid, { theme: newTheme }, user.uid, userRole);
+      await updateUser(
+        user.uid,
+        {
+          settings: {
+            ...userData.settings,
+            theme: newTheme,
+          } as any,
+        },
+        user.uid,
+        userRole,
+      );
     };
 
     //updateUserTheme();
@@ -85,14 +95,19 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     setIsRoundedState(newRounded);
     localStorage.setItem("isRounded", isRounded ? "true" : "false");
 
-    if (!user) {
+    if (!user || !userData) {
       return;
     }
 
     const updateUserRounded = async () => {
       await updateUser(
         user.uid,
-        { roundedCorners: newRounded },
+        {
+          settings: {
+            ...userData.settings,
+            isRounded: newRounded,
+          } as any,
+        },
         user.uid,
         userRole,
       );

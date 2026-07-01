@@ -44,7 +44,7 @@ export default function MentorCardAdmin({
       className={`backdrop-blur-2xl p-6 border transition-all duration-300 flex flex-col ${isRounded ? "rounded-xl" : "rounded-none"
         } ${theme === "dark"
           ? "bg-white/5 border-white/10 hover:border-white/20 hover:bg-white/10"
-          : "bg-slate-50 border-slate-300 hover:border-slate-400 hover:bg-slate-100"
+          : "bg-white border-slate-300 hover:border-slate-400 hover:bg-slate-50"
         }`}
     >
       {updateView ? (

@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useAuth } from "@/BackEnd/AuthContext";
 import AccountDetails from "./components/AccountDetails";
 import { useTheme } from "@/context/ThemeContext";
 import UIConfig from "./components/UIConfig";
+import NotificationSettings from "./components/NotificationSettings";
 import AccountDeletion from "./components/AccountDeletion";
 import ProfileHeader from "./components/ProfileHeader";
 import { notFound } from "next/navigation";
@@ -12,6 +13,8 @@ import AvatarView from "./components/AvatarView";
 import LogOut from "./components/LogOut";
 import SecurityButton from "./components/SecurityButton";
 import SecurityDialog from "./components/SecurityDialog";
+// Der neue Import:
+import ProjectOverview from "./components/ProjectOverview";
 
 export default function ProfileView() {
   const [showAvatarView, setShowAvatarView] = useState<boolean>(false);
@@ -40,34 +43,9 @@ export default function ProfileView() {
       className={`min-h-screen py-12 px-4 transition-colors duration-300 ${theme === "dark" ? "text-gray-300" : "text-slate-600"
         }`}
     >
-      <div className="max-w-5xl mx-auto space-y-10">
+      <div className="max-w-7xl mx-auto space-y-10">
         {/* Header Section */}
-        <div className="space-y-4">
-          <h1
-            className={`text-4xl font-bold ${
-              theme === "dark" ? "text-white" : "text-slate-900"
-            }`}
-          >
-            Profil
-          </h1>
-          <p
-            className={`text-sm ${
-              theme === "dark" ? "text-gray-400" : "text-slate-600"
-            }`}
-          >
-            Verwalten Sie Ihr Profil und Ihre Einstellungen
-          </p>
-        </div>
-
-        {/* Profile Section */}
         <section className="space-y-4">
-          <h2
-            className={`text-lg font-semibold ${
-              theme === "dark" ? "text-white/80" : "text-slate-700"
-            }`}
-          >
-            Profinformationen
-          </h2>
           <div className="grid grid-cols-1 md:grid-cols-8 gap-6">
             <div className="flex flex-row md:col-span-5">
               <ProfileHeader
@@ -79,10 +57,7 @@ export default function ProfileView() {
               />
             </div>
             <div className="flex flex-col gap-4 md:col-span-3">
-              <LogOut
-                theme={theme}
-                isRounded={isRounded}
-              />
+              <LogOut theme={theme} isRounded={isRounded} />
               <AccountDeletion
                 theme={theme}
                 isRounded={isRounded}
@@ -91,7 +66,7 @@ export default function ProfileView() {
               />
             </div>
 
-            {showAvatarView ? (
+            {showAvatarView && (
               <AvatarView
                 theme={theme}
                 isRounded={isRounded}
@@ -99,54 +74,52 @@ export default function ProfileView() {
                 updateProfile={updateProfile}
                 setShowAvatarView={setShowAvatarView}
               />
-            ) : (
-              ""
             )}
           </div>
         </section>
 
-        {/* Account Details Section */}
+        {/* Main Details & Settings Grid */}
         <section className="space-y-4">
-          <h2
-            className={`text-lg font-semibold ${
-              theme === "dark" ? "text-white/80" : "text-slate-700"
-            }`}
-          >
-            Kontodetails
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-8 gap-6">
-            <div className="md:col-span-5">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-stretch">
+            {/* LINKER BLOCK (Spalten 1-7): Account Details & ProjectOverview darunter */}
+            <div className="md:col-span-7 flex flex-col gap-6">
               <AccountDetails
                 theme={theme}
                 isRounded={isRounded}
                 userData={userData}
               />
+
+              {/* Hier sitzt jetzt die saubere Projekt-Komponente */}
+              <ProjectOverview
+                theme={theme}
+                isRounded={isRounded}
+                userData={userData}
+              />
             </div>
-            <div className="md:col-span-3 flex flex-col gap-6">
+
+            {/* RECHTER BLOCK (Spalten 8-12): Alles untereinander gestapelt */}
+            <div className="md:col-span-5 flex flex-col gap-6">
               <SecurityButton
                 theme={theme}
                 isRounded={isRounded}
                 onClick={() => setShowSecurityDialog(true)}
               />
+
+              <UIConfig
+                theme={theme}
+                toggleTheme={toggleTheme}
+                isRounded={isRounded}
+                toggleRounded={toggleRounded}
+              />
+
+              <NotificationSettings
+                theme={theme}
+                isRounded={isRounded}
+                userData={userData}
+                updateProfile={updateProfile}
+              />
             </div>
           </div>
-        </section>
-
-        {/* Settings Section */}
-        <section className="space-y-4">
-          <h2
-            className={`text-lg font-semibold ${
-              theme === "dark" ? "text-white/80" : "text-slate-700"
-            }`}
-          >
-            Einstellungen
-          </h2>
-          <UIConfig
-            theme={theme}
-            toggleTheme={toggleTheme}
-            isRounded={isRounded}
-            toggleRounded={toggleRounded}
-          />
         </section>
       </div>
 

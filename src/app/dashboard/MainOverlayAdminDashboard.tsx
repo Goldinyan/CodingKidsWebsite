@@ -1,8 +1,7 @@
 "use client";
 
-import type { UserData } from "@/BackEnd/type";
 import { useState, useEffect } from "react";
-import { Menu, Section, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import {
   Users,
@@ -10,10 +9,10 @@ import {
   UserCheck,
   Megaphone,
   User,
-  LogOut,
   Home,
   ArrowRight,
   StepBack,
+  LogOut,
   TrendingUp,
 } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
@@ -30,222 +29,265 @@ const SECTIONS = [
   { id: "announce", label: "Ankündigungen", icon: Megaphone },
 ];
 
-export function MainOverlayAdminDashboard({
-  userData,
-}: {
-  userData: UserData;
-}) {
+export function MainOverlayAdminDashboard() {
   const [open, setOpen] = useState<boolean>(false);
-  const { theme } = useTheme();
+  const { theme, isRounded } = useTheme();
   const activeSection = useScrollSpy(SECTIONS, isInSection);
+  const router = useRouter();
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth >= 768) {
-        setOpen(false);
-      }
+      if (window.innerWidth >= 768) setOpen(false);
     };
-
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const router = useRouter();
+  const ACCOUNT_LINKS = [
+    {
+      label: "Profil",
+      mobileLabel: "Profil bearbeiten",
+      icon: User,
+      onClick: () => router.push("/profile"),
+      colorStyles: {
+        dark: "bg-zinc-900 text-zinc-100",
+        light: "bg-slate-100 text-slate-600",
+      },
+    },
+    {
+      label: "Hauptseite",
+      mobileLabel: "Zur Übersicht",
+      icon: theme === "dark" ? StepBack : Home,
+      onClick: () => router.push("/"),
+      colorStyles: {
+        dark: "bg-cyan-950/60 text-cyan-400",
+        light: "bg-cyan-50 text-cyan-600",
+      },
+    },
+  ];
+
+  const containerRadius = isRounded ? "rounded-2xl" : "rounded-none";
+  const buttonRadius = isRounded ? "rounded-lg" : "rounded-none";
+  const iconRadius = isRounded ? "rounded-md" : "rounded-none";
+
+  const getSectionIconStyles = (id: string) => {
+    const colorMap: Record<string, { dark: string; light: string }> = {
+      analytics: {
+        dark: "bg-blue-950/60 text-blue-400",
+        light: "bg-blue-50 text-blue-600",
+      },
+      user: {
+        dark: "bg-purple-950/60 text-purple-400",
+        light: "bg-purple-50 text-purple-600",
+      },
+      events: {
+        dark: "bg-indigo-950/60 text-indigo-400",
+        light: "bg-indigo-50 text-indigo-600",
+      },
+      mentor: {
+        dark: "bg-emerald-950/60 text-emerald-400",
+        light: "bg-emerald-50 text-emerald-600",
+      },
+      announce: {
+        dark: "bg-amber-950/60 text-amber-400",
+        light: "bg-amber-50 text-amber-600",
+      },
+    };
+    return (
+      colorMap[id] || {
+        dark: "bg-zinc-900 text-white",
+        light: "bg-slate-100 text-slate-600",
+      }
+    );
+  };
 
   return (
     <div
-      className={`flex flex-col ${theme == "dark" ? "bg-dark" : "bg-otherbg"} min-h-screen pb-20`}
+      className={`flex flex-col min-h-screen pb-20 transition-colors duration-300 ${theme === "dark" ? "bg-black text-white" : "bg-slate-50 text-slate-600"
+        }`}
     >
       <div>
         <div
-          className={`fixed ${theme == "dark" ? "bg-black text-white border-b border-base-white/15" : "bg-white text-black"} top-0 left-0 right-0 h-16 z-50 flex items-center justify-between shadow px-4`}
+          className={`fixed top-0 left-0 right-0 h-16 z-50 flex items-center justify-between px-4 transition-all duration-300 border-b ${theme === "dark"
+              ? "bg-black border-zinc-800 text-white"
+              : "bg-white text-black border-slate-200 shadow-sm"
+            }`}
         >
-          <p
-            className={`text-2xl pl-2 font-bold ${theme == "dark" ? "text-white" : "text-black"}`}
-          >
-            Coding Kids
-          </p>
-          <div className="md:hidden ">
-            {!open ? (
-              <Menu
-                onClick={() => setOpen(!open)}
-                className={`w-6 h-6 ${theme == "dark" ? "text-white" : "text-black"}`}
-              />
-            ) : (
-              <X
-                onClick={() => setOpen(!open)}
-                className={`w-6 h-6 ${theme == "dark" ? "text-white" : "text-black"}`}
-              />
-            )}
+          <p className="text-2xl pl-2 font-bold tracking-tight">Coding Kids</p>
+          <div className="md:hidden">
+            <button
+              onClick={() => setOpen(!open)}
+              className="p-1 focus:outline-none"
+            >
+              {!open ? (
+                <Menu className="w-6 h-6 text-current" />
+              ) : (
+                <X className="w-6 h-6 text-current" />
+              )}
+            </button>
           </div>
         </div>
 
         <div className="flex pt-12">
-          <div className="w-64 bg-white hidden md:flex flex-col fixed h-screen border-r border-gray-200">
-            <div className="p-6 flex flex-col h-[50%]">
+          <div
+            className={`w-64 hidden md:flex flex-col fixed h-screen border-r transition-all duration-300 ${theme === "dark"
+                ? "bg-black border-zinc-800"
+                : "bg-white border-slate-200"
+              }`}
+          >
+            <div className="p-6 flex flex-col h-[50%] pt-10">
               <div className="my-4">
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                <p
+                  className={`text-[10px] font-mono tracking-widest uppercase ${theme === "dark" ? "text-zinc-500" : "text-gray-900"} `}
+                >
                   Navigation
                 </p>
               </div>
 
-              <nav className="flex flex-col gap-1 flex-1">
+              <nav className="flex flex-col gap-1 flex-1 mb-3">
                 {SECTIONS.map((s) => (
                   <SectionCard
                     key={s.id}
                     id={s.id}
                     Icon={s.icon}
                     label={s.label}
-                    isActive={activeSection == s.id}
+                    isActive={activeSection === s.id}
                     setOpen={setOpen}
                     scrollToSection={scrollToSection}
                   />
                 ))}
               </nav>
 
-              <div className="pt-6 flex flex-col gap-5 border-t border-gray-200">
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
-                  Konto
+              <div
+                className={`pt-6 flex flex-col gap-4 border-t ${theme === "dark" ? "border-zinc-800" : "border-slate-200"}`}
+              >
+                <p
+                  className={`text-[10px] font-mono uppercase tracking-widest mb-1 ${theme === "dark" ? "text-zinc-500" : "text-gray-900"}`}
+                >
+                  Konto & Profil
                 </p>
-                <button
-                  onClick={() => {
-                    router.push("/profile");
-                  }}
-                  className="w-full px-4 py-3 rounded-lg border border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-all duration-300 flex items-center gap-3 group"
-                >
-                  <div className="flex-shrink-0 p-2 rounded-lg bg-gray-100 group-hover:bg-gray-200 transition-colors">
-                    <User className="w-4 h-4 text-gray-600" />
-                  </div>
-                  <p className="text-sm font-medium text-gray-700 group-hover:text-gray-900 transition-colors">
-                    Profil
-                  </p>
-                </button>
-                <button
-                  onClick={() => {
-                    router.push("/");
-                  }}
-                  className="w-full px-4 py-3 rounded-lg border border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-all duration-300 flex items-center gap-3 group"
-                >
-                  <div className="flex-shrink-0 p-2 rounded-lg bg-gray-100 group-hover:bg-gray-200 transition-colors">
-                    <Home className="w-4 h-4 text-gray-600" />
-                  </div>
-                  <p className="text-sm font-medium text-gray-700 group-hover:text-gray-900 transition-colors">
-                    Zur Hauptseite
-                  </p>
-                </button>
+
+                {ACCOUNT_LINKS.filter((link) => link.label !== "Log Out").map(
+                  (link, idx) => {
+                    const Icon = link.icon;
+                    return (
+                      <button
+                        key={idx}
+                        onClick={link.onClick}
+                        className={`w-full px-4 py-2.5 border transition-all duration-300 flex items-center gap-3 group text-xs font-gro tracking-wider ${buttonRadius} ${theme === "dark"
+                            ? "border-zinc-800 hover:border-zinc-700 hover:bg-zinc-900 text-zinc-300 hover:text-white"
+                            : "border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-700"
+                          }`}
+                      >
+                        <div
+                          className={`flex-shrink-0 p-1.5 transition-colors ${iconRadius} ${theme === "dark"
+                              ? "bg-zinc-900 group-hover:bg-zinc-800 text-white"
+                              : "bg-slate-100 group-hover:bg-slate-200 text-slate-600"
+                            }`}
+                        >
+                          <Icon className="w-3.5 h-3.5" />
+                        </div>
+                        <span>{link.label}</span>
+                      </button>
+                    );
+                  },
+                )}
               </div>
             </div>
           </div>
 
-          <div
-            className={` flex-1 w-full  md:ml-64 ${open ? "hidden" : "flex"
-              }`}
-          >
+          <div className={`flex-1 w-full md:ml-64 ${open ? "hidden" : "flex"}`}>
             <MainOverlay />
           </div>
 
           {open && (
-            <div className="flex flex-col md:hidden items-start pl-4 pt-20 w-full  ">
-              <p className="text-md pl-2 pb-4 pt-4">Hauptmenü</p>
-              <div className="bg-white border-lightborder  border-2 rounded-2xl w-70 2:w-85 3:w-100  sm:w-120 flex flex-col gap-4 pt-4 divide-y divide-gray-200">
-                <div
-                  onClick={() => {
-                    document
-                      .getElementById("user")
-                      ?.scrollIntoView({ behavior: "smooth" });
-                    setOpen(!open);
-                  }}
-                  className={`flex items-center gap-5  pb-4 px-4 `}
-                >
-                  <div className="bg-lightPinkBg p-1.5 rounded-md">
-                    <Users className="text-primaryOwn h-5 w-5" />
-                  </div>
+            <div className="flex flex-col md:hidden items-start pl-4 pt-20 w-full animate-fade-in">
+              <p
+                className={`text-xs font-mono tracking-widest uppercase pb-3 pt-4 pl-2 ${theme === "dark" ? "text-zinc-500" : "text-gray-400"}`}
+              >
+                Hauptmenü
+              </p>
 
-                  <p className="text-black  text-lg">Nutzerverwaltung</p>
-                  <ArrowRight className="h-5 ml-auto text-graytext" />
-                </div>
-
-                <div
-                  onClick={() => {
-                    document
-                      .getElementById("events")
-                      ?.scrollIntoView({ behavior: "smooth" });
-                    setOpen(!open);
-                  }}
-                  className={`flex items-center gap-5  pb-4 px-4`}
-                >
-                  <div className="bg-lightPinkBg p-1.5 rounded-md">
-                    <CalendarCheck className="text-primaryOwn h-5 w-5" />
-                  </div>
-
-                  <p className="text-black  text-lg">Eventverwaltung</p>
-                  <ArrowRight className="h-5 ml-auto text-graytext" />
-                </div>
-
-                <div
-                  onClick={() => {
-                    document
-                      .getElementById("mentor")
-                      ?.scrollIntoView({ behavior: "smooth" });
-                    setOpen(!open);
-                  }}
-                  className={`flex items-center gap-5  pb-4 px-4 `}
-                >
-                  <div className="bg-lightGreenBg p-1.5 rounded-md">
-                    <UserCheck className="text-green h-5 w-5" />
-                  </div>
-
-                  <p className="text-black  text-lg">Mentoren</p>
-                  <ArrowRight className="h-5 ml-auto text-graytext" />
-                </div>
-
-                <div
-                  onClick={() => {
-                    document
-                      .getElementById("announce")
-                      ?.scrollIntoView({ behavior: "smooth" });
-                    setOpen(!open);
-                  }}
-                  className={`flex items-center gap-5  pb-4 px-4`}
-                >
-                  <div className="bg-lightGreenBg p-1.5 rounded-md">
-                    <Megaphone className="text-green h-5 w-5" />
-                  </div>
-
-                  <p className="text-black  text-lg">Ankündigungen</p>
-                  <ArrowRight className="h-5 ml-auto text-graytext" />
-                </div>
+              <div
+                className={`border w-full max-w-md flex flex-col pt-2 divide-y transition-all duration-300 ${containerRadius} ${theme === "dark"
+                    ? "bg-black border-zinc-800 divide-zinc-900"
+                    : "bg-white border-slate-200 divide-slate-100 shadow-lg"
+                  }`}
+              >
+                {SECTIONS.map((s) => {
+                  const Icon = s.icon;
+                  const iconStyles = getSectionIconStyles(s.id);
+                  return (
+                    <div
+                      key={s.id}
+                      onClick={() => {
+                        document
+                          .getElementById(s.id)
+                          ?.scrollIntoView({ behavior: "smooth" });
+                        setOpen(false);
+                      }}
+                      className="flex items-center gap-5 py-4 px-4 cursor-pointer hover:bg-slate-100/50 dark:hover:bg-zinc-900"
+                    >
+                      <div
+                        className={`p-2 transition-colors ${iconRadius} ${theme === "dark" ? iconStyles.dark : iconStyles.light}`}
+                      >
+                        <Icon className="h-5 w-5" />
+                      </div>
+                      <p
+                        className={`text-base font-medium ${theme === "dark" ? "text-zinc-100" : "text-slate-900"}`}
+                      >
+                        {s.label}
+                      </p>
+                      <ArrowRight className="h-4 ml-auto opacity-40 text-current" />
+                    </div>
+                  );
+                })}
               </div>
 
-              <p className="text-md pl-2 mt-5">Profil</p>
+              <p
+                className={`text-xs font-mono tracking-widest uppercase pb-3 mt-6 pl-2 ${theme === "dark" ? "text-zinc-500" : "text-gray-400"}`}
+              >
+                Profil & Account
+              </p>
 
-              <div className="bg-white border-lightborder border-2 rounded-2xl w-70 2:w-85 3:w-100 sm:w-120  flex flex-col gap-4 mt-5 pt-4 divide-y divide-gray-200">
-                <div className={`flex items-center gap-5  pb-4 px-4`}>
-                  <div className="bg-gray-200 p-1.5 rounded-md">
-                    <User className="text-black h-5 w-5" />
-                  </div>
-
-                  <p className="text-black  text-lg">Profile</p>
-                  <ArrowRight className="h-5 ml-auto text-graytext" />
-                </div>
-
-                <div className={`flex items-center gap-5  pb-4 px-4`}>
-                  <div className="bg-blue-100 p-1.5 rounded-md">
-                    <StepBack className="text-blue-700 h-5 w-5" />
-                  </div>
-
-                  <p className="text-black  text-lg">Zur Übersicht</p>
-                  <ArrowRight className="h-5 ml-auto text-graytext" />
-                </div>
-
-                <div className={`flex items-center gap-5  pb-4 px-4`}>
-                  <div className="bg-lightRedBg p-1.5 rounded-md">
-                    <LogOut className="text-red-500 h-5 w-5" />
-                  </div>
-
-                  <p className="text-black  text-lg">Log Out</p>
-                  <ArrowRight className="h-5 ml-auto text-graytext" />
-                </div>
+              <div
+                className={`border w-full max-w-md flex flex-col pt-2 divide-y mb-8 transition-all duration-300 ${containerRadius} ${theme === "dark"
+                    ? "bg-black border-zinc-800 divide-zinc-900"
+                    : "bg-white border-slate-200 divide-slate-100 shadow-lg"
+                  }`}
+              >
+                {ACCOUNT_LINKS.map((link, idx) => {
+                  const Icon = link.icon;
+                  return (
+                    <div
+                      key={idx}
+                      onClick={() => {
+                        link.onClick();
+                        setOpen(false);
+                      }}
+                      className="flex items-center gap-5 py-4 px-4 cursor-pointer hover:bg-slate-100/50 dark:hover:bg-zinc-900"
+                    >
+                      <div
+                        className={`p-2 transition-colors ${iconRadius} ${theme === "dark" ? link.colorStyles.dark : link.colorStyles.light}`}
+                      >
+                        <Icon className="h-5 w-5" />
+                      </div>
+                      <p
+                        className={`text-base font-medium ${link.label === "Log Out"
+                            ? theme === "dark"
+                              ? "text-rose-400"
+                              : "text-rose-600"
+                            : theme === "dark"
+                              ? "text-zinc-100"
+                              : "text-slate-900"
+                          }`}
+                      >
+                        {link.mobileLabel}
+                      </p>
+                      <ArrowRight className="h-4 ml-auto opacity-40 text-current" />
+                    </div>
+                  );
+                })}
               </div>
             </div>
           )}

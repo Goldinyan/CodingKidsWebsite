@@ -21,7 +21,7 @@ export default function MentorChangeView() {
   }, []);
 
   return (
-    <div className={`w-full p-6 min-h-screen transition-colors duration-300 `}>
+    <div className={`w-full p-6 min-h-screen transition-colors duration-300 ${theme === "dark" ? "bg-black text-white" : "bg-white text-slate-900"}`}>
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
           <h1

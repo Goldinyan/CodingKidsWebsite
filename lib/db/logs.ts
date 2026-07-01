@@ -21,9 +21,9 @@ import type {
   UserData,
   AnnouncementData,
   CourseData,
+  UserRole,
 } from "@/BackEnd/type";
 import {
   checkRateLimit,
   RateLimitExceededError,
-  type UserRole,
 } from "../rate_limiting/rateLimiter";

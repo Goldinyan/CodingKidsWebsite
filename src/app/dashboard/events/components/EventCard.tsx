@@ -6,6 +6,7 @@ import {
   Save,
   Trash2,
   X,
+  Clock,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useTheme } from "@/context/ThemeContext";
@@ -13,6 +14,7 @@ import { toJsDate } from "@/BackEnd/utils";
 import type { EventData, UserData } from "@/BackEnd/type";
 import { EVENT_FIELDS, EVENT_FIELD_LABELS } from "../constants";
 import { formatValue } from "../formatValue";
+import { formatLogMessage, formatLogDate } from "../formatLog";
 
 export function EventCard(props: {
   event: EventData;
@@ -55,7 +57,7 @@ export function EventCard(props: {
       transition={{ type: "spring", stiffness: 400, damping: 25 }}
       className={`p-6 border backdrop-blur-2xl  transition-all duration-300 ${isRounded ? "rounded-xl" : "rounded-none"} ${theme === "dark"
           ? "bg-white/5 border-white/10 hover:border-white/20 hover:bg-white/10"
-          : "bg-slate-50 border-slate-300 hover:border-slate-400 hover:bg-slate-100"
+          : "bg-white border-slate-300 hover:border-slate-400 hover:bg-slate-50"
         }`}
     >
       <div className="flex flex-row justify-between">
@@ -240,6 +242,65 @@ export function EventCard(props: {
               )}
             </motion.div>
           ))}
+
+          {event.logs && event.logs.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: EVENT_FIELDS.length * 0.05 }}
+              className={`p-4 border transition-colors duration-300 ${isRounded ? "rounded-xl" : "rounded-none"} ${theme === "dark"
+                ? "bg-white/5 border-white/10 hover:bg-white/10"
+                : "bg-white border-slate-300 hover:bg-slate-50"
+              }`}
+            >
+              <p
+                className={`text-sm font-bold uppercase tracking-wide mb-3 ${theme === "dark" ? "text-green-400" : "text-green-600"
+                }`}
+              >
+                Event Logs ({event.logs.length})
+              </p>
+
+              <div
+                className={`flex flex-col divide-y border transition-colors duration-300 ${isRounded ? "rounded-xl" : "rounded-none"} ${theme === "dark"
+                  ? "border-white/10 divide-white/10 bg-white/5"
+                  : "border-slate-300 divide-slate-200 bg-white"
+                }`}
+              >
+                {event.logs.map((log, idx) => {
+                  const { title, details } = formatLogMessage(log);
+                  return (
+                    <motion.div
+                      key={idx}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: idx * 0.05 }}
+                      className={`py-3 px-4 transition-colors ${theme === "dark"
+                        ? "hover:bg-white/10"
+                        : "hover:bg-slate-50"
+                      }`}
+                    >
+                      <div className="flex items-start gap-3">
+                        <Clock className={`w-4 h-4 mt-0.5 flex-shrink-0 ${theme === "dark" ? "text-blue-400" : "text-blue-600"}`} />
+                        <div className="flex-1 min-w-0">
+                          <p className={`text-sm font-semibold ${theme === "dark" ? "text-white" : "text-slate-900"}`}>
+                            {title}
+                          </p>
+                          {details && (
+                            <p className={`text-xs mt-1 ${theme === "dark" ? "text-gray-400" : "text-slate-600"}`}>
+                              {details}
+                            </p>
+                          )}
+                          <p className={`text-xs mt-1 ${theme === "dark" ? "text-gray-500" : "text-slate-500"}`}>
+                            {formatLogDate(log)}
+                          </p>
+                        </div>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </motion.div>
+          )}
 
           <div className="flex flex-row gap-3 items-center pt-2">
             <motion.button

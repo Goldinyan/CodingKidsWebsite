@@ -10,7 +10,6 @@ export enum EventStatus {
   NotRegistered = "notRegistered",
 }
 
-
 export const USER_ROLES_ARRAY = [
   "anonymous",
   "user",
@@ -74,7 +73,7 @@ export type EventData = {
   users: string[];
   queue: string[];
   leftUsers: string[];
-  log?: LogType;
+  logs?: Log[];
 };
 
 export type AnnouncementData = {
@@ -92,17 +91,31 @@ export type AnnouncementData = {
 // ------------------------------
 
 type BaseSettings = {
-  darkMode: boolean;
-  notifications: {
-    newEvent: boolean;
-  };
+  theme: Theme;
+  isRounded: boolean;
 };
 
+type NotificationSettings = {
+  newEvent: boolean;
+  kicked: boolean;
+  queueToUser: boolean;
+  understaffedWarning: boolean;
+  logs?: boolean;
+  systemAlerts?: boolean;
+};
+
+type UserSettings = BaseSettings & {
+  notifications: Pick<
+    NotificationSettings,
+    "newEvent" | "kicked" | "queueToUser"
+  >;
+};
+
+type AdminSettings = BaseSettings & {
+  notifications: Omit<NotificationSettings, "kicked" | "queueToUser">;
+};
 type StaffSettings = BaseSettings & {
-  notifications: {
-    newEvent: boolean;
-    logs: boolean;
-  };
+  notifications: Pick<NotificationSettings, "newEvent" | "understaffedWarning">;
 };
 
 type BaseUserData = {
@@ -112,31 +125,27 @@ type BaseUserData = {
   birthdate: Timestamp;
   createdAt: Timestamp;
   avatar: string;
-  theme: Theme;
-  roundedCorners: boolean;
   courses?: string[];
   projects: string[];
-  settings: {
-    darkMode: boolean;
-    notifications: {
-      newEvent: boolean;
-      logs: boolean;
-    };
-  };
 };
 
 // UNION
 
 export type UserData =
   | (BaseUserData & {
-    role: "admin" | "mentor";
+    role: "admin";
+    children: string[];
+    settings: AdminSettings;
+  })
+  | (BaseUserData & {
+    role: "mentor";
     children: string[];
     settings: StaffSettings;
   })
   | (BaseUserData & {
     role: "anonymous" | "user" | "member";
     children?: never;
-    settings: BaseSettings;
+    settings: UserSettings;
   });
 
 // --------------------------------------

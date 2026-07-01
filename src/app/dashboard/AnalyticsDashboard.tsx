@@ -120,7 +120,7 @@ export default function AnalyticsDashboard() {
       className={`p-6 border transition-all duration-300 ${innerRoundedClass} ${
         theme === "dark"
           ? "bg-white/5 border-white/10 hover:bg-white/10"
-          : "bg-slate-50 border-slate-200 hover:bg-slate-100"
+          : "bg-white border-slate-300 hover:bg-slate-50"
       }`}
     >
       <div className="flex items-center justify-between mb-4">
@@ -174,7 +174,7 @@ export default function AnalyticsDashboard() {
       <div className={`p-6 border transition-all duration-300 ${innerRoundedClass} ${
         theme === "dark"
           ? "bg-white/5 border-white/10"
-          : "bg-slate-50 border-slate-200"
+          : "bg-white border-slate-300"
       }`}
       >
         <h4
@@ -232,7 +232,7 @@ export default function AnalyticsDashboard() {
         className={`p-6 border transition-all duration-300 ${roundedClass} ${
           theme === "dark"
             ? "bg-white/5 border-white/10"
-            : "bg-slate-50 border-slate-200"
+            : "bg-white border-slate-300"
         }`}
       >
         <p
@@ -251,7 +251,7 @@ export default function AnalyticsDashboard() {
       className={`p-6 border transition-all duration-300 space-y-6 ${roundedClass} ${
         theme === "dark"
           ? "bg-white/5 border-white/10"
-          : "bg-slate-50 border-slate-200"
+          : "bg-white border-slate-300"
       }`}
     >
       <div>
