@@ -86,6 +86,7 @@ export default function EventAdd(props: {
       ],
       users: [],
       queue: [],
+      mentors: [],
       leftUsers: [],
       typeOfEvent: "CoderDojo",
       tag: "Scratch",

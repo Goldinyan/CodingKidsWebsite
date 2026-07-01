@@ -32,20 +32,27 @@ export function DeleteAnnouncementDialog(props: {
           }`}
       >
         <DialogHeader className="mb-4">
-          <div className="flex items-center gap-3 mb-2 text-red-500">
-            <AlertTriangle className="w-5 h-5 stroke-[2]" />
-            <DialogTitle className="text-2xl font-black font-['Familjen_Grotesk'] tracking-tight uppercase">
-              ANKÜNDIGUNG_LÖSCHEN?
-            </DialogTitle>
+          <div className="flex items-center gap-2 text-red-600 dark:text-red-500 mb-1">
+            <AlertTriangle className="w-4 h-4 stroke-[2.5]" />
+            <span className="font-['JetBrains_Mono'] text-[10px] font-bold tracking-widest uppercase">
+              CRITICAL_ACTION
+            </span>
           </div>
+
+          <DialogTitle className="text-2xl font-black font-['Familjen_Grotesk'] tracking-tight uppercase text-red-600 dark:text-red-500">
+            ANKÜNDIGUNG_LÖSCHEN?
+          </DialogTitle>
+
           <DialogDescription
-            className={`font-['JetBrains_Mono'] text-[11px] tracking-wide uppercase leading-relaxed ${isDark ? "text-zinc-400" : "text-slate-500"
+            className={`font-['JetBrains_Mono'] text-[11px] tracking-wide uppercase leading-relaxed mt-2 ${isDark ? "text-zinc-400" : "text-slate-500"
               }`}
           >
             Soll die Ankündigung{" "}
             <span
               className={
-                isDark ? "text-white font-bold" : "text-slate-900 font-bold"
+                isDark
+                  ? "text-white font-bold underline decoration-red-500/50"
+                  : "text-slate-900 font-bold underline decoration-red-600/50"
               }
             >
               &quot;{title}&quot;
@@ -54,9 +61,10 @@ export function DeleteAnnouncementDialog(props: {
           </DialogDescription>
         </DialogHeader>
 
+        {/* SYSTEM BANNER WARNING */}
         <div
           className={`p-3 border border-dashed font-['JetBrains_Mono'] text-[10px] tracking-wider uppercase mb-4 ${radiusClass} ${isDark
-              ? "bg-red-950/20 border-red-900/50 text-red-400"
+              ? "bg-red-950/20 border-red-900/40 text-red-400"
               : "bg-red-50 border-red-200 text-red-700"
             }`}
         >
@@ -64,7 +72,8 @@ export function DeleteAnnouncementDialog(props: {
           Dashboard aller Benutzer.
         </div>
 
-        <DialogFooter className="flex flex-row gap-2 pt-4 border-t border-zinc-100 dark:border-zinc-900/60 justify-end">
+        {/* DIALOG ACTIONS */}
+        <DialogFooter className="flex flex-row gap-2 pt-4 border-t border-zinc-100 dark:border-zinc-900/60 justify-end mt-2">
           <button
             onClick={() => onOpenChange(false)}
             className={`px-5 py-2.5 font-['JetBrains_Mono'] text-[10px] tracking-widest uppercase transition-all duration-200 flex items-center justify-center gap-2 border ${radiusClass} ${isDark
@@ -77,10 +86,7 @@ export function DeleteAnnouncementDialog(props: {
           </button>
           <button
             onClick={onConfirm}
-            className={`px-5 py-2.5 font-['JetBrains_Mono'] text-[10px] tracking-widest uppercase text-white transition-all duration-200 flex items-center justify-center gap-2 border border-transparent ${radiusClass} ${isDark
-                ? "bg-red-600 hover:bg-red-700"
-                : "bg-red-600 hover:bg-red-700 shadow-sm"
-              }`}
+            className={`px-5 py-2.5 font-['JetBrains_Mono'] text-[10px] tracking-widest uppercase text-white transition-all duration-200 flex items-center justify-center gap-2 border border-transparent ${radiusClass} bg-red-600 hover:bg-red-700 shadow-sm`}
           >
             <Trash2 className="w-3.5 h-3.5" />
             LÖSCHEN

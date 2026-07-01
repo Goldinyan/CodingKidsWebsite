@@ -1,11 +1,11 @@
 "use client";
 
 import {
-        addAnnouncement,
-        deleteAnnouncement,
-        updateAnnouncement,
+  addAnnouncement,
+  deleteAnnouncement,
+  updateAnnouncement,
 } from "@/lib/db/announcements";
-import type { AnnouncementData } from "@/BackEnd/type";
+import type { AnnouncementData, UserRole } from "@/BackEnd/type";
 import { useState } from "react";
 import { Plus, Search } from "lucide-react";
 import { motion } from "framer-motion";
@@ -14,241 +14,263 @@ import { useAuth } from "@/BackEnd/AuthContext";
 import { Timestamp } from "firebase/firestore";
 import { getAuthorName } from "./announcements/getAuthor";
 import {
-        useAdmins,
-        useAnnouncementsData,
-        useFilteredAnnouncements,
-        useUserIsAdmin,
+  useAdmins,
+  useAnnouncementsData,
+  useFilteredAnnouncements,
+  useUserIsAdmin,
 } from "./announcements/hooks";
 import {
-        AnnouncementCard,
-        DeleteAnnouncementDialog,
-        EditAnnouncementDialog,
-        NewAnnouncementDialog,
+  AnnouncementCard,
+  DeleteAnnouncementDialog,
+  EditAnnouncementDialog,
+  NewAnnouncementDialog,
 } from "./announcements/components";
 
 export default function AnnouncementDashboard() {
-        const [isAddingAnnouncement, setIsAddingAnnouncement] =
-                useState<boolean>(false);
-        const [editingId, setEditingId] = useState<string | null>(null);
-        const [searchBar, setSearchBar] = useState<string>("");
-        const { user, userRole } = useAuth();
-        const { theme } = useTheme();
-        const userIsAdmin = useUserIsAdmin(user?.uid);
-        const admins = useAdmins(user?.uid, userRole);
-        const { announcements, setAnnouncements } = useAnnouncementsData(user?.uid, userRole);
-        const filteredAnnouncements = useFilteredAnnouncements(announcements, searchBar);
-        const [editValues, setEditValues] = useState<{
-                title: string;
-                content: string;
-        }>({
-                title: "",
-                content: "",
-        });
-        const [newAnnouncement, setNewAnnouncement] = useState<{
-                title: string;
-                content: string;
-                tag: "User" | "Member";
-        }>({
-                title: "",
-                content: "",
-                tag: "User",
-        });
-        const [deleteConfirm, setDeleteConfirm] = useState<{
-                isOpen: boolean;
-                announcementId: string | null;
-                announcementTitle: string | null;
-        }>({
-                isOpen: false,
-                announcementId: null,
-                announcementTitle: null,
-        });
+  const [isAddingAnnouncement, setIsAddingAnnouncement] =
+    useState<boolean>(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [searchBar, setSearchBar] = useState<string>("");
+  const { user, userRole } = useAuth();
+  const { theme, isRounded } = useTheme();
+  const userIsAdmin = useUserIsAdmin(user?.uid);
+  const admins = useAdmins(user?.uid, userRole);
 
-        const handleAddAnnouncement = async () => {
-                if (!user || !newAnnouncement.title.trim()) {
-                        return;
-                }
+  const { announcements, setAnnouncements } = useAnnouncementsData(
+    user?.uid,
+    userRole,
+  );
+  const filteredAnnouncements = useFilteredAnnouncements(
+    announcements,
+    searchBar,
+  );
 
-                const announcementToAdd: AnnouncementData = {
-                        uid: "",
-                        title: newAnnouncement.title,
-                        content: newAnnouncement.content,
-                        tag: newAnnouncement.tag,
-                        author: user.uid,
-                        date: Timestamp.fromDate(new Date()),
-                };
+  const [editValues, setEditValues] = useState<{
+    title: string;
+    content: string;
+  }>({ title: "", content: "" });
+  const [newAnnouncement, setNewAnnouncement] = useState<{
+    title: string;
+    content: string;
+    tag: UserRole;
+  }>({
+    title: "",
+    content: "",
+    tag: "user",
+  });
+  const [deleteConfirm, setDeleteConfirm] = useState<{
+    isOpen: boolean;
+    announcementId: string | null;
+    announcementTitle: string | null;
+  }>({
+    isOpen: false,
+    announcementId: null,
+    announcementTitle: null,
+  });
 
-                await addAnnouncement(announcementToAdd, user.uid, userRole);
-                setAnnouncements((prev) => [...prev, announcementToAdd]);
-                setIsAddingAnnouncement(false);
-                setNewAnnouncement({ title: "", content: "", tag: "User" });
-        };
+  const isDark = theme === "dark";
+  const radiusClass = isRounded ? "rounded-[12px]" : "rounded-none";
 
-        const handleEditStart = (announcement: AnnouncementData) => {
-                setEditingId(announcement.uid);
-                setEditValues({
-                        title: announcement.title,
-                        content: announcement.content,
-                });
-        };
+  const handleAddAnnouncement = async () => {
+    if (!user || !newAnnouncement.title.trim()) return;
 
-        const handleSaveEdit = async (uid: string) => {
-                await updateAnnouncement(
-                        uid,
-                        {
-                                title: editValues.title,
-                                content: editValues.content,
-                        },
-                        user?.uid || "anonymous",
-                        userRole,
-                );
-                setAnnouncements(
-                        announcements.map((a) => (a.uid === uid ? { ...a, ...editValues } : a)),
-                );
-                setEditingId(null);
-                setEditValues({ title: "", content: "" });
-        };
+    const announcementToAdd: AnnouncementData = {
+      uid: "",
+      title: newAnnouncement.title,
+      content: newAnnouncement.content,
+      tag: newAnnouncement.tag,
+      author: user.uid,
+      date: Timestamp.fromDate(new Date()),
+    };
 
-        const handleDelete = async (uid: string) => {
-                await deleteAnnouncement(uid, user?.uid || "anonymous", userRole);
-                setAnnouncements((prev) => prev.filter((a) => a.uid !== uid));
-                setDeleteConfirm({
-                        isOpen: false,
-                        announcementId: null,
-                        announcementTitle: null,
-                });
-        };
+    await addAnnouncement(announcementToAdd, user.uid, userRole);
+    setAnnouncements((prev) => [...prev, announcementToAdd]);
+    setIsAddingAnnouncement(false);
+    setNewAnnouncement({ title: "", content: "", tag: "user" });
+  };
 
-        return (
-                <div className={`w-full p-6 min-h-screen transition-colors duration-300 ${theme === "dark"
-                        ? "bg-black text-white"
-                        : "bg-white text-slate-900"
-                }`}>
-                        <div className="max-w-7xl mx-auto">
-                                <div className="mb-8">
-                                        <h1 className={`text-4xl font-bold mb-2 ${theme === "dark" ? "text-white" : "text-slate-900"}`}>
-                                                Ankündigungen
-                                        </h1>
-                                        <p className={theme === "dark" ? "text-gray-400" : "text-slate-600"}>
-                                                Verwalten Sie Ankündigungen für Benutzer
-                                        </p>
-                                </div>
+  const handleEditStart = (announcement: AnnouncementData) => {
+    setEditingId(announcement.uid);
+    setEditValues({
+      title: announcement.title,
+      content: announcement.content,
+    });
+  };
 
-                                <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                                        <div className="flex-1 relative">
-                                                <Search className={`absolute left-3 top-3 w-5 h-5 ${theme === "dark" ? "text-gray-500" : "text-slate-400"}`} />
-                                                <input
-                                                        type="text"
-                                                        placeholder="Ankündigungen durchsuchen..."
-                                                        value={searchBar}
-                                                        onChange={(e) => setSearchBar(e.target.value)}
-                                                        className={`w-full pl-10 pr-4 py-2 border transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-green-500 ${theme === "dark"
-                                                                ? "bg-white/5 border-white/10 text-white placeholder-gray-500 hover:bg-white/10 hover:border-white/20"
-                                                                : "bg-white border-slate-300 text-slate-900 placeholder-slate-400 hover:border-slate-400"
-                                                        }`}
-                                                />
-                                        </div>
+  const handleSaveEdit = async (uid: string) => {
+    await updateAnnouncement(
+      uid,
+      { title: editValues.title, content: editValues.content },
+      user?.uid || "anonymous",
+      userRole,
+    );
+    setAnnouncements(
+      announcements.map((a) => (a.uid === uid ? { ...a, ...editValues } : a)),
+    );
+    setEditingId(null);
+    setEditValues({ title: "", content: "" });
+  };
 
-                                        {userIsAdmin && (
-                                                <motion.button
-                                                        whileHover={{ scale: 1.02 }}
-                                                        whileTap={{ scale: 0.95 }}
-                                                        onClick={() => setIsAddingAnnouncement(true)}
-                                                        className={`px-6 py-2 font-medium border transition-all duration-300 flex items-center gap-2 ${theme === "dark"
-                                                                ? "bg-green-600 text-white border-green-600 hover:bg-green-700"
-                                                                : "bg-green-600 text-white border-green-600 hover:bg-green-700"
-                                                        }`}
-                                                >
-                                                        <Plus className="w-5 h-5" />
-                                                        Neue Ankündigung
-                                                </motion.button>
-                                        )}
-                                </div>
+  const handleDelete = async (uid: string) => {
+    await deleteAnnouncement(uid, user?.uid || "anonymous", userRole);
+    setAnnouncements((prev) => prev.filter((a) => a.uid !== uid));
+    setDeleteConfirm({
+      isOpen: false,
+      announcementId: null,
+      announcementTitle: null,
+    });
+  };
 
-                                <motion.div
-                                        variants={{
-                                                hidden: {},
-                                                visible: {
-                                                        opacity: 1,
-                                                        transition: { staggerChildren: 0.05 },
-                                                },
-                                        }}
-                                        initial="hidden"
-                                        whileInView="visible"
-                                        className="grid gap-4 md:grid-cols-1 lg:grid-cols-2"
-                                >
-                                        {filteredAnnouncements.length === 0 ? (
-                                                <div className="col-span-full text-center py-12">
-                                                        <p className={`text-lg ${theme === "dark" ? "text-gray-500" : "text-slate-500"}`}>
-                                                                {searchBar
-                                                                        ? "Keine Ankündigungen gefunden"
-                                                                        : "Keine Ankündigungen vorhanden"}
-                                                        </p>
-                                                </div>
-                                        ) : (
-                                                filteredAnnouncements.map((announcement, idx) => (
-                                                        <motion.div
-                                                                key={announcement.uid}
-                                                                initial={{ opacity: 0, y: 20 }}
-                                                                whileInView={{ opacity: 1, y: 0 }}
-                                                                transition={{ duration: 0.3, delay: idx * 0.05 }}
-                                                        >
-                                                                <AnnouncementCard
-                                                                        announcement={announcement}
-                                                                        authorName={getAuthorName(admins, announcement.author)}
-                                                                        userIsAdmin={userIsAdmin}
-                                                                        onEdit={() => handleEditStart(announcement)}
-                                                                        onDelete={() =>
-                                                                                setDeleteConfirm({
-                                                                                        isOpen: true,
-                                                                                        announcementId: announcement.uid,
-                                                                                        announcementTitle: announcement.title,
-                                                                                })
-                                                                        }
-                                                                />
-                                                        </motion.div>
-                                                ))
-                                        )}
-                                </motion.div>
-                        </div>
+  return (
+    <div
+      className={`w-full p-6 min-h-screen transition-colors duration-200 ${isDark ? "text-white" : "text-slate-900"
+        }`}
+    >
+      <div className="max-w-7xl mx-auto">
+        <div className="mb-8 border-b border-zinc-200 dark:border-zinc-800 pb-5 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+          <div>
+            <h1
+              className={`text-4xl font-black font-['Familjen_Grotesk'] tracking-tight uppercase ${isDark ? "text-white" : "text-slate-900"}`}
+            >
+              ANKÜNDIGUNGEN
+            </h1>
+            <p
+              className={`font-['JetBrains_Mono'] text-[10px] tracking-wider uppercase mt-1 ${isDark ? "text-zinc-500" : "text-slate-400"}`}
+            >
+              System-Mitteilungen und globale Feeds für registrierte Benutzer
+              verwalten
+            </p>
+          </div>
 
-                        <NewAnnouncementDialog
-                                open={isAddingAnnouncement}
-                                onOpenChange={setIsAddingAnnouncement}
-                                value={newAnnouncement}
-                                onChange={setNewAnnouncement}
-                                onCreate={handleAddAnnouncement}
-                        />
+          <div
+            className={`px-3 py-1.5 border border-dashed font-['JetBrains_Mono'] text-[10px] tracking-wider uppercase ${radiusClass} ${isDark
+                ? "bg-zinc-900 border-zinc-800 text-zinc-400"
+                : "bg-white border-slate-200 text-slate-500 shadow-sm"
+              }`}
+          >
+            EINTRÄGE: {String(filteredAnnouncements.length).padStart(2, "0")}
+          </div>
+        </div>
 
-                        <EditAnnouncementDialog
-                                open={editingId !== null}
-                                onOpenChange={(open) => {
-                                        if (!open) setEditingId(null);
-                                }}
-                                value={editValues}
-                                onChange={setEditValues}
-                                onCancel={() => {
-                                        setEditingId(null);
-                                        setEditValues({ title: "", content: "" });
-                                }}
-                                onSave={() => {
-                                        if (editingId) handleSaveEdit(editingId);
-                                }}
-                        />
+        {/* SEARCH AND CONTROL BAR */}
+        <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="flex-1 relative font-['JetBrains_Mono']">
+            <Search
+              className={`absolute left-3 top-3.5 w-4 h-4 ${isDark ? "text-zinc-600" : "text-slate-400"}`}
+            />
+            <input
+              type="text"
+              placeholder="ANKÜNDIGUNGEN DURCHSUCHEN..."
+              value={searchBar}
+              onChange={(e) => setSearchBar(e.target.value)}
+              className={`w-full pl-10 pr-4 py-2.5 text-xs uppercase tracking-wide border focus:outline-none focus:border-green-600 transition-colors ${radiusClass} ${isDark
+                  ? "bg-zinc-900 border-zinc-800 text-white placeholder-zinc-700"
+                  : "bg-white border-slate-200 text-slate-900 placeholder-slate-300 shadow-sm"
+                }`}
+            />
+          </div>
 
-                        <DeleteAnnouncementDialog
-                                open={deleteConfirm.isOpen}
-                                title={deleteConfirm.announcementTitle}
-                                onOpenChange={(open) =>
-                                        setDeleteConfirm({
-                                                isOpen: open,
-                                                announcementId: open ? deleteConfirm.announcementId : null,
-                                                announcementTitle: open ? deleteConfirm.announcementTitle : null,
-                                        })
-                                }
-                                onConfirm={() => {
-                                        if (deleteConfirm.announcementId) handleDelete(deleteConfirm.announcementId);
-                                }}
-                        />
-                </div>
-        );
+          {userIsAdmin && (
+            <button
+              onClick={() => setIsAddingAnnouncement(true)}
+              className={`px-5 py-2.5 font-['JetBrains_Mono'] text-[10px] tracking-widest uppercase text-white transition-all duration-200 flex items-center justify-center gap-2 border border-transparent ${radiusClass} bg-green-600 hover:bg-green-700 shadow-sm`}
+            >
+              <Plus className="w-4 h-4 stroke-[2]" />
+              NEUE ANKÜNDIGUNG
+            </button>
+          )}
+        </div>
+
+        <motion.div
+          variants={{
+            hidden: {},
+            visible: { transition: { staggerChildren: 0.04 } },
+          }}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          className="grid gap-4 md:grid-cols-1 lg:grid-cols-2"
+        >
+          {filteredAnnouncements.length === 0 ? (
+            <div
+              className={`col-span-full text-center py-16 border border-dashed ${radiusClass} ${isDark ? "border-zinc-800 bg-zinc-900/20" : "border-slate-200 bg-white shadow-sm"}`}
+            >
+              <p
+                className={`font-['JetBrains_Mono'] text-xs tracking-wider uppercase ${isDark ? "text-zinc-500" : "text-slate-400"}`}
+              >
+                {searchBar
+                  ? "ERR_NO_MATCH: KEINE ANKÜNDIGUNGEN GEFUNDEN"
+                  : "EMPTY_MATRIX: KEINE ANKÜNDIGUNGEN VORHANDEN"}
+              </p>
+            </div>
+          ) : (
+            filteredAnnouncements.map((announcement, idx) => (
+              <motion.div
+                key={announcement.uid}
+                variants={{
+                  hidden: { y: 15, opacity: 0 },
+                  visible: { y: 0, opacity: 1 },
+                }}
+                transition={{ type: "spring", stiffness: 350, damping: 30 }}
+              >
+                <AnnouncementCard
+                  announcement={announcement}
+                  authorName={getAuthorName(admins, announcement.author)}
+                  userIsAdmin={userIsAdmin}
+                  onEdit={() => handleEditStart(announcement)}
+                  onDelete={() =>
+                    setDeleteConfirm({
+                      isOpen: true,
+                      announcementId: announcement.uid,
+                      announcementTitle: announcement.title,
+                    })
+                  }
+                />
+              </motion.div>
+            ))
+          )}
+        </motion.div>
+      </div>
+
+      <NewAnnouncementDialog
+        open={isAddingAnnouncement}
+        onOpenChange={setIsAddingAnnouncement}
+        value={newAnnouncement}
+        onChange={setNewAnnouncement}
+        onCreate={handleAddAnnouncement}
+      />
+
+      <EditAnnouncementDialog
+        open={editingId !== null}
+        onOpenChange={(open) => {
+          if (!open) setEditingId(null);
+        }}
+        value={editValues}
+        onChange={setEditValues}
+        onCancel={() => {
+          setEditingId(null);
+          setEditValues({ title: "", content: "" });
+        }}
+        onSave={() => {
+          if (editingId) handleSaveEdit(editingId);
+        }}
+      />
+
+      <DeleteAnnouncementDialog
+        open={deleteConfirm.isOpen}
+        title={deleteConfirm.announcementTitle}
+        onOpenChange={(open) =>
+          setDeleteConfirm({
+            isOpen: open,
+            announcementId: open ? deleteConfirm.announcementId : null,
+            announcementTitle: open ? deleteConfirm.announcementTitle : null,
+          })
+        }
+        onConfirm={() => {
+          if (deleteConfirm.announcementId)
+            handleDelete(deleteConfirm.announcementId);
+        }}
+      />
+    </div>
+  );
 }

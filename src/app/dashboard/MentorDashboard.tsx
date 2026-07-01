@@ -11,6 +11,9 @@ export default function MentorChangeView() {
   const { theme, isRounded } = useTheme();
   const [mentorData, setMentorData] = useState<Mentor[]>([]);
 
+  const isDark = theme === "dark";
+  const radiusClass = isRounded ? "rounded-[12px]" : "rounded-none";
+
   useEffect(() => {
     const handleData = async () => {
       const data = await getAllMentors();
@@ -21,36 +24,57 @@ export default function MentorChangeView() {
   }, []);
 
   return (
-    <div className={`w-full p-6 min-h-screen transition-colors duration-300 ${theme === "dark" ? "bg-black text-white" : "bg-white text-slate-900"}`}>
+    <div 
+      className={`w-full p-6 min-h-screen transition-colors duration-200 ${
+        isDark ? "text-white" : "text-slate-900"
+      }`}
+    >
       <div className="max-w-7xl mx-auto">
-        <div className="mb-8">
-          <h1
-            className={`text-4xl font-bold mb-2 ${theme === "dark" ? "text-white" : "text-slate-900"}`}
+        <div className="mb-8 border-b border-zinc-200 dark:border-zinc-800 pb-5 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+          <div>
+            <h1
+              className={`text-4xl font-black font-['Familjen_Grotesk'] tracking-tight uppercase ${
+                isDark ? "text-white" : "text-slate-900"
+              }`}
+            >
+              MENTORENVERWALTUNG
+            </h1>
+            <p className={`font-['JetBrains_Mono'] text-[10px] tracking-wider uppercase mt-1 ${
+              isDark ? "text-zinc-500" : "text-slate-400"
+            }`}>
+              System-Schnittstelle zur Modifikation administrativer Konten und Berechtigungen
+            </p>
+          </div>
+
+          <div 
+            className={`px-3 py-1.5 border border-dashed font-['JetBrains_Mono'] text-[10px] tracking-wider uppercase ${radiusClass} ${
+              isDark ? "bg-zinc-900 border-zinc-800 text-zinc-400" : "bg-white border-slate-200 text-slate-500 shadow-sm"
+            }`}
           >
-            Mentoren Verwaltung
-          </h1>
+            REGISTRIERT: {String(mentorData.length).padStart(2, "0")}
+          </div>
         </div>
 
         <motion.div
           variants={{
             hidden: {},
             visible: {
-              opacity: 1,
-              transition: { staggerChildren: 0.06 },
+              transition: { staggerChildren: 0.04 },
             },
           }}
           initial="hidden"
           whileInView="visible"
-          className="grid gap-6 grid-cols-1 xl:grid-cols-2 "
+          viewport={{ once: true }}
+          className="grid gap-6 grid-cols-1 xl:grid-cols-2"
         >
           {mentorData.map((mentor, index) => (
             <motion.div
-              key={index}
+              key={mentor.uid || index}
               variants={{
-                hidden: { opacity: 1, y: 20 },
-                visible: { opacity: 1, y: 0 },
+                hidden: { y: 15, opacity: 0 },
+                visible: { y: 0, opacity: 1 },
               }}
-              transition={{ duration: 0.3 }}
+              transition={{ type: "spring", stiffness: 350, damping: 30 }}
             >
               <MentorCardAdmin
                 uid={mentor.uid}

@@ -20,11 +20,9 @@ export default function SectionCard({
 }) {
   const { theme, isRounded } = useTheme();
 
-  // Dynamische Radien basierend auf isRounded
   const cardRadius = isRounded ? "rounded-lg" : "rounded-none";
   const iconRadius = isRounded ? "rounded-md" : "rounded-none";
 
-  // Styles für den Button (Hintergrund & Rahmen)
   const buttonStyles = isActive
     ? theme === "dark"
       ? "bg-zinc-900/50 border-zinc-800"
@@ -33,7 +31,6 @@ export default function SectionCard({
       ? "hover:bg-zinc-900/30 border-transparent"
       : "hover:bg-gray-50 border-transparent";
 
-  // Styles für den Icon-Container
   const iconContainerStyles = isActive
     ? theme === "dark"
       ? "bg-blue-950 text-blue-400"
@@ -48,12 +45,12 @@ export default function SectionCard({
       : "text-blue-900"
     : theme === "dark"
       ? "text-zinc-400 group-hover:text-zinc-200"
-      : "text-gray-600 group-hover:text-gray-900";
+      : "text-gray-500 group-hover:text-gray-900";
 
   return (
     <button
       onClick={() => scrollToSection(id, setOpen)}
-      className={`group relative w-full px-4 py-3 border transition-all duration-300 flex items-center gap-3 ${cardRadius} ${buttonStyles}`}
+      className={`group relative w-full px-2 py-3 border transition-all duration-300 flex items-center gap-3 ${cardRadius} ${buttonStyles}`}
     >
       <div
         className={`flex-shrink-0 p-2 transition-all duration-300 ${iconRadius} ${iconContainerStyles}`}
@@ -62,7 +59,7 @@ export default function SectionCard({
       </div>
 
       <div className="flex-1 text-left">
-        <p className={`text-sm font-medium transition-colors font-gro ${textStyles}`}>
+        <p className={`text-[14px] font-medium transition-colors font-gro ${textStyles}`}>
           {label}
         </p>
       </div>
