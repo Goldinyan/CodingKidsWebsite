@@ -19,7 +19,7 @@ export function NewAnnouncementDialog(props: {
   onChange: (next: {
     title: string;
     content: string;
-    tag: "User" | "Member";
+    tag: UserRole;
   }) => void;
   onCreate: () => void;
 }) {
@@ -51,7 +51,6 @@ export function NewAnnouncementDialog(props: {
         </DialogHeader>
 
         <div className="space-y-4 font-['JetBrains_Mono']">
-          {/* TITEL INPUT */}
           <div>
             <label
               className={`block text-[10px] tracking-wider uppercase mb-1.5 ${isDark ? "text-zinc-500" : "text-slate-400"}`}
@@ -70,7 +69,6 @@ export function NewAnnouncementDialog(props: {
             />
           </div>
 
-          {/* ZIELGRUPPE SELECT */}
           <div>
             <label
               className={`block text-[10px] tracking-wider uppercase mb-1.5 ${isDark ? "text-zinc-500" : "text-slate-400"}`}
@@ -80,7 +78,7 @@ export function NewAnnouncementDialog(props: {
             <select
               value={value.tag}
               onChange={(e) =>
-                onChange({ ...value, tag: e.target.value as "User" | "Member" })
+                onChange({ ...value, tag: e.target.value as UserRole })
               }
               className={`w-full px-3 py-2 text-xs border focus:outline-none focus:border-green-600 transition-colors cursor-pointer ${radiusClass} ${isDark
                   ? "bg-zinc-900 border-zinc-800 text-white"

@@ -9,7 +9,7 @@ export default function FooterWrapper() {
   const router = useRouter();
   const pathname = usePathname();
   const { theme } = useTheme();
-  
+
   const isDark = theme === "dark";
   const hideFooter = pathname.startsWith("/dashboard");
 
@@ -17,9 +17,8 @@ export default function FooterWrapper() {
 
   return (
     <footer
-      className={`border-t py-8 transition-colors duration-200 ${
-        isDark ? "bg-zinc-950 border-zinc-900" : "bg-white border-slate-200"
-      }`}
+      className={`border-t py-8 transition-colors duration-200 ${isDark ? "bg-zinc-950 border-zinc-900" : "bg-white border-slate-200"
+        }`}
     >
       <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
         <button
@@ -34,7 +33,9 @@ export default function FooterWrapper() {
             />
           </div>
           <div>
-            <span className={`font-gro font-black text-sm ${isDark ? "text-white" : "text-slate-900"}`}>
+            <span
+              className={`font-gro font-black text-sm ${isDark ? "text-white" : "text-slate-900"}`}
+            >
               CodingKids
             </span>
             <span

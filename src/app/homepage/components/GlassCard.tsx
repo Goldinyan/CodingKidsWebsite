@@ -1,3 +1,7 @@
+"use client";
+
+import { useTheme } from "@/context/ThemeContext";
+
 export default function GlassCard({
   children,
   className = "",
@@ -7,11 +11,23 @@ export default function GlassCard({
   className?: string;
   style?: React.CSSProperties;
 }) {
+  const { theme, isRounded } = useTheme();
+  const isDark = theme === "dark";
+
+  const borderRadius = isRounded ? "rounded-2xl" : "rounded-none";
+  const borderColor = isDark
+    ? "border-white/[0.07] hover:border-green-400/40"
+    : "border-slate-200 hover:border-green-500/50";
+
+  const background = isDark
+    ? "rgba(255,255,255,0.025)"
+    : "rgba(248, 250, 252, 0.7)";
+
   return (
     <div
-      className={`rounded-2xl border border-white/[0.07] hover:border-green-400/40 transition-all duration-300 ${className}`}
+      className={`border transition-all duration-300 ${borderRadius} ${borderColor} ${className}`}
       style={{
-        background: "rgba(255,255,255,0.025)",
+        background: background,
         backdropFilter: "blur(12px)",
         ...style,
       }}

@@ -16,6 +16,8 @@ import { useTheme } from "@/context/ThemeContext";
 export default function TopView() {
   const router = useRouter();
   const { theme, isRounded } = useTheme();
+  const isDark = theme === "dark";
+
   return (
     <div className="">
       <div className="relative w-full px-4 pt-20 pb-20">
@@ -25,36 +27,22 @@ export default function TopView() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
           >
-            {/*
-            <div
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-[11px] mb-8"
-              style={{
-                background: "rgba(255,255,255,0.03)",
-                borderColor: "rgba(255,255,255,0.1)",
-                fontFamily: "'JetBrains Mono', monospace",
-                color: "#d1d5db",
-              }}
-            >
-              <span
-                className="w-1.5 h-1.5 rounded-full animate-pulse"
-                style={{ background: "#4ade80" }}
-              />
-              CoderDojo Niederrhein · Wesel
-            </div>
-          */}
             <h1
-              className="text-4xl font-gro md:text-5xl font-black tracking-medium leading-none mb-5"
+              className={`text-4xl font-gro md:text-5xl font-black tracking-medium leading-none mb-5 ${
+                isDark ? "text-white" : "text-slate-900"
+              }`}
             >
               Programmieren.
               <br />
-              <span style={{ color: "#4ade80" }}>Kostenlos.</span>
+              <span className="text-green-500">Kostenlos.</span>
               <br />
               Vor Ort.
             </h1>
 
             <p
-              className="text-[20px] font-thin leading-relaxed mb-8 max-w-md"
-              style={{ color: "#9ca3af" }}
+              className={`text-[20px] font-thin leading-relaxed mb-8 max-w-md ${
+                isDark ? "text-gray-400" : "text-slate-500"
+              }`}
             >
               CoderDojos sind kostenlose, reale Veranstaltungen für Kinder und
               Jugendliche zwischen 8 und 17 Jahren. Lerne Programmieren, baue
@@ -74,10 +62,13 @@ export default function TopView() {
               whileTap={{ scale: 0.9 }}
               transition={{ type: "spring", stiffness: 400, damping: 15 }}
               onClick={() => router.push("/termine")}
-              className={`transition-colors duration-300 px-4 py-2 font-medium text-xs border ${isRounded ? "rounded-lg" : "rounded-none"} ${theme === "dark"
-                  ? "bg-green-400 text-black "
+              className={`transition-colors duration-300 px-4 py-2 font-medium text-xs border ${
+                isRounded ? "rounded-lg" : "rounded-none"
+              } ${
+                isDark
+                  ? "bg-green-500 text-black border-green-500 hover:bg-green-400"
                   : "bg-green-600 text-white border-green-600 hover:bg-green-700"
-                }`}
+              }`}
             >
               Zum nächsten Dojo anmelden
             </motion.button>
@@ -90,10 +81,13 @@ export default function TopView() {
           >
             <motion.button
               onClick={() => router.push("/verein")}
-              className={`transition-colors duration-300 px-4 py-2 font-thin text-xs border ${isRounded ? "rounded-lg" : "rounded-none"}  ${theme === "dark"
+              className={`transition-colors duration-300 px-4 py-2 font-thin text-xs border ${
+                isRounded ? "rounded-lg" : "rounded-none"
+              } ${
+                isDark
                   ? "bg-black text-white border-white/10 hover:border-white/5 hover:bg-white/5"
                   : "bg-white text-slate-900 border-slate-200 hover:border-slate-900 hover:bg-slate-50"
-                }`}
+              }`}
             >
               Über den Verein
             </motion.button>
@@ -114,17 +108,18 @@ export default function TopView() {
               transition={{ delay: i * 0.06, duration: 0.4 }}
             >
               <GlassCard className="p-5 flex flex-col gap-2">
-                <Icon className="w-4 h-4" style={{ color: "#4ade80" }} />
+                <Icon className="w-4 h-4 text-green-500" />
                 <div
-                  className="text-xl font-gro font-black tracking-tight text-white"
+                  className={`text-xl font-gro font-black tracking-tight ${
+                    isDark ? "text-white" : "text-slate-900"
+                  }`}
                 >
                   {value}
                 </div>
                 <div
-                  className="text-[10px] font-mono uppercase tracking-widest"
-                  style={{
-                    color: "#6b7280",
-                  }}
+                  className={`text-[10px] font-mono uppercase tracking-widest ${
+                    isDark ? "text-gray-500" : "text-slate-400"
+                  }`}
                 >
                   {label}
                 </div>
@@ -132,60 +127,6 @@ export default function TopView() {
             </motion.div>
           ))}
         </div>
-
-        {/*
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          exit="hidden"
-          viewport={{ once: false, margin: "0px 0px -50px 0px" }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-        >
-          {features.map(({ text, des, icon: Icon }, idx) => {
-            return (
-              <motion.div
-                key={text}
-                variants={itemVariants}
-                whileHover="hover"
-                layout
-                className={`group relative z-10 p-6 backdrop-blur-2xl border transition-colors duration-300 ${isRounded ? "rounded-lg" : "rounde-none"}  ${theme === "dark"
-                    ? "bg-white/5 border-green-500/30 hover:border-green-500/60 hover:bg-white/10"
-                    : "bg-slate-50 border-green-300 hover:border-green-500 hover:bg-green-50"
-                  }`}
-                style={{
-                  boxShadow:
-                    theme === "dark"
-                      ? "0 4px 20px -2px rgba(0,0,0,0.4)"
-                      : "0 4px 20px -2px rgba(0,0,0,0.05)",
-                }}
-              >
-                <div className="flex items-start gap-4 mb-4">
-                  <Icon
-                    className={`w-6 h-6 flex-shrink-0 mt-1 transition-colors duration-300 ${theme === "dark"
-                        ? "text-gray-300 group-hover:text-green-400"
-                        : "text-green-600"
-                      }`}
-                  />
-                  <h3
-                    className={`text-lg font-semibold mt-1 ${theme === "dark" ? "text-white" : "text-slate-900"
-                      } leading-tight`}
-                  >
-                    {text}
-                  </h3>
-                </div>
-                <p
-                  className={`text-sm leading-relaxed ${theme === "dark" ? "text-gray-400" : "text-slate-600"
-                    }`}
-                >
-                  {des}
-                </p>
-              </motion.div>
-            );
-          })}
-        </motion.div>
-
-      */}
       </div>
     </div>
   );

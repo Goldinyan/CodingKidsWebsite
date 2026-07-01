@@ -77,8 +77,8 @@ export default function MiddleView() {
           >
             <GlassCard
               className={`p-6 cursor-pointer h-full transition-all duration-300 group ${isDark
-                  ? "hover:!border-[var(--hover-border)] hover:!bg-[var(--hover-bg)]"
-                  : "hover:!border-[var(--hover-border)] hover:bg-slate-50"
+                ? "hover:!border-[var(--hover-border)] hover:!bg-[var(--hover-bg)]"
+                : "hover:!border-[var(--hover-border)] hover:bg-slate-50"
                 }`}
               style={{
                 // @ts-expect-error: CSS-Variablen sind dynamisch und werden hier gesetzt
@@ -164,13 +164,13 @@ export default function MiddleView() {
         </div>
 
         <div className="grid w-full grid-cols-1 xl:grid-cols-5 gap-4">
-          <GlassCard className="xl:col-span-3 flex flex-col lg:flex-row  w-full justify-between p-6  hover:!border-purple-400/40 ">
+          <GlassCard className="xl:col-span-3 flex flex-col lg:flex-row w-full justify-between p-6 hover:!border-purple-400/40 ">
             <div className="flex flex-col min-w-80 items-start gap-4 mb-6">
               <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-purple-500/15 border border-purple-500/25">
                 <MapPin className="w-5 h-5 text-purple-400" />
               </div>
               <div>
-                <div className="font-bold font-gro text-white mb-0.5">
+                <div className={`font-bold font-gro ${isDark ? "text-white" : "text-slate-900"} mb-0.5`}>
                   CUBES Wesel
                 </div>
                 <div className="text-sm text-gray-500">
@@ -191,11 +191,11 @@ export default function MiddleView() {
               </a>
             </div>
 
-            <div className="rounded-xl  p-4 mb-6 border bg-white/5 border-white/10">
+            <div className={`rounded-xl p-4 mb-6 border ${isDark ? "bg-white/5 border-white/10" : "bg-slate-100 border-slate-200"}`}>
               <p className="text-[10px] font-mono uppercase tracking-widest mb-2 text-gray-500">
                 Anfahrt
               </p>
-              <p className="text-sm  leading-relaxed text-gray-400">
+              <p className={`text-sm leading-relaxed ${isDark ? "text-gray-400" : "text-slate-600"}`}>
                 B58 aus Schermbeck kommend Richtung Wesel → bei Polster Aktuell
                 rechts → gegenüber BlueCraft GmbH links (Schilder "LASE").
                 Parkplatz am Ende der Straße rechts. Links neben GUSTO Cubes
@@ -204,12 +204,12 @@ export default function MiddleView() {
             </div>
           </GlassCard>
 
-          <GlassCard className="w-full xl:col-span-2 p-6  flex flex-col gap-5 hover:!border-purple-400/40 ">
+          <GlassCard className="w-full xl:col-span-2 p-6 flex flex-col gap-5 hover:!border-purple-400/40 ">
             <div>
               <div className="text-[10px] uppercase font-mono tracking-widest mb-1 text-gray-500">
                 Termin
               </div>
-              <div className="text-2xl font-black font-gro text-white leading-none">
+              <div className={`text-2xl font-black font-gro ${isDark ? "text-white" : "text-slate-900"} leading-none`}>
                 Jeden Mittwoch
               </div>
               <div className="text-xl font-bold font-gro mt-1 text-purple-400">
@@ -255,7 +255,7 @@ export default function MiddleView() {
               >
                 <Notebook className="w-4 h-4" style={{ color: "#4ade80" }} />
               </div>
-              <div className="font-bold font-gro text-white">
+              <div className={`font-bold font-gro ${isDark ? "text-white" : "text-slate-900"}`}>
                 Voraussetzungen
               </div>
             </div>
@@ -283,7 +283,7 @@ export default function MiddleView() {
             >
               Warum programmieren?
             </div>
-            <div className="text-lg font-black font-gro text-white leading-snug mb-3">
+            <div className={`text-lg font-black font-gro ${isDark ? "text-white" : "text-slate-900"} leading-snug mb-3`}>
               Deine Ideen. Deine Regeln. Deine Projekte.
             </div>
             <p

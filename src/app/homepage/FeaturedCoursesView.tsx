@@ -15,6 +15,7 @@ export default function FeaturedCoursesView() {
   const { user, userRole, loading } = useAuth();
   const [courses, setCourses] = useState<CourseData[]>([]);
   const { theme, isRounded } = useTheme();
+  const isDark = theme === "dark";
 
   const hasFetched = useRef<string | null>(null);
 
@@ -45,7 +46,7 @@ export default function FeaturedCoursesView() {
   if (loading) {
     return (
       <section className="py-14">
-        <p className="text-2xl font-bold mb-8">Lädt...</p>
+        <p className={`text-2xl font-bold mb-8 ${isDark ? "text-white" : "text-slate-900"}`}>Lädt...</p>
       </section>
     );
   }
@@ -74,40 +75,44 @@ export default function FeaturedCoursesView() {
               className="group"
             >
               <div
-                className={`rounded-2xl border p-6 cursor-pointer transition-all duration-200 h-full ${isGreen
-                    ? "bg-white/[0.025] border-white/[0.07] hover:bg-green-500/[0.07] hover:border-green-500/18"
-                    : "bg-white/[0.025] border-white/[0.07] hover:bg-purple-500/[0.07] hover:border-purple-500/18"
-                  }`}
+                className={`border p-6 cursor-pointer transition-all duration-200 h-full ${
+                  isRounded ? "rounded-2xl" : "rounded-none"
+                } ${
+                  isDark
+                    ? "bg-white/[0.025] border-white/[0.07] hover:bg-white/[0.05]"
+                    : "bg-slate-50 border-slate-200 hover:bg-white hover:border-slate-300"
+                }`}
               >
                 {/* Header row */}
                 <div className="flex items-start justify-between gap-3 mb-4">
                   <div className="flex items-center gap-3">
                     <div
-                      className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border ${isGreen
-                          ? "bg-green-500/12 border-green-500/25"
-                          : "bg-purple-500/[0.18] border-purple-500/30"
-                        }`}
+                      className={`w-10 h-10 flex items-center justify-center shrink-0 border ${
+                        isRounded ? "rounded-xl" : "rounded-none"
+                      } ${
+                        isGreen
+                          ? isDark ? "bg-green-500/12 border-green-500/25" : "bg-green-50 border-green-200"
+                          : isDark ? "bg-purple-500/[0.18] border-purple-500/30" : "bg-purple-50 border-purple-200"
+                      }`}
                     >
                       <Code2
-                        className={`w-5 h-5 ${isGreen ? "text-green-500" : "text-purple-400"
-                          }`}
+                        className={`w-5 h-5 ${isGreen ? "text-green-500" : "text-purple-500"}`}
                       />
                     </div>
                     <div>
-                      <div className="font-bold text-white leading-tight font-grotesk">
+                      <div className={`font-bold leading-tight font-grotesk ${isDark ? "text-white" : "text-slate-900"}`}>
                         {course.name}
                       </div>
                       <div className="text-[11px] mt-0.5 font-mono text-gray-500">
-                        {course.dates.length} Termin
-                        {course.dates.length !== 1 ? "e" : ""} geplant
+                        {course.dates.length} Termin{course.dates.length !== 1 ? "e" : ""} geplant
                       </div>
                     </div>
                   </div>
-                  <ChevronRight className="w-4 h-4 shrink-0 mt-1 text-gray-700" />
+                  <ChevronRight className="w-4 h-4 shrink-0 mt-1 text-gray-400" />
                 </div>
 
                 {/* Description */}
-                <p className="text-sm leading-relaxed mb-4 text-gray-500">
+                <p className={`text-sm leading-relaxed mb-4 ${isDark ? "text-gray-500" : "text-slate-600"}`}>
                   {course.des}
                 </p>
 
@@ -116,36 +121,37 @@ export default function FeaturedCoursesView() {
                   {course.tags.map((tag, ti) => (
                     <span
                       key={tag}
-                      className={`text-[10px] px-2 py-0.5 rounded-md border font-mono ${ti === 0
+                      className={`text-[10px] px-2 py-0.5 rounded-md border font-mono ${
+                        ti === 0
                           ? isGreen
-                            ? "text-green-500 bg-green-500/18 border-green-500/30"
-                            : "text-purple-400 bg-purple-500/18 border-purple-500/30"
-                          : "text-gray-400 bg-white/[0.04] border-white/[0.08]"
-                        }`}
+                            ? isDark ? "text-green-500 bg-green-500/18 border-green-500/30" : "text-green-700 bg-green-100 border-green-200"
+                            : isDark ? "text-purple-400 bg-purple-500/18 border-purple-500/30" : "text-purple-700 bg-purple-100 border-purple-200"
+                          : isDark ? "text-gray-400 bg-white/[0.04] border-white/[0.08]" : "text-slate-500 bg-slate-200/50 border-slate-300"
+                      }`}
                     >
                       {tag}
                     </span>
                   ))}
                 </div>
 
-                <div className="flex items-center justify-between pt-4 border-t border-white/[0.06]">
+                <div className={`flex items-center justify-between pt-4 border-t ${isDark ? "border-white/[0.06]" : "border-slate-200"}`}>
                   <div className="flex items-center gap-2">
                     <div className="flex -space-x-1.5">
                       {course.mentors?.slice(0, 3).map((m) => (
                         <div
                           key={m.uid}
-                          className={`w-6 h-6 rounded-full flex items-center justify-center border text-[9px] font-bold font-grotesk ${isGreen
+                          className={`w-6 h-6 rounded-full flex items-center justify-center border text-[9px] font-bold font-grotesk ${
+                            isGreen
                               ? "bg-green-500 text-white border-green-600"
                               : "bg-purple-500 text-white border-purple-600"
-                            }`}
+                          }`}
                         >
                           {m.name.charAt(0)}
                         </div>
                       ))}
                     </div>
                     <span className="text-[11px] font-mono text-gray-500">
-                      {course.mentors?.length} Mentor
-                      {course.mentors?.length !== 1 ? "en" : ""}
+                      {course.mentors?.length} Mentor{course.mentors?.length !== 1 ? "en" : ""}
                     </span>
                   </div>
 

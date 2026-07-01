@@ -40,6 +40,7 @@ export default function FeaturedEventsView() {
   const [events, setEvents] = useState<EventData[]>([]);
   const [courses, setCourses] = useState<CourseData[]>([]);
   const { theme, isRounded } = useTheme();
+  const isDark = theme === "dark";
   const { user, userData, userRole, loading } = useAuth();
   const router = useRouter();
 
@@ -112,11 +113,11 @@ export default function FeaturedEventsView() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
           >
-            <div className="flex flex-col items-center justify-center p-8 text-center rounded-2xl border border-dashed border-white/10 bg-white/[0.01] min-h-[220px]">
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-purple-500/10 border border-purple-500/20 mb-4">
+            <div className={`flex flex-col items-center justify-center p-8 text-center border border-dashed ${isRounded ? "rounded-2xl" : "rounded-none"} ${isDark ? "border-white/10 bg-white/[0.01]" : "border-slate-200 bg-slate-50"}`}>
+              <div className={`w-12 h-12 flex items-center justify-center ${isRounded ? "rounded-xl" : "rounded-none"} bg-purple-500/10 border border-purple-500/20 mb-4`}>
                 <CalendarX2 className="w-6 h-6 text-purple-400" />
               </div>
-              <h3 className="text-white font-bold text-base font-grotesk mb-1">
+              <h3 className={`font-bold text-base font-grotesk mb-1 ${isDark ? "text-white" : "text-slate-900"}`}>
                 Keine Termine geplant
               </h3>
               <p className="text-sm text-gray-500 max-w-sm leading-relaxed">
@@ -140,12 +141,11 @@ export default function FeaturedEventsView() {
               transition={{ delay: i * 0.06, duration: 0.4 }}
             >
               <GlassCard
-                className={`flex items-center gap-4 p-5 hover:!border-purple-400/30 transition-colors ${full ? "opacity-60" : "opacity-100"
-                  }`}
+                className={`flex items-center gap-4 p-5 hover:!border-purple-400/30 transition-colors ${full ? "opacity-60" : "opacity-100"}`}
               >
                 {/* Date */}
                 <div
-                  className={`shrink-0 rounded-xl border p-2.5 text-center w-14 ${full
+                  className={`shrink-0 border p-2.5 text-center w-14 ${isRounded ? "rounded-xl" : "rounded-none"} ${full
                       ? "bg-white/[0.02] border-white/[0.06]"
                       : "bg-purple-500/[0.06] border-purple-500/20"
                     }`}
@@ -153,7 +153,7 @@ export default function FeaturedEventsView() {
                   <div className="text-[9px] tracking-widest font-mono text-gray-500">
                     {fmtMonth(ev.date)}
                   </div>
-                  <div className="text-xl font-black leading-tight text-white font-grotesk">
+                  <div className={`text-xl font-black leading-tight font-grotesk ${isDark ? "text-white" : "text-slate-900"}`}>
                     {fmtDay(ev.date)}
                   </div>
                 </div>
@@ -161,7 +161,7 @@ export default function FeaturedEventsView() {
                 <div className="w-px h-9 shrink-0 bg-white/[0.07]" />
 
                 <div className="flex-1 min-w-0">
-                  <div className="font-semibold text-sm text-white truncate font-grotesk">
+                  <div className={`font-semibold text-sm truncate font-grotesk ${isDark ? "text-white" : "text-slate-900"}`}>
                     {ev.name}
                   </div>
                   <div className="text-[11px] mt-0.5 font-mono text-gray-500">
@@ -181,7 +181,7 @@ export default function FeaturedEventsView() {
                   )}
                   <button
                     onClick={() => router.push("/termine")}
-                    className={`px-3 py-1.5 rounded-lg border text-xs font-bold bg-transparent transition-all font-mono ${full
+                    className={`px-3 py-1.5 border text-xs font-bold bg-transparent transition-all font-mono ${isRounded ? "rounded-lg" : "rounded-none"} ${full
                         ? "bg-white/[0.03] border-white/[0.06] text-gray-500 cursor-not-allowed"
                         : "bg-purple-500/[0.08] border-purple-500/25 text-purple-400 hover:bg-purple-500/15 cursor-pointer"
                       }`}
@@ -198,7 +198,7 @@ export default function FeaturedEventsView() {
       {validEvents.length > 0 && (
         <button
           onClick={() => router.push("/termine")}
-          className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-xl border font-bold text-sm no-underline transition-all bg-purple-500/[0.06] border-purple-500/20 text-purple-400 hover:bg-purple-500/12 cursor-pointer"
+          className={`w-full flex items-center justify-center gap-2 px-6 py-3 border font-bold text-sm no-underline transition-all bg-purple-500/[0.06] border-purple-500/20 text-purple-400 hover:bg-purple-500/12 cursor-pointer ${isRounded ? "rounded-xl" : "rounded-none"}`}
         >
           Alle Termine &amp; Anmeldung <ArrowRight className="w-4 h-4" />
         </button>
