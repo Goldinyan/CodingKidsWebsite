@@ -33,19 +33,13 @@ export default function UserDashboard() {
 
   const { user, userRole } = useAuth();
   const { theme, isRounded } = useTheme();
-
   const { users, setUsers } = useUsersData(user?.uid, userRole);
   const filteredUsers = useFilteredUsers(users, searchBar, filters, seeAll);
 
   const saveUserChanges = async (uid: string) => {
-    if (!editValues.name?.trim()) {
-      return;
-    }
-
+    if (!editValues.name?.trim()) return;
     await updateUser(uid, editValues, user?.uid || "anonymous", userRole);
-
     setUsers(users.map((u) => (u.uid === uid ? { ...u, ...editValues } : u)));
-
     setEditingId(null);
     setEditValues({});
   };
@@ -60,194 +54,179 @@ export default function UserDashboard() {
     });
   };
 
+  const radiusClass = isRounded ? "rounded-[16px]" : "rounded-none";
+
   return (
     <div
-      className={`w-full px-6 py-4 transition-colors duration-300 ${theme === "dark" ? "bg-black text-white" : "bg-white text-slate-900"
+      className={`w-full min-h-screen py-14 px-6 font-['DM_Sans'] transition-colors duration-300 ${theme === "dark"
+          ? "bg-black text-[#f4f4f5]"
+          : "bg-slate-50 text-slate-700"
         }`}
     >
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="mb-8"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.4 }}
+          className="mb-12"
         >
+          <span
+            className={`font-['JetBrains_Mono'] text-[10px] tracking-[0.22em] uppercase block mb-2 ${theme === "dark" ? "text-[#a855f7]" : "text-purple-600"
+              }`}
+          >
+            Systemsteuerung
+          </span>
           <h1
-            className={`text-5xl font-bold mb-3 ${theme === "dark" ? "text-white" : "text-slate-900"
+            className={`text-5xl font-black font-['Familjen_Grotesk'] tracking-tight leading-none uppercase ${theme === "dark" ? "text-white" : "text-slate-900"
               }`}
           >
             Nutzerverwaltung
           </h1>
-          <p
-            className={`text-lg ${theme === "dark" ? "text-gray-400" : "text-slate-600"
-              }`}
-          >
-            Verwalten Sie Benutzer: Bearbeiten und Löschen
-          </p>
         </motion.div>
 
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-          className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between"
+          transition={{ duration: 0.4, delay: 0.1 }}
+          className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between"
         >
-          <div className="flex-1 relative">
+          <div className="flex-1 relative group">
             <Search
-              className={`absolute left-3 top-3 w-5 h-5 transition-colors ${theme === "dark" ? "text-gray-600" : "text-slate-400"
+              className={`absolute left-4 top-3.5 w-4 h-4 transition-colors duration-200 ${theme === "dark"
+                  ? "text-zinc-600 group-focus-within:text-[#4ADE80]"
+                  : "text-slate-400 group-focus-within:text-green-600"
                 }`}
             />
             <input
               type="text"
-              placeholder="Nutzer durchsuchen..."
+              placeholder="DURSUCHE USERS..."
               value={searchBar}
               onChange={(e) => setSearchBar(e.target.value)}
-              className={`w-full pl-10 pr-4 py-2 border transition-colors duration-300 focus:outline-none ${isRounded ? "rounded-lg" : "rounded-none"
-                } ${theme === "dark"
-                  ? "bg-white/5 border-white/10 text-white placeholder-gray-500 focus:border-white/20 focus:bg-white/10"
-                  : "bg-white border-slate-300 text-slate-900 placeholder-slate-400 focus:border-green-600 focus:bg-white"
+              className={`w-full pl-11 pr-4 py-3 font-['JetBrains_Mono'] text-xs uppercase tracking-wider transition-all duration-200 focus:outline-none ${radiusClass} ${theme === "dark"
+                  ? "bg-[rgba(255,255,255,0.025)] border border-[rgba(255,255,255,0.07)] text-white placeholder-zinc-600 focus:border-[#4ADE80] focus:bg-[rgba(255,255,255,0.04)]"
+                  : "bg-white border border-slate-200 text-slate-900 placeholder-slate-400 focus:border-green-600 focus:bg-white shadow-sm"
                 }`}
             />
           </div>
 
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="flex gap-2"
+          <button
+            onClick={() =>
+              setFilters((prev) => ({
+                ...prev,
+                name: prev.name === "ascending" ? "descending" : "ascending",
+              }))
+            }
+            className={`p-3.5 transition-all duration-200 flex items-center justify-center ${radiusClass} ${theme === "dark"
+                ? "bg-[rgba(255,255,255,0.04)] border border-[rgba(255,255,255,0.08)] text-zinc-400 hover:text-[#4ADE80] hover:border-[#4ADE80]"
+                : "bg-white border border-slate-200 text-slate-500 hover:text-green-600 hover:border-green-600 shadow-sm"
+              }`}
           >
             {filters.name === "ascending" ? (
-              <button
-                onClick={() =>
-                  setFilters((prev) => ({ ...prev, name: "descending" }))
-                }
-                className={`p-2 border transition-colors duration-300 ${isRounded ? "rounded-lg" : "rounded-none"
-                  } ${theme === "dark"
-                    ? "bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20"
-                    : "bg-slate-50 border-slate-300 hover:bg-white hover:border-slate-400"
-                  }`}
-              >
-                <SortAsc
-                  className={`w-5 h-5 ${theme === "dark" ? "text-gray-400" : "text-slate-600"
-                    }`}
-                />
-              </button>
+              <SortAsc className="w-4 h-4" />
             ) : (
-              <button
-                onClick={() =>
-                  setFilters((prev) => ({ ...prev, name: "ascending" }))
-                }
-                className={`p-2 border transition-all duration-300 ${isRounded ? "rounded-lg" : "rounded-none"
-                  } ${theme === "dark"
-                    ? "bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20"
-                    : "bg-slate-50 border-slate-300 hover:bg-white hover:border-slate-400"
-                  }`}
-              >
-                <SortDesc
-                  className={`w-5 h-5 ${theme === "dark" ? "text-gray-400" : "text-slate-600"
-                    }`}
-                />
-              </button>
+              <SortDesc className="w-4 h-4" />
             )}
-          </motion.div>
+          </button>
         </motion.div>
 
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="mb-8 flex flex-wrap gap-2"
+          transition={{ duration: 0.4, delay: 0.2 }}
+          className="mb-10 flex flex-wrap gap-2"
         >
-          {(["All", "Mentor", "Admin", "User", "Member"] as const).map(
-            (role) => (
-              <motion.button
-                key={role}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setFilters((prev) => ({ ...prev, role }))}
-                className={`px-4 py-2 border transition-colors duration-300 font-medium ${isRounded ? "rounded-lg" : "rounded-none"
-                  } ${filters.role === role
+          {(
+            [
+              { id: "All", label: "ALLE_USERS" },
+              { id: "Mentor", label: "MENTORS" },
+              { id: "Admin", label: "ADMINS" },
+              { id: "User", label: "STANDARD_USERS" },
+              { id: "Member", label: "SUBSCRIBED_MEMBERS" },
+            ] as const
+          ).map((role) => {
+            const isSelected = filters.role === role.id;
+            return (
+              <button
+                key={role.id}
+                onClick={() =>
+                  setFilters((prev) => ({ ...prev, role: role.id }))
+                }
+                className={`px-4 py-2 font-['JetBrains_Mono'] text-[10px] tracking-widest uppercase transition-all duration-200 ${radiusClass} ${isSelected
                     ? theme === "dark"
-                      ? "bg-white text-black border-white"
-                      : "bg-green-600 text-white border-green-600"
+                      ? "bg-[#7B028E] text-white border border-transparent"
+                      : "bg-purple-600 text-white border border-transparent"
                     : theme === "dark"
-                      ? "bg-transparent text-white border-white/20 hover:border-white/40 hover:bg-white/5"
-                      : "bg-white text-slate-700 border-slate-300 hover:bg-slate-50 hover:border-slate-400"
+                      ? "bg-[rgba(255,255,255,0.04)] text-zinc-400 border border-[rgba(255,255,255,0.08)] hover:border-[#a855f7] hover:text-white"
+                      : "bg-white text-slate-500 border border-slate-200 hover:border-purple-600 hover:text-purple-600 shadow-sm"
                   }`}
               >
-                {role === "All"
-                  ? "Alle"
-                  : role === "User"
-                    ? "User"
-                    : role === "Member"
-                      ? "Mitglied"
-                      : role}
-              </motion.button>
-            ),
-          )}
+                {role.label}
+              </button>
+            );
+          })}
         </motion.div>
 
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
+          transition={{ duration: 0.4, delay: 0.3 }}
           className="grid gap-6 md:grid-cols-1 lg:grid-cols-2"
         >
           {filteredUsers.length === 0 ? (
-            <div className="col-span-full text-center py-16">
+            <div
+              className={`col-span-full text-center py-24 border border-dashed ${radiusClass} ${theme === "dark"
+                  ? "bg-[rgba(255,255,255,0.01)] border-[rgba(255,255,255,0.05)]"
+                  : "bg-slate-100/50 border-slate-200"
+                }`}
+            >
               <p
-                className={`text-lg ${theme === "dark" ? "text-gray-500" : "text-slate-500"
-                  }`}
+                className={`font-['JetBrains_Mono'] text-xs uppercase tracking-widest ${theme === "dark" ? "text-zinc-600" : "text-slate-400"}`}
               >
                 {searchBar
-                  ? "Keine Nutzer gefunden, die Ihrer Suche entsprechen"
-                  : "Keine Nutzer vorhanden."}
+                  ? "No system logs match specified search query"
+                  : "Database execution returned empty set"}
               </p>
             </div>
           ) : (
             filteredUsers.map((u, idx) => (
               <motion.div
                 key={u.uid}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.05 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: idx * 0.03 }}
+                className={`p-1 transition-all duration-200 ${radiusClass} ${theme === "dark"
+                    ? "bg-[rgba(255,255,255,0.025)] border border-[rgba(255,255,255,0.07)] hover:bg-[rgba(255,255,255,0.05)] hover:border-[rgba(255,255,255,0.15)]"
+                    : "bg-white border border-slate-200 hover:border-slate-300 shadow-sm"
+                  }`}
               >
                 <UserCard
                   user={u}
                   roleLabel={u.role}
                   onEdit={() => handleEditStart(u)}
-                  onDelete={() =>
+                />
+                {/*onDelete={() =>
                     setDeleteConfirm({
                       isOpen: true,
                       userId: u.uid,
                       userName: u.name,
                     })
-                  }
-                />
+                  }*/}
               </motion.div>
             ))
           )}
         </motion.div>
 
         {filteredUsers.length > 10 && (
-          <motion.div
-            layout
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4 }}
-            className="flex items-center justify-center mt-12"
-          >
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+          <motion.div layout className="flex items-center justify-center mt-14">
+            <button
               onClick={() => setSeeAll(!seeAll)}
-              className={`px-8 py-3 font-medium border transition-colors duration-300 ${isRounded ? "rounded-lg" : "rounded-none"
-                } ${theme === "dark"
-                  ? "bg-white text-black border-white hover:bg-gray-100"
-                  : "bg-green-600 text-white border-green-600 hover:bg-green-700"
+              className={`px-8 py-3 font-['JetBrains_Mono'] text-[11px] tracking-widest uppercase transition-all duration-200 ${radiusClass} ${theme === "dark"
+                  ? "bg-[rgba(255,255,255,0.04)] border border-[rgba(255,255,255,0.08)] text-zinc-300 hover:text-[#4ADE80] hover:border-[#4ADE80]"
+                  : "bg-white border border-slate-200 text-slate-600 hover:text-green-600 hover:border-green-600 shadow-sm"
                 }`}
             >
-              {seeAll ? "Weniger anzeigen" : "Mehr anzeigen"}
-            </motion.button>
+              {seeAll ? "Collapse Entries" : "Expand All Entries"}
+            </button>
           </motion.div>
         )}
       </div>

@@ -17,7 +17,7 @@ export function useFilteredUsers(
         (u) =>
           u.name.toLowerCase().includes(search) ||
           u.email.toLowerCase().includes(search) ||
-          u.birthdate?.toLowerCase().includes(search),
+          toJsDate(u.birthdate)?.toString().toLowerCase().includes(search),
       );
     }
 
