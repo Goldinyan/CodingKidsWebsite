@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import { getAllMentors } from "@/lib/db";
 import { Mentor } from "@/BackEnd/type";
-import { m, motion } from "framer-motion";
+import { m, motion, Variants } from "framer-motion";
 import { MentorCard } from "../verein/MentorCard";
 import { useAuth } from "@/BackEnd/AuthContext";
 import { useTheme } from "@/context/ThemeContext";
@@ -126,7 +126,7 @@ export default function MentorsView() {
         {mentors.slice(0, 3).map((mentor) => (
           <motion.div
             key={mentor.uid}
-            variants={itemVariants}
+            variants={itemVariants as Variants}
             layout="position"
           >
             <SimpleMentorCard

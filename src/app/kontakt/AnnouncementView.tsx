@@ -2,12 +2,11 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/BackEnd/AuthContext";
-import type { UserData, AnnouncementData, PresetRoles } from "@/BackEnd/type";
+import type { UserData, AnnouncementData} from "@/BackEnd/type";
 import { getAllAnnouncements, getAllUsers } from "@/lib/db";
 import { Bell, User, Zap, Shield, CheckCircle2, Clock } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
-
-const roles: PresetRoles[] = ["admin", "user", "member", "mentor", "anonymous"];
+import { UserRole } from "@/BackEnd/type";
 
 export default function AnnouncementView({ data }: { data: UserData }) {
   const [announcements, setAnnouncements] = useState<AnnouncementData[]>([]);
@@ -39,6 +38,8 @@ export default function AnnouncementView({ data }: { data: UserData }) {
     allUsers.filter((u) => u.uid == id);
     return allUsers[0];
   };
+
+  const roles: UserRole[] = ["admin", "mentor", "member", "user"];
 
   useEffect(() => {
     if (announcements.length > 0) {

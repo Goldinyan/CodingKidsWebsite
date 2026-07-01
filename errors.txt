@@ -1,0 +1,6 @@
+src/app/kontakt/AnnouncementView.tsx(5,43): error TS2305: Module '"@/BackEnd/type"' has no exported member 'PresetRoles'.
+src/app/profile/page.tsx(9,8): error TS2786: 'ProfileView' cannot be used as a JSX component.
+  Its type '() => Element | (() => never)' is not a valid JSX element type.
+    Type '() => Element | (() => never)' is not assignable to type '(props: any) => ReactNode | Promise<ReactNode>'.
+      Type 'Element | (() => never)' is not assignable to type 'ReactNode | Promise<ReactNode>'.
+        Type '() => never' is not assignable to type 'ReactNode | Promise<ReactNode>'.
