@@ -1,14 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Search } from "lucide-react";
-import { motion } from "framer-motion";
+import { Plus, Search, FolderX } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "@/context/ThemeContext";
 import { useAuth } from "@/BackEnd/AuthContext";
 import { addCourse, deleteCourse, updateCourse } from "@/lib/db/courses";
 import type { CourseData } from "@/BackEnd/type";
 import { useToast } from "@/components/ui/use-toast";
-import { Button } from "@/components/ui/button";
 import { useCoursesData, useFilteredCourses } from "./courses/hooks";
 import {
   CourseCard,
@@ -19,7 +18,7 @@ import {
 export default function CourseDashboard() {
   const { user, userRole } = useAuth();
   const { toast } = useToast();
-  const { theme } = useTheme();
+  const { theme, isRounded } = useTheme();
 
   const [searchBar, setSearchBar] = useState<string>("");
   const [isAddingCourse, setIsAddingCourse] = useState<boolean>(false);
@@ -52,6 +51,8 @@ export default function CourseDashboard() {
     isLoading,
   } = useCoursesData(user?.uid, userRole);
   const filteredCourses = useFilteredCourses(coursesData, searchBar);
+
+  const radiusClass = isRounded ? "rounded-[12px]" : "rounded-none";
 
   const handleTagChange = (val: string) => {
     setTagInput(val);
@@ -179,124 +180,141 @@ export default function CourseDashboard() {
 
   if (isLoading) {
     return (
-      <div
-        className={`flex items-center justify-center p-8 transition-colors duration-300 `}
-      >
-        <div className={theme === "dark" ? "text-gray-500" : "text-slate-500"}>
-          Kurse werden geladen...
+      <div className="flex items-center justify-center min-h-[400px] p-8 transition-colors duration-200">
+        <div
+          className={`font-['JetBrains_Mono'] text-xs tracking-widest uppercase animate-pulse ${theme === "dark" ? "text-zinc-500" : "text-slate-400"}`}
+        >
+          KURSE_WERDEN_GELADEN...
         </div>
       </div>
     );
   }
 
   return (
-    <div className={`w-full px-6 py-8 transition-colors duration-300 ${theme === "dark" ? "bg-black text-white" : "bg-white text-slate-900"}`}>
-      <div className="max-w-7xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="mb-8"
-        >
-          <h1
-            className={`text-5xl font-bold mb-3 ${theme === "dark" ? "text-white" : "text-slate-900"
-              }`}
-          >
-            Kurs-Verwaltung
-          </h1>
-          <p
-            className={`text-lg ${theme === "dark" ? "text-gray-400" : "text-slate-600"
-              }`}
-          >
-            Verwalten Sie Ihre Kurse: Erstellen, Bearbeiten und Löschen
-          </p>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-          className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between"
-        >
-          <div className="flex-1 relative">
-            <Search
-              className={`absolute z-10 left-3 top-3 w-5 h-5 transition-colors ${theme === "dark" ? "text-gray-600" : "text-slate-400"
+    <>
+      <div className="w-full p-6 transition-colors duration-200">
+        <div className="max-w-7xl mx-auto">
+          <div className="mb-8">
+            <h1
+              className={`text-4xl font-black font-['Familjen_Grotesk'] tracking-tight uppercase mb-1.5 ${theme === "dark" ? "text-white" : "text-slate-900"
                 }`}
-            />
-            <input
-              type="text"
-              placeholder="Kurse durchsuchen..."
-              value={searchBar}
-              onChange={(e) => setSearchBar(e.target.value)}
-              className={`backdrop-blur-2xl w-full pl-10 pr-4 py-2 border transition-all duration-300 focus:outline-none ${theme === "dark"
-                  ? "bg-white/5 border-white/10 text-white placeholder-gray-500 focus:border-white/20 focus:bg-white/10"
-                  : "bg-slate-50 border-slate-300 text-slate-900 placeholder-slate-400 focus:border-purple-600 focus:bg-white"
+            >
+              KursVerwaltung
+            </h1>
+            <p
+              className={`font-['JetBrains_Mono'] text-[10px] tracking-wider uppercase ${theme === "dark" ? "text-zinc-500" : "text-slate-400"
                 }`}
-            />
+            >
+              Administration der Lehr-Module, Fach-Tags und System-Strukturen
+            </p>
           </div>
 
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setIsAddingCourse(true)}
-            className={`flex items-center gap-2 px-8 py-3 font-medium border transition-colors duration-300 ${theme === "dark"
-                ? "bg-white text-black border-white hover:bg-gray-100"
-                : "bg-purple-600 text-white border-purple-600 hover:bg-purple-700"
-              }`}
-          >
-            <Plus className="w-5 h-5" />
-            Neuer Kurs
-          </motion.button>
-        </motion.div>
+          <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div className="flex-1 relative">
+              <Search
+                className={`absolute left-4 top-3.5 w-4 h-4 ${theme === "dark" ? "text-zinc-600" : "text-slate-400"
+                  }`}
+              />
+              <input
+                type="text"
+                placeholder="KURSE DURCHSUCHEN..."
+                value={searchBar}
+                onChange={(e) => setSearchBar(e.target.value)}
+                className={`w-full pl-11 pr-4 py-3 font-['JetBrains_Mono'] text-xs uppercase tracking-wider transition-all duration-200 focus:outline-none ${radiusClass} ${theme === "dark"
+                    ? "bg-zinc-950 border border-zinc-800 text-white placeholder-zinc-700 focus:border-green-600"
+                    : "bg-white border border-slate-200 text-slate-900 placeholder-slate-300 focus:border-green-600 shadow-sm"
+                  }`}
+              />
+            </div>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="grid gap-6 md:grid-cols-1 lg:grid-cols-2"
-        >
-          {filteredCourses.length === 0 ? (
-            <div className="col-span-full text-center py-16">
-              <p
-                className={`text-lg ${theme === "dark" ? "text-gray-500" : "text-slate-500"
+            <button
+              onClick={() => setIsAddingCourse(true)}
+              className={`px-6 py-3 font-['JetBrains_Mono'] text-[10px] tracking-widest uppercase text-white transition-all duration-200 flex items-center justify-center gap-2 border border-transparent ${radiusClass} ${theme === "dark"
+                  ? "bg-green-600 hover:bg-green-700"
+                  : "bg-green-600 hover:bg-green-700 shadow-sm"
+                }`}
+            >
+              <Plus className="w-4 h-4" />
+              ADD_COURSE
+            </button>
+          </div>
+
+          <AnimatePresence mode="wait">
+            {filteredCourses.length === 0 ? (
+              <motion.div
+                key="empty-state"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2 }}
+                className={`w-full min-h-[400px] flex flex-col items-center justify-center border p-8 text-center transition-all duration-200 ${radiusClass} ${theme === "dark"
+                    ? "bg-zinc-950/40 border-zinc-900"
+                    : "bg-white border-slate-100 shadow-sm"
                   }`}
               >
-                {searchBar
-                  ? "Keine Kurse gefunden, die Ihrer Suche entsprechen"
-                  : "Keine Kurse vorhanden. Erstellen Sie einen neuen Kurs!"}
-              </p>
-            </div>
-          ) : (
-            filteredCourses.map((course, idx) => (
-              <motion.div
-                key={course.uid}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.05 }}
-              >
-                <CourseCard
-                  course={course}
-                  isEditing={editingId === course.uid}
-                  editValues={editValues}
-                  onEditValuesChange={setEditValues}
-                  onStartEdit={() => handleEditStart(course)}
-                  onCancelEdit={() => {
-                    setEditingId(null);
-                    setEditValues({});
-                  }}
-                  onSaveEdit={() => handleSaveEdit(course.uid)}
-                  onRequestDelete={() =>
-                    setDeleteConfirm({
-                      isOpen: true,
-                      courseId: course.uid,
-                      courseName: course.name,
-                    })
-                  }
-                />
+                <div
+                  className={`p-4 mb-4 border ${radiusClass} ${theme === "dark"
+                      ? "bg-zinc-900/50 border-zinc-800 text-zinc-500"
+                      : "bg-slate-50 border-slate-200 text-slate-400"
+                    }`}
+                >
+                  <FolderX className="w-8 h-8 stroke-[1.5]" />
+                </div>
+                <h3
+                  className={`font-['Familjen_Grotesk'] text-lg font-bold uppercase tracking-tight mb-1 ${theme === "dark" ? "text-zinc-200" : "text-slate-800"
+                    }`}
+                >
+                  Keine Kurse gefunden
+                </h3>
+                <p
+                  className={`font-['JetBrains_Mono'] text-[11px] uppercase tracking-wide max-w-sm ${theme === "dark" ? "text-zinc-600" : "text-slate-400"
+                    }`}
+                >
+                  {searchBar
+                    ? `Der Filter lieferte keine Matrix-Einträge für "${searchBar}"`
+                    : "Es sind aktuell keine Lehr-Module im System hinterlegt."}
+                </p>
               </motion.div>
-            ))
-          )}
-        </motion.div>
+            ) : (
+              <motion.div
+                key="courses-grid"
+                layout="position"
+                className="grid gap-6 grid-cols-1 lg:grid-cols-2 mt-2"
+              >
+                {filteredCourses.map((course) => (
+                  <motion.div
+                    key={course.uid}
+                    layout="position"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <CourseCard
+                      course={course}
+                      isEditing={editingId === course.uid}
+                      editValues={editValues}
+                      onEditValuesChange={setEditValues}
+                      onStartEdit={() => handleEditStart(course)}
+                      onCancelEdit={() => {
+                        setEditingId(null);
+                        setEditValues({});
+                      }}
+                      onSaveEdit={() => handleSaveEdit(course.uid)}
+                      onRequestDelete={() =>
+                        setDeleteConfirm({
+                          isOpen: true,
+                          courseId: course.uid,
+                          courseName: course.name,
+                        })
+                      }
+                    />
+                  </motion.div>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
 
       <NewCourseDialog
@@ -321,6 +339,6 @@ export default function CourseDashboard() {
         }
         onConfirm={handleDeleteCourse}
       />
-    </div>
+    </>
   );
 }

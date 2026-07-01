@@ -630,9 +630,7 @@ export default function EventCreationDialog(props: {
                 className={`flex-1 font-['JetBrains_Mono'] text-xs uppercase tracking-wider bg-purple-600 hover:bg-purple-700 text-white transition-colors duration-300 ${roundedClass} disabled:opacity-50`}
               >
                 {isCreating ? (
-                  <>
-                    Erstelle...
-                  </>
+                  <>Erstelle...</>
                 ) : (
                   <>
                     <Check className="w-3.5 h-3.5 mr-2" />
