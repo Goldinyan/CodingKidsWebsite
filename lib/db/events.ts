@@ -94,7 +94,7 @@ export async function addEvent(
       place: newEvent.place,
       typeOfEvent: newEvent.typeOfEvent,
       description: newEvent.description,
-      tag: newEvent.tag,
+      tags: newEvent.tags,
       difficulty: newEvent.difficulty,
       requirements: newEvent.requirements,
       mentors: [],

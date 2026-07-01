@@ -2,6 +2,7 @@
 
 import { Theme } from "@/context/ThemeContext";
 import { motion } from "framer-motion";
+import { MapPinned, Presentation, School, Sparkle } from "lucide-react";
 
 export default function History({
   theme,
@@ -54,7 +55,7 @@ export default function History({
                       : "bg-green-50 border-green-200"
                     }`}
                 >
-                  <Sparkles
+                  <Sparkle
                     className={`w-5 h-5 transition-colors duration-300 ${theme === "dark" ? "text-white" : "text-green-600"}`}
                   />
                 </div>

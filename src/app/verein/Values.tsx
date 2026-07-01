@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import {
   Lightbulb,
   Handshake,
@@ -80,7 +80,7 @@ export default function Values({
     >
       {values.map(({ title, description, icon: Icon }, idx) => (
         <motion.div
-          variants={itemVariants}
+          variants={itemVariants as Variants}
           layout
           key={title}
           className={`group ${isRounded ? "rounded-lg" : "rounded-none"} backdrop-blur-2xl p-6 border transition-colors duration-300 ${theme === "dark"

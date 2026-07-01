@@ -13,5 +13,5 @@ export default function Home() {
   if (!userData) notFound();
   if (userData.role !== "admin") notFound();
 
-  return <MainOverlayAdminDashboard userData={userData} />;
+  return <MainOverlayAdminDashboard  />;
 }

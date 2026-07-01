@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import {
   Users,
   Gift,
@@ -54,7 +54,7 @@ export default function Support() {
   return (
     <div className="w-full">
       <motion.div
-        variants={itemVariants}
+        variants={itemVariants as Variants}
         initial="hidden"
         whileInView="visible"
         exit="hidden"
@@ -83,7 +83,7 @@ export default function Support() {
       <div className="w-full px-8 py-12">
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 items-stretch">
           <motion.div
-            variants={itemVariants}
+            variants={itemVariants as Variants}
             initial="hidden"
             whileInView="visible"
             exit="hidden"
@@ -155,7 +155,7 @@ export default function Support() {
           </motion.div>
 
           <motion.div
-            variants={itemVariants}
+            variants={itemVariants as Variants}
             initial="hidden"
             whileInView="visible"
             exit="hidden"
@@ -265,7 +265,7 @@ export default function Support() {
       </div>
 
       <motion.div
-        variants={itemVariants}
+        variants={itemVariants as Variants}
         initial="hidden"
         whileInView="visible"
         exit="hidden"

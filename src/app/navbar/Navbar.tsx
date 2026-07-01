@@ -4,6 +4,7 @@ import logoTransparent from "@/public/Logo_aussen_Transparent.png";
 import { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
+import type { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { useAuth } from "@/BackEnd/AuthContext";
 import { User, LogIn, MessageCircle, Contact, Mail } from "lucide-react";
 import { useIsMobile } from "@/hooks/useIsMobile";
@@ -135,14 +136,13 @@ export default function Navbar() {
             <div className="relative">
               <button
                 onClick={() => router.push(user ? "/profile" : "/login")}
-                className={`ml-2 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[14px] font-bold no-underline transition-all shrink-0 ${
-                  user 
+                className={`ml-2 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[14px] font-bold no-underline transition-all shrink-0 ${user
                     ? `${isRounded ? "rounded-md" : "rounded-none"} ${theme == "dark"
-                        ? "text-gray-300 hover:text-white hover:bg-white/10"
-                        : "text-gray-900 hover:text-black hover:bg-black/10"
-                      } p-2`
+                      ? "text-gray-300 hover:text-white hover:bg-white/10"
+                      : "text-gray-900 hover:text-black hover:bg-black/10"
+                    } p-2`
                     : "bg-purple-700 hover:bg-purple-600 text-white px-3 py-1.5"
-                }`}
+                  }`}
               >
                 {!user ? <p>Anmelden</p> : <User className="w-5 h-5" />}
               </button>
@@ -162,12 +162,7 @@ export default function Navbar() {
               </button>
             )}
           </div>
-          <MainHeader
-            theme={theme}
-            user={user}
-            router={router}
-            isRounded={isRounded}
-          />
+          <MainHeader theme={theme} router={router} isRounded={isRounded} />
         </div>
 
         <div className="flex flex-col w-full h-full md:hidden">
@@ -194,13 +189,11 @@ export default function Navbar() {
 }
 function MainHeader({
   theme,
-  user,
   router,
   isRounded,
 }: {
   theme: Theme;
-  user: typeof User | null;
-  router: any;
+  router: AppRouterInstance;
   isRounded: boolean;
 }) {
   const headers: { title: string; domain: string }[] = [

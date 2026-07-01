@@ -22,7 +22,7 @@ const defaultEvent: EventData = {
   mentors: [],
   leftUsers: [],
   typeOfEvent: "",
-  tag: "",
+  tags: "",
   difficulty: "",
   requirements: "",
   description: "",
@@ -90,7 +90,7 @@ export default function EventAdd(props: {
       mentors: [],
       leftUsers: [],
       typeOfEvent: "CoderDojo",
-      tag: "Scratch",
+      tags: "Scratch",
       difficulty: "Einsteigerfreundlich",
       requirements:
         "Keine Vorkenntnisse erforderlich. Ideal für Kinder ab 8 Jahren",
@@ -263,8 +263,8 @@ export default function EventAdd(props: {
           className="border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           id="tag"
           placeholder="z.B. Scratch, Python"
-          value={EventInfo.tag}
-          onChange={(e) => setEventInfo({ ...EventInfo, tag: e.target.value })}
+          value={EventInfo.tags}
+          onChange={(e) => setEventInfo({ ...EventInfo, tags: e.target.value })}
         />
       </div>
 

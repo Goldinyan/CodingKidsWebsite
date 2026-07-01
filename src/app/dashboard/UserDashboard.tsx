@@ -1,8 +1,8 @@
 "use client";
 
-import { getUserData, updateUser } from "@/lib/db";
+import { updateUser } from "@/lib/db";
 import { useState } from "react";
-import { type UserData, type Filter } from "@/BackEnd/type";
+import { type UserData, type Filter, UserRole } from "@/BackEnd/type";
 import { useAuth } from "@/BackEnd/AuthContext";
 import { SortAsc, SortDesc, Search } from "lucide-react";
 import { motion } from "framer-motion";
@@ -39,7 +39,11 @@ export default function UserDashboard() {
   const saveUserChanges = async (uid: string) => {
     if (!editValues.name?.trim()) return;
     await updateUser(uid, editValues, user?.uid || "anonymous", userRole);
-    setUsers(users.map((u) => (u.uid === uid ? { ...u, ...editValues } : u)));
+    setUsers(
+      users.map(
+        (u) => (u.uid === uid ? { ...u, ...editValues } : u) as UserData,
+      ),
+    );
     setEditingId(null);
     setEditValues({});
   };
@@ -58,9 +62,7 @@ export default function UserDashboard() {
 
   return (
     <div
-      className={`w-full min-h-screen py-14 px-6 font-['DM_Sans'] transition-colors duration-300 ${theme === "dark"
-          ? "bg-black text-[#f4f4f5]"
-          : "text-slate-700"
+      className={`w-full min-h-screen py-14 px-6 font-['DM_Sans'] transition-colors duration-300 ${theme === "dark" ? "bg-black text-[#f4f4f5]" : "text-slate-700"
         }`}
     >
       <div className="max-w-6xl mx-auto">
@@ -149,7 +151,10 @@ export default function UserDashboard() {
               <button
                 key={role.id}
                 onClick={() =>
-                  setFilters((prev) => ({ ...prev, role: role.id }))
+                  setFilters((prev) => ({
+                    ...prev,
+                    role: role.id as UserRole | "All",
+                  }))
                 }
                 className={`px-4 py-2 font-['JetBrains_Mono'] text-[10px] tracking-widest uppercase transition-all duration-200 ${radiusClass} ${isSelected
                     ? theme === "dark"
@@ -233,7 +238,6 @@ export default function UserDashboard() {
 
       <EditUserDialog
         open={editingId !== null}
-        theme={theme}
         onOpenChange={(open) => {
           if (!open) setEditingId(null);
         }}
@@ -251,7 +255,7 @@ export default function UserDashboard() {
       <DeleteUserDialog
         open={deleteConfirm.isOpen}
         userName={deleteConfirm.userName}
-        userId={deleteConfirm.userId}
+        userId={deleteConfirm.userId ?? ""}
         onOpenChange={(open) =>
           setDeleteConfirm({ isOpen: open, userId: null, userName: null })
         }

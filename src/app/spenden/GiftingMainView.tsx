@@ -26,7 +26,6 @@ export default function GiftingMainView() {
       toast({
         title: "In Arbeit",
         description: "Diese Seite befindet sich noch in der Entwicklung.",
-        variant: "success",
       });
     }
   }, [userRole]);

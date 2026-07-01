@@ -5,7 +5,7 @@ import { getAllMentors } from "@/lib/db";
 import type { Mentor } from "@/BackEnd/type";
 import { useState, useEffect } from "react";
 import { Theme } from "@/context/ThemeContext";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, Variants } from "framer-motion";
 import { SimpleMentorCard } from "./mentor/SimpleMentorCard";
 
 export default function MentorenView({
@@ -108,7 +108,7 @@ export default function MentorenView({
             {filMentors.map((mentor) => (
               <motion.div
                 key={mentor.uid}
-                variants={itemVariants}
+                variants={itemVariants as Variants}
                 layout="position"
                 className=""
               >
@@ -118,8 +118,7 @@ export default function MentorenView({
                     id: 0,
                     name: mentor.name,
                     role: mentor.role,
-                    des1: mentor.des1,
-                    des2: mentor.des2,
+                    des: mentor.des,
                     insta: mentor.insta,
                     github: mentor.github,
                     linkedin: mentor.linkedin,

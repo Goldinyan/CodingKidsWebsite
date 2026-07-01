@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
-import type { EventData } from "@/BackEnd/type";
+import type { EventData, UserRole } from "@/BackEnd/type";
 import { getAllEvents } from "@/lib/db";
 
-export function useEventsData(userId: string | undefined, userRole: unknown) {
+export function useEventsData(userId: string | undefined, userRole: UserRole) {
   const [events, setEvents] = useState<EventData[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<unknown>(null);

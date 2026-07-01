@@ -28,9 +28,10 @@ const defaultEvent: EventData = {
   place: ["", "", ""],
   users: [],
   queue: [],
+  mentors: [],
   leftUsers: [],
   typeOfEvent: "",
-  tag: "",
+  tags: "",
   difficulty: "",
   requirements: "",
   description: "",
@@ -183,7 +184,7 @@ export default function EventCreationDialog(props: {
       mentors: [],
       leftUsers: [],
       typeOfEvent: "CoderDojo",
-      tag: "Scratch",
+      tags: "Scratch",
       difficulty: "Einsteigerfreundlich",
       requirements:
         "Keine Vorkenntnisse erforderlich. Ideal für Kinder ab 8 Jahren",
@@ -520,9 +521,9 @@ export default function EventCreationDialog(props: {
                         : "bg-slate-50 border-slate-200 placeholder-slate-400 focus:bg-white focus:border-purple-400"
                       } border focus:outline-none`}
                     placeholder="z.B. Scratch, Python"
-                    value={EventInfo.tag}
+                    value={EventInfo.tags}
                     onChange={(e) =>
-                      setEventInfo({ ...EventInfo, tag: e.target.value })
+                      setEventInfo({ ...EventInfo, tags: e.target.value })
                     }
                   />
                 </div>

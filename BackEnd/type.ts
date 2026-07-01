@@ -102,7 +102,7 @@ type BaseSettings = {
   isRounded: boolean;
 };
 
-type NotificationSettings = {
+export type NotificationSettings = {
   newEvent: boolean;
   kicked: boolean;
   queueToUser: boolean;
@@ -111,17 +111,18 @@ type NotificationSettings = {
   systemAlerts?: boolean;
 };
 
-type UserSettings = BaseSettings & {
+export type UserSettings = BaseSettings & {
   notifications: Pick<
     NotificationSettings,
     "newEvent" | "kicked" | "queueToUser"
   >;
 };
 
-type AdminSettings = BaseSettings & {
+export type AdminSettings = BaseSettings & {
   notifications: Omit<NotificationSettings, "kicked" | "queueToUser">;
 };
-type StaffSettings = BaseSettings & {
+
+export type StaffSettings = BaseSettings & {
   notifications: Pick<NotificationSettings, "newEvent" | "understaffedWarning">;
 };
 
@@ -180,7 +181,7 @@ export type AuthContextType = {
 export type Filter = {
   name: Preset;
   birthYear: Preset;
-  role: UserRole & "All";
+  role: UserRole | "All";
 };
 
 export type CourseData = {

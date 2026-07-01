@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { EventData, UserData } from "@/BackEnd/type";
+import type { EventData, UserData, UserRole } from "@/BackEnd/type";
 import { getAllUsers } from "@/lib/db";
 
 type UserIdSelector = (event: EventData) => string[];
@@ -7,7 +7,7 @@ type UserIdSelector = (event: EventData) => string[];
 export function useEventUsersMap(
   events: EventData[],
   userId: string | undefined,
-  userRole: unknown,
+  userRole: UserRole,
   selectIds: UserIdSelector,
 ) {
   const [map, setMap] = useState<Record<string, UserData[]>>({});

@@ -89,15 +89,9 @@ export default function ProfileView() {
                 userData={userData}
               />
 
-              {/* Hier sitzt jetzt die saubere Projekt-Komponente */}
-              <ProjectOverview
-                theme={theme}
-                isRounded={isRounded}
-                userData={userData}
-              />
+              <ProjectOverview />
             </div>
 
-            {/* RECHTER BLOCK (Spalten 8-12): Alles untereinander gestapelt */}
             <div className="md:col-span-5 flex flex-col gap-6">
               <SecurityButton
                 theme={theme}

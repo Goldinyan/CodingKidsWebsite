@@ -19,8 +19,7 @@ export function AnnouncementCard(props: {
   const isDark = theme === "dark";
   const radiusClass = isRounded ? "rounded-[12px]" : "rounded-none";
 
-  // Strikte Farbtrennung basierend auf der Zielgruppe (Tag)
-  const isUserTag = announcement.tag === "User";
+  const isUserTag = announcement.tag === "user";
 
   return (
     <motion.div

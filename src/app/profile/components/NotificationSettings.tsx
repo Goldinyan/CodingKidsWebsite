@@ -2,15 +2,25 @@
 
 import { useState } from "react";
 import { Theme } from "@/context/ThemeContext";
-import { UserData } from "@/BackEnd/type";
+import { AdminSettings, StaffSettings, UserSettings } from "@/BackEnd/type";
+import { UserData, UserRole } from "@/BackEnd/type"; 
+
 import {
   Bell,
   AlertCircle,
   Users,
-  BookOpen,
   AlertTriangle,
+  BookOpen,
   LucideIcon,
 } from "lucide-react";
+
+type NotificationKey =
+  | "newEvent"
+  | "kicked"
+  | "queueToUser"
+  | "understaffedWarning"
+  | "logs"
+  | "systemAlerts";
 
 interface NotificationSettingsProps {
   theme: Theme;
@@ -21,12 +31,12 @@ interface NotificationSettingsProps {
 }
 
 interface SettingItem {
-  key: string; 
+  key: NotificationKey;
   label: string;
   icon: LucideIcon;
   colorDark: string;
   colorLight: string;
-  roles: string[]; 
+  roles: string[];
 }
 
 const SETTINGS_CONFIG: SettingItem[] = [
@@ -93,13 +103,15 @@ export default function NotificationSettings({
   const [loading, setLoading] = useState(false);
   const [localSettings, setLocalSettings] = useState(userData.settings);
 
-  // Fallback, falls notifications mal undefined sein sollte
-  const notificationSettings = localSettings?.notifications || {};
+  const notificationSettings = localSettings.notifications as Record<
+    string,
+    boolean
+  >;
 
-  const handleToggle = async (settingKey: string) => {
+  const handleToggle = async (settingKey: NotificationKey) => {
     setLoading(true);
     try {
-      const currentVal = (notificationSettings as any)[settingKey] || false;
+      const currentVal = !!notificationSettings[settingKey];
       const newSettings = {
         ...localSettings,
         notifications: {
@@ -108,11 +120,10 @@ export default function NotificationSettings({
         },
       };
 
-      setLocalSettings(newSettings);
+      setLocalSettings(newSettings as typeof localSettings);
 
       await updateProfile({
-        ...userData,
-        settings: newSettings,
+        settings: newSettings as any
       });
     } catch (error) {
       console.error("Error updating notifications:", error);
@@ -140,48 +151,32 @@ export default function NotificationSettings({
     }
   `;
 
-  // Filtere die sichtbaren Settings basierend auf der User-Rolle
   const visibleSettings = SETTINGS_CONFIG.filter((item) =>
-    item.roles.includes(userData.role || "user"),
+    item.roles.includes(userData.role),
   );
 
   return (
     <div
-      className={`backdrop-blur-xl p-6 border transition-all duration-300 space-y-4 flex-1 ${roundedClass} ${className} ${theme === "dark"
-          ? "bg-white/5 border-white/10"
-          : "bg-slate-100 border-slate-200"
-        }`}
+      className={`backdrop-blur-xl p-6 border transition-all duration-300 space-y-4 flex-1 ${roundedClass} ${className} ${theme === "dark" ? "bg-white/5 border-white/10" : "bg-slate-100 border-slate-200"}`}
     >
       <h3
-        className={`text-sm font-mono tracking-widest uppercase ${theme === "dark" ? "text-blue-400" : "text-blue-600"
-          }`}
+        className={`text-sm font-mono tracking-widest uppercase ${theme === "dark" ? "text-blue-400" : "text-blue-600"}`}
       >
         Benachrichtigungen
       </h3>
-      <p
-        className={`text-xs font-mono tracking-normal ${theme === "dark" ? "text-gray-400" : "text-slate-500"
-          }`}
-      >
-        Verwalten Sie Ihre Benachrichtigungseinstellungen.
-      </p>
-
       <div className="space-y-4 font-mono text-xs">
         {visibleSettings.map((item) => {
           const IconComponent = item.icon;
-          const isEnabled = (notificationSettings as any)[item.key] || false;
+          const isEnabled = !!notificationSettings[item.key];
 
           return (
             <div
               key={item.key}
-              className={`flex items-center justify-between p-3 border rounded-lg transition-colors ${theme === "dark"
-                  ? "bg-black/20 border-white/5 hover:bg-black/30"
-                  : "bg-white/50 border-slate-200 hover:bg-white/70"
-                }`}
+              className={`flex items-center justify-between p-3 border rounded-lg ${theme === "dark" ? "bg-black/20 border-white/5" : "bg-white/50 border-slate-200"}`}
             >
               <div className="flex items-center gap-2">
                 <IconComponent
-                  className={`w-4 h-4 ${theme === "dark" ? item.colorDark : item.colorLight
-                    }`}
+                  className={`w-4 h-4 ${theme === "dark" ? item.colorDark : item.colorLight}`}
                 />
                 <span
                   className={
@@ -202,15 +197,6 @@ export default function NotificationSettings({
           );
         })}
       </div>
-
-      {loading && (
-        <div
-          className={`text-xs text-center py-2 ${theme === "dark" ? "text-gray-500" : "text-slate-500"
-            }`}
-        >
-          Wird aktualisiert...
-        </div>
-      )}
     </div>
   );
 }
