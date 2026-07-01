@@ -23,7 +23,7 @@ import { formatLogMessage, formatLogDate } from "../formatLog";
 
 
 export function EventCard(props: {
-  event: EventData & { mentors?: UserData[]; tags?: string[] };
+  event: EventData;
   expanded: boolean;
   onToggleExpanded: () => void;
   users: UserData[];
@@ -105,7 +105,7 @@ export function EventCard(props: {
         {event.tags && event.tags.length > 0 && (
           <div className="hidden sm:flex flex-row gap-1 ml-3 items-center">
             <Tag className="w-3 h-3 text-zinc-400" />
-            {event.tags.map((tag, i) => (
+            {event.tags.split(",").map((tag, i) => (
               <span
                 key={i}
                 className="text-[10px] bg-zinc-100 dark:bg-zinc-900 px-1.5 py-0.5 rounded text-zinc-500"
@@ -162,7 +162,6 @@ export function EventCard(props: {
                       {formatValue(event[key]) || "—"}
                     </p>
                   )}
-                  {/* ... Teilnehmer & Warteschlange Listen-Renderings ... */}
                   {key === "users" && (
                     <div className="mt-1">
                       {event.users.length > 0 ? (
@@ -474,7 +473,7 @@ export function EventCard(props: {
                 </label>
                 <input
                   type="text"
-                  value={editValue?.tags ?? event.tags?.join(", ") ?? ""}
+                  value={editValue?.tags ?? event.tags ?? ""}
                   onChange={(e) =>
                     onEditValueChange({
                       ...(editValue || {}),

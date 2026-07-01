@@ -40,6 +40,8 @@ export type BaseLog = {
   date: Timestamp;
 };
 
+type ChangeValue = string | number | boolean | null | undefined | object;
+
 export type Log =
   | (BaseLog & { type: "userLeftQueue"; userName: string; reason: string })
   | (BaseLog & { type: "userJoinedQueue"; userName: string })
@@ -58,7 +60,7 @@ export type Log =
     type: "eventChanged";
     mentorName: string;
     reason?: string;
-    changes: Record<string, { from: any; to: any }>;
+    changes: Record<string, { from: ChangeValue; to: ChangeValue}>;
   });
 
 export type EventData = {
@@ -66,7 +68,7 @@ export type EventData = {
   name: string;
   course: string;
   date: Timestamp;
-  tag: string;
+  tags: string;
   difficulty: string;
   requirements: string;
   length: number;

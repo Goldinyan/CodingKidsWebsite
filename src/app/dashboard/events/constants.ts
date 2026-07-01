@@ -3,7 +3,7 @@ import type { EventData } from "@/BackEnd/type";
 export type EventTimeFilter = "Upcoming" | "Past";
 
 export const EVENT_FIELDS = [
-  "tag",
+  "tags",
   "difficulty",
   "requirements",
   "length",
