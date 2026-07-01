@@ -19,6 +19,7 @@ const defaultEvent: EventData = {
   place: ["", "", ""],
   users: [],
   queue: [],
+  mentors: [],
   leftUsers: [],
   typeOfEvent: "",
   tag: "",
@@ -307,7 +308,7 @@ export default function EventAdd(props: {
           <Button variant="outline" className="flex-1" onClick={presetEvent1}>
             Preset: Scratch
           </Button>
-          <Button variant="outline" className="flex-1" onClick={presetEvent2}>
+          <Button variant="outline" className="flex-1">
             Preset: Versammlung
           </Button>
         </div>
@@ -338,7 +339,7 @@ export default function EventAdd(props: {
           <Button variant="outline" className="flex-1" onClick={presetEvent1}>
             Preset: Scratch
           </Button>
-          <Button variant="outline" className="flex-1" onClick={presetEvent2}>
+          <Button variant="outline" className="flex-1">
             Preset: Versammlung
           </Button>
         </div>
