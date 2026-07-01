@@ -69,7 +69,6 @@ export function EventCard(props: {
           : "bg-white border-slate-200 text-slate-700 shadow-sm"
         }`}
     >
-      {/* ... (Oberer Teil der Card bleibt absolut identisch) ... */}
       <div className="flex flex-row justify-between items-start mb-3">
         <p
           className={`text-lg font-black font-['Familjen_Grotesk'] tracking-tight ${theme === "dark" ? "text-white" : "text-slate-900"}`}
@@ -236,7 +235,6 @@ export function EventCard(props: {
                 </div>
               ))}
 
-              {/* Mentoren Sektion */}
               <div
                 className={`p-4 border ${radiusClass} ${theme === "dark" ? "bg-zinc-900/40 border-zinc-900" : "bg-slate-50 border-slate-100"}`}
               >

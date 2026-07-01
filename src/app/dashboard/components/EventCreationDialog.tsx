@@ -169,7 +169,7 @@ export default function EventCreationDialog(props: {
     setEventInfo({
       name: "Scratch Workshop",
       uid: "",
-      course: "scratch-basic",
+      course: "Scratch",
       date: Timestamp.fromDate(getNextWednesday()),
       length: 90,
       memberCount: 18,
@@ -180,6 +180,7 @@ export default function EventCreationDialog(props: {
       ],
       users: [],
       queue: [],
+      mentors: [],
       leftUsers: [],
       typeOfEvent: "CoderDojo",
       tag: "Scratch",
@@ -192,37 +193,11 @@ export default function EventCreationDialog(props: {
     setError("");
   };
 
-  const presetEvent2 = () => {
-    setEventInfo({
-      name: "Mitgliederversammlung",
-      uid: "",
-      date: Timestamp.fromDate(getNextWednesday()),
-      course: "DA",
-      length: 180,
-      memberCount: 50,
-      place: [
-        "CUBES Wesel – Hauptraum",
-        "Rudolf-Diesel-Str. 115",
-        "46485 Wesel",
-      ],
-      users: [],
-      queue: [],
-      leftUsers: [],
-      typeOfEvent: "MemberOnly",
-      tag: "Verein",
-      difficulty: "Keine",
-      requirements: "Nur für registrierte Mitglieder. Anmeldung erforderlich",
-      description:
-        "Jährliche Versammlung aller Vereinsmitglieder zur Abstimmung über aktuelle Themen, Finanzen und zukünftige Projekte. Es wird um pünktliches Erscheinen gebeten.",
-    });
-    setError("");
-  };
-
   if (!open) return null;
 
   return (
     <div
-      className={`fixed inset-0 z-50 flex items-center justify-center p-4 transition-colors duration-300 ${theme === "dark" ? "bg-black/60" : "bg-slate-900/40"
+      className={`fixed inset-0 z-100 flex items-center justify-center p-4 transition-colors duration-300 ${theme === "dark" ? "bg-black/60" : "bg-slate-900/40"
         } backdrop-blur-sm`}
     >
       <motion.div
@@ -234,7 +209,6 @@ export default function EventCreationDialog(props: {
             : "bg-white border border-slate-200 shadow-xl"
           }`}
       >
-        {/* Header */}
         <div
           className={`px-8 py-6 border-b transition-colors duration-300 ${theme === "dark"
               ? "border-zinc-800 bg-zinc-950/50"
@@ -273,7 +247,6 @@ export default function EventCreationDialog(props: {
             </button>
           </div>
 
-          {/* Quick Presets am Anfang anzeigen */}
           {currentStep === 0 && (
             <div className="mb-4 flex items-center gap-2 p-2 rounded-lg border border-dashed border-purple-500/30 bg-purple-500/5">
               <Sparkles className="w-3.5 h-3.5 text-purple-400 shrink-0" />
@@ -288,18 +261,10 @@ export default function EventCreationDialog(props: {
                 >
                   Scratch Workshop
                 </button>
-                <button
-                  type="button"
-                  onClick={presetEvent2}
-                  className="text-[11px] font-['JetBrains_Mono'] px-2.5 py-1 rounded bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-white hover:border-purple-500 transition-all"
-                >
-                  Versammlung
-                </button>
               </div>
             </div>
           )}
 
-          {/* Progress bar */}
           <div className="flex gap-2">
             {steps.map((_, index) => (
               <div
@@ -321,7 +286,6 @@ export default function EventCreationDialog(props: {
           </div>
         </div>
 
-        {/* Content */}
         <div
           className={`px-8 py-6 min-h-72 max-h-[400px] overflow-y-auto transition-colors duration-300 ${theme === "dark" ? "bg-black" : "bg-white"
             }`}
@@ -355,7 +319,6 @@ export default function EventCreationDialog(props: {
                   />
                 </div>
 
-                {/* Dynamischer Kurs-Selector */}
                 <div className="grid gap-1.5">
                   <Label
                     className={`text-[11px] font-bold tracking-wider font-['JetBrains_Mono'] uppercase ${theme === "dark" ? "text-zinc-400" : "text-slate-600"
@@ -376,7 +339,7 @@ export default function EventCreationDialog(props: {
                     <option value="">
                       -- Kein Kurs (Allgemeines Event) --
                     </option>
-                    {courses.map((course) => (
+                    {courses?.map((course) => (
                       <option key={course.uid} value={course.uid}>
                         {course.name}
                       </option>
@@ -549,30 +512,7 @@ export default function EventCreationDialog(props: {
                     className={`text-[11px] font-bold tracking-wider font-['JetBrains_Mono'] uppercase ${theme === "dark" ? "text-zinc-400" : "text-slate-600"
                       }`}
                   >
-                    Event-Typ *
-                  </Label>
-                  <Input
-                    className={`${roundedClass} px-4 py-2 text-sm transition-colors duration-300 ${theme === "dark"
-                        ? "bg-zinc-950 border-zinc-800 text-white placeholder-zinc-600 focus:border-purple-500/50"
-                        : "bg-slate-50 border-slate-200 placeholder-slate-400 focus:bg-white focus:border-purple-400"
-                      } border focus:outline-none`}
-                    placeholder="z.B. CoderDojo, Workshop"
-                    value={EventInfo.typeOfEvent}
-                    onChange={(e) =>
-                      setEventInfo({
-                        ...EventInfo,
-                        typeOfEvent: e.target.value,
-                      })
-                    }
-                  />
-                </div>
-
-                <div className="grid gap-1.5">
-                  <Label
-                    className={`text-[11px] font-bold tracking-wider font-['JetBrains_Mono'] uppercase ${theme === "dark" ? "text-zinc-400" : "text-slate-600"
-                      }`}
-                  >
-                    Tag / Thema
+                    Tags (kommagetrennt)
                   </Label>
                   <Input
                     className={`${roundedClass} px-4 py-2 text-sm transition-colors duration-300 ${theme === "dark"
@@ -658,7 +598,6 @@ export default function EventCreationDialog(props: {
           )}
         </div>
 
-        {/* Footer Buttons */}
         <div
           className={`px-8 py-4 border-t transition-colors duration-300 ${theme === "dark"
               ? "border-zinc-800 bg-zinc-950/50"
@@ -692,7 +631,6 @@ export default function EventCreationDialog(props: {
               >
                 {isCreating ? (
                   <>
-                    <span className="animate-spin mr-2">⌛</span>
                     Erstelle...
                   </>
                 ) : (

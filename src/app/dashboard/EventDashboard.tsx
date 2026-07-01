@@ -87,6 +87,12 @@ export default function EventDashboard() {
     userRole,
     useCallback((e) => e.queue, []),
   );
+  const mentorMap = useEventUsersMap(
+    eventsData,
+    user?.uid,
+    userRole,
+    useCallback((e) => e.mentors || [], []),
+  );
 
   const radiusClass = isRounded ? "rounded-[12px]" : "rounded-none";
 
@@ -283,7 +289,6 @@ export default function EventDashboard() {
             </button>
           </div>
 
-          {/* Bedingtes Rendering für Empty State oder Grid */}
           <AnimatePresence mode="wait">
             {filEvents.length === 0 ? (
               <motion.div
@@ -346,7 +351,9 @@ export default function EventDashboard() {
                       courses={courses}
                       users={userMap[event.uid] || []}
                       queueUsers={queueUserMap[event.uid] || []}
+                      mentors={mentorMap[event.uid] || []}
                       onRemoveUser={(u) => handleRemoveUser(event, u)}
+                      onRemoveMentor={(m) => handleRemoveUser(event, m)}
                       isEditing={!!editStates[event.uid]}
                       editValue={editValues[event.uid]}
                       onToggleEdit={() => toggleEdit(event.uid, event)}

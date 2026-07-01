@@ -1,49 +1,67 @@
 import type { Log } from "@/BackEnd/type";
-import { toJsDate } from "@/BackEnd/utils";
 
 export function formatLogMessage(log: Log): { title: string; details?: string } {
   switch (log.type) {
     case "userJoined":
       return {
         title: "Benutzer angemeldet",
-        details: `Benutzer ${log.user} hat sich angemeldet`,
+        details: `${log.userName} hat sich angemeldet`,
       };
 
     case "userJoinedQueue":
       return {
         title: "Benutzer in Warteschlange",
-        details: `Benutzer ${log.user} wurde in Warteschlange aufgenommen`,
+        details: `${log.userName} wurde in Warteschlange aufgenommen`,
       };
 
     case "userLeft":
       return {
         title: "Benutzer abgemeldet",
-        details: `Benutzer ${log.user} abgemeldet${log.reason ? ` (${log.reason})` : ""}`,
+        details: `${log.userName} abgemeldet${log.reason ? ` (${log.reason})` : ""}`,
       };
 
     case "userLeftQueue":
       return {
         title: "Von Warteschlange entfernt",
-        details: `Benutzer ${log.user} von Warteschlange entfernt${log.reason ? ` (${log.reason})` : ""}`,
+        details: `${log.userName} von Warteschlange entfernt${log.reason ? ` (${log.reason})` : ""}`,
       };
 
     case "userKicked":
       return {
         title: "Benutzer entfernt",
-        details: `Benutzer ${log.user} wurde von ${log.mentor} entfernt${log.reason ? ` (${log.reason})` : ""}`,
+        details: `${log.userName} wurde von ${log.mentorName} entfernt${log.reason ? ` (${log.reason})` : ""}`,
+      };
+
+    case "mentorJoined":
+      return {
+        title: "Mentor angemeldet",
+        details: `${log.mentorName} (Mentor) hat sich angemeldet`,
+      };
+
+    case "mentorLeft":
+      return {
+        title: "Mentor abgemeldet",
+        details: `${log.mentorName} (Mentor) wurde entfernt`,
       };
 
     case "eventDeleted":
       return {
         title: "Event gelöscht",
-        details: `Event wurde von ${log.user} gelöscht`,
+        details: `Event wurde von ${log.userName} gelöscht`,
       };
 
     case "eventChanged":
-      const changes = log.updates ? Object.keys(log.updates).join(", ") : "unbekannt";
+      const changedFields = Object.entries(log.changes)
+        .map(([key, change]) => {
+          const fromVal = formatValue(change.from);
+          const toVal = formatValue(change.to);
+          return `${formatFieldName(key)}: "${fromVal}" → "${toVal}"`;
+        })
+        .join(", ");
+
       return {
         title: "Event aktualisiert",
-        details: `${log.mentor} hat ${changes} aktualisiert${log.reason ? ` (${log.reason})` : ""}`,
+        details: `${log.mentorName} hat ${changedFields} aktualisiert${log.reason ? ` (${log.reason})` : ""}`,
       };
 
     default:
@@ -52,6 +70,36 @@ export function formatLogMessage(log: Log): { title: string; details?: string } 
         details: "Unbekannte Log-Aktion",
       };
   }
+}
+
+function formatFieldName(key: string): string {
+  const fieldNames: Record<string, string> = {
+    name: "Name",
+    date: "Datum",
+    length: "Dauer",
+    memberCount: "Teilnehmerzahl",
+    place: "Ort",
+    typeOfEvent: "Event-Typ",
+    description: "Beschreibung",
+    tag: "Tag",
+    difficulty: "Schwierigkeitsgrad",
+    requirements: "Voraussetzungen",
+    course: "Kurs",
+  };
+  return fieldNames[key] || key;
+}
+
+function formatValue(value: any): string {
+  if (value === null || value === undefined) {
+    return "—";
+  }
+  if (typeof value === "object") {
+    if (Array.isArray(value)) {
+      return value.join(", ") || "—";
+    }
+    return JSON.stringify(value);
+  }
+  return String(value).substring(0, 50);
 }
 
 export function formatLogDate(log: Log): string {

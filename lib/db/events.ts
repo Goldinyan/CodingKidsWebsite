@@ -13,14 +13,23 @@ import {
   arrayUnion,
   Timestamp,
 } from "firebase/firestore";
-import {
-  EventData,
-  EventStatus,
-  type Log,
-} from "@/BackEnd/type";
+import { EventData, EventStatus, type Log } from "@/BackEnd/type";
 import type { UserRole } from "@/BackEnd/type";
 import { enforceRateLimit } from "./db";
 import { getAllCourses, updateCourse } from "./courses";
+
+async function getUserData(userId: string) {
+  try {
+    const userRef = doc(db, "users", userId);
+    const userSnapshot = await getDoc(userRef);
+    if (userSnapshot.exists()) {
+      return userSnapshot.data();
+    }
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+  }
+  return null;
+}
 
 // EVENTS
 
@@ -61,15 +70,18 @@ export async function addEvent(
     }
     const dateId = date.toISOString();
 
+    const userData = await getUserData(userId);
+    const mentorName = userData?.name || userId;
+
     const initialLog: Log = {
       type: "eventChanged",
       date: Timestamp.now(),
-      mentor: userId,
+      mentorName,
       reason: "Event erstellt",
-      updates: {
-        name: newEvent.name,
-        course: newEvent.course,
-        date: newEvent.date,
+      changes: {
+        name: { from: null, to: newEvent.name },
+        course: { from: null, to: newEvent.course },
+        date: { from: null, to: newEvent.date },
       },
     };
 
@@ -82,6 +94,9 @@ export async function addEvent(
       place: newEvent.place,
       typeOfEvent: newEvent.typeOfEvent,
       description: newEvent.description,
+      tag: newEvent.tag,
+      difficulty: newEvent.difficulty,
+      requirements: newEvent.requirements,
       mentors: [],
       users: [],
       queue: [],
@@ -118,11 +133,14 @@ export async function deleteEvent(
       return;
     }
 
+    const userData = await getUserData(userId);
+    const userName = userData?.name || userId;
+
     // Log deletion before deleting
     const deleteLog: Log = {
       type: "eventDeleted",
       date: Timestamp.now(),
-      user: userId,
+      userName,
     };
 
     await updateDoc(ref, {
@@ -158,23 +176,43 @@ export async function updateEvent(
 
   try {
     const ref = doc(db, "events", uid);
+    const eventSnapshot = await getDoc(ref);
 
-    // Create update log
-    const updateLog: Log = {
-      type: "eventChanged",
-      date: Timestamp.now(),
-      mentor: userId,
-      reason: "Event aktualisiert",
-      updates: updates,
-    };
+    if (!eventSnapshot.exists()) {
+      throw new Error("Event does not exist");
+    }
 
-    // Remove logs from updates to prevent circular updates
-    const { logs, ...updatesWithoutLogs } = updates;
+    const oldData = eventSnapshot.data();
+    const userData = await getUserData(userId);
+    const mentorName = userData?.name || userId;
 
-    await updateDoc(ref, {
-      ...updatesWithoutLogs,
-      logs: arrayUnion(updateLog),
+    // Calculate only changed fields
+    const changes: Record<string, { from: any; to: any }> = {};
+    Object.entries(updates).forEach(([key, newValue]) => {
+      if (key !== "logs" && oldData[key] !== newValue) {
+        changes[key] = {
+          from: oldData[key],
+          to: newValue,
+        };
+      }
     });
+
+    if (Object.keys(changes).length > 0) {
+      const updateLog: Log = {
+        type: "eventChanged",
+        date: Timestamp.now(),
+        mentorName,
+        reason: "Event aktualisiert",
+        changes,
+      };
+
+      const { logs, ...updatesWithoutLogs } = updates;
+
+      await updateDoc(ref, {
+        ...updatesWithoutLogs,
+        logs: arrayUnion(updateLog),
+      });
+    }
   } catch (err) {
     console.log(err);
   }
@@ -197,31 +235,53 @@ export async function addUserToEvent(
     }
 
     const eventData = eventSnapshot.data();
+    const userData = await getUserData(userId);
+    const userName = userData?.name || userId;
+
+    // Check if user is mentor or admin
+    const isMentorOrAdmin =
+      requesterRole === "mentor" || requesterRole === "admin";
 
     const currentUsers: string[] = eventData.users || [];
+    const currentMentors: string[] = eventData.mentors || [];
 
-    if (currentUsers.length >= eventData.memberCount) {
+    if (isMentorOrAdmin) {
+      // Add to mentors array instead of users
       const log: Log = {
-        type: "userJoinedQueue",
+        type: "mentorJoined",
         date: Timestamp.now(),
-        user: userId,
+        mentorName: userName,
       };
 
       await updateDoc(eventRef, {
-        queue: arrayUnion(userId),
+        mentors: arrayUnion(userId),
         logs: arrayUnion(log),
       });
     } else {
-      const log: Log = {
-        type: "userJoined",
-        date: Timestamp.now(),
-        user: userId,
-      };
+      // Regular user logic
+      if (currentUsers.length >= eventData.memberCount) {
+        const log: Log = {
+          type: "userJoinedQueue",
+          date: Timestamp.now(),
+          userName,
+        };
 
-      await updateDoc(eventRef, {
-        users: arrayUnion(userId),
-        logs: arrayUnion(log),
-      });
+        await updateDoc(eventRef, {
+          queue: arrayUnion(userId),
+          logs: arrayUnion(log),
+        });
+      } else {
+        const log: Log = {
+          type: "userJoined",
+          date: Timestamp.now(),
+          userName,
+        };
+
+        await updateDoc(eventRef, {
+          users: arrayUnion(userId),
+          logs: arrayUnion(log),
+        });
+      }
     }
   } catch (error) {
     console.error("Error adding user to event:", error);
@@ -283,12 +343,16 @@ export async function removeUserFromEvent(
     const eventData = eventSnapshot.data();
     const currentUsers: string[] = eventData.users;
     const currentQueue: string[] = eventData.queue;
+    const currentMentors: string[] = eventData.mentors || [];
+
+    const userData = await getUserData(userId);
+    const userName = userData?.name || userId;
 
     if (currentUsers.includes(userId)) {
       const log: Log = {
         type: "userLeft",
         date: Timestamp.now(),
-        user: userId,
+        userName,
         reason: "Benutzer wurde entfernt",
       };
 
@@ -299,11 +363,13 @@ export async function removeUserFromEvent(
 
       if (currentQueue.length > 0) {
         const nextUser = currentQueue[0];
+        const nextUserData = await getUserData(nextUser);
+        const nextUserName = nextUserData?.name || nextUser;
 
         const moveLog: Log = {
           type: "userJoined",
           date: Timestamp.now(),
-          user: nextUser,
+          userName: nextUserName,
         };
 
         await updateDoc(eventRef, {
@@ -318,12 +384,25 @@ export async function removeUserFromEvent(
       const log: Log = {
         type: "userLeftQueue",
         date: Timestamp.now(),
-        user: userId,
+        userName,
         reason: "Von Warteschlange entfernt",
       };
 
       await updateDoc(eventRef, {
         queue: arrayRemove(userId),
+        logs: arrayUnion(log),
+      });
+    }
+
+    if (currentMentors.includes(userId)) {
+      const log: Log = {
+        type: "mentorLeft",
+        date: Timestamp.now(),
+        mentorName: userName,
+      };
+
+      await updateDoc(eventRef, {
+        mentors: arrayRemove(userId),
         logs: arrayUnion(log),
       });
     }

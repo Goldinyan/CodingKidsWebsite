@@ -28,6 +28,8 @@ export const LOG_TYPES = [
   "userJoined",
   "userLeft",
   "userKicked",
+  "mentorJoined",
+  "mentorLeft",
   "eventDeleted",
   "eventChanged",
 ] as const;
@@ -39,22 +41,24 @@ export type BaseLog = {
 };
 
 export type Log =
-  | (BaseLog & { type: "userLeftQueue"; user: string; reason: string })
-  | (BaseLog & { type: "userJoinedQueue"; user: string })
-  | (BaseLog & { type: "userJoined"; user: string })
-  | (BaseLog & { type: "userLeft"; user: string; reason?: string })
+  | (BaseLog & { type: "userLeftQueue"; userName: string; reason: string })
+  | (BaseLog & { type: "userJoinedQueue"; userName: string })
+  | (BaseLog & { type: "userJoined"; userName: string })
+  | (BaseLog & { type: "userLeft"; userName: string; reason?: string })
   | (BaseLog & {
     type: "userKicked";
-    user: string;
+    userName: string;
     reason?: string;
-    mentor: string;
+    mentorName: string;
   })
-  | (BaseLog & { type: "eventDeleted"; user: string })
+  | (BaseLog & { type: "mentorJoined"; mentorName: string })
+  | (BaseLog & { type: "mentorLeft"; mentorName: string })
+  | (BaseLog & { type: "eventDeleted"; userName: string })
   | (BaseLog & {
     type: "eventChanged";
-    mentor: string;
+    mentorName: string;
     reason?: string;
-    updates: Partial<EventData>;
+    changes: Record<string, { from: any; to: any }>;
   });
 
 export type EventData = {
@@ -72,6 +76,7 @@ export type EventData = {
   description: string;
   users: string[];
   queue: string[];
+  mentors: string[];
   leftUsers: string[];
   logs?: Log[];
 };
