@@ -94,7 +94,8 @@ export type AnnouncementData = {
   tag: UserRole;
   title: string;
   content: string;
-  author: string;
+  authorUid: string;
+  authorName: string;
   date: Timestamp;
   readBy?: string[];
 };

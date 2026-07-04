@@ -8,12 +8,11 @@ import type { AnnouncementData } from "@/BackEnd/type";
 
 export function AnnouncementCard(props: {
   announcement: AnnouncementData;
-  authorName: string;
   userIsAdmin: boolean;
   onEdit: () => void;
   onDelete: () => void;
 }) {
-  const { announcement, authorName, userIsAdmin, onEdit, onDelete } = props;
+  const { announcement, userIsAdmin, onEdit, onDelete } = props;
   const { theme, isRounded } = useTheme();
 
   const isDark = theme === "dark";
@@ -36,7 +35,7 @@ export function AnnouncementCard(props: {
           className={`font-['JetBrains_Mono'] text-[10px] tracking-wider uppercase mb-2 flex items-center justify-between ${isDark ? "text-zinc-500" : "text-slate-400"
             }`}
         >
-          <span>BY: {authorName || "UNKNOWN_AUTH"}</span>
+          <span>BY: {announcement.authorName || "UNKNOWN_AUTH"}</span>
           <span>
             {toJsDate(announcement.date).toLocaleDateString("de-DE", {
               weekday: "short",

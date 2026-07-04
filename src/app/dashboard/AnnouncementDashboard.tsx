@@ -79,7 +79,8 @@ export default function AnnouncementDashboard() {
       title: newAnnouncement.title,
       content: newAnnouncement.content,
       tag: newAnnouncement.tag,
-      author: user.uid,
+      authorUid: user.uid,
+      authorName: user.displayName || "Unknown",
       date: Timestamp.fromDate(new Date()),
     };
 
@@ -215,7 +216,6 @@ export default function AnnouncementDashboard() {
               >
                 <AnnouncementCard
                   announcement={announcement}
-                  authorName={getAuthorName(admins, announcement.author)}
                   userIsAdmin={userIsAdmin}
                   onEdit={() => handleEditStart(announcement)}
                   onDelete={() =>

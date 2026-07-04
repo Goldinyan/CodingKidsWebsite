@@ -50,17 +50,6 @@ export default function AnnouncementView({ data }: { data: UserData }) {
     fetchAnnouncements();
   }, [user?.uid, userRole]);
 
-  const getAuthorName = async (uid: string) => {
-    try {
-      const admins = await getAllAdmins();
-      const admin = admins.find((admin) => admin.uid === uid);
-      return admin ? admin.name : "Unbekannt";
-    } catch (error) {
-      console.error("Fehler beim Abrufen des Autors:", error);
-      return "Unbekannt";
-    }
-  };
-
   useEffect(() => {
     if (announcements.length > 0) {
       const filtered: Record<string, AnnouncementData[]> = {};
@@ -226,7 +215,7 @@ export default function AnnouncementView({ data }: { data: UserData }) {
                         <span
                           className={`font-bold ${theme === "dark" ? "text-zinc-300" : "text-slate-700"}`}
                         >
-                          {getAuthorName(an.author)}
+                          {an.authorName}
                         </span>
                       </span>
                     </div>

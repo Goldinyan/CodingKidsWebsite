@@ -60,7 +60,8 @@ export async function addAnnouncement(
       title: newAnnouncement.title,
       content: newAnnouncement.content,
       date: new Date(),
-      author: newAnnouncement.author,
+      authorUid: newAnnouncement.authorUid,
+      authorName: newAnnouncement.authorName,
       readBy: [],
     });
   } catch (error) {
