@@ -1,5 +1,5 @@
 import { db } from "../firebase";
-import { collection, getDocs, deleteDoc } from "firebase/firestore";
+import { collection, getDocs, deleteDoc, arrayUnion } from "firebase/firestore";
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import type { AnnouncementData, UserRole } from "@/BackEnd/type";
 import { enforceRateLimit } from "./db";
@@ -84,4 +84,19 @@ export async function updateAnnouncement(
     console.error("Fehler beim Aktualisieren der Ankündigung:", err);
     throw err;
   }
+}
+
+export async function markAnnouncementAsRead(
+  announcementUid: string,
+  userId: string,
+  userRole: UserRole = "user",
+) {
+  return updateAnnouncement(
+    announcementUid,
+    {
+      readBy: arrayUnion(userId) as unknown as string[],
+    },
+    userId,
+    userRole,
+  );
 }
