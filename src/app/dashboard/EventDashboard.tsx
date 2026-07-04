@@ -363,6 +363,7 @@ export default function EventDashboard() {
         onOpenChange={setIsAddingEvent}
         onCreated={() => refresh()}
         courses={courses}
+        events={eventsData}
       />
 
       <DeleteEventDialog

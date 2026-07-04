@@ -18,7 +18,7 @@ export default function FilterPill({
   return (
     <button
       onClick={onClick}
-      className={`px-3 py-1.5 rounded-lg text-xs border transition-all font-medium ${
+      className={`px-3 py-1.5 rounded-lg text-xxs border transition-all font-medium ${
         active
           ? "bg-green-500/10 border-green-500/30 text-green-500"
           : theme === "dark"

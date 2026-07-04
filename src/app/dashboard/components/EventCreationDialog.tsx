@@ -4,7 +4,7 @@ import { Timestamp } from "firebase/firestore";
 import { useState } from "react";
 import { useAuth } from "@/BackEnd/AuthContext";
 import { addEvent } from "@/lib/db";
-import type { CourseData, EventData } from "@/BackEnd/type";
+import { Difficulties, type CourseData, type EventData } from "@/BackEnd/type";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -32,7 +32,7 @@ const defaultEvent: EventData = {
   leftUsers: [],
   typeOfEvent: "",
   tags: "",
-  difficulty: "",
+  difficulty: Difficulties.Einsteiger,
   requirements: "",
   description: "",
 };
@@ -51,10 +51,11 @@ export default function EventCreationDialog(props: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onCreated?: () => void;
+  events?: EventData[];
   courses?: CourseData[];
 }) {
   const { user, userRole } = useAuth();
-  const { open, onOpenChange, onCreated, courses } = props;
+  const { open, onOpenChange, onCreated, courses, events } = props;
   const { theme, isRounded } = useTheme();
 
   const [currentStep, setCurrentStep] = useState(0);
@@ -148,6 +149,25 @@ export default function EventCreationDialog(props: {
       return;
     }
 
+    if (
+      !EventInfo.place[0].trim() ||
+      !EventInfo.place[1].trim() ||
+      !EventInfo.place[2].trim()
+    ) {
+      setError("Alle Standortangaben sind erforderlich");
+      return;
+    }
+
+    if (
+      events?.some(
+        (event) =>
+          event.date === EventInfo.date && event.name === EventInfo.name,
+      )
+    ) {
+      setError("Ein Event an diesem Tag mit diesem Namen existiert bereits.");
+      return;
+    }
+
     setIsCreating(true);
     try {
       await addEvent(EventInfo, user.uid, userRole);
@@ -185,7 +205,7 @@ export default function EventCreationDialog(props: {
       leftUsers: [],
       typeOfEvent: "CoderDojo",
       tags: "Scratch",
-      difficulty: "Einsteigerfreundlich",
+      difficulty: Difficulties.Einsteiger,
       requirements:
         "Keine Vorkenntnisse erforderlich. Ideal für Kinder ab 8 Jahren",
       description:
@@ -530,26 +550,44 @@ export default function EventCreationDialog(props: {
 
                 <div className="grid gap-1.5">
                   <Label
+                    htmlFor="difficulty"
                     className={`text-[11px] font-bold tracking-wider font-['JetBrains_Mono'] uppercase ${theme === "dark" ? "text-zinc-400" : "text-slate-600"
                       }`}
                   >
                     Schwierigkeitsgrad
                   </Label>
-                  <Input
-                    className={`${roundedClass} px-4 py-2 text-sm transition-colors duration-300 ${theme === "dark"
-                        ? "bg-zinc-950 border-zinc-800 text-white placeholder-zinc-600 focus:border-purple-500/50"
-                        : "bg-slate-50 border-slate-200 placeholder-slate-400 focus:bg-white focus:border-purple-400"
-                      } border focus:outline-none`}
-                    placeholder="z.B. Anfänger, Fortgeschritten"
+                  <select
+                    id="difficulty"
+                    className={`${roundedClass} w-full px-4 py-2 text-sm transition-colors duration-300 border focus:outline-none appearance-none cursor-pointer
+          ${theme === "dark"
+                        ? "bg-zinc-950 border-zinc-800 text-white focus:border-purple-500/50"
+                        : "bg-slate-50 border-slate-200 text-slate-900 focus:bg-white focus:border-purple-400"
+                      }`}
                     value={EventInfo.difficulty}
                     onChange={(e) =>
-                      setEventInfo({ ...EventInfo, difficulty: e.target.value })
+                      setEventInfo({
+                        ...EventInfo,
+                        difficulty: e.target.value as Difficulties,
+                      })
                     }
-                  />
+                  >
+                    {Object.values(Difficulties).map((value) => (
+                      <option
+                        key={value}
+                        value={value}
+                        className={
+                          theme === "dark"
+                            ? "bg-zinc-950 text-white"
+                            : "bg-white text-slate-900"
+                        }
+                      >
+                        {value}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </motion.div>
             )}
-
             {currentStep === 3 && (
               <motion.div
                 key="step-3"

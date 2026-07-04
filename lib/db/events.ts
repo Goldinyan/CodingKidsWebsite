@@ -68,7 +68,7 @@ export async function addEvent(
     } else {
       date = new Date(newEvent.date as unknown as string);
     }
-    const dateId = date.toISOString();
+    const Id = date.toISOString() + "-" + newEvent.course;
 
     const userData = await getUserData(userId);
     const mentorName = userData?.name || userId;
@@ -85,7 +85,7 @@ export async function addEvent(
       },
     };
 
-    await setDoc(doc(db, "events", dateId), {
+    await setDoc(doc(db, "events", Id), {
       name: newEvent.name,
       course: newEvent.course,
       date: date.toISOString(),
@@ -108,7 +108,7 @@ export async function addEvent(
     );
 
     if (course) {
-      const updatedDates = [...course.dates, dateId];
+      const updatedDates = [...course.dates, Id];
       await updateCourse(course.uid, { dates: updatedDates }, userId, userRole);
     }
   } catch (error) {

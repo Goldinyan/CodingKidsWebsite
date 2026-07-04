@@ -8,9 +8,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "@/context/ThemeContext";
 import { useAuth } from "@/BackEnd/AuthContext";
 import { useEventView } from "./hooks/useEventView";
-import React, { useEffect } from "react";
-import { getAllCourses } from "@/lib/db";
-import { CourseData } from "@/BackEnd/type";
 
 export default function EventView() {
   const { theme, isRounded } = useTheme();
@@ -36,7 +33,7 @@ export default function EventView() {
 
   return (
     <div
-      className={`min-h-screen transition-colors duration-300 ${theme === "dark" ? "bg-black text-white" : "bg-white text-slate-900"}`}
+      className={`min-h-screen transition-colors duration-300 ${theme === "dark" ? "text-white" : "text-slate-900"}`}
     >
       <div className="max-w-6xl mx-auto px-6 pt-2 pb-20 relative">
         <div className="mb-10 relative">
@@ -46,12 +43,12 @@ export default function EventView() {
             CoderDojo Niederrhein
           </p>
           <h1
-            className={`text-4xl font-black tracking-tight mb-3 font-grotesk ${theme === "dark" ? "text-white" : "text-slate-900"}`}
+            className={`text-4xl font-black font-gro tracking-tight mb-3 font-grotesk ${theme === "dark" ? "text-white" : "text-slate-900"}`}
           >
             Alle Termine
           </h1>
           <p
-            className={`text-sm max-w-xl ${theme === "dark" ? "text-gray-500" : "text-slate-600"}`}
+            className={`md:text-xs text-xxs font-mono max-w-xl ${theme === "dark" ? "text-gray-500" : "text-slate-600"}`}
           >
             Jeden Mittwoch 18:00–19:30 Uhr · CUBES Wesel · Kostenlos und offen
             für alle
@@ -106,17 +103,31 @@ export default function EventView() {
             {filteredUpcomingEvents.length === 0 ? (
               <motion.div
                 key="empty"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="py-16 text-center"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                className={`py-12 px-6 text-center border transition-colors duration-300
+      ${isRounded ? "rounded-xl" : "rounded-none"}
+      ${theme === "dark"
+                    ? "border-zinc-800/60 bg-zinc-900/[0.04]"
+                    : "border-slate-200/80 bg-slate-50/50"
+                  }`}
               >
                 <CalendarDays
-                  className={`w-10 h-10 mx-auto mb-3 ${theme === "dark" ? "opacity-40" : "opacity-30"}`}
+                  className={`w-8 h-8 mx-auto mb-3 transition-colors duration-300
+        ${theme === "dark" ? "text-zinc-600" : "text-slate-400"}`}
                 />
                 <p
-                  className={`text-sm font-mono ${theme === "dark" ? "text-gray-700" : "text-slate-500"}`}
+                  className={`text-md font-gro font-medium mb-2
+        ${theme === "dark" ? "text-zinc-400" : "text-slate-700"}`}
                 >
                   Keine Veranstaltungen gefunden
+                </p>
+                <p
+                  className={`text-xs font-mono max-w-xs mx-auto
+        ${theme === "dark" ? "text-zinc-600" : "text-slate-400"}`}
+                >
+                  Versuche deine Filter anzupassen oder schau später noch einmal
+                  vorbei.
                 </p>
               </motion.div>
             ) : (

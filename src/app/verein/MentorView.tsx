@@ -1,11 +1,10 @@
 "use client";
 
-import { MentorCard } from "./MentorCard";
 import { getAllMentors } from "@/lib/db";
 import type { Mentor } from "@/BackEnd/type";
 import { useState, useEffect } from "react";
 import { Theme } from "@/context/ThemeContext";
-import { motion, AnimatePresence, Variants } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import { SimpleMentorCard } from "./mentor/SimpleMentorCard";
 
 export default function MentorenView({
@@ -39,56 +38,52 @@ export default function MentorenView({
 
   const containerVariants = {
     hidden: {},
-
     visible: {
       opacity: 1,
-
       transition: {
-        staggerChildren: 0.06,
-
-        delayChildren: 0.05,
+        staggerChildren: 0.04,
       },
     },
   };
 
   const itemVariants = {
     hidden: {
-      scale: 0.95,
-
-      y: 30,
+      opacity: 0,
+      y: 15,
     },
-
     visible: {
-      scale: 1,
-
+      opacity: 1,
       y: 0,
-
       transition: {
         type: "tween",
-
         ease: "easeOut",
-
-        duration: 0.25,
+        duration: 0.3,
       },
     },
   };
 
+  const radiusClass = isRounded ? "rounded-lg" : "rounded-none";
+
   return (
-    <div className="w-full py-24">
-      <div className="w-full flex flex-col items-start justify-center gap-16">
-        <div className="flex flex-col items-start text-center px-8">
+    <div className="w-full py-20 font-['DM_Sans']">
+      <div className="w-full flex flex-col items-start justify-center gap-12">
+        <div className="flex flex-col items-start text-left px-8 max-w-4xl">
           <span
-            className={`text-xs font-mono tracking-widest uppercase mb-3 ${theme == "dark" ? "text-zinc-500" : "text-zinc-400"}`}
+            className={`font-['JetBrains_Mono'] text-[10px] tracking-[0.22em] uppercase block mb-2 ${theme === "dark" ? "text-[#4ADE80]" : "text-green-600"
+              }`}
           >
-            Das Team
+            UNSER TEAM{" "}
           </span>
+
           <h2
-            className={`text-4xl text-start md:text-5xl font-bold tracking-tight mb-6 max-w-2xl leading-tight ${theme == "dark" ? "text-white" : "text-black"}`}
+            className={`text-3xl md:text-4xl font-black font-['Familjen_Grotesk'] tracking-tight leading-none uppercase mb-6 ${theme === "dark" ? "text-white" : "text-slate-900"
+              }`}
           >
             Lernen Sie die Menschen hinter der Mission kennen
           </h2>
           <p
-            className={`text-lg text-start md:text-xl max-w-3xl font-light leading-relaxed ${theme == "dark" ? "text-gray-400" : "text-gray-600"}`}
+            className={`text-sm md:text-md  font-normal leading-relaxed ${theme === "dark" ? "text-zinc-400" : "text-slate-600"
+              }`}
           >
             Unser Team ist eine engagierte Gruppe von Entwicklern und
             Freiwilligen, die sich leidenschaftlich dafür einsetzen, die nächste
@@ -101,21 +96,19 @@ export default function MentorenView({
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
-            exit="hidden"
-            viewport={{ once: false, margin: "0px 0px -50px 0px" }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 "
+            viewport={{ once: true, margin: "0px 0px -10px 0px" }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
           >
             {filMentors.map((mentor) => (
               <motion.div
                 key={mentor.uid}
                 variants={itemVariants as Variants}
                 layout="position"
-                className=""
               >
                 <SimpleMentorCard
                   props={{
-                    uid: "0",
-                    id: 0,
+                    uid: mentor.uid,
+                    id: mentor.id,
                     name: mentor.name,
                     role: mentor.role,
                     des: mentor.des,
@@ -123,8 +116,6 @@ export default function MentorenView({
                     github: mentor.github,
                     linkedin: mentor.linkedin,
                     pic: mentor.pic,
-                    theme: theme,
-                    isRounded: isRounded,
                   }}
                 />
               </motion.div>
@@ -132,23 +123,25 @@ export default function MentorenView({
           </motion.div>
         </section>
 
-        <div className="pt-4 w-full flex items-center justify-center">
-          <motion.p
-            layout
-            className={`mx-auto  font-medium backdrop-blur-2xl border transition-colors duration-300 cursor-pointer py-3 px-6 text-sm ${isRounded ? "rounded-md" : "rounded-none"
-              } ${theme == "dark"
-                ? "border-zinc-800 text-gray-300 bg-white/5 hover:bg-white/10"
-                : "border-zinc-200 text-black bg-transparent hover:bg-black/5"
-              }`}
-            onClick={() => setShowAll((prev) => !prev)}
-          >
-            {!showAll ? (
-              <span>Alle Mentoren anzeigen</span>
-            ) : (
-              <span>Weniger anzeigen</span>
-            )}
-          </motion.p>
-        </div>
+        {filMentors.length > 3 && (
+          <div className="pt-4 w-full flex items-center justify-center">
+            <motion.button
+              layout
+              type="button"
+              className={`font-['JetBrains_Mono'] font-bold text-xs tracking-widest uppercase border transition-all duration-150 py-3.5 px-8 ${radiusClass} ${theme === "dark"
+                  ? "border-zinc-800 text-zinc-300 bg-[rgba(255,255,255,0.025)] hover:border-[#4ADE80] hover:bg-[rgba(255,255,255,0.05)] active:bg-zinc-950"
+                  : "border-slate-200 text-slate-800 bg-white hover:border-green-600 hover:shadow-sm active:bg-slate-50"
+                }`}
+              onClick={() => setShowAll((prev) => !prev)}
+            >
+              {!showAll ? (
+                <span>MEHR ANZEIGEN</span>
+              ) : (
+                <span>WENIGER ANZEIGEN</span>
+              )}
+            </motion.button>
+          </div>
+        )}
       </div>
     </div>
   );

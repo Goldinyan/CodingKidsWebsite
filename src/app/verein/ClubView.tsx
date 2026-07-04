@@ -10,7 +10,7 @@ export default function ClubViews() {
 
   return (
     <div className="max-w-6xl mx-auto px-6">
-      <section id="wir" className={`py-10 border-b transition-colors duration-300 ${theme === "dark" ? "border-white/10" : "border-slate-200"}`}>
+      <section id="wir" className={`border-b transition-colors duration-300 ${theme === "dark" ? "border-white/10" : "border-slate-200"}`}>
         <WerWirSind />
       </section>
       <section className={`py-10 border-b transition-colors duration-300 ${theme === "dark" ? "border-white/10" : "border-slate-200"}`}>

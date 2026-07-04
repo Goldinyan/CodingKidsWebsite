@@ -1,33 +1,26 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { motion, Variants } from "framer-motion";
-import {
-  Lightbulb,
-  Handshake,
-  Heart,
-  Sparkles,
-  Presentation,
-  MapPinned,
-  School,
-} from "lucide-react";
+import { Lightbulb, Handshake, Heart } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
-import { Theme } from "@/context/ThemeContext";
 
 const values = [
   {
+    sysId: "CORE_VAL_01",
     title: "Möglichkeiten",
     description:
       "Wir geben Kindern die Werkzeuge und das Selbstvertrauen, um Schöpfer und nicht nur Konsumenten von Technologie zu werden.",
     icon: Lightbulb,
   },
   {
+    sysId: "CORE_VAL_02",
     title: "Zusammenarbeit",
     description:
       "Wir fördern eine unterstützende Gemeinschaft, in der Schüler in einer teamorientierten Umgebung voneinander lernen.",
     icon: Handshake,
   },
   {
+    sysId: "CORE_VAL_03",
     title: "Zugänglichkeit",
     description:
       "Unsere Programme sind so konzipiert, dass sie inklusiv und für Kinder aus allen Verhältnissen verfügbar sind.",
@@ -40,68 +33,78 @@ const containerVariants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.06,
-      delayChildren: 0.05,
+      staggerChildren: 0.04,
     },
   },
 };
 
 const itemVariants = {
   hidden: {
-    scale: 0.95,
-    y: 30,
+    opacity: 0,
+    y: 15,
   },
   visible: {
-    scale: 1,
+    opacity: 1,
     y: 0,
     transition: {
       type: "tween",
       ease: "easeOut",
-      duration: 0.25,
+      duration: 0.3,
     },
   },
 };
 
-export default function Values({
-  theme,
-  isRounded,
-}: {
-  theme: Theme;
-  isRounded: boolean;
-}) {
+export default function Values() {
+  const { theme, isRounded } = useTheme();
+
+  const radiusClass = isRounded ? "rounded-[16px]" : "rounded-none";
+
   return (
     <motion.div
       variants={containerVariants}
       initial="hidden"
       whileInView="visible"
-      exit="hidden"
-      viewport={{ once: false, margin: "0px 0px 40px 0px" }}
-      className="grid grid-cols-1 md:grid-cols-3 gap-6"
+      viewport={{ once: true, margin: "0px 0px -5px 0px" }}
+      className="grid grid-cols-1 lg:grid-cols-3 gap-6"
     >
-      {values.map(({ title, description, icon: Icon }, idx) => (
+      {values.map(({ sysId, title, description, icon: Icon }) => (
         <motion.div
           variants={itemVariants as Variants}
-          layout
           key={title}
-          className={`group ${isRounded ? "rounded-lg" : "rounded-none"} backdrop-blur-2xl p-6 border transition-colors duration-300 ${theme === "dark"
-              ? "bg-white/5 border-white/10 hover:border-green-500/50 hover:bg-white/8"
-              : "bg-slate-50 border-slate-300 hover:border-green-500 hover:bg-green-50"
+          className={`p-6 border transition-all duration-200 group relative ${radiusClass} ${theme === "dark"
+              ? "bg-[rgba(255,255,255,0.025)] border-[rgba(255,255,255,0.07)] hover:border-[#4ADE80] hover:bg-[rgba(255,255,255,0.04)]"
+              : "bg-white border-slate-200 hover:border-green-600 hover:shadow-sm"
             }`}
         >
-          <div
-            className={`w-12 h-12  rounded-lg flex items-center justify-center mb-6 transition-colors ${isRounded ? "rounded-lg" : "rounded-none"} 
-${theme == "dark" ? "bg-white/10 group-hover:bg-white/20" : "bg-slate-200 group-hover:bg-slate-300 "}  `}
-          >
+          <div className="flex items-center justify-between mb-6">
+            {/*<span
+              className={`font-['JetBrains_Mono'] text-[9px] tracking-widest uppercase ${
+                theme === "dark" ? "text-zinc-600" : "text-slate-400"
+              }`}
+            >
+              {sysId}
+            </span>*/}
             <Icon
-              className={`w-6 h-6 group-hover:text-green-600 transition-colors duration-300 ${theme == "dark" ? "text-white" : "text-black"}`}
+              className={`w-4 h-4 transition-colors duration-200 ${theme === "dark"
+                  ? "text-zinc-500 group-hover:text-[#4ADE80]"
+                  : "text-slate-400 group-hover:text-green-600"
+                }`}
             />
+
+            <h3
+              className={`text-md md:text-md font-black font-['Familjen_Grotesk'] tracking-tight uppercase  ${theme === "dark" ? "text-white" : "text-slate-900"
+                }`}
+            >
+              {title}
+            </h3>
           </div>
-          <h3
-            className={`text-lg font-semibold mb-4 ${theme == "dark" ? " text-white" : "text-black"}`}
+
+          <p
+            className={`text-xs leading-relaxed ${theme === "dark" ? "text-zinc-400" : "text-slate-600"
+              }`}
           >
-            {title}
-          </h3>
-          <p className="text-gray-400 text-sm leading-relaxed">{description}</p>
+            {description}
+          </p>
         </motion.div>
       ))}
     </motion.div>

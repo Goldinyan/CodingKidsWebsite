@@ -1,16 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import {
-  Lightbulb,
-  Handshake,
-  Heart,
-  Sparkles,
-  Presentation,
-  MapPinned,
-  School,
-} from "lucide-react";
 import MentorenView from "./MentorView";
 import { useTheme } from "@/context/ThemeContext";
 import Values from "./Values";
@@ -19,75 +9,89 @@ export default function WerWirSind() {
   const { theme, isRounded } = useTheme();
 
   return (
-    <>
-      <div className="w-full">
-        <div className="flex items-center justify-center flex-col min-h-[450px] gap-6">
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="relative flex items-center flex-col text-center px-6"
+    <div
+      className={`w-full min-h-screen font-['DM_Sans'] transition-colors duration-300 ${theme === "dark" ? "text-[#f4f4f5]" : " text-slate-700"
+        }`}
+    >
+      <div className="w-full max-w-6xl mx-auto px-6 py-8">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.4 }}
+          className="flex flex-col gap-4 text-left max-w-4xl"
+        >
+          <span
+            className={`font-['JetBrains_Mono'] text-[10px] tracking-[0.22em] uppercase block ${theme === "dark" ? "text-[#a855f7]" : "text-purple-600"
+              }`}
           >
-            <h1
-              className={`text-5xl md:text-6xl font-bold tracking-tight mb-6 leading-tight ${theme == "dark" ? "text-white" : "text-black"}`}
+            MISSION_STATEMENT // VISION
+          </span>
+          <h1
+            className={`text-4xl md:text-6xl font-black font-['Familjen_Grotesk'] tracking-tight leading-none uppercase ${theme === "dark" ? "text-white" : "text-slate-900"
+              }`}
+          >
+            Wir gestalten die digitale Zukunft.
+          </h1>
+          <p
+            className={`text-xs md:text-md font-normal mt-4 max-w-xl leading-relaxed ${theme === "dark" ? "text-zinc-400" : "text-slate-600"
+              }`}
+          >
+            Unsere Mission ist es, Kinder für Technologie zu begeistern, ihre
+            Kreativität zu fördern und sie zu den Innovatoren von morgen zu
+            machen.
+          </p>
+        </motion.div>
+      </div>
+
+      <div
+        className={`w-full border-b ${theme === "dark" ? "border-zinc-900" : "border-slate-200"}`}
+      />
+
+      <div className="w-full px-6 py-20 relative">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.4 }}
+            viewport={{ once: true }}
+            className="mb-14"
+          >
+            <span
+              className={`font-['JetBrains_Mono'] text-[10px] tracking-[0.22em] uppercase block mb-2 ${theme === "dark" ? "text-[#4ADE80]" : "text-green-600"
+                }`}
             >
-              Wir gestalten die digitale Zukunft.
-            </h1>
+              Antrieb & Motivation
+            </span>
+
+            <h2
+              className={`text-3xl md:text-4xl font-black font-['Familjen_Grotesk'] tracking-tight leading-none uppercase mb-6 ${theme === "dark" ? "text-white" : "text-slate-900"
+                }`}
+            >
+              Was uns antreibt
+            </h2>
             <p
-              className={`text-lg md:text-xl max-w-2xl font-light leading-relaxed ${theme == "dark" ? "text-gray-300" : "text-gray-800"}`}
+              className={`text-xs md:text-md max-w-xl font-normal leading-relaxed ${theme === "dark" ? "text-zinc-400" : "text-slate-600"
+                }`}
             >
-              Unsere Mission ist es, Kinder für Technologie zu begeistern, ihre
-              Kreativität zu fördern und sie zu den Innovatoren von morgen zu
-              machen.
+              Unsere Mission ist es, digitale Bildung zugänglich und
+              unterhaltsam zu machen und Kreativität, kritisches Denken und
+              Zusammenarbeit für jedes Kind in unserer Gemeinschaft zu fördern.
             </p>
           </motion.div>
+
+          <Values  />
         </div>
+      </div>
 
-        <div className="w-full flex justify-center px-8 my-8">
-          <motion.div
-            initial={{ scaleX: 0, opacity: 0 }}
-            whileInView={{ scaleX: 1, opacity: 0.15 }}
-            viewport={{ once: false }}
-            transition={{ duration: 0.8, ease: "easeInOut" }}
-            className={`h-[1.5px]  w-full max-w-5xl origin-center ${theme == "dark" ? "bg-white" : "bg-black"}`}
-          />
-        </div>
+      <div
+        className={`w-full border-b ${theme === "dark" ? "border-zinc-900" : "border-slate-200"}`}
+      />
 
-        <div className="w-full px-8 py-20 relative">
-          <div className="absolute pointer-events-none opacity-30" />
-
-          <div className="w-full mx-auto relative">
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-              className="mb-16"
-            >
-              {/* liebe diese badges */}
-              <span className={`text-xs font-mono tracking-widest uppercase block mb-3 ${theme == "dark" ? "text-zinc-500" : "text-zinc-400"}`}>
-                Antrieb & Motivation
-              </span>
-              
-              <h2 className={`text-4xl md:text-5xl font-bold text-start mb-6 ${theme == "dark" ? "text-white" : "text-black"}`}>
-                Was uns antreibt
-              </h2>
-              <p className={`text-xl text-start w-full max-w-2xl mr-auto font-light leading-relaxed ${theme == "dark" ? "text-gray-400" : "text-gray-600"}`}>
-                Unsere Mission ist es, digitale Bildung zugänglich und
-                unterhaltsam zu machen und Kreativität, kritisches Denken und
-                Zusammenarbeit für jedes Kind in unserer Gemeinschaft zu
-                fördern.
-              </p>
-            </motion.div>
-
-            <Values theme={theme} isRounded={isRounded} />
-          </div>
-        </div>
-
-        <div>
+      <div className="w-full py-16">
+        <div className="max-w-6xl mx-auto">
           <MentorenView theme={theme} isRounded={isRounded} />
         </div>
       </div>
-    </>
+    </div>
   );
 }
