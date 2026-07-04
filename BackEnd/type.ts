@@ -18,6 +18,12 @@ export const USER_ROLES_ARRAY = [
   "mentor",
 ] as const;
 
+export enum Difficulties {
+  Einsteiger = "Einsteiger",
+  Mittel = "Mittel",
+  Fortgeschritten = "Fortgeschritten",
+}
+
 export type UserRole = (typeof USER_ROLES_ARRAY)[number];
 
 export type Preset = "false" | "ascending" | "descending";
@@ -60,7 +66,7 @@ export type Log =
     type: "eventChanged";
     mentorName: string;
     reason?: string;
-    changes: Record<string, { from: ChangeValue; to: ChangeValue}>;
+    changes: Record<string, { from: ChangeValue; to: ChangeValue }>;
   });
 
 export type EventData = {
@@ -69,7 +75,7 @@ export type EventData = {
   course: string;
   date: Timestamp;
   tags: string;
-  difficulty: string;
+  difficulty: Difficulties;
   requirements: string;
   length: number;
   memberCount: number;

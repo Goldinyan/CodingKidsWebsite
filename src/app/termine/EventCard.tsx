@@ -1,275 +1,469 @@
-import { useState } from "react";
-import type { EventData } from "@/BackEnd/type";
-import { Button } from "@/components/ui/button";
+import { useState, useMemo } from "react";
 import {
-  Check,
+  CourseData,
+  Difficulties,
+  EventData,
+  EventStatus,
+} from "@/BackEnd/type";
+import { EventStatus as StatusEnum } from "@/BackEnd/type"; // Falls Enum-Typ-Konflikte bestehen
+import { Button } from "@/components/ui/button";
+import { motion, AnimatePresence } from "framer-motion";
+import {
   Clock,
-  AlertTriangle,
-  Loader2,
-  Calendar,
-  MapPin,
-  ChevronRight,
   Users,
-  UserRoundX,
+  MapPin,
+  ChevronDown,
+  Calendar,
+  CheckCircle2,
+  AlertCircle,
+  Lock,
+  ArrowRight,
+  Loader2,
+  CalendarCheck,
+  Pin,
 } from "lucide-react";
 import { toJsDate } from "@/BackEnd/utils";
-import { motion, AnimatePresence } from "framer-motion";
 import { Theme } from "@/context/ThemeContext";
-import { EventStatus } from "@/BackEnd/type";
 
-const getHoverMessage = (status: EventStatus): string => {
-  switch (status) {
-    case EventStatus.Loading:
-      return "Der Status dieses Events wird derzeit geladen.";
-    case EventStatus.User:
-      return "Sie sind als Teilnehmer:in für dieses Event eingetragen.";
-    case EventStatus.Queue:
-      return "Sie befinden sich in der Warteschlange für dieses Event.";
-    case EventStatus.NotRegistered:
-      return "Sie sind nicht als Teilnehmer:in für dieses Event registriert.";
-    case EventStatus.Error:
-      return "Beim Laden dieses Events ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut.";
-    default:
-      return "Unbekannter Status.";
+function formatDate(date: Date): string {
+  const options: Intl.DateTimeFormatOptions = {
+    weekday: "short", // z.B. "Do."
+    day: "2-digit", // z.B. "03"
+    month: "long", // z.B. "September"
+    year: "numeric", // z.B. "2026"
+  };
+
+  return date.toLocaleDateString("de-DE", options);
+}
+
+const diffStyle: Record<
+  Difficulties,
+  { color: string; bg: string; border: string }
+> = {
+  [Difficulties.Einsteiger]: {
+    color: "#4ade80",
+    bg: "rgba(74,222,128,0.1)",
+    border: "rgba(74,222,128,0.25)",
+  },
+  [Difficulties.Mittel]: {
+    color: "#fbbf24",
+    bg: "rgba(251,191,36,0.1)",
+    border: "rgba(251,191,36,0.25)",
+  },
+  [Difficulties.Fortgeschritten]: {
+    color: "#f87171",
+    bg: "rgba(248,113,113,0.1)",
+    border: "rgba(248,113,113,0.25)",
+  },
+};
+
+function DiffBadge({ diff }: { diff: string }) {
+  const s =
+    diffStyle[diff as Difficulties] ?? diffStyle[Difficulties.Einsteiger];
+  return (
+    <span
+      className="text-[10px] px-2 py-0.5 rounded-md border shrink-0"
+      style={{
+        fontFamily: "'JetBrains Mono', monospace",
+        color: s.color,
+        background: s.bg,
+        borderColor: s.border,
+      }}
+    >
+      {diff}
+    </span>
+  );
+}
+
+function StatusPill({
+  status,
+  queueCount,
+  userCount,
+}: {
+  status: EventStatus;
+  queueCount: number;
+  userCount: number;
+}) {
+  const baseStyle = { fontFamily: "'JetBrains Mono', monospace" };
+
+  if (status === EventStatus.Loading) {
+    return (
+      <span
+        className="flex items-center gap-1 text-[10px] px-2 py-1 rounded-md bg-white/5 text-zinc-400"
+        style={baseStyle}
+      >
+        <Loader2 className="w-3 h-3 animate-spin" /> Lädt...
+      </span>
+    );
   }
-};
-
-const statusIcons: Record<EventStatus, React.ReactNode> = {
-  [EventStatus.Loading]: (
-    <Loader2 className="animate-spin w-5 h-5 text-zinc-400" />
-  ),
-  [EventStatus.User]: <Check className="text-emerald-500 w-5 h-5" />,
-  [EventStatus.Queue]: <Clock className="text-amber-500 w-5 h-5" />,
-  [EventStatus.NotRegistered]: <UserRoundX className="text-rose-500 w-5 h-5" />,
-  [EventStatus.Error]: <AlertTriangle className="text-orange-500 w-5 h-5" />,
-};
+  if (status === EventStatus.Queue) {
+    return (
+      <span
+        className="inline-flex items-center gap-1 text-[10px] px-2 py-1 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/20 whitespace-nowrap"
+        style={baseStyle}
+      >
+        <Clock className="w-3 h-3" /> Warteliste ({queueCount})
+      </span>
+    );
+  }
+  if (status === EventStatus.User) {
+    return (
+      <span
+        className="inline-flex items-center gap-1 text-[10px] font-medium px-2 py-1 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 whitespace-nowrap"
+        style={baseStyle}
+      >
+        <CheckCircle2 className="w-3 h-3 shrink-0" />
+        <span>Eingetragen</span>
+      </span>
+    );
+  }
+  if (status === EventStatus.Error) {
+    return (
+      <span
+        className="inline-flex items-center gap-1 text-[10px] px-2 py-1 rounded-md bg-rose-500/10 text-rose-400 whitespace-nowrap border border-rose-500/20"
+        style={baseStyle}
+      >
+        <AlertCircle className="w-3 h-3" /> Fehler
+      </span>
+    );
+  }
+  return (
+    <span
+      className="flex items-center gap-1 text-[10px] px-2 py-1 rounded-md"
+      style={{
+        fontFamily: "'JetBrains Mono', monospace",
+        background: "rgba(74,222,128,0.1)",
+        color: "#4ade80",
+      }}
+    >
+      <CheckCircle2 className="w-3 h-3" /> {userCount} Platz
+      {userCount !== 1 ? "e" : ""} frei
+    </span>
+  );
+}
 
 export default function EventCard(props: {
   event: EventData;
   isPast: boolean;
   status: EventStatus;
   tooEarly: boolean;
+  course: CourseData;
   theme: Theme;
   isRounded: boolean;
   handleEvents: (eventId: string, action: "join" | "leave") => void;
 }) {
-  const { event, isPast = false, status, tooEarly, theme, isRounded, handleEvents } = props;
+  const {
+    event,
+    isPast = false,
+    status,
+    course,
+    tooEarly,
+    theme,
+    isRounded,
+    handleEvents,
+  } = props;
 
-  const [showAllPlaces, setShowAllPlaces] = useState(false);
+  const [expanded, setExpanded] = useState(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const [showStatus, setShowStatus] = useState<boolean>(false);
-
-  //const tooEarly = !checkIfEventIsInRange(toJsDate(event.date));
-  //const status = statuses[event.uid];
 
   const isInEvent = status === EventStatus.User || status === EventStatus.Queue;
+  const eventDate = useMemo(() => toJsDate(event.date), [event.date]);
 
-  const EndOfEvent = toJsDate(event.date);
-  const currentIcon = statusIcons[status];
+  const day = eventDate.toLocaleDateString("de-DE", { day: "2-digit" });
+  const month = eventDate
+    .toLocaleDateString("de-DE", { month: "short" })
+    .toUpperCase();
 
-  const cardClass =
-    theme === "dark"
-      ? "bg-white/5 border-zinc-800 text-white"
-      : "bg-zinc-50 border-zinc-200 text-black";
-
-  const badgeClass =
-    theme === "dark"
-      ? "bg-white/10 text-zinc-300"
-      : "bg-zinc-200/60 text-zinc-700";
-
-  const textMutedClass = theme === "dark" ? "text-zinc-400" : "text-zinc-500";
-  const textBodyClass = theme === "dark" ? "text-white" : "text-zinc-700";
-  const iconClass = theme === "dark" ? "text-zinc-500" : "text-zinc-400";
-
-  const getButtonClass = () => {
-    if (tooEarly)
-      return "bg-zinc-300 dark:bg-zinc-800 text-zinc-500 cursor-not-allowed opacity-50";
-    if (isInEvent) {
-      return theme === "dark"
-        ? "bg-rose-950/40 text-rose-400 border border-rose-900/50 hover:bg-rose-900/30"
-        : "bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-100";
-    }
-    return theme === "dark"
-      ? "bg-white text-black hover:bg-zinc-200"
-      : "bg-black text-white hover:bg-zinc-800";
-  };
+  const totalUsers = event.users?.length || 0;
+  const queueCount = event.queue?.length || 0;
+  const maxPlaces = event.memberCount || 20; // Fallback falls memberCount die Max-Kapazität ist
+  const pct = Math.min(100, Math.round((totalUsers / maxPlaces) * 100));
+  const spotsLeft = Math.max(0, maxPlaces - totalUsers);
 
   return (
-    <div
-      className={`flex flex-col h-full p-6 border backdrop-blur-2xl transition-colors duration-200 ${cardClass} ${isRounded ? "rounded-2xl" : "rounded-none"}`}
+    <motion.div
+      layout
+      className={`border overflow-hidden transition-all duration-200 ${isRounded ? "rounded-2xl" : "rounded-none"
+        } ${theme === "dark"
+          ? expanded
+            ? "bg-white/[0.04] border-white/14"
+            : "bg-white/[0.025] border-white/07 text-white"
+          : expanded
+            ? "bg-zinc-100 border-zinc-300"
+            : "bg-zinc-50 border-zinc-200 text-black"
+        }`}
     >
-      <div className="flex items-start justify-between mb-4">
-        <span
-          className={`text-xs font-semibold px-3 py-1 ${badgeClass} ${isRounded ? "rounded-full" : "rounded-none"}`}
-        >
-          {event.difficulty}
-        </span>
-        {isPast && (
-          <span className={`ml-auto mr-4 mt-1 text-sm ${textMutedClass}`}>
-            {event.typeOfEvent}
-          </span>
-        )}
-        {!isPast && (
-          <div className="group relative">
-            <div
-              onClick={() => setShowStatus(!showStatus)}
-              className={`p-2 border backdrop-blur-md bg-transparent ${theme === "dark" ? "border-zinc-800" : "border-zinc-300"} ${isRounded ? "rounded-full" : "rounded-none"}`}
-            >
-              {currentIcon}
-            </div>
-            <div
-              className={`absolute right-0 top-full mt-2 min-w-50 p-5 border text-xs shadow-xl z-10 backdrop-blur-md ${showStatus ? "flex" : "hidden group-hover:flex"
-                } ${theme === "dark"
-                  ? "bg-zinc-950 border-zinc-800 text-zinc-300"
-                  : "bg-white border-zinc-200 text-zinc-600"
-                } ${isRounded ? "rounded-md" : "rounded-none"}`}
-            >
-              {getHoverMessage(status)}
-            </div>
-          </div>
-        )}
-      </div>
-      <h3 className="text-lg font-bold mb-2 tracking-tight">{event.name}</h3>
-      <p
-        className={`text-sm font-light mb-4 leading-relaxed ${textMutedClass}`}
+      <button
+        type="button"
+        onClick={() => setExpanded(!expanded)}
+        className="w-full text-left p-5 flex items-center gap-4 bg-transparent border-none cursor-pointer focus:outline-none"
       >
-        {event.description}
-      </p>
-      <div className="grow" />
-      <div className={`space-y-3 mb-6 text-sm font-light ${textBodyClass}`}>
-        <div className="flex items-center gap-2.5">
-          <Calendar className={`w-4 h-4 shrink-0 ${iconClass}`} />
-          <p>
-            {toJsDate(event.date).toLocaleString("de-DE", {
-              weekday: "short",
-              day: "2-digit",
-              month: "short",
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
-            {" - "}
-            {toJsDate(EndOfEvent).toLocaleString("de-DE", {
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
-          </p>
-        </div>
-
-        {event.place && event.place.length > 0 && (
-          <div className="flex justify-start items-start gap-2.5">
-            <MapPin className={`w-4 h-4 mt-0.5 shrink-0 ${iconClass}`} />
-            <div className="flex flex-col flex-1 overflow-hidden">
-              <AnimatePresence initial={false} mode="wait">
-                {showAllPlaces ? (
-                  <motion.div
-                    key="all-places"
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{
-                      type: "tween",
-                      ease: "easeInOut",
-                      duration: 0.2,
-                    }}
-                    className="space-y-0.5"
-                  >
-                    {event.place.map((line: string, index: number) => (
-                      <p key={index}>{line}</p>
-                    ))}
-                  </motion.div>
-                ) : (
-                  <motion.p
-                    key="single-place"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="truncate"
-                  >
-                    {event.place[0]}
-                  </motion.p>
-                )}
-              </AnimatePresence>
-            </div>
-
-            {event.place.length > 1 && (
-              <motion.button
-                onClick={() => setShowAllPlaces(!showAllPlaces)}
-                className={`p-1 flex items-center justify-center transition-colors duration-200 ${theme === "dark"
-                    ? "border-zinc-800 hover:bg-white/5"
-                    : "border-zinc-200 hover:bg-zinc-100"
-                  } ${isRounded ? "rounded" : "rounded-none"}`}
-                animate={{ rotate: showAllPlaces ? 90 : 0 }}
-                transition={{
-                  type: "tween",
-                  ease: "easeInOut",
-                  duration: 0.2,
-                }}
-                whileTap={{ scale: 0.9 }}
-              >
-                <ChevronRight className="w-4 h-4" />
-              </motion.button>
-            )}
-          </div>
-        )}
-
-        <div className="flex items-center gap-2.5">
-          <Users className={`w-4 h-4 shrink-0 ${iconClass}`} />
-          <span>
-            {event.users?.length + (event.queue?.length || 0)} /{" "}
-            {event.memberCount} Plätze belegt
-          </span>
-        </div>
-      </div>
-      {!isPast && (
-        <Button
-          disabled={tooEarly || loading}
-          onClick={() => {
-            setLoading(true);
-            setTimeout(() => {
-              if (!tooEarly) {
-                handleEvents(event.uid, isInEvent ? "leave" : "join");
-              }
-              setLoading(false);
-            }, 1000);
+        <div
+          className={`shrink-0 px-3 py-2 text-center border ${isRounded ? "rounded-xl" : "rounded-none"}`}
+          style={{
+            background: isInEvent
+              ? "rgba(74,222,128,0.06)"
+              : "rgba(255,255,255,0.02)",
+            borderColor: isInEvent
+              ? "rgba(74,222,128,0.18)"
+              : "rgba(255,255,255,0.06)",
+            minWidth: 54,
           }}
-          className={`w-full py-2.5 font-medium transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] shadow-none ${getButtonClass()} ${isRounded ? "rounded-xl" : "rounded-none"
-            } ${loading ? "opacity-80 cursor-not-allowed" : ""}`}
         >
-          {loading ? (
-            <div className="flex items-center justify-center gap-2">
-              <svg
-                className="animate-spin h-5 w-5 text-current"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                ></circle>
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                ></path>
-              </svg>
-              <span>Lädt...</span>
+          <div
+            className="text-[9px] tracking-widest text-zinc-500"
+            style={{ fontFamily: "'JetBrains Mono', monospace" }}
+          >
+            {month}
+          </div>
+          <div
+            className={`text-2xl font-black leading-tight ${theme === "dark" ? "text-white" : "text-black"}`}
+            style={{ fontFamily: "'Familjen Grotesk', sans-serif" }}
+          >
+            {day}
+          </div>
+        </div>
+
+        <div className="flex-1 min-w-0">
+          <div className="flex flex-wrap items-center gap-2 mb-1">
+            <span
+              className={`font-bold text-sm truncate ${theme === "dark" ? "text-white" : "text-black"}`}
+              style={{ fontFamily: "'Familjen Grotesk', sans-serif" }}
+            >
+              {event.name}
+            </span>
+            <DiffBadge diff={event.difficulty} />
+            <span
+              className="text-[10px] px-2 py-0.5 rounded-md bg-white/5 text-zinc-400"
+              style={{ fontFamily: "'JetBrains Mono', monospace" }}
+            >
+              {event.typeOfEvent}
+            </span>
+          </div>
+
+          <div
+            className="text-[11px] flex items-center flex-wrap gap-x-3 gap-y-1 text-zinc-500"
+            style={{ fontFamily: "'JetBrains Mono', monospace" }}
+          >
+            <span className="flex items-center gap-1">
+              <Calendar className="w-3 h-3" />
+              {eventDate.toLocaleTimeString("de-DE", {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}{" "}
+              Uhr
+            </span>
+            <span className="flex items-center gap-1">
+              <Users className="w-3 h-3" />
+              {totalUsers}/{maxPlaces}
+            </span>
+            <span className="flex items-center gap-1 font-medium">
+              {event.course}
+            </span>
+          </div>
+        </div>
+
+        {/* Rechte Seite: Status-Pill + Expand Pfeil */}
+        <div className="shrink-0 flex items-center gap-3">
+          {!isPast && (
+            <div className="hidden sm:block">
+              <StatusPill
+                status={status}
+                queueCount={queueCount}
+                userCount={event.memberCount - event.users.length}
+              />
             </div>
-          ) : !tooEarly ? (
-            isInEvent ? (
-              "Verlassen"
-            ) : (
-              "Beitreten"
-            )
-          ) : (
-            "Zu früh"
           )}
-        </Button>
-      )}{" "}
-    </div>
+          <ChevronDown
+            className="w-4 h-4 transition-transform duration-200 text-zinc-500"
+            style={{ transform: expanded ? "rotate(180deg)" : "rotate(0deg)" }}
+          />
+        </div>
+      </button>
+
+      {/* ── EXPANDED CONTENT (Framer Motion Slidedown) ── */}
+      <AnimatePresence>
+        {expanded && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className="overflow-hidden"
+          >
+            <div className="px-5 pb-5 border-t border-white/06">
+              <div className="pt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="md:col-span-2 flex flex-col gap-4">
+                  <div>
+                    <div
+                      className="text-[10px] uppercase tracking-widest mb-1.5 text-zinc-500"
+                      style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                    >
+                      Beschreibung
+                    </div>
+                    <p
+                      className={`text-xxs leading-relaxed ${theme === "dark" ? "text-zinc-400" : "text-zinc-700"}`}
+                    >
+                      {event.description}
+                    </p>
+                  </div>
+
+                  <div className="">
+                    <div
+                      className="text-[10px] uppercase flex flex-row tracking-widest mb-1.5 text-zinc-500"
+                      style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                    >
+                      Vorrausetzungen
+                    </div>
+                    <div className="flex items-start gap-2 ">
+                      <CheckCircle2
+                        className="w-4 h-4 mt-0.5 shrink-0"
+                        style={{ color: "#4ade80" }}
+                      />
+
+                      <p
+                        className={`text-xxs leading-relaxed ${theme === "dark" ? "text-zinc-400" : "text-zinc-700"}`}
+                      >
+                        {event.requirements || "Keine Vorrausetzungen"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="">
+                    <div
+                      className="text-[10px] uppercase flex flex-row tracking-widest mb-1.5 text-zinc-500"
+                      style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                    >
+                      Kurs
+                    </div>
+                    <div className="flex flex-row items-start gap-2 ">
+                      {course.tags &&
+                        course?.tags.map((tag) => (
+                          <span
+                            key={tag}
+                            className="text-[10px] px-2 py-0.5 rounded-md border"
+                            style={{
+                              fontFamily: "'JetBrains Mono', monospace",
+                              background: "rgba(255,255,255,0.04)",
+                              borderColor: "rgba(255,255,255,0.08)",
+                              color: "#9ca3af",
+                            }}
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                    </div>
+                    <p
+                      className={`text-xxs mt-2 leading-relaxed ${theme === "dark" ? "text-zinc-400" : "text-zinc-700"}`}
+                    >
+                      {course.des}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-3">
+                  <div className="rounded-xl border p-4 bg-white/[0.02] border-white/06">
+                    <div
+                      className="text-[10px] uppercase tracking-widest mb-2 text-zinc-500"
+                      style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                    >
+                      Kapazität
+                    </div>
+
+                    <div
+                      className="flex justify-between text-xs mb-1.5"
+                      style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                    >
+                      <span className="text-zinc-400">
+                        {totalUsers} angemeldet
+                      </span>
+                      <span
+                        style={{
+                          color: spotsLeft === 0 ? "#f87171" : "#4ade80",
+                        }}
+                      >
+                        {spotsLeft} frei
+                      </span>
+                    </div>
+
+                    {/* Progress Bar */}
+                    <div className="h-1.5 rounded-full mb-3 bg-white/10">
+                      <div
+                        className="h-1.5 rounded-full transition-all duration-500"
+                        style={{
+                          width: `${pct}%`,
+                          background: spotsLeft === 0 ? "#ef4444" : "#4ade80",
+                        }}
+                      />
+                    </div>
+
+                    <div
+                      className="flex flex-col gap-1.5 text-[11px] text-zinc-400"
+                      style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                    >
+                      <div className="flex items-center gap-2">
+                        <Calendar className="w-3.5 h-3.5 text-zinc-500" />
+                        <span>{formatDate(eventDate)}</span>
+                        <span>{event.length} Minuten</span>
+                        <span>{event.place[2]}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Clock className="w-3.5 h-3.5 text-zinc-500" />
+                        <span>{event.length} Minuten</span>
+                        <span>{event.place[2]}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Pin className="w-3.5 h-3.5 text-zinc-500" />
+
+                        <span>{event.place[0]}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {!isPast && (
+                    <Button
+                      disabled={tooEarly || loading}
+                      onClick={(e) => {
+                        e.stopPropagation(); // Verhindert Schließen der Card beim Klicken
+                        setLoading(true);
+                        setTimeout(() => {
+                          if (!tooEarly) {
+                            handleEvents(
+                              event.uid,
+                              isInEvent ? "leave" : "join",
+                            );
+                          }
+                          setLoading(false);
+                        }, 1000);
+                      }}
+                      className={`w-full py-2.5 text-sm font-bold flex items-center justify-center gap-2 transition-all duration-200 ${isRounded ? "rounded-xl" : "rounded-none"
+                        } ${tooEarly
+                          ? "bg-zinc-800 text-zinc-500 cursor-not-allowed opacity-50 shadow-none"
+                          : isInEvent
+                            ? "bg-rose-500/10 text-rose-400 border border-rose-500/20 hover:bg-rose-500/20"
+                            : "bg-[#4ade80] text-black hover:bg-[#86efac]"
+                        }`}
+                      style={{ fontFamily: "'Familjen Grotesk', sans-serif" }}
+                    >
+                      {loading ? (
+                        <Loader2 className="w-4 h-4 animate-spin text-current" />
+                      ) : tooEarly ? (
+                        "Zu früh"
+                      ) : isInEvent ? (
+                        "Verlassen"
+                      ) : (
+                        <>
+                          Beitreten <ArrowRight className="w-4 h-4" />
+                        </>
+                      )}
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   );
 }

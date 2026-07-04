@@ -4,10 +4,11 @@ import { Timestamp } from "firebase/firestore";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/BackEnd/AuthContext";
 import { addEvent, getAllCourses } from "@/lib/db";
-import type { EventData, CourseData } from "@/BackEnd/type";
+import { type EventData, type CourseData, Difficulties } from "@/BackEnd/type";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Doto } from "next/font/google";
 
 const defaultEvent: EventData = {
   name: "",
@@ -23,7 +24,7 @@ const defaultEvent: EventData = {
   leftUsers: [],
   typeOfEvent: "",
   tags: "",
-  difficulty: "",
+  difficulty: Difficulties.Einsteiger,
   requirements: "",
   description: "",
 };
@@ -91,7 +92,7 @@ export default function EventAdd(props: {
       leftUsers: [],
       typeOfEvent: "CoderDojo",
       tags: "Scratch",
-      difficulty: "Einsteigerfreundlich",
+      difficulty: Difficulties.Einsteiger,
       requirements:
         "Keine Vorkenntnisse erforderlich. Ideal für Kinder ab 8 Jahren",
       description:
@@ -268,7 +269,7 @@ export default function EventAdd(props: {
         />
       </div>
 
-      <div className="grid gap-2">
+      {/*<div className="grid gap-2">
         <Label htmlFor="difficulty" className="font-semibold text-gray-700">
           Schwierigkeitsgrad
         </Label>
@@ -281,6 +282,33 @@ export default function EventAdd(props: {
             setEventInfo({ ...EventInfo, difficulty: e.target.value })
           }
         />
+      </div>*/}
+
+      <div className="grid gap-2">
+        <Label htmlFor="difficulty" className="font-semibold text-gray-700">
+          Schwierigkeitsgrad
+        </Label>
+        <select
+          id="difficulty"
+          className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          value={EventInfo.difficulty}
+          onChange={(e) =>
+            setEventInfo({
+              ...EventInfo,
+              difficulty: e.target.value as Difficulties,
+            })
+          }
+        >
+          <option value="" disabled>
+            Bitte auswählen...
+          </option>
+
+          {Object.values(Difficulties).map((value) => (
+            <option key={value} value={value}>
+              {value}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div className="col-span-1 md:col-span-2 grid gap-2">

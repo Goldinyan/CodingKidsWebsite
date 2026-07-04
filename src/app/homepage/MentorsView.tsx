@@ -121,7 +121,7 @@ export default function MentorsView() {
         whileInView="visible"
         exit="hidden"
         viewport={{ once: false, margin: "0px 0px -50px 0px" }}
-        className="grid grid-cols-1 md:grid-cols-2 gap-5"
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
       >
         {mentors.slice(0, 3).map((mentor) => (
           <motion.div
@@ -140,8 +140,6 @@ export default function MentorsView() {
                 github: mentor.github,
                 linkedin: mentor.linkedin,
                 pic: mentor.pic,
-                theme: theme,
-                isRounded: isRounded,
               }}
             />
           </motion.div>

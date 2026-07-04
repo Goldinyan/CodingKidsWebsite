@@ -1,4 +1,4 @@
-import type { Theme } from "@/context/ThemeContext";
+import { useTheme, type Theme } from "@/context/ThemeContext";
 import type { Mentor } from "@/BackEnd/type";
 import Image from "next/image";
 import { Github, Instagram, Linkedin, Twitter } from "lucide-react";
@@ -7,14 +7,14 @@ export type SimpleMentorCardProps = Mentor & {
   onExpand?: () => void;
   isFirst?: boolean;
   isExpanded?: boolean;
-  theme: Theme;
-  isRounded: boolean;
 };
 
 export function SimpleMentorCard({ props }: { props: SimpleMentorCardProps }) {
+  const { theme, isRounded } = useTheme();
+
   return (
     <div
-      className={` w-full h-full bg-white/2.5 backdrop-blur-2xl p-6 border border-zinc-200 dark:border-zinc-800 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col ${props.isRounded ? "rounded-2xl" : "rounded-none"
+      className={` w-full h-full bg-white/2.5 backdrop-blur-2xl p-6 border border-zinc-200 dark:border-zinc-800 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col ${isRounded ? "rounded-2xl" : "rounded-none"
         }`}
     >
       <div className="flex items-center gap-4 mb-4">
@@ -26,7 +26,9 @@ export function SimpleMentorCard({ props }: { props: SimpleMentorCardProps }) {
           className="w-12 h-12 rounded-xl object-cover bg-zinc-100"
         />
         <div>
-          <h3 className="font-bold text-md font-gro dark:text-white">
+          <h3
+            className={`font-bold text-md font-gro ${theme == "dark" ? "text-white" : "text-black"}`}
+          >
             {props.name}
           </h3>
           <p className="w-full text-purple-400 font-light text-xxs font-mono">

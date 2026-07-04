@@ -59,7 +59,7 @@ export function useEventView() {
       setCourses(allCourses);
     };
     fetchCourses();
-  }, [user?.uid, userRole, loading]);
+  }, [user?.uid, userRole, loading, user]);
 
   useEffect(() => {
     if (!user?.uid || loading) return;

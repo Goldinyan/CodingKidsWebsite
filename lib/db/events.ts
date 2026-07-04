@@ -308,6 +308,7 @@ export async function isUserInEvent(
     const eventData = eventSnapshot.data();
     const currentUsers: string[] = eventData.users;
     const currentQueue: string[] = eventData.queue;
+    const currentStaff: string[] = eventData.mentors || [];
 
     if (currentUsers.includes(userId)) {
       return EventStatus.User;
@@ -315,6 +316,10 @@ export async function isUserInEvent(
 
     if (currentQueue.includes(userId)) {
       return EventStatus.Queue;
+    }
+
+    if(currentStaff.includes(userId)) {
+      return EventStatus.User; // Staff members are considered as users in the event 
     }
 
     return EventStatus.NotRegistered;
