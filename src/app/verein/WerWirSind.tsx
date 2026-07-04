@@ -24,10 +24,10 @@ export default function WerWirSind() {
             className={`font-['JetBrains_Mono'] text-[10px] tracking-[0.22em] uppercase block ${theme === "dark" ? "text-[#a855f7]" : "text-purple-600"
               }`}
           >
-            MISSION_STATEMENT // VISION
+            Unsere Idee
           </span>
           <h1
-            className={`text-4xl md:text-6xl font-black font-['Familjen_Grotesk'] tracking-tight leading-none uppercase ${theme === "dark" ? "text-white" : "text-slate-900"
+            className={`text-4xl md:text-5xl font-black font-['Familjen_Grotesk'] tracking-tight leading-none uppercase ${theme === "dark" ? "text-white" : "text-slate-900"
               }`}
           >
             Wir gestalten die digitale Zukunft.

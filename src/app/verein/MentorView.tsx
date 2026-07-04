@@ -91,13 +91,13 @@ export default function MentorenView({
           </p>
         </div>
 
-        <section id="mentor" className="mx-auto w-full px-8">
+        <section id="mentor" className="mx-auto w-full">
           <motion.div
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "0px 0px -10px 0px" }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6"
           >
             {filMentors.map((mentor) => (
               <motion.div
