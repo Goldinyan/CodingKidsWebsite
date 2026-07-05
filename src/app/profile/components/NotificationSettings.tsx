@@ -1,9 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Theme } from "@/context/ThemeContext";
-import { AdminSettings, StaffSettings, UserSettings } from "@/BackEnd/type";
-import { UserData, UserRole } from "@/BackEnd/type"; 
+import { useTheme } from "@/context/ThemeContext";
+import { UserData } from "@/BackEnd/type";
 
 import {
   Bell,
@@ -23,8 +22,6 @@ type NotificationKey =
   | "systemAlerts";
 
 interface NotificationSettingsProps {
-  theme: Theme;
-  isRounded: boolean;
   userData: UserData;
   updateProfile: (updates: Partial<UserData>) => Promise<void>;
   className?: string;
@@ -32,73 +29,67 @@ interface NotificationSettingsProps {
 
 interface SettingItem {
   key: NotificationKey;
+  systemLabel: string; // Deutsche Anzeige für Kinder, außer für Admin-Keys
   label: string;
   icon: LucideIcon;
-  colorDark: string;
-  colorLight: string;
   roles: string[];
 }
 
 const SETTINGS_CONFIG: SettingItem[] = [
   {
     key: "newEvent",
+    systemLabel: "Neues_Event",
     label: "Neue Events",
     icon: Bell,
-    colorDark: "text-blue-400",
-    colorLight: "text-blue-600",
     roles: ["user", "member", "mentor", "admin"],
   },
   {
     key: "kicked",
+    systemLabel: "Event_Verlassen",
     label: "Aus Event entfernt",
     icon: AlertCircle,
-    colorDark: "text-red-400",
-    colorLight: "text-red-600",
     roles: ["user", "member"],
   },
   {
     key: "queueToUser",
+    systemLabel: "Warteschlange_Update",
     label: "Warteschlange aktualisiert",
     icon: Users,
-    colorDark: "text-purple-400",
-    colorLight: "text-purple-600",
     roles: ["user", "member"],
   },
   {
     key: "understaffedWarning",
+    systemLabel: "understaffedWarning", // Bleibt englisch für Mentoren/Admins
     label: "Personalbestand niedrig",
     icon: AlertTriangle,
-    colorDark: "text-yellow-400",
-    colorLight: "text-yellow-600",
     roles: ["mentor", "admin"],
   },
   {
     key: "logs",
+    systemLabel: "logs", // Bleibt englisch für Admins
     label: "System-Logs",
     icon: BookOpen,
-    colorDark: "text-cyan-400",
-    colorLight: "text-cyan-600",
     roles: ["admin"],
   },
   {
     key: "systemAlerts",
+    systemLabel: "systemAlerts", // Bleibt englisch für Admins
     label: "System-Warnungen",
     icon: AlertTriangle,
-    colorDark: "text-orange-400",
-    colorLight: "text-orange-600",
     roles: ["admin"],
   },
 ];
 
 export default function NotificationSettings({
-  theme,
-  isRounded,
   userData,
   updateProfile,
-  className,
+  className = "",
 }: NotificationSettingsProps) {
-  const roundedClass = isRounded ? "rounded-2xl" : "rounded-none";
-  const innerRoundedClass = isRounded ? "rounded-xl" : "rounded-none";
+  const { theme, isRounded } = useTheme();
+
+  const roundedClass = isRounded ? "rounded-xl" : "rounded-none";
+  const innerRoundedClass = isRounded ? "rounded-md" : "rounded-none";
+  const switchRoundedClass = isRounded ? "rounded-full" : "rounded-none";
 
   const [loading, setLoading] = useState(false);
   const [localSettings, setLocalSettings] = useState(userData.settings);
@@ -109,6 +100,7 @@ export default function NotificationSettings({
   >;
 
   const handleToggle = async (settingKey: NotificationKey) => {
+    if (loading) return;
     setLoading(true);
     try {
       const currentVal = !!notificationSettings[settingKey];
@@ -123,7 +115,7 @@ export default function NotificationSettings({
       setLocalSettings(newSettings as typeof localSettings);
 
       await updateProfile({
-        settings: newSettings as any
+        settings: newSettings as Partial<UserData>,
       });
     } catch (error) {
       console.error("Error updating notifications:", error);
@@ -134,20 +126,20 @@ export default function NotificationSettings({
   };
 
   const toggleClass = (isEnabled: boolean) => `
-    relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${isEnabled
+    relative inline-flex h-5 w-9 items-center transition-all duration-150 cursor-pointer ${switchRoundedClass} ${isEnabled
       ? theme === "dark"
-        ? "bg-green-500/30 border-green-500/50"
-        : "bg-green-100 border-green-300"
+        ? "bg-zinc-100 border-zinc-100"
+        : "bg-zinc-900 border-zinc-900"
       : theme === "dark"
-        ? "bg-gray-700/50 border-gray-600/50"
-        : "bg-gray-200 border-gray-300"
-    } border ${innerRoundedClass}
+        ? "bg-zinc-950/60 border-zinc-900"
+        : "bg-slate-200 border-slate-300"
+    } border
   `;
 
   const toggleThumbClass = (isEnabled: boolean) => `
-    inline-block h-4 w-4 transform rounded-full transition-transform ${isEnabled
-      ? `translate-x-6 ${theme === "dark" ? "bg-green-400" : "bg-green-600"}`
-      : `translate-x-1 ${theme === "dark" ? "bg-gray-500" : "bg-gray-400"}`
+    inline-block h-3 w-3 transform transition-transform duration-150 ${switchRoundedClass} ${isEnabled
+      ? `translate-x-5 ${theme === "dark" ? "bg-zinc-950" : "bg-white"}`
+      : `translate-x-1 ${theme === "dark" ? "bg-zinc-700" : "bg-slate-400"}`
     }
   `;
 
@@ -157,14 +149,28 @@ export default function NotificationSettings({
 
   return (
     <div
-      className={`backdrop-blur-xl p-6 border transition-all duration-300 space-y-4 flex-1 ${roundedClass} ${className} ${theme === "dark" ? "bg-white/5 border-white/10" : "bg-slate-100 border-slate-200"}`}
+      className={`w-full p-6 border transition-all duration-150 flex flex-col gap-5 ${roundedClass} ${className} ${theme === "dark"
+          ? "bg-[rgba(255,255,255,0.02)] border-zinc-800"
+          : "bg-slate-50 border-slate-300"
+        }`}
     >
-      <h3
-        className={`text-sm font-mono tracking-widest uppercase ${theme === "dark" ? "text-blue-400" : "text-blue-600"}`}
-      >
-        Benachrichtigungen
-      </h3>
-      <div className="space-y-4 font-mono text-xs">
+      <div className="flex flex-col gap-1">
+        <span
+          className={`block font-mono text-[10px] font-bold tracking-widest uppercase ${theme === "dark" ? "text-green-500" : "text-green-400"
+            }`}
+        >
+          Benachrichtigungen
+        </span>
+        <p
+          className={`text-xxs font-sans ${theme === "dark" ? "text-zinc-500" : "text-slate-400"
+            }`}
+        >
+          Wähle aus, bei welchen Ereignissen du System-Benachrichtigungen
+          erhalten möchtest.
+        </p>
+      </div>
+
+      <div className="flex flex-col gap-2 font-mono text-xs">
         {visibleSettings.map((item) => {
           const IconComponent = item.icon;
           const isEnabled = !!notificationSettings[item.key];
@@ -172,20 +178,32 @@ export default function NotificationSettings({
           return (
             <div
               key={item.key}
-              className={`flex items-center justify-between p-3 border rounded-lg ${theme === "dark" ? "bg-black/20 border-white/5" : "bg-white/50 border-slate-200"}`}
+              className={`flex items-center justify-between p-4 border transition-colors duration-150 ${innerRoundedClass} ${theme === "dark"
+                  ? "bg-zinc-950/40 border-zinc-900"
+                  : "bg-white border-slate-200"
+                }`}
             >
-              <div className="flex items-center gap-2">
-                <IconComponent
-                  className={`w-4 h-4 ${theme === "dark" ? item.colorDark : item.colorLight}`}
-                />
-                <span
-                  className={
-                    theme === "dark" ? "text-gray-300" : "text-slate-700"
-                  }
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center gap-2">
+                  <IconComponent
+                    className={`w-3.5 h-3.5 ${theme === "dark" ? "text-zinc-500" : "text-slate-400"
+                      }`}
+                  />
+                  <span
+                    className={`text-[10px] uppercase font-sans tracking-wider ${theme === "dark" ? "text-zinc-500" : "text-slate-400"
+                      }`}
+                  >
+                    {item.systemLabel}
+                  </span>
+                </div>
+                <p
+                  className={`text-xs font-sans font-medium ${theme === "dark" ? "text-zinc-300" : "text-slate-800"
+                    }`}
                 >
                   {item.label}
-                </span>
+                </p>
               </div>
+
               <button
                 onClick={() => handleToggle(item.key)}
                 disabled={loading}

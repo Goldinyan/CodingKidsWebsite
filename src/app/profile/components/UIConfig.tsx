@@ -1,145 +1,127 @@
-import { UserData } from "@/BackEnd/type";
-import { Theme } from "@/context/ThemeContext";
+"use client";
 
-export default function UIConfig({
-  theme,
-  toggleTheme,
-  isRounded,
-  toggleRounded,
-  className,
-}: {
-  theme: Theme;
-  toggleTheme: () => void;
-  isRounded: boolean;
-  toggleRounded: () => void;
-  className?: string;
-}) {
-  const roundedClass = isRounded ? "rounded-2xl" : "rounded-none";
-  const innerRoundedClass = isRounded ? "rounded-xl" : "rounded-none";
+import { useTheme } from "@/context/ThemeContext";
+
+export default function UIConfig({ className = "" }: { className?: string }) {
+  const { theme, isRounded, toggleTheme, toggleRounded } = useTheme();
+
+  const roundedClass = isRounded ? "rounded-xl" : "rounded-none";
+  const innerRoundedClass = isRounded ? "rounded-md" : "rounded-none";
 
   return (
     <div
-      className={`backdrop-blur-xl  p-6 border transition-all duration-300 space-y-4 flex-1 ${roundedClass} ${className} ${theme === "dark"
-          ? "bg-white/5 border-white/10"
-          : "bg-slate-100 border-slate-200"
+      className={`w-full p-6 border transition-all duration-150 flex flex-col gap-5 ${roundedClass} ${className} ${theme === "dark"
+          ? "bg-[rgba(255,255,255,0.02)] border-zinc-800"
+          : "bg-slate-50 border-slate-300"
         }`}
     >
-      <h3
-        className={`text-sm font-mono tracking-widest uppercase ${theme === "dark" ? "text-green-400" : "text-green-600"}`}
-      >
-        UI Konfiguration
-      </h3>
-      <p
-        className={`text-xs font-mono tracking-normal ${theme === "dark" ? "text-gray-400" : "text-slate-500"
-          }`}
-      >
-        Konfiguration der optischen Parameter für das Interface.
-      </p>
-      <div className="space-y-3 font-mono text-xs">
-        <div className="flex items-center justify-between py-2 border-b border-white/5">
-          <span className="text-gray-500 font-mono text-xs">Theme:</span>
+      <div className="flex flex-col gap-1">
+        <span
+          className={`block font-mono text-[10px] font-bold tracking-widest uppercase ${theme === "dark" ? "text-green-500" : "text-green-400"
+            }`}
+        >
+          System 
+        </span>
+        <p
+          className={`text-xxs font-sans ${theme === "dark" ? "text-zinc-500" : "text-slate-400"
+            }`}
+        >
+          Passe das visuelle Erscheinungsbild der Website an deine Vorlieben
+          an.
+        </p>
+      </div>
+
+      <div className="flex flex-col gap-3 font-mono text-xs">
+        <div
+          className={`flex items-center justify-between py-2 border-b ${theme === "dark" ? "border-zinc-800/60" : "border-slate-200"
+            }`}
+        >
+          <span
+            className={theme === "dark" ? "text-zinc-400" : "text-slate-600"}
+          >
+            Theme:
+          </span>
 
           <div
-            className={`flex items-center border font-mono text-xs select-none p-0.5 ${innerRoundedClass} ${theme === "dark"
-                ? "bg-black/30 border-white/5"
+            className={`flex items-center border p-0.5 select-none ${innerRoundedClass} ${theme === "dark"
+                ? "bg-zinc-950/60 border-zinc-900"
                 : "bg-white border-slate-200"
               }`}
           >
             <button
-              onClick={() => {
-                if (!(theme == "dark")) return;
-                toggleTheme();
-              }}
-              className={`px-2.5 py-1 tracking-wider uppercase transition-all duration-300 ${innerRoundedClass} ${theme !== "dark"
-                  ? "bg-black/5 text-slate-900 font-bold"
-                  : "text-gray-500 hover:text-gray-300"
+              onClick={() => theme === "dark" && toggleTheme()}
+              className={`px-3 py-1 text-[11px] font-bold tracking-wider uppercase transition-all duration-150 ${innerRoundedClass} ${theme !== "dark"
+                  ? "bg-slate-100 text-slate-900"
+                  : "text-zinc-500 hover:text-zinc-300"
                 }`}
             >
               Light
             </button>
-
             <span
-              className={`text-xs mr-1 transition-colors duration-300 ${theme === "dark" ? "text-white/10" : "text-slate-300"
+              className={`text-[10px] mx-1 select-none ${theme === "dark" ? "text-zinc-800" : "text-slate-200"
                 }`}
             >
-              |
+              /
             </span>
-
             <button
-              onClick={() => {
-                if (!(theme == "light")) return;
-                toggleTheme();
-              }}
-              className={`px-2.5 py-1 tracking-wider uppercase transition-all duration-300 ${innerRoundedClass} 
-                } ${theme === "dark"
-                  ? "bg-white/10 text-white font-bold"
-                  : "bg-none text-slate-900 font-bold"
+              onClick={() => theme === "light" && toggleTheme()}
+              className={`px-3 py-1 text-[11px] font-bold tracking-wider uppercase transition-all duration-150 ${innerRoundedClass} ${theme === "dark"
+                  ? "bg-zinc-800 text-white"
+                  : "text-slate-400 hover:text-slate-800"
                 }`}
             >
               Dark
             </button>
           </div>
         </div>
-        <div className="flex items-center justify-between py-2 ">
-          <span className="text-gray-500 font-mono text-xs">Borders:</span>
+
+        <div className="flex items-center justify-between py-2">
+          <span
+            className={theme === "dark" ? "text-zinc-400" : "text-slate-600"}
+          >
+            Borders:
+          </span>
 
           <div
-            className={`flex items-center border font-mono text-xs select-none p-0.5 ${innerRoundedClass} ${theme === "dark"
-                ? "bg-black/30 border-white/5"
+            className={`flex items-center border p-0.5 select-none ${innerRoundedClass} ${theme === "dark"
+                ? "bg-zinc-950/60 border-zinc-900"
                 : "bg-white border-slate-200"
               }`}
           >
             <button
-              onClick={() => {
-                if (!isRounded) return;
-                toggleRounded();
-              }}
-              className={`px-2.5 py-1 tracking-wider uppercase transition-all duration-300 ${innerRoundedClass} ${!isRounded
+              onClick={() => isRounded && toggleRounded()}
+              className={`px-3 py-1 text-[11px] font-bold tracking-wider uppercase transition-all duration-150 ${innerRoundedClass} ${!isRounded
                   ? theme === "dark"
-                    ? "bg-white/10 text-white font-bold"
-                    : "bg-black/5 text-slate-900 font-bold"
+                    ? "bg-zinc-800 text-white"
+                    : "bg-slate-100 text-slate-900"
                   : theme === "dark"
-                    ? "text-gray-500 hover:text-gray-300 bg-transparent"
-                    : "text-slate-400 hover:text-slate-900 bg-transparent"
+                    ? "text-zinc-500 hover:text-zinc-300"
+                    : "text-slate-400 hover:text-slate-800"
                 }`}
             >
               Sharp
             </button>
-
             <span
-              className={`text-xs mx-1 transition-colors duration-300 ${theme === "dark" ? "text-white/10" : "text-slate-300"
+              className={`text-[10px] mx-1 select-none ${theme === "dark" ? "text-zinc-800" : "text-slate-200"
                 }`}
             >
-              |
+              /
             </span>
-
             <button
-              onClick={() => {
-                if (isRounded) return;
-                toggleRounded();
-              }}
-              className={`px-2.5 py-1 tracking-wider uppercase transition-all duration-300 ${innerRoundedClass} ${isRounded
+              onClick={() => !isRounded && toggleRounded()}
+              className={`px-3 py-1 text-[11px] font-bold tracking-wider uppercase transition-all duration-150 ${innerRoundedClass} ${isRounded
                   ? theme === "dark"
-                    ? "bg-white/10 text-white font-bold"
-                    : "bg-black/5 text-slate-900 font-bold"
+                    ? "bg-zinc-800 text-white"
+                    : "bg-slate-100 text-slate-900"
                   : theme === "dark"
-                    ? "text-gray-500 hover:text-gray-300 bg-transparent"
-                    : "text-slate-400 hover:text-slate-900 bg-transparent"
+                    ? "text-zinc-500 hover:text-zinc-300"
+                    : "text-slate-400 hover:text-slate-800"
                 }`}
             >
               Smooth
             </button>
           </div>
         </div>
-        {/*
-        <div className="flex justify-between py-1.5">
-          <span className="text-gray-500">Children:</span>
-          <span
-            className={`font-bold ${theme === "dark" ? "text-white" : "text-slate-900"}`}
-          >
-            {userData.children?.length || 0} verknüpft
-          </span>
-        </div> */}
       </div>
     </div>
   );

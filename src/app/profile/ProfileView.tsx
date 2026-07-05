@@ -57,32 +57,17 @@ export default function ProfileView() {
         <section className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-stretch">
             <div className="md:col-span-7 flex flex-col gap-6">
-              <AccountDetails
-                theme={theme}
-                isRounded={isRounded}
-                userData={userData}
-              />
+              <AccountDetails userData={userData} />
 
               <ProjectOverview />
             </div>
 
             <div className="md:col-span-5 flex flex-col gap-6">
-              <SecurityButton
-                theme={theme}
-                isRounded={isRounded}
-                onClick={() => setShowSecurityDialog(true)}
-              />
+              <SecurityButton onClick={() => setShowSecurityDialog(true)} />
 
-              <UIConfig
-                theme={theme}
-                toggleTheme={toggleTheme}
-                isRounded={isRounded}
-                toggleRounded={toggleRounded}
-              />
+              <UIConfig />
 
               <NotificationSettings
-                theme={theme}
-                isRounded={isRounded}
                 userData={userData}
                 updateProfile={updateProfile}
               />
