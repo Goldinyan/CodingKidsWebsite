@@ -33,7 +33,7 @@ export default function Navbar() {
         const unread = announcements.filter(
           (announcement) =>
             (!announcement.readBy || !announcement.readBy.includes(user.uid)) &&
-            announcement.author !== user.uid
+            announcement.authorUid !== user.uid
         ).length;
         setUnreadMessages(unread);
       } catch (error) {

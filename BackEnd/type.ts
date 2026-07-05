@@ -139,7 +139,6 @@ type BaseUserData = {
   email: string;
   birthdate: Timestamp;
   createdAt: Timestamp;
-  avatar: string;
   courses?: string[];
   projects: string[];
 };

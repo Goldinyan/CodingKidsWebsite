@@ -13,11 +13,10 @@ import AvatarView from "./components/AvatarView";
 import LogOut from "./components/LogOut";
 import SecurityButton from "./components/SecurityButton";
 import SecurityDialog from "./components/SecurityDialog";
-// Der neue Import:
 import ProjectOverview from "./components/ProjectOverview";
+import AccountActions from "./components/AccountActions";
 
 export default function ProfileView() {
-  const [showAvatarView, setShowAvatarView] = useState<boolean>(false);
   const [showSecurityDialog, setShowSecurityDialog] = useState<boolean>(false);
 
   const { user, userData, userRole, updateProfile, loading } = useAuth();
@@ -47,33 +46,11 @@ export default function ProfileView() {
         <section className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-8 gap-6">
             <div className="flex flex-row md:col-span-5">
-              <ProfileHeader
-                theme={theme}
-                isRounded={isRounded}
-                userData={userData}
-                showAvatarView={showAvatarView}
-                setShowAvatarView={setShowAvatarView}
-              />
+              <ProfileHeader userData={userData} />
             </div>
             <div className="flex flex-col gap-4 md:col-span-3">
-              <LogOut theme={theme} isRounded={isRounded} />
-              <AccountDeletion
-                theme={theme}
-                isRounded={isRounded}
-                user={user}
-                userRole={userRole}
-              />
+              <AccountActions user={user} userRole={userRole} />
             </div>
-
-            {showAvatarView && (
-              <AvatarView
-                theme={theme}
-                isRounded={isRounded}
-                userData={userData}
-                updateProfile={updateProfile}
-                setShowAvatarView={setShowAvatarView}
-              />
-            )}
           </div>
         </section>
 

@@ -1,25 +1,23 @@
 "use client";
 
-import { Theme } from "@/context/ThemeContext";
+import { Theme, useTheme } from "@/context/ThemeContext";
 import { Trash2 } from "lucide-react";
 import { UserRole } from "@/BackEnd/type";
 import { deleteUser } from "lib/db/users";
 import { User } from "firebase/auth";
 
 export default function AccountDeletion({
-  theme,
-  isRounded,
   user,
   userRole,
 }: {
-  theme: Theme;
-  isRounded: boolean;
   user: User | null;
   userRole: UserRole;
 }) {
-  const roundedClass = isRounded ? "rounded-2xl" : "rounded-none";
-  const innerRoundedClass = isRounded ? "rounded-xl" : "rounded-none";
-  const isDark = theme === "dark";
+
+  const { theme, isRounded } = useTheme();
+
+  const roundedClass = isRounded ? "rounded-xl" : "rounded-none";
+  const innerRoundedClass = isRounded ? "rounded-md" : "rounded-none";
 
   const handleDelete = () => {
     if (
@@ -33,16 +31,19 @@ export default function AccountDeletion({
 
   return (
     <div
-      className={`backdrop-blur-xl p-4 border transition-all duration-300 ${roundedClass} ${isDark
-          ? "bg-red-950/20 border-red-500/20"
-          : "bg-red-50 border-red-200"
+      className={`w-full p-6 border transition-all duration-150 ${roundedClass} ${theme === "dark"
+          ? "bg-[rgba(255,255,255,0.02)] border-zinc-800"
+          : "bg-slate-50 border-slate-300"
         }`}
     >
       <button
         onClick={handleDelete}
-        className={`py-2.5 w-full font-mono text-xs tracking-wider uppercase transition-colors duration-300 flex items-center justify-center gap-2 ${innerRoundedClass} bg-red-700 hover:bg-red-800 text-white`}
+        className={`w-full py-2.5 font-['JetBrains_Mono'] text-xs font-bold tracking-wider uppercase transition-colors flex items-center justify-center gap-2 ${innerRoundedClass} ${theme === "dark"
+            ? "bg-zinc-950 text-red-400 border border-zinc-900 hover:bg-red-950/20 hover:border-red-900/50"
+            : "bg-white text-red-600 border border-slate-300 hover:bg-red-50 hover:border-red-200"
+          }`}
       >
-        <Trash2 className="w-4 h-4" />
+        <Trash2 className="w-3.5 h-3.5" />
         Account löschen
       </button>
     </div>
