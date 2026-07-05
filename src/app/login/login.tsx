@@ -9,7 +9,6 @@ import { useTheme } from "@/context/ThemeContext";
 
 const sanitizeInput = (input: string): string => {
   return input.trim().replace(/[<>]/g, "").substring(0, 255);
-  //  damit wird alle "< und >" entfernt damit sowas nicht möglich ist als input <script>...</script>
 };
 
 export default function LoginView() {
@@ -20,9 +19,16 @@ export default function LoginView() {
   const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
-  const { theme } = useTheme();
+  const { theme, isRounded } = useTheme();
 
-  const handleLogin = async () => {
+  const roundedClass = isRounded ? "rounded-xl" : "rounded-none";
+  const innerRoundedClass = isRounded ? "rounded-md" : "rounded-none";
+  const checkboxRoundedClass = isRounded ? "rounded" : "rounded-none";
+
+  const handleLogin = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (isLoading || !email || !password) return;
+    
     setErrorMsg("");
 
     const sanitizedEmail = sanitizeInput(email);
@@ -41,150 +47,148 @@ export default function LoginView() {
       await loginUser(value.email, value.password, rememberMe);
       router.push("/");
     } catch (err) {
-      setErrorMsg("Anmeldung fehlgeschlagen. Überprüfe deine Anmeldedaten.");
+      setErrorMsg("Anmeldung fehlgeschlagen. Überprüfe deine E-Mail und dein Passwort.");
       console.error(err);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value);
-  };
-
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value);
-  };
-
   return (
-    <div className="w-full space-y-6">
-      <div>
-        <h2
-          className={`text-3xl font-bold ml-[2px] mb-2 ${theme === "dark" ? "text-white" : "text-slate-900"}`}
+    <div className="w-full flex flex-col gap-6">
+      <div className="flex flex-col gap-1">
+        <span
+          className={`block font-mono text-[10px] font-bold tracking-widest uppercase ${
+            theme === "dark" ? "text-zinc-500" : "text-slate-400"
+          }`}
         >
-          Anmelden
+          Anmeldung 
+        </span>
+        <h2
+          className={`text-2xl font-sans font-bold tracking-tight ${
+            theme === "dark" ? "text-white" : "text-slate-900"
+          }`}
+        >
+          Willkommen zurück!
         </h2>
         <p
-          className={`ml-[2px] font-light ${theme === "dark" ? "text-gray-400" : "text-slate-600"}`}
+          className={`text-xs font-sans ${
+            theme === "dark" ? "text-zinc-500" : "text-slate-400"
+          }`}
         >
-          Willkommen zurück! Bitte melde dich an.
+          Bitte melde dich an, um auf deine Lernumgebung zuzugreifen.
         </p>
       </div>
 
-      <div className="space-y-4">
-        <div>
-          <label
-            className={`block text-sm ml-[2px] font-medium mb-2 ${theme === "dark" ? "text-gray-300" : "text-slate-700"}`}
-          >
-            E-Mail
+      <form onSubmit={handleLogin} className="flex flex-col gap-4 font-['JetBrains_Mono'] text-xs">
+        <div className="flex flex-col gap-1.5">
+          <label className={theme === "dark" ? "text-zinc-500" : "text-slate-400"}>
+            Deine E-Mail-Adresse
           </label>
-          <div className="relative">
+          <div className="relative flex items-center">
             <Mail
-              className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 ${theme === "dark" ? "text-gray-500" : "text-slate-400"}`}
+              className={`absolute left-3 w-4 h-4 pointer-events-none ${
+                theme === "dark" ? "text-zinc-600" : "text-slate-400"
+              }`}
             />
             <input
               type="email"
               value={email}
-              onChange={handleEmailChange}
-              placeholder="deine@email.com"
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="name@beispiel.de"
               maxLength={255}
-              className={`w-[98%] ml-[2px] pl-10 pr-4 py-3 border rounded-lg backdrop-blur-sm focus:outline-none transition ${theme === "dark"
-                  ? "border-white/10 bg-white/5 text-white placeholder-gray-600 focus:ring-2 focus:ring-white/30 focus:border-transparent"
-                  : "border-black/10 bg-black/5 text-slate-900 placeholder-slate-500 focus:ring-2 focus:ring-black/20 focus:border-transparent"
-                }`}
+              className={`w-full pl-9 pr-4 py-2 border transition-all duration-150 text-sm font-sans outline-none ${innerRoundedClass} ${
+                theme === "dark"
+                  ? "bg-zinc-950 border-zinc-800 text-white placeholder-zinc-700 focus:border-zinc-500"
+                  : "bg-slate-50 border-slate-200 text-slate-900 placeholder-slate-300 focus:border-slate-400"
+              }`}
             />
           </div>
         </div>
 
-        <div>
-          <label
-            className={`block text-sm font-medium mb-2 ${theme === "dark" ? "text-gray-300" : "text-slate-700"}`}
-          >
-            Passwort
+        <div className="flex flex-col gap-1.5">
+          <label className={theme === "dark" ? "text-zinc-500" : "text-slate-400"}>
+            Dein Passwort
           </label>
-          <div className="relative">
+          <div className="relative flex items-center">
             <Lock
-              className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 ${theme === "dark" ? "text-gray-500" : "text-slate-400"}`}
+              className={`absolute left-3 w-4 h-4 pointer-events-none ${
+                theme === "dark" ? "text-zinc-600" : "text-slate-400"
+              }`}
             />
             <input
               type="password"
               value={password}
-              onChange={handlePasswordChange}
+              onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
               maxLength={255}
-              className={`w-[98%] ml-[2px] pl-10 pr-4 py-3 border rounded-lg backdrop-blur-sm focus:outline-none transition ${theme === "dark"
-                  ? "border-white/10 bg-white/5 text-white placeholder-gray-600 focus:ring-2 focus:ring-white/30 focus:border-transparent"
-                  : "border-black/10 bg-black/5 text-slate-900 placeholder-slate-500 focus:ring-2 focus:ring-black/20 focus:border-transparent"
-                }`}
+              className={`w-full pl-9 pr-4 py-2 border transition-all duration-150 text-sm font-sans outline-none ${innerRoundedClass} ${
+                theme === "dark"
+                  ? "bg-zinc-950 border-zinc-800 text-white placeholder-zinc-700 focus:border-zinc-500"
+                  : "bg-slate-50 border-slate-200 text-slate-900 placeholder-slate-300 focus:border-slate-400"
+              }`}
             />
           </div>
         </div>
-      </div>
 
-      <div className="flex items-center ml-[2px]">
-        <label className="flex items-center gap-3 cursor-pointer select-none">
-          <input
-            type="checkbox"
-            checked={rememberMe}
-            onChange={(e) => setRememberMe(e.target.checked)}
-            className={`w-5 h-5 rounded border appearance-none transition-all duration-200 checked:bg-green-600 checked:border-green-600 focus:outline-none cursor-pointer relative
-              ${theme === "dark"
-                ? "border-white/20 bg-white/5 focus:ring-2 focus:ring-white/30"
-                : "border-black/20 bg-black/5 focus:ring-2 focus:ring-black/20"
-              }
-              before:content-['✓'] before:absolute before:text-white before:text-xs before:font-bold before:top-1/2 before:left-1/2 before:-translate-x-1/2 before:-translate-y-1/2 before:opacity-0 checked:before:opacity-100
-            `}
-          />
-          <span
-            className={`text-sm font-medium ${theme === "dark" ? "text-gray-300" : "text-slate-700"}`}
-          >
-            Angemeldet bleiben
-          </span>
-        </label>
-      </div>
-
-      {errorMsg && (
-        <div
-          className={`flex items-center gap-3 p-4 border rounded-lg animate-shake ${theme === "dark"
-              ? "bg-red-950/50 border-red-900/50"
-              : "bg-red-100/50 border-red-200"
-            }`}
-        >
-          <AlertCircle
-            className={`w-5 h-5 flex-shrink-0 ${theme === "dark" ? "text-red-400" : "text-red-600"}`}
-          />
-          <p
-            className={`text-sm ${theme === "dark" ? "text-red-300" : "text-red-700"}`}
-          >
-            {errorMsg}
-          </p>
+        <div className="flex items-center py-1">
+          <label className="flex items-center gap-2.5 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+              className={`w-4 h-4 border appearance-none transition-all duration-150 checked:bg-zinc-900 dark:checked:bg-zinc-100 focus:outline-none cursor-pointer relative ${checkboxRoundedClass} ${
+                theme === "dark"
+                  ? "border-zinc-800 bg-zinc-950 focus:border-zinc-500"
+                  : "border-slate-300 bg-slate-50 focus:border-slate-400"
+              } before:content-['✓'] before:absolute before:text-[10px] before:font-bold before:top-1/2 before:left-1/2 before:-translate-x-1/2 before:-translate-y-1/2 before:opacity-0 checked:before:opacity-100 ${
+                theme === "dark" ? "checked:before:text-zinc-950" : "checked:before:text-white"
+              }`}
+            />
+            <span
+              className={`text-xs font-sans font-medium ${
+                theme === "dark" ? "text-zinc-400" : "text-slate-600"
+              }`}
+            >
+              Angemeldet bleiben
+            </span>
+          </label>
         </div>
-      )}
 
-      <button
-        onClick={handleLogin}
-        onKeyDown={(e) => {
-          if (e.key == "Enter") {
-            handleLogin();
-          }
-        }}
-        disabled={isLoading || !email || !password}
-        className={`w-full py-3 font-semibold rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 ${theme === "dark"
-            ? "bg-white text-black hover:bg-gray-100"
-            : "bg-green-600 text-white hover:bg-green-700"
+        {errorMsg && (
+          <div
+            className={`flex items-start gap-2.5 p-3 text-xs border animate-shake ${innerRoundedClass} ${
+              theme === "dark"
+                ? "bg-rose-950/20 border-rose-900/60 text-rose-400"
+                : "bg-rose-50 border-rose-200 text-rose-800"
+            }`}
+          >
+            <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+            <p className="font-sans font-medium leading-relaxed">{errorMsg}</p>
+          </div>
+        )}
+
+        <button
+          type="submit"
+          disabled={isLoading || !email || !password}
+          className={`w-full py-2 px-4 font-sans font-bold text-xs transition-all duration-150 border uppercase tracking-wider disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98] mt-2 ${innerRoundedClass} ${
+            theme === "dark"
+              ? "bg-zinc-100 hover:bg-zinc-200 text-zinc-950 border-zinc-100"
+              : "bg-zinc-900 hover:bg-zinc-800 text-white border-zinc-900"
           }`}
-      >
-        {isLoading ? "Wird angemeldet..." : "Anmelden"}
-      </button>
+        >
+          {isLoading ? "Wird angemeldet..." : "Anmelden"}
+        </button>
+      </form>
 
       <style>{`
         @keyframes shake {
           0%, 100% { transform: translateX(0); }
-          25% { transform: translateX(-5px); }
-          75% { transform: translateX(5px); }
+          25% { transform: translateX(-4px); }
+          75% { transform: translateX(4px); }
         }
         .animate-shake {
-          animation: shake 0.4s ease-in-out;
+          animation: shake 0.3s ease-in-out;
         }
       `}</style>
     </div>

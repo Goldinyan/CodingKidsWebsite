@@ -19,7 +19,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (!user) return;
     try {
       await updateUser(user.uid, updates, user.uid, userRole);
-      setUserData((prev) => (prev ? { ...prev, ...updates } as UserData : null));
+      setUserData((prev) =>
+        prev ? ({ ...prev, ...updates } as UserData) : null,
+      );
 
       if (updates.role) {
         setUserRole(updates.role);
@@ -40,7 +42,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           const data = await getUserData(firebaseUser.uid);
           if (data) {
             setUserData(data);
-            setUserRole(data.role); 
+            setUserRole(data.role);
           }
         } else {
           setUserData(null);

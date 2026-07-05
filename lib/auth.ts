@@ -22,7 +22,10 @@ import {
   browserSessionPersistence,
 } from "firebase/auth";
 import type { User } from "firebase/auth";
+import { Timestamp } from "firebase/firestore";
 import { doc, getDoc, setDoc, updateDoc, arrayUnion } from "firebase/firestore";
+import { UserData } from "@/BackEnd/type";
+import { toJsDate } from "@/BackEnd/utils";
 
 export async function registerUser(
   email: string,
@@ -50,14 +53,29 @@ export async function registerUser(
     await updateProfile(user, {
       displayName: extraData.name,
     });
-    await setDoc(doc(db, "users", user.uid), {
-      email: user.email,
+
+    const userData: UserData = {
+      uid: user.uid,
+      email: user.email!,
       name: extraData.name,
-      birthdate: extraData.birthdate.toISOString(),
-      createdAt: new Date().toISOString(),
-      role: "N/A",
+      birthdate: Timestamp.fromDate(
+        toJsDate(extraData.birthdate.toISOString()),
+      ),
+      createdAt: Timestamp.fromDate(new Date()),
+      role: "user",
       courses: extraData.courses || [],
-    });
+      projects: [],
+      settings: {
+        theme: "light",
+        isRounded: true,
+        notifications: {
+          newEvent: true,
+          kicked: true,
+          queueToUser: true,
+        },
+      },
+    };
+    await setDoc(doc(db, "users", user.uid), { userData });
 
     return user;
   } catch (error) {

@@ -4,84 +4,97 @@ import LoginView from "./login";
 import RegisterView from "./register";
 import { useState } from "react";
 import { useTheme } from "@/context/ThemeContext";
-import { Link } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
   const [view, setView] = useState<"Login" | "SignUp">("Login");
-  const { theme } = useTheme();
+  const { theme, isRounded } = useTheme();
   const router = useRouter();
 
+  const roundedClass = isRounded ? "rounded-xl" : "rounded-none";
+  const innerRoundedClass = isRounded ? "rounded-md" : "rounded-none";
+
   return (
-    <div
-      className={`
-     ${view == "Login" ? "min-h-220" : "min-h-270"}  
-     w-full flex items-center justify-center relative main-view-container px-4`}
-    >
-      <div className="w-full max-w-md relative z-10">
+    <div className="w-full min-h-screen flex flex-col items-center justify-center p-4 relative z-10 select-none">
+      <div className="w-full max-w-md flex flex-col gap-6">
         <div
-          className={` ${theme == "dark" ? "bg-base-white/5 border-base-white/10" : "bg-black/5 border-black/10 "}
-w-full border backdrop-blur-sm p-8`}
+          className={`w-full border backdrop-blur-sm p-8 shadow-2xl transition-all duration-300 ${roundedClass} ${theme === "dark"
+              ? "bg-zinc-950 border-zinc-900 text-zinc-200"
+              : "bg-white border-slate-200 text-slate-900"
+            }`}
         >
           <div
-            className={`flex gap-2 mb-8 w-full border-b ${theme == "dark" ? "border-white/10" : "border-black/10"}`}
+            className={`flex gap-1 p-0.5 border mb-6 ${innerRoundedClass} ${theme === "dark"
+                ? "bg-zinc-900/40 border-zinc-900"
+                : "bg-slate-100 border-slate-200"
+              }`}
           >
             <button
               onClick={() => setView("Login")}
-              className={`flex-1 pb-4 font-semibold transition-all duration-300 ${view === "Login"
+              className={`flex-1 py-2 text-xs font-semibold transition-all duration-150 ${innerRoundedClass} ${view === "Login"
                   ? theme === "dark"
-                    ? "text-white border-b-2 border-white"
-                    : "text-slate-900 border-b-2 border-slate-900"
+                    ? "bg-zinc-800 text-white shadow-sm"
+                    : "bg-white text-slate-900 shadow-sm border border-slate-200/40"
                   : theme === "dark"
-                    ? "text-gray-500 hover:text-gray-400"
-                    : "text-slate-600 hover:text-slate-700"
+                    ? "text-zinc-500 hover:text-zinc-300"
+                    : "text-slate-400 hover:text-slate-700"
                 }`}
             >
               Anmelden
             </button>
             <button
               onClick={() => setView("SignUp")}
-              className={`flex-1 pb-4 font-semibold transition-all duration-300 ${view === "SignUp"
+              className={`flex-1 py-2 text-xs font-semibold transition-all duration-150 ${innerRoundedClass} ${view === "SignUp"
                   ? theme === "dark"
-                    ? "text-white border-b-2 border-white"
-                    : "text-slate-900 border-b-2 border-slate-900"
+                    ? "bg-zinc-800 text-white shadow-sm"
+                    : "bg-white text-slate-900 shadow-sm border border-slate-200/40"
                   : theme === "dark"
-                    ? "text-gray-500 hover:text-gray-400"
-                    : "text-slate-600 hover:text-slate-700"
+                    ? "text-zinc-500 hover:text-zinc-300"
+                    : "text-slate-400 hover:text-slate-700"
                 }`}
             >
               Registrieren
             </button>
           </div>
 
-          <div className="relative overflow-hidden min-h-[400px]">
-            <div
-              className={`transition-all duration-500 ease-in-out transform ${view === "Login"
-                  ? "opacity-100 translate-x-0"
-                  : "absolute opacity-0 translate-x-full pointer-events-none"
-                }`}
-            >
-              <LoginView />
-            </div>
-            <div
-              className={`transition-all duration-500 ease-in-out transform ${view === "SignUp"
-                  ? "opacity-100 translate-x-0"
-                  : "absolute opacity-0 -translate-x-full pointer-events-none"
-                }`}
-            >
-              <RegisterView />
+          <div className="relative overflow-hidden transition-all duration-300">
+            <div className="flex w-full min-h-[380px] relative">
+              <div
+                className={`w-full transition-all duration-300 ease-in-out transform flex-shrink-0 ${view === "Login"
+                    ? "opacity-100 translate-x-0 static"
+                    : "opacity-0 -translate-x-full absolute pointer-events-none"
+                  }`}
+              >
+                <LoginView />
+              </div>
+
+              {/* Register View */}
+              <div
+                className={`w-full transition-all duration-300 ease-in-out transform flex-shrink-0 ${view === "SignUp"
+                    ? "opacity-100 translate-x-0 static"
+                    : "opacity-0 translate-x-full absolute pointer-events-none"
+                  }`}
+              >
+                <RegisterView />
+              </div>
             </div>
           </div>
 
           <div
-            className={`mt-8 pt-6 border-t ${theme == "dark" ? "border-white/10 text-gray-400" : "border-black/10 text-slate-600"} text-center text-sm animate-fade-in`}
+            className={`mt-6 pt-5 border-t text-center text-xs transition-colors duration-300 ${theme === "dark"
+                ? "border-zinc-900 text-zinc-500"
+                : "border-slate-100 text-slate-400"
+              }`}
           >
             {view === "Login" ? (
               <p>
                 Noch kein Konto?{" "}
                 <button
                   onClick={() => setView("SignUp")}
-                  className={`font-semibold transition-colors ${theme == "dark" ? "text-white hover:text-gray-300" : "text-slate-900 hover:text-slate-700"}`}
+                  className={`font-semibold underline underline-offset-4 transition-colors ${theme === "dark"
+                      ? "text-zinc-300 hover:text-white"
+                      : "text-slate-900 hover:text-slate-700"
+                    }`}
                 >
                   Jetzt registrieren
                 </button>
@@ -91,7 +104,10 @@ w-full border backdrop-blur-sm p-8`}
                 Bereits registriert?{" "}
                 <button
                   onClick={() => setView("Login")}
-                  className={`font-semibold transition-colors ${theme == "dark" ? "text-white hover:text-gray-300" : "text-slate-900 hover:text-slate-700"}`}
+                  className={`font-semibold underline underline-offset-4 transition-colors ${theme === "dark"
+                      ? "text-zinc-300 hover:text-white"
+                      : "text-slate-900 hover:text-slate-700"
+                    }`}
                 >
                   Hier anmelden
                 </button>
@@ -101,28 +117,14 @@ w-full border backdrop-blur-sm p-8`}
         </div>
 
         <div
-          className={`mt-8 text-center text-sm ${theme == "dark" ? "text-gray-500" : "text-slate-600"}`}
+          className={`flex flex-col items-center gap-2 text-center text-[11px] font-sans transition-colors ${theme === "dark" ? "text-zinc-600" : "text-slate-400"
+            }`}
         >
-          <p>
-            Mit deiner Anmeldung akzeptierst du unsere Datenschutzbestimmungen
+          <p className="max-w-[320px] leading-normal">
+            Mit deiner Anmeldung akzeptierst du unsere Datenschutzbestimmungen.
           </p>
-          <div>
-            <p onClick={() => router.push("http://localhost:3000/impressum")}>
-              Imressum
-            </p>
-          </div>
         </div>
       </div>
-
-      <style>{`
-       @keyframes fadeIn {
-         from { opacity: 0; }
-         to { opacity: 1; }
-       }
-       .animate-fade-in {
-         animation: fadeIn 0.5s ease-in-out;
-       }
-     `}</style>
     </div>
   );
 }

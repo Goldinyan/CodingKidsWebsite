@@ -38,7 +38,6 @@ export default function AccountActions({
           : "bg-slate-50 border-slate-300"
         }`}
     >
-      {/* Session Management */}
       <div className="flex flex-col gap-2">
         {/*<span
           className={`block font-['JetBrains_Mono'] text-[10px] font-bold tracking-widest uppercase ${theme === "dark" ? "text-zinc-500" : "text-slate-400"
