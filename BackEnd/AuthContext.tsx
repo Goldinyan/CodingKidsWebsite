@@ -6,6 +6,7 @@ import { auth } from "@/lib/firebase";
 import type { AuthContextType } from "@/BackEnd/type";
 import { getUserData, updateUser } from "@/lib/db/users";
 import { UserData, UserRole } from "@/BackEnd/type";
+import { logOutUser } from "@/lib/auth";
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
@@ -40,6 +41,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       try {
         if (firebaseUser) {
           const data = await getUserData(firebaseUser.uid);
+          console.log("Geladene Userdaten:", data);
           if (data) {
             setUserData(data);
             setUserRole(data.role);

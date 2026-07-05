@@ -17,6 +17,8 @@ import { EventData, EventStatus, type Log } from "@/BackEnd/type";
 import type { UserRole } from "@/BackEnd/type";
 import { enforceRateLimit } from "./db";
 import { getAllCourses, updateCourse } from "./courses";
+import { sendTriggerEmailToMultipleUsers } from "./emailTriggers";
+import { getAllUsers } from ".";
 
 async function getUserData(userId: string) {
   try {
@@ -111,6 +113,17 @@ export async function addEvent(
       const updatedDates = [...course.dates, Id];
       await updateCourse(course.uid, { dates: updatedDates }, userId, userRole);
     }
+
+    const allUsers = await getAllUsers(userId, userRole);
+    allUsers.filter((user) => user.settings.notifications.newEvent);
+
+    sendTriggerEmailToMultipleUsers("newEvent", allUsers, {
+      eventName: newEvent.name,
+      eventDate: date.toISOString(),
+      difficulty: newEvent.difficulty,
+      description: newEvent.description,
+    });
+
   } catch (error) {
     console.error("Error adding event:", error);
     throw error;
@@ -318,8 +331,8 @@ export async function isUserInEvent(
       return EventStatus.Queue;
     }
 
-    if(currentStaff.includes(userId)) {
-      return EventStatus.User; // Staff members are considered as users in the event 
+    if (currentStaff.includes(userId)) {
+      return EventStatus.User; // Staff members are considered as users in the event
     }
 
     return EventStatus.NotRegistered;

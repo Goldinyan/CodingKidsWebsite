@@ -28,6 +28,23 @@ export type UserRole = (typeof USER_ROLES_ARRAY)[number];
 
 export type Preset = "false" | "ascending" | "descending";
 
+export type EmailTrigger =
+  | "newEvent"
+  | "kicked"
+  | "queueToUser"
+  | "understaffedWarning"
+  | "announcement"
+  | "accountCreated"
+  | "accountDeleted";
+
+export type EmailTemplate = {
+  triggerId: EmailTrigger;
+  subject: string;
+  htmlContent: string;
+  roles: UserRole[];
+  requiredFields: string[];
+};
+
 export const LOG_TYPES = [
   "userLeftQueue",
   "userJoinedQueue",
