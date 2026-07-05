@@ -115,7 +115,7 @@ export default function NotificationSettings({
       setLocalSettings(newSettings as typeof localSettings);
 
       await updateProfile({
-        settings: newSettings as Partial<UserData>,
+        settings: newSettings as any,
       });
     } catch (error) {
       console.error("Error updating notifications:", error);

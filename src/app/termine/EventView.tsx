@@ -97,7 +97,6 @@ export default function EventView() {
           </div>
         )}
 
-        {/* Event list */}
         <div className="flex flex-col gap-3">
           <AnimatePresence mode="popLayout">
             {filteredUpcomingEvents.length === 0 ? (
@@ -151,7 +150,6 @@ export default function EventView() {
           </AnimatePresence>
         </div>
 
-        {/* Past events section */}
         {pastEvents.length > 0 && filteredUpcomingEvents.length > 0 && (
           <div className="w-full mt-12">
             <h2
@@ -166,6 +164,7 @@ export default function EventView() {
                   <EventCard
                     key={event.uid}
                     event={event}
+                    course={courses.find((c) => c.uid === event.course)!}
                     isPast={true}
                     status={statuses[event.uid]}
                     tooEarly={false}

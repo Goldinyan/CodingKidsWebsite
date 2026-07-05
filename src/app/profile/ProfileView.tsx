@@ -6,11 +6,8 @@ import AccountDetails from "./components/AccountDetails";
 import { useTheme } from "@/context/ThemeContext";
 import UIConfig from "./components/UIConfig";
 import NotificationSettings from "./components/NotificationSettings";
-import AccountDeletion from "./components/AccountDeletion";
 import ProfileHeader from "./components/ProfileHeader";
 import { notFound } from "next/navigation";
-import AvatarView from "./components/AvatarView";
-import LogOut from "./components/LogOut";
 import SecurityButton from "./components/SecurityButton";
 import SecurityDialog from "./components/SecurityDialog";
 import ProjectOverview from "./components/ProjectOverview";
@@ -20,7 +17,7 @@ export default function ProfileView() {
   const [showSecurityDialog, setShowSecurityDialog] = useState<boolean>(false);
 
   const { user, userData, userRole, updateProfile, loading } = useAuth();
-  const { theme, isRounded, toggleTheme, toggleRounded } = useTheme();
+  const { theme, isRounded } = useTheme();
 
   if (loading) {
     return (
