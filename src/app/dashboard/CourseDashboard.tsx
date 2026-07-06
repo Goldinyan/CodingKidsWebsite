@@ -24,7 +24,13 @@ import {
 export default function CourseDashboard() {
   const { user, userRole } = useAuth();
   const { toast } = useToast();
-  const { showErrorToast, showUpdateError } = useNotificationToast();
+  const {
+    showUpdateSuccess,
+    showCreateSuccess,
+    showErrorToast,
+    showUpdateError,
+    showDeleteSuccess,
+  } = useNotificationToast();
   const { theme, isRounded } = useTheme();
 
   const [searchBar, setSearchBar] = useState<string>("");
@@ -109,16 +115,12 @@ export default function CourseDashboard() {
       setTagInput("");
       setIsAddingCourse(false);
 
-      toast({
-        title: "Erfolg",
-        description: "Kurs erfolgreich erstellt",
+      showCreateSuccess({
+        title: "Kurs erfolgreich erstellt",
+        description: `Der Kurs "${courseToAdd.name}" wurde erfolgreich erstellt.`,
       });
     } catch (error) {
       showErrorToast(error);
-      toast({
-        title: "Fehler",
-        description: "Kurs konnte nicht erstellt werden",
-      });
     }
   };
 
@@ -137,16 +139,12 @@ export default function CourseDashboard() {
       setEditingId(null);
       setEditValues({});
 
-      toast({
-        title: "Erfolg",
-        description: "Kurs erfolgreich aktualisiert",
+      showUpdateSuccess({
+        title: "Kurs erfolgreich aktualisiert",
+        description: `Die Änderungen am Kurs "${editValues.name || courseId}" wurden erfolgreich übernommen.`,
       });
     } catch (error) {
       showErrorToast(error);
-      toast({
-        title: "Fehler",
-        description: "Kurs konnte nicht aktualisiert werden",
-      });
     }
   };
 
@@ -162,16 +160,12 @@ export default function CourseDashboard() {
 
       setDeleteConfirm({ isOpen: false, courseId: null, courseName: null });
 
-      toast({
-        title: "Erfolg",
-        description: "Kurs erfolgreich gelöscht",
+      showDeleteSuccess({
+        title: "Kurs erfolgreich gelöscht",
+        description: `Der Kurs "${deleteConfirm.courseName}" wurde erfolgreich gelöscht.`,
       });
     } catch (error) {
       showErrorToast(error);
-      toast({
-        title: "Fehler",
-        description: "Kurs konnte nicht gelöscht werden",
-      });
     }
   };
 
@@ -215,16 +209,12 @@ export default function CourseDashboard() {
       setAssigningMentorsId(null);
       setSelectedMentorIds([]);
 
-      toast({
-        title: "Erfolg",
-        description: "Mentoren erfolgreich zugewiesen",
+      showUpdateSuccess({
+        title: "Mentoren erfolgreich zugewiesen",
+        description: `Die Mentoren für den Kurs "${coursesData.find((c) => c.uid === assigningMentorsId)?.name}" wurden erfolgreich aktualisiert.`,
       });
     } catch (error) {
       showErrorToast(error);
-      toast({
-        title: "Fehler",
-        description: "Mentoren konnten nicht zugewiesen werden",
-      });
     }
   };
 

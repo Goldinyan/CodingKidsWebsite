@@ -8,6 +8,7 @@ import { StepsHeader } from "./gifting/components/StepsHeader";
 import { DifferentGifts } from "./gifting/components/DifferentGifts";
 import { Customize } from "./gifting/components/Customize";
 import { Summary } from "./gifting/components/Summary";
+import { useNotificationToast } from "@/hooks/useNotificationToast";
 
 export default function GiftingMainView() {
   const { userRole } = useAuth();
@@ -21,14 +22,16 @@ export default function GiftingMainView() {
     message: "",
   });
 
+  const {  showMaintenanceInfo } = useNotificationToast();
+
   useEffect(() => {
     if (userRole !== "admin") {
-      toast({
+      showMaintenanceInfo({
         title: "In Arbeit",
         description: "Diese Seite befindet sich noch in der Entwicklung.",
       });
     }
-  }, [userRole]);
+  }, [userRole, showMaintenanceInfo]);
 
   const steps: { text: string; number: number }[] = [
     {
@@ -61,12 +64,27 @@ export default function GiftingMainView() {
         <div className=" pt-8 flex gap-5 md:flex-row flex-col ">
           <div className="w-110 md:w-120 lg:w-180 ">
             <div className="flex flex-col gap-5">
-              <DifferentGifts value={donation} updateStep={setStep} updateValue={setDonation} step={step} />
-              <Customize value={donation} updateStep={setStep} updateValue={setDonation} step={step} />
+              <DifferentGifts
+                value={donation}
+                updateStep={setStep}
+                updateValue={setDonation}
+                step={step}
+              />
+              <Customize
+                value={donation}
+                updateStep={setStep}
+                updateValue={setDonation}
+                step={step}
+              />
             </div>
           </div>
           <div className="w-110 md:w-60">
-            <Summary value={donation} updateStep={setStep} updateValue={setDonation} step={step} />
+            <Summary
+              value={donation}
+              updateStep={setStep}
+              updateValue={setDonation}
+              step={step}
+            />
           </div>
         </div>
       </div>

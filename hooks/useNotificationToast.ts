@@ -48,6 +48,10 @@ const SUCCESS_MESSAGES = {
     title: "Erfolgreich aktualisiert",
     description: "Die Änderungen wurden sauber übernommen.",
   },
+  CREATE_SUCCESS: {
+    title: "Erfolgreich erstellt",
+    description: "Das Element wurde erfolgreich erstellt.",
+  },
   GENERIC_SUCCESS: {
     title: "Aktion erfolgreich",
     description: "Der Vorgang wurde erfolgreich abgeschlossen.",
@@ -167,6 +171,8 @@ export function useNotificationToast() {
       showErrorToast(null, "UPDATE_ERROR", customConfig),
 
     // Success Shortcuts
+    showCreateSuccess: (customConfig?: ToastConfig) =>
+      showSuccessToast("CREATE_SUCCESS", customConfig),
     showSaveSuccess: (customConfig?: ToastConfig) =>
       showSuccessToast("SAVE_SUCCESS", customConfig),
     showDeleteSuccess: (customConfig?: ToastConfig) =>

@@ -27,7 +27,11 @@ import {
 export default function EventDashboard() {
   const { user, userRole, loading } = useAuth();
   const { toast } = useToast();
-  const { showErrorToast, showDeleteError, showUpdateError } = useNotificationToast();
+  const {
+    showErrorToast,
+    showDeleteSuccess,
+    showUpdateSuccess
+  } = useNotificationToast();
   const { theme, isRounded } = useTheme();
 
   const [deleteConfirmModal, setDeleteConfirmModal] = useState<{
@@ -136,14 +140,13 @@ export default function EventDashboard() {
       await deleteEvent(eventId, user?.uid || "anonymous", userRole);
       setDeleteConfirmModal({ isOpen: false, eventId: null, eventName: null });
 
-      toast({
-        title: "EVENT_GELOESCHT",
-        description: `"${eventName}" wurde erfolgreich gelöscht.`,
+      showDeleteSuccess({
+        title: "Event erfolgreich gelöscht",
+        description: `Das Event "${eventName}" wurde erfolgreich gelöscht.`,
       });
-
       await refresh();
     } catch (error) {
-      showDeleteError();
+      showErrorToast(error);
     }
   };
 
@@ -155,14 +158,13 @@ export default function EventDashboard() {
       await updateEvent(uid, updated, user?.uid || "anonymous", userRole);
       setEditStates((prev) => ({ ...prev, [uid]: false }));
 
-      toast({
-        title: "EVENT_AKTUALISIERT",
-        description: "Die Änderungen wurden erfolgreich gespeichert.",
+      showUpdateSuccess({
+        title: "Event erfolgreich aktualisiert",
+        description: `Die Änderungen am Event "${updated.name}" wurden erfolgreich gespeichert.`,
       });
-
       await refresh();
     } catch (error) {
-      showUpdateError();
+      showErrorToast(error);
     }
   };
 
