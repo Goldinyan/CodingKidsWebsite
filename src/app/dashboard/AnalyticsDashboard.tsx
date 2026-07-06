@@ -5,7 +5,7 @@ import { useTheme } from "@/context/ThemeContext";
 import { TrendingUp, Users, Calendar, BookOpen } from "lucide-react";
 import { collection, getDocs, query, orderBy, limit } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { useErrorToast } from "@/hooks/useErrorToast";
+import { useNotificationToast } from "@/hooks/useNotificationToast";
 
 interface AnalyticsData {
   totalUsers: number;
@@ -18,7 +18,7 @@ interface AnalyticsData {
 
 export default function AnalyticsDashboard() {
   const { theme, isRounded } = useTheme();
-  const { showErrorToast } = useErrorToast();
+  const { showErrorToast } = useNotificationToast();
   const [loading, setLoading] = useState(true);
   const [analytics, setAnalytics] = useState<AnalyticsData>({
     totalUsers: 0,

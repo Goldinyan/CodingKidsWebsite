@@ -15,8 +15,8 @@ import {
 import { CourseData, type EventData, type UserData } from "@/BackEnd/type";
 import EventCreationDialog from "./components/EventCreationDialog";
 import { useToast } from "@/components/ui/use-toast";
-import { useErrorToast } from "@/hooks/useErrorToast";
 import type { EventTimeFilter } from "./events/constants";
+import { useNotificationToast } from "@/hooks/useNotificationToast";
 import { DeleteEventDialog, EventCard } from "./events/components";
 import {
   useEventUsersMap,
@@ -27,7 +27,7 @@ import {
 export default function EventDashboard() {
   const { user, userRole, loading } = useAuth();
   const { toast } = useToast();
-  const { showErrorToast, showDeleteError, showUpdateError } = useErrorToast();
+  const { showErrorToast, showDeleteError, showUpdateError } = useNotificationToast();
   const { theme, isRounded } = useTheme();
 
   const [deleteConfirmModal, setDeleteConfirmModal] = useState<{

@@ -17,7 +17,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
-import { useErrorToast } from "@/hooks/useErrorToast";
+import { useNotificationToast } from "@/hooks/useNotificationToast";
 
 const defaultEvent: EventData = {
   name: "",
@@ -58,7 +58,7 @@ export default function EventCreationDialog(props: {
   const { user, userRole } = useAuth();
   const { open, onOpenChange, onCreated, courses, events } = props;
   const { theme, isRounded } = useTheme();
-  const { showErrorToast } = useErrorToast();
+  const { showErrorToast } = useNotificationToast();
 
   const [currentStep, setCurrentStep] = useState(0);
   const [EventInfo, setEventInfo] = useState<EventData>(defaultEvent);

@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 import { toJsDate } from "@/BackEnd/utils";
 import { Theme } from "@/context/ThemeContext";
-import { useErrorToast } from "@/hooks/useErrorToast";
+import { useNotificationToast } from "@/hooks/useNotificationToast";
 
 function formatDate(date: Date): string {
   const options: Intl.DateTimeFormatOptions = {
@@ -167,7 +167,7 @@ export default function EventCard(props: {
 
   const [expanded, setExpanded] = useState(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const { showErrorToast, showUpdateError } = useErrorToast();
+  const { showErrorToast, showUpdateError } = useNotificationToast();
 
   const isInEvent = status === EventStatus.User || status === EventStatus.Queue;
   const eventDate = useMemo(() => toJsDate(event.date), [event.date]);

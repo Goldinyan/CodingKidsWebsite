@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 import { useTheme } from "@/context/ThemeContext";
 import SectionLabel from "./components/SectionLabel";
 import SectionHeading from "./components/SectionHeading";
-import { useErrorToast } from "@/hooks/useErrorToast";
+import { useNotificationToast } from "@/hooks/useNotificationToast";
 import { toJsDate } from "@/BackEnd/utils";
 
 export default function FeaturedCoursesView() {
@@ -18,7 +18,7 @@ export default function FeaturedCoursesView() {
   const [courses, setCourses] = useState<CourseData[]>([]);
   const { theme, isRounded } = useTheme();
   const isDark = theme === "dark";
-  const { showErrorToast } = useErrorToast();
+  const { showErrorToast } = useNotificationToast();
 
   const router = useRouter();
 

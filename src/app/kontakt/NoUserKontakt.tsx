@@ -5,7 +5,7 @@ import { Mail, Phone, MapPin, ArrowRight } from "lucide-react";
 import { sendEmailToSupport } from "@/BackEnd/email";
 import { useState } from "react";
 import { Theme, useTheme } from "@/context/ThemeContext";
-import { useErrorToast } from "@/hooks/useErrorToast";
+import { useNotificationToast } from "@/hooks/useNotificationToast";
 
 type EmailProps = {
   name: string;
@@ -35,7 +35,7 @@ export default function NoUserKontakt() {
   });
 
   const { theme, isRounded } = useTheme();
-  const { showErrorToast } = useErrorToast();
+  const { showErrorToast } = useNotificationToast();
 
   const [errors, setErrors] = useState<{
     name?: boolean;

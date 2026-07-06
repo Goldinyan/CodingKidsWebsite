@@ -13,7 +13,7 @@ import SectionLabel from "./components/SectionLabel";
 import SectionHeading from "./components/SectionHeading";
 import GlassCard from "./components/GlassCard";
 import { useToast } from "@/components/ui/use-toast";
-import { useErrorToast } from "@/hooks/useErrorToast";
+import { useNotificationToast } from "@/hooks/useNotificationToast";
 import { toastVariants } from "@/components/ui/toast";
 
 const fmtMonth = (date: any) => {
@@ -46,7 +46,7 @@ export default function FeaturedEventsView() {
   const isDark = theme === "dark";
   const { user, userData, userRole, loading } = useAuth();
   const router = useRouter();
-  const { showErrorToast } = useErrorToast();
+  const { showErrorToast } = useNotificationToast();
 
   const hasFetched = useRef<string | null>(null);
 

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useTheme } from "@/context/ThemeContext";
 import { UserData } from "@/BackEnd/type";
-import { useErrorToast } from "@/hooks/useErrorToast";
+import { useNotificationToast } from "@/hooks/useNotificationToast";
 
 import {
   Bell,
@@ -87,7 +87,7 @@ export default function NotificationSettings({
   className = "",
 }: NotificationSettingsProps) {
   const { theme, isRounded } = useTheme();
-  const { showErrorToast } = useErrorToast();
+  const { showErrorToast } = useNotificationToast();
 
   const roundedClass = isRounded ? "rounded-xl" : "rounded-none";
   const innerRoundedClass = isRounded ? "rounded-md" : "rounded-none";

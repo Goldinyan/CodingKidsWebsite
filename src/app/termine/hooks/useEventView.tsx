@@ -1,7 +1,7 @@
 // hooks/useEventView.ts
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/BackEnd/AuthContext";
-import { useErrorToast } from "@/hooks/useErrorToast";
+import { useNotificationToast } from "@/hooks/useNotificationToast";
 import {
   getAllEvents,
   getAllCourses,
@@ -11,11 +11,10 @@ import {
 } from "@/lib/db";
 import { Timestamp } from "firebase/firestore";
 import { EventData, CourseData, EventStatus } from "@/BackEnd/type";
-import { ErrorToastConfig } from "@/hooks/useErrorToast";
 
 export function useEventView() {
   const { user, userRole, userData, loading } = useAuth();
-  const { showErrorToast } = useErrorToast();
+  const { showErrorToast } = useNotificationToast();
   const [upcomingEvents, setUpcomingEvents] = useState<EventData[]>([]);
   const [filteredUpcomingEvents, setFilteredUpcomingEvents] = useState<
     EventData[]
@@ -165,7 +164,7 @@ export function useEventView() {
   const handleEvents = async (
     eventId: string,
     action: "join" | "leave",
-    toast: (customConfig?: ErrorToastConfig) => void,
+    toast: (customConfig?: any) => void,
   ) => {
     if (!user) {
       toast({

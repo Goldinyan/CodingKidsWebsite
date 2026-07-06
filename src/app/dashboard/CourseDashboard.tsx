@@ -8,7 +8,7 @@ import { useAuth } from "@/BackEnd/AuthContext";
 import { addCourse, deleteCourse, updateCourse } from "@/lib/db/courses";
 import type { CourseData } from "@/BackEnd/type";
 import { useToast } from "@/components/ui/use-toast";
-import { useErrorToast } from "@/hooks/useErrorToast";
+import { useNotificationToast } from "@/hooks/useNotificationToast";
 import {
   useCoursesData,
   useFilteredCourses,
@@ -24,7 +24,7 @@ import {
 export default function CourseDashboard() {
   const { user, userRole } = useAuth();
   const { toast } = useToast();
-  const { showErrorToast } = useErrorToast();
+  const { showErrorToast, showUpdateError } = useNotificationToast();
   const { theme, isRounded } = useTheme();
 
   const [searchBar, setSearchBar] = useState<string>("");
@@ -36,8 +36,6 @@ export default function CourseDashboard() {
     null,
   );
   const [selectedMentorIds, setSelectedMentorIds] = useState<string[]>([]);
-
-  const { showUpdateError } = useErrorToast();
 
   const [deleteConfirm, setDeleteConfirm] = useState<{
     isOpen: boolean;
@@ -111,7 +109,6 @@ export default function CourseDashboard() {
       setTagInput("");
       setIsAddingCourse(false);
 
-      
       toast({
         title: "Erfolg",
         description: "Kurs erfolgreich erstellt",

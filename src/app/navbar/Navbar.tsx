@@ -17,7 +17,7 @@ import {
 import NavbarMobile from "./NavbarMobile";
 import { getAllAnnouncements } from "@/lib/db";
 import { useTheme, Theme } from "@/context/ThemeContext";
-import { useErrorToast } from "@/hooks/useErrorToast";
+import { useNotificationToast } from "@/hooks/useNotificationToast";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
@@ -25,7 +25,7 @@ export default function Navbar() {
   const [unreadMessages, setUnreadMessages] = useState(0);
   const router = useRouter();
   const { theme, isRounded } = useTheme();
-  const { showErrorToast } = useErrorToast();
+  const { showErrorToast } = useNotificationToast();
 
   const hasFetched = useRef<string | null>(null);
 
