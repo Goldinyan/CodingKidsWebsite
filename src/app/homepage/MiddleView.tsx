@@ -77,8 +77,8 @@ export default function MiddleView() {
           >
             <GlassCard
               className={`p-6 cursor-pointer h-full transition-all duration-300 group ${isDark
-                ? "hover:!border-[var(--hover-border)] hover:!bg-[var(--hover-bg)]"
-                : "hover:!border-[var(--hover-border)] hover:bg-slate-50"
+                  ? "hover:!border-[var(--hover-border)] hover:!bg-[var(--hover-bg)]"
+                  : "hover:!border-[var(--hover-border)] hover:bg-slate-50"
                 }`}
               style={{
                 // @ts-expect-error: CSS-Variablen sind dynamisch und werden hier gesetzt
@@ -156,7 +156,6 @@ export default function MiddleView() {
           </p>
         </div>
       </GlassCard>
-      {/* wann und wo*/}
       <section className="py-14 w-full">
         <div className="mb-8 w-full">
           <SectionLabel>Wann & Wo</SectionLabel>
@@ -164,52 +163,70 @@ export default function MiddleView() {
         </div>
 
         <div className="grid w-full grid-cols-1 xl:grid-cols-5 gap-4">
-          <GlassCard className="xl:col-span-3 flex flex-col lg:flex-row w-full justify-between p-6 hover:!border-purple-400/40 ">
-            <div className="flex flex-col min-w-80 items-start gap-4 mb-6">
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-purple-500/15 border border-purple-500/25">
-                <MapPin className="w-5 h-5 text-purple-400" />
-              </div>
-              <div>
-                <div className={`font-bold font-gro ${isDark ? "text-white" : "text-slate-900"} mb-0.5`}>
-                  CUBES Wesel
+          {/* LINKEN CARD: STANDORT & ANFAHRT */}
+          <GlassCard className="xl:col-span-3 flex flex-col justify-between p-6 hover:!border-purple-400/40">
+            <div className="flex flex-col w-full gap-6">
+              {/* Header: Icon + Adresse */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-white/5 dark:border-white/5">
+                <div className="flex items-start gap-4">
+                  <div
+                    className={`w-10 h-10 flex items-center justify-center shrink-0 bg-purple-500/15 border border-purple-500/25 ${isRounded ? "rounded-xl" : "rounded-none"}`}
+                  >
+                    <MapPin className="w-5 h-5 text-purple-400" />
+                  </div>
+                  <div>
+                    <div
+                      className={`font-bold font-gro ${isDark ? "text-white" : "text-slate-900"} mb-0.5`}
+                    >
+                      CUBES Wesel
+                    </div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">
+                      Rudolf-Diesel-Straße 115, 46485 Wesel
+                    </div>
+                    <div className="text-xs mt-1 text-gray-400 font-mono">
+                      Erster Konferenzraum links im EG · barrierefrei
+                    </div>
+                  </div>
                 </div>
-                <div className="text-sm text-gray-500">
-                  Rudolf-Diesel-Straße 115, 46485 Wesel
-                </div>
-                <div className="text-sm mt-0.5 text-gray-500">
-                  Erster Konferenzraum links im EG · barrierefrei
-                </div>
+
+                <a
+                  href="https://maps.google.com/?q=Rudolf-Diesel-Straße+115+46485+Wesel"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-wider py-2 px-3 border border-purple-500/30 transition-colors bg-purple-500/5 text-purple-400 hover:bg-purple-500/10 ${isRounded ? "rounded-lg" : "rounded-none"}`}
+                >
+                  Karten <ExternalLink className="w-3.5 h-3.5" />
+                </a>
               </div>
 
-              <a
-                href="https://maps.google.com/?q=Rudolf-Diesel-Straße+115+46485+Wesel"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-sm no-underline transition-colors text-purple-400 hover:text-purple-300"
-              >
-                In Google Maps öffnen <ExternalLink className="w-3.5 h-3.5" />
-              </a>
-            </div>
-
-            <div className={`rounded-xl p-4 mb-6 border ${isDark ? "bg-white/5 border-white/10" : "bg-slate-100 border-slate-200"}`}>
-              <p className="text-[10px] font-mono uppercase tracking-widest mb-2 text-gray-500">
-                Anfahrt
-              </p>
-              <p className={`text-sm leading-relaxed ${isDark ? "text-gray-400" : "text-slate-600"}`}>
-                B58 aus Schermbeck kommend Richtung Wesel → bei Polster Aktuell
-                rechts → gegenüber BlueCraft GmbH links (Schilder "LASE").
-                Parkplatz am Ende der Straße rechts. Links neben GUSTO Cubes
-                befindet sich der Eingang.
-              </p>
+              {/* Anfahrt: Volle Breite unter der Adresse */}
+              <div className="flex flex-col gap-1.5">
+                <p className="text-[10px] font-mono uppercase tracking-widest text-purple-400/80">
+                  Anfahrt & Parken
+                </p>
+                <p
+                  className={`text-sm leading-relaxed ${isDark ? "text-gray-400" : "text-slate-600"}`}
+                >
+                  B58 aus Schermbeck kommend Richtung Wesel{" "}
+                  <span className="text-purple-400">→</span> bei Polster Aktuell
+                  rechts <span className="text-purple-400">→</span> gegenüber
+                  BlueCraft GmbH links (Schilder "LASE"). Der Parkplatz befindet
+                  sich am Ende der Straße auf der rechten Seite. Links neben
+                  GUSTO Cubes ist der Haupteingang.
+                </p>
+              </div>
             </div>
           </GlassCard>
 
-          <GlassCard className="w-full xl:col-span-2 p-6 flex flex-col gap-5 hover:!border-purple-400/40 ">
+          {/* RECHTE CARD: TERMIN */}
+          <GlassCard className="w-full xl:col-span-2 p-6 flex flex-col gap-5 hover:!border-purple-400/40">
             <div>
               <div className="text-[10px] uppercase font-mono tracking-widest mb-1 text-gray-500">
                 Termin
               </div>
-              <div className={`text-2xl font-black font-gro ${isDark ? "text-white" : "text-slate-900"} leading-none`}>
+              <div
+                className={`text-2xl font-black font-gro ${isDark ? "text-white" : "text-slate-900"} leading-none`}
+              >
                 Jeden Mittwoch
               </div>
               <div className="text-xl font-bold font-gro mt-1 text-purple-400">
@@ -234,13 +251,13 @@ export default function MiddleView() {
 
             <button
               onClick={() => router.push("/termine")}
-              className="mt-auto w-full font-gro flex items-center justify-center gap-2 px-4 py-2 rounded-xl font-bold text-[14px] no-underline transition-colors bg-purple-500 hover:bg-purple-400 text-black"
+              className={`mt-auto w-full font-gro flex items-center justify-center gap-2 px-4 py-2 font-bold text-[14px] transition-colors bg-purple-500 hover:bg-purple-400 text-black ${isRounded ? "rounded-xl" : "rounded-none"}`}
             >
               Nächste Dojos ansehen <ArrowRight className="w-4 h-4" />
             </button>
           </GlassCard>
         </div>
-      </section>
+      </section>{" "}
       {/* ── Voraussetzungen ──────────────────────────────── */}
       <section className="py-10">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -255,18 +272,23 @@ export default function MiddleView() {
               >
                 <Notebook className="w-4 h-4" style={{ color: "#4ade80" }} />
               </div>*/}
-              <div className={`font-bold font-gro ${isDark ? "text-white" : "text-slate-900"}`}>
+              <div
+                className={`font-bold font-gro ${isDark ? "text-white" : "text-slate-900"}`}
+              >
                 Voraussetzungen
               </div>
             </div>
-            <ul className="flex flex-col gap-3">
+            <ul className="flex flex-col gap-3 mt-10 ">
               {requirements.map((req) => (
-                <li key={req} className="flex items-start gap-2.5">
+                <li
+                  key={req}
+                  className="flex justify-start items-start gap-2.5"
+                >
                   <CheckCircle2
-                    className="w-4 h-4 mt-0.5 shrink-0"
+                    className="w-4 h-4  shrink-0"
                     style={{ color: "#4ade80" }}
                   />
-                  <span className="text-[14px]" style={{ color: "#9ca3af" }}>
+                  <span className="text-xs" style={{ color: "#9ca3af" }}>
                     {req}
                   </span>
                 </li>
@@ -283,7 +305,9 @@ export default function MiddleView() {
             >
               Warum programmieren?
             </div>
-            <div className={`text-lg font-black font-gro ${isDark ? "text-white" : "text-slate-900"} leading-snug mb-3`}>
+            <div
+              className={`text-lg font-black font-gro ${isDark ? "text-white" : "text-slate-900"} leading-snug mb-3`}
+            >
               Deine Ideen. Deine Regeln. Deine Projekte.
             </div>
             <p
