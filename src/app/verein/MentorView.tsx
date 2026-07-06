@@ -2,10 +2,12 @@
 
 import { getAllMentors } from "@/lib/db";
 import type { Mentor } from "@/BackEnd/type";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { Theme } from "@/context/ThemeContext";
 import { motion, Variants } from "framer-motion";
 import { SimpleMentorCard } from "./mentor/SimpleMentorCard";
+import { useAuth } from "@/BackEnd/AuthContext";
+import { useNotificationToast } from "@/hooks/useNotificationToast";
 
 export default function MentorenView({
   theme,
@@ -15,26 +17,35 @@ export default function MentorenView({
   isRounded: boolean;
 }) {
   const [mentorData, setMentorData] = useState<Mentor[]>([]);
-  const [filMentors, setFilMentors] = useState<Mentor[]>([]);
   const [showAll, setShowAll] = useState<boolean>(false);
   const [expandedMentorId, setExpandedMentorId] = useState<string | null>(null);
 
-  useEffect(() => {
-    const sortedMentors = [...mentorData].sort((a, b) =>
-      a.uid === expandedMentorId ? -1 : b.uid === expandedMentorId ? 1 : 0,
-    );
-    const filtered = showAll ? sortedMentors : sortedMentors.slice(0, 3);
-    setFilMentors(filtered);
-  }, [expandedMentorId, mentorData, showAll]);
+  const { user, userRole, loading } = useAuth();
+  const { showFetchError } = useNotificationToast();
+
+  const hasFetched = useRef<string | null>(null);
 
   useEffect(() => {
+    if (loading) return;
+
+    if (user) {
+      const currentKey = user ? `${user.uid}-${userRole}` : "guest";
+      if (hasFetched.current === currentKey) return;
+      hasFetched.current = currentKey;
+    }
+
     const handleData = async () => {
-      const allMentores = await getAllMentors();
-      const orderedMentors = allMentores.sort((a, b) => a.id - b.id);
-      setMentorData(orderedMentors);
+      try {
+        const allMentores = await getAllMentors(user?.uid, userRole);
+        const orderedMentors = allMentores.sort((a, b) => a.id - b.id);
+        setMentorData(orderedMentors);
+      } catch (error) {
+        showFetchError(error);
+      }
     };
+
     handleData();
-  }, []);
+  }, [loading, user, userRole, showFetchError]);
 
   const containerVariants = {
     hidden: {},
@@ -65,7 +76,7 @@ export default function MentorenView({
   const radiusClass = isRounded ? "rounded-lg" : "rounded-none";
 
   return (
-    <div className="w-full py-20 font-['DM_Sans']">
+    <div className="w-full py-20 px-4 font-['DM_Sans']">
       <div className="w-full flex flex-col items-start justify-center gap-12">
         <div className="flex flex-col items-start text-left px-8 max-w-4xl">
           <span
@@ -99,7 +110,7 @@ export default function MentorenView({
             viewport={{ once: true, margin: "0px 0px -10px 0px" }}
             className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6"
           >
-            {filMentors.map((mentor) => (
+            {mentorData.map((mentor) => (
               <motion.div
                 key={mentor.uid}
                 variants={itemVariants as Variants}
@@ -122,8 +133,8 @@ export default function MentorenView({
             ))}
           </motion.div>
         </section>
-
-        {filMentors.length > 3 && (
+        {/*
+        {mentorData.length > 3 && (
           <div className="pt-4 w-full flex items-center justify-center">
             <motion.button
               layout
@@ -141,7 +152,7 @@ export default function MentorenView({
               )}
             </motion.button>
           </div>
-        )}
+        )}*/}
       </div>
     </div>
   );

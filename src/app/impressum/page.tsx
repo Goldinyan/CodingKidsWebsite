@@ -2,6 +2,7 @@
 
 import { useTheme } from "@/context/ThemeContext";
 import GlassCard from "../homepage/components/GlassCard";
+import { appendSegmentRequestKeyPart } from "next/dist/shared/lib/segment-cache/segment-value-encoding";
 
 export default function Impressum() {
   const { theme } = useTheme();
@@ -363,3 +364,8 @@ export default function Impressum() {
     </div>
   );
 }
+
+
+
+
+

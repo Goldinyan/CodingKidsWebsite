@@ -235,7 +235,7 @@ export default function Support() {
           </div>
 
           <button
-            onClick={() => router.push("/spenden")}
+            onClick={() => router.push("/kontakt")}
             className={`flex items-center justify-center gap-2 w-full px-4 py-3 font-['JetBrains_Mono'] text-xs font-bold uppercase border transition-all duration-150 group/btn shadow-sm ${theme === "dark"
                 ? "bg-[#4ADE80] text-zinc-950 border-[#4ADE80] hover:bg-green-400"
                 : "bg-green-600 text-white border-green-600 hover:bg-green-700"
