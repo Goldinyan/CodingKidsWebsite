@@ -15,6 +15,7 @@ import {
 import { CourseData, type EventData, type UserData } from "@/BackEnd/type";
 import EventCreationDialog from "./components/EventCreationDialog";
 import { useToast } from "@/components/ui/use-toast";
+import { useErrorToast } from "@/hooks/useErrorToast";
 import type { EventTimeFilter } from "./events/constants";
 import { DeleteEventDialog, EventCard } from "./events/components";
 import {
@@ -26,6 +27,7 @@ import {
 export default function EventDashboard() {
   const { user, userRole, loading } = useAuth();
   const { toast } = useToast();
+  const { showErrorToast, showDeleteError, showUpdateError } = useErrorToast();
   const { theme, isRounded } = useTheme();
 
   const [deleteConfirmModal, setDeleteConfirmModal] = useState<{
@@ -65,7 +67,7 @@ export default function EventDashboard() {
         );
         setCourses(coursesData);
       } catch (error) {
-        console.error("Error fetching courses:", error);
+        showErrorToast(error);
       }
     };
 
@@ -141,11 +143,7 @@ export default function EventDashboard() {
 
       await refresh();
     } catch (error) {
-      console.error(error);
-      toast({
-        title: "SYS_ERR",
-        description: "Das Event konnte nicht gelöscht werden.",
-      });
+      showDeleteError();
     }
   };
 
@@ -164,11 +162,7 @@ export default function EventDashboard() {
 
       await refresh();
     } catch (error) {
-      console.error(error);
-      toast({
-        title: "SYS_ERR",
-        description: "Das Event konnte nicht aktualisiert werden.",
-      });
+      showUpdateError();
     }
   };
 
@@ -178,9 +172,8 @@ export default function EventDashboard() {
       await removedFromEventByAdmin(u.email, event.name);
       await refresh();
     } catch (e) {
-      console.error(e);
-      toast({
-        title: "SYS_ERR",
+      showErrorToast(e, "DELETE_ERROR", {
+        title: "Fehler beim Entfernen",
         description: "Der User konnte nicht entfernt werden.",
       });
     }

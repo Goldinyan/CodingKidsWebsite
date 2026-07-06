@@ -185,18 +185,11 @@ export function checkRateLimit(
   const now = Date.now();
   const key = `${functionName}:${userId}`;
 
-
   const status = getRateLimitStatus(functionName, userId);
+  const currentCount = (status?.count ?? 0) + 1;
 
   console.log(
-    "New call from: " +
-    functionName.toUpperCase() +
-    " for the " +
-    (status?.count ?? 0 + 1) +
-    " time by user: " +
-    userId +
-    " with role: " +
-    userRole,
+    `[RATE LIMIT] ${functionName.toUpperCase()} | Call #${currentCount} | User: ${userId} (${userRole})`,
   );
 
   // Get the rate limit config for this function and role

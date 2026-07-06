@@ -23,14 +23,18 @@ const ToastViewport = React.forwardRef<
 ToastViewport.displayName = ToastPrimitives.Viewport.displayName;
 
 export const toastVariants = cva(
-  "group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden border p-4 pr-6 transition-all font-mono tracking-tight shadow-md",
+  "group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden border p-4 pr-6 transition-all font-mono tracking-tight",
   {
     variants: {
       variant: {
-        success: "border-zinc-400 dark:border-zinc-700",
-        failed: "font-bold border-transparent",
-        info: "border-zinc-200 dark:border-zinc-800",
-        default: "border-zinc-200 dark:border-zinc-800",
+        default:
+          "bg-white text-zinc-950 border-zinc-200 dark:bg-zinc-950 dark:text-zinc-50 dark:border-zinc-800 shadow-sm",
+        info: "bg-zinc-50 text-zinc-900 border-zinc-200 dark:bg-zinc-900/50 dark:text-zinc-300 dark:border-zinc-800/80",
+        success:
+          "bg-white text-zinc-950 border-zinc-950 dark:bg-zinc-950 dark:text-white dark:border-zinc-200 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.1)]",
+
+        failed:
+          "bg-zinc-950 text-white border-transparent dark:bg-white dark:text-zinc-950 font-bold shadow-md",
       },
     },
     defaultVariants: {

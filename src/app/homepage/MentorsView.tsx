@@ -13,6 +13,7 @@ import {
 } from "../verein/mentor/SimpleMentorCard";
 import SectionLabel from "./components/SectionLabel";
 import SectionHeading from "./components/SectionHeading";
+import { useErrorToast } from "@/hooks/useErrorToast";
 
 export default function MentorsView() {
   const [mentors, setMentors] = useState<Mentor[]>([]);
@@ -21,6 +22,7 @@ export default function MentorsView() {
 
   const { user, userRole, loading } = useAuth();
   const { theme, isRounded } = useTheme();
+  const { showErrorToast } = useErrorToast();
 
   const hasFetched = useRef<string | null>(null);
 
@@ -57,7 +59,7 @@ export default function MentorsView() {
         const allMentors = await getAllMentors(user?.uid, userRole);
         setMentors(allMentors.sort((a, b) => a.id - b.id));
       } catch (error) {
-        console.error("Failed to fetch mentors:", error);
+        showErrorToast(error);
       }
     };
 

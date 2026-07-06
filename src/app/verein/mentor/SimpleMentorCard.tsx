@@ -41,11 +41,11 @@ export function SimpleMentorCard({ props }: { props: SimpleMentorCardProps }) {
         {props.des}
       </p>
 
-      <div className="grow" />
+      <div className="grow min-h-5" />
 
-      <div className="flex justify-between items-center pt-4 mt-4 border-t border-zinc-100 dark:border-zinc-800">
+      <div className="flex justify-between items-center pt-4   border-t border-zinc-100 dark:border-zinc-800">
         {(props.insta || props.linkedin || props.github) && (
-          <div className="flex items-center gap-2 pt-3 ">
+          <div className="flex items-center gap-2 ">
             {props.insta && (
               <a
                 href={props.insta}

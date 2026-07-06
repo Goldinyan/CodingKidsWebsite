@@ -8,6 +8,7 @@ import { useAuth } from "@/BackEnd/AuthContext";
 import { addCourse, deleteCourse, updateCourse } from "@/lib/db/courses";
 import type { CourseData } from "@/BackEnd/type";
 import { useToast } from "@/components/ui/use-toast";
+import { useErrorToast } from "@/hooks/useErrorToast";
 import { useCoursesData, useFilteredCourses, useMentorsData } from "./courses/hooks";
 import {
   CourseCard,
@@ -19,6 +20,7 @@ import {
 export default function CourseDashboard() {
   const { user, userRole } = useAuth();
   const { toast } = useToast();
+  const { showErrorToast } = useErrorToast();
   const { theme, isRounded } = useTheme();
 
   const [searchBar, setSearchBar] = useState<string>("");
@@ -108,7 +110,7 @@ export default function CourseDashboard() {
         description: "Kurs erfolgreich erstellt",
       });
     } catch (error) {
-      console.error("Error adding course:", error);
+      showErrorToast(error);
       toast({
         title: "Fehler",
         description: "Kurs konnte nicht erstellt werden",
@@ -136,7 +138,7 @@ export default function CourseDashboard() {
         description: "Kurs erfolgreich aktualisiert",
       });
     } catch (error) {
-      console.error("Error updating course:", error);
+      showErrorToast(error);
       toast({
         title: "Fehler",
         description: "Kurs konnte nicht aktualisiert werden",
@@ -161,7 +163,7 @@ export default function CourseDashboard() {
         description: "Kurs erfolgreich gelöscht",
       });
     } catch (error) {
-      console.error("Error deleting course:", error);
+      showErrorToast(error);
       toast({
         title: "Fehler",
         description: "Kurs konnte nicht gelöscht werden",
@@ -214,7 +216,7 @@ export default function CourseDashboard() {
         description: "Mentoren erfolgreich zugewiesen",
       });
     } catch (error) {
-      console.error("Error assigning mentors:", error);
+      showErrorToast(error);
       toast({
         title: "Fehler",
         description: "Mentoren konnten nicht zugewiesen werden",

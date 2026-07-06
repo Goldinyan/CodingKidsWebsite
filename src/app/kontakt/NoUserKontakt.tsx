@@ -5,6 +5,7 @@ import { Mail, Phone, MapPin, ArrowRight } from "lucide-react";
 import { sendEmailToSupport } from "@/BackEnd/email";
 import { useState } from "react";
 import { Theme, useTheme } from "@/context/ThemeContext";
+import { useErrorToast } from "@/hooks/useErrorToast";
 
 type EmailProps = {
   name: string;
@@ -34,6 +35,7 @@ export default function NoUserKontakt() {
   });
 
   const { theme, isRounded } = useTheme();
+  const { showErrorToast } = useErrorToast();
 
   const [errors, setErrors] = useState<{
     name?: boolean;
@@ -99,6 +101,7 @@ export default function NoUserKontakt() {
       });
       setErrorMessage("");
     } catch (error) {
+      showErrorToast(error);
       setErrorMessage(
         "Fehler beim Senden der E-Mail. Bitte versuchen Sie es erneut.",
       );

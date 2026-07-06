@@ -9,6 +9,8 @@ import type {
 const TOAST_LIMIT = 1;
 const TOAST_REMOVE_DELAY = 1000000;
 
+export type CustomToastVariant = "success" | "failed" | "info" | "default";
+
 type ToasterToast = {
   id: string;
   title?: React.ReactNode;
@@ -16,7 +18,7 @@ type ToasterToast = {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   action?: ToastActionElement;
-  variant: keyof typeof toastVariants;
+  variant: CustomToastVariant;
 };
 
 const actionTypes = {

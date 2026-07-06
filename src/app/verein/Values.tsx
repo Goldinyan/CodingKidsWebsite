@@ -71,7 +71,7 @@ export default function Values() {
         <motion.div
           variants={itemVariants as Variants}
           key={title}
-          className={`p-6 border transition-all duration-200 group relative ${radiusClass} ${theme === "dark"
+          className={`p-6 border transition-colors duration-200 group relative ${radiusClass} ${theme === "dark"
               ? "bg-[rgba(255,255,255,0.025)] border-[rgba(255,255,255,0.07)] hover:border-[#4ADE80] hover:bg-[rgba(255,255,255,0.04)]"
               : "bg-white border-slate-200 hover:border-green-600 hover:shadow-sm"
             }`}

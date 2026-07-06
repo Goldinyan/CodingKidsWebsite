@@ -17,6 +17,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
+import { useErrorToast } from "@/hooks/useErrorToast";
 
 const defaultEvent: EventData = {
   name: "",
@@ -57,6 +58,7 @@ export default function EventCreationDialog(props: {
   const { user, userRole } = useAuth();
   const { open, onOpenChange, onCreated, courses, events } = props;
   const { theme, isRounded } = useTheme();
+  const { showErrorToast } = useErrorToast();
 
   const [currentStep, setCurrentStep] = useState(0);
   const [EventInfo, setEventInfo] = useState<EventData>(defaultEvent);
@@ -177,7 +179,7 @@ export default function EventCreationDialog(props: {
       onCreated?.();
       onOpenChange(false);
     } catch (error) {
-      console.error("Fehler beim Hinzufügen des Events:", error);
+      showErrorToast(error);
       setError(
         "Fehler beim Erstellen des Events. Bitte versuchen Sie es erneut.",
       );

@@ -18,6 +18,7 @@ import { motion } from "framer-motion";
 import { useViewportHeight } from "@/hooks/useViewportHeight";
 import { getAllAnnouncements } from "@/lib/db";
 import { useTheme } from "@/context/ThemeContext";
+import { useErrorToast } from "@/hooks/useErrorToast";
 
 interface NavbarMobileProps {
   setOpen: (open: boolean) => void;
@@ -29,6 +30,7 @@ export default function NavbarMobile({ setOpen }: NavbarMobileProps) {
   const { user, userData, userRole } = useAuth();
   const [unreadMessages, setUnreadMessages] = useState(0);
   const { theme } = useTheme();
+  const { showErrorToast } = useErrorToast();
 
   const hasFetched = useRef<string | null>(null);
 
@@ -48,7 +50,7 @@ export default function NavbarMobile({ setOpen }: NavbarMobileProps) {
         ).length;
         setUnreadMessages(unread);
       } catch (error) {
-        console.error("Fehler beim Laden der Benachrichtigungen:", error);
+        showErrorToast(error);
       }
     };
 

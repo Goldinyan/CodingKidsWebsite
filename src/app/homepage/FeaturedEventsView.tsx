@@ -13,6 +13,7 @@ import SectionLabel from "./components/SectionLabel";
 import SectionHeading from "./components/SectionHeading";
 import GlassCard from "./components/GlassCard";
 import { useToast } from "@/components/ui/use-toast";
+import { useErrorToast } from "@/hooks/useErrorToast";
 import { toastVariants } from "@/components/ui/toast";
 
 const fmtMonth = (date: any) => {
@@ -45,7 +46,7 @@ export default function FeaturedEventsView() {
   const isDark = theme === "dark";
   const { user, userData, userRole, loading } = useAuth();
   const router = useRouter();
-  const { toast } = useToast();
+  const { showErrorToast } = useErrorToast();
 
   const hasFetched = useRef<string | null>(null);
 
@@ -73,12 +74,7 @@ export default function FeaturedEventsView() {
         setEvents(upcomingEvents as EventData[]);
         setCourses(allCourses as CourseData[]);
       } catch (error) {
-        toast({
-          variant: "failed" as keyof typeof toastVariants,
-          title: "Fehler beim Laden der Termine",
-          description:
-            "Es ist ein Fehler beim Laden der Termine aufgetreten. Bitte versuche es später erneut.",
-        });
+        showErrorToast(error);
       }
     };
 
@@ -102,16 +98,9 @@ export default function FeaturedEventsView() {
     (ev) => toJsDate(ev.date).getTime() > Date.now(),
   );
 
-  const idk = () => {
-    toast({
-      variant: "info" as keyof typeof toastVariants,
-      title: "Info",
-      description: "Dies ist eine Info-Nachricht.",
-    });
-  };
-
+  
   return (
-    <section onClick={() => idk()} className="py-14 mx-4">
+    <section className="py-14 mx-4">
       <div className="flex items-end justify-between mb-8">
         <div>
           <SectionLabel>Nächste Termine</SectionLabel>
@@ -212,12 +201,12 @@ export default function FeaturedEventsView() {
                   )}
                   <button
                     onClick={() => router.push("/termine")}
-                    className={`px-3 py-1.5 border text-xs font-bold bg-transparent transition-all font-mono ${isRounded ? "rounded-lg" : "rounded-none"} ${full
+                    className={`px-3 py-1.5 border text-xs font-medium bg-transparent transition-all font-mono ${isRounded ? "rounded-lg" : "rounded-none"} ${full
                         ? "bg-white/[0.03] border-white/[0.06] text-gray-500 cursor-not-allowed"
                         : "bg-purple-500/[0.08] border-purple-500/25 text-purple-400 hover:bg-purple-500/15 cursor-pointer"
                       }`}
                   >
-                    Details →
+                    Details
                   </button>
                 </div>
               </GlassCard>
@@ -229,7 +218,7 @@ export default function FeaturedEventsView() {
       {validEvents.length > 0 && (
         <button
           onClick={() => router.push("/termine")}
-          className={`w-full flex items-center justify-center gap-2 px-6 py-3 border font-bold text-sm no-underline transition-all bg-purple-500/[0.06] border-purple-500/20 text-purple-400 hover:bg-purple-500/12 cursor-pointer ${isRounded ? "rounded-xl" : "rounded-none"}`}
+          className={`w-full flex items-center justify-center gap-2 px-6 py-3 border font-bold text-xs no-underline transition-all bg-purple-500/[0.06] border-purple-500/20 text-purple-400 hover:bg-purple-500/12 cursor-pointer ${isRounded ? "rounded-xl" : "rounded-none"}`}
         >
           Alle Termine &amp; Anmeldung <ArrowRight className="w-4 h-4" />
         </button>

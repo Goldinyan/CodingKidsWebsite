@@ -1,6 +1,7 @@
 // hooks/useEventView.ts
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/BackEnd/AuthContext";
+import { useErrorToast } from "@/hooks/useErrorToast";
 import {
   getAllEvents,
   getAllCourses,
@@ -10,9 +11,11 @@ import {
 } from "@/lib/db";
 import { Timestamp } from "firebase/firestore";
 import { EventData, CourseData, EventStatus } from "@/BackEnd/type";
+import { ErrorToastConfig } from "@/hooks/useErrorToast";
 
 export function useEventView() {
   const { user, userRole, userData, loading } = useAuth();
+  const { showErrorToast } = useErrorToast();
   const [upcomingEvents, setUpcomingEvents] = useState<EventData[]>([]);
   const [filteredUpcomingEvents, setFilteredUpcomingEvents] = useState<
     EventData[]
@@ -59,14 +62,10 @@ export function useEventView() {
       setCourses(allCourses);
     };
     fetchCourses();
-  }, [user?.uid, userRole, loading, user]);
-
-  useEffect(() => {
-    if (!user?.uid || loading) return;
 
     const fetchEvents = async () => {
       const events: EventData[] = (await getAllEvents(
-        user.uid,
+        user?.uid ?? "",
         userRole,
       )) as EventData[];
 
@@ -108,7 +107,7 @@ export function useEventView() {
           const status = await isUserInEvent(event.uid, user.uid, userRole);
           statusMap[event.uid] = status;
         } catch (error) {
-          console.error(error);
+          showErrorToast(error);
           statusMap[event.uid] = EventStatus.Error;
         }
       }
@@ -163,8 +162,19 @@ export function useEventView() {
     upcomingEvents,
   ]);
 
-  const handleEvents = async (eventId: string, action: "join" | "leave") => {
-    if (!user) return;
+  const handleEvents = async (
+    eventId: string,
+    action: "join" | "leave",
+    toast: (customConfig?: ErrorToastConfig) => void,
+  ) => {
+    if (!user) {
+      toast({
+        title: "Fehler",
+        description:
+          "Du musst eingeloggt sein, um dich für ein Event anzumelden.",
+      });
+      return;
+    }
     try {
       if (action === "join") {
         await addUserToEvent(eventId, user.uid, user.uid, userRole);
@@ -177,7 +187,7 @@ export function useEventView() {
           action === "join" ? EventStatus.User : EventStatus.NotRegistered,
       }));
     } catch (error) {
-      console.error("Error handling event:", error);
+      showErrorToast(error);
     }
   };
 

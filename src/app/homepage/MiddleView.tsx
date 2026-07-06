@@ -246,7 +246,7 @@ export default function MiddleView() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <GlassCard className="p-6">
             <div className="flex items-center gap-3 mb-5">
-              <div
+              {/*<div
                 className="w-9 h-9 rounded-xl flex items-center justify-center"
                 style={{
                   background: "rgba(74,222,128,0.15)",
@@ -254,7 +254,7 @@ export default function MiddleView() {
                 }}
               >
                 <Notebook className="w-4 h-4" style={{ color: "#4ade80" }} />
-              </div>
+              </div>*/}
               <div className={`font-bold font-gro ${isDark ? "text-white" : "text-slate-900"}`}>
                 Voraussetzungen
               </div>

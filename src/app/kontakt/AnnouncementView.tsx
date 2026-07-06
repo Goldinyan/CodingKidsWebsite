@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
 import { UserRole } from "@/BackEnd/type";
+import { useErrorToast } from "@/hooks/useErrorToast";
 
 const ROLES: UserRole[] = ["admin", "mentor", "member", "user"];
 
@@ -27,6 +28,7 @@ export default function AnnouncementView({ data }: { data: UserData }) {
   const [filAn, setFilAn] = useState<Record<string, AnnouncementData[]>>({});
   const { user, userRole } = useAuth();
   const { theme, isRounded } = useTheme();
+  const { showErrorToast } = useErrorToast();
 
   const hasFetched = useRef<string | null>(null);
 
@@ -107,7 +109,7 @@ export default function AnnouncementView({ data }: { data: UserData }) {
     try {
       await markAnnouncementAsRead(announcementUid, user.uid, userRole);
     } catch (error) {
-      console.error("Fehler beim Aktualisieren des Lesestatus:", error);
+      showErrorToast(error);
     }
   };
 

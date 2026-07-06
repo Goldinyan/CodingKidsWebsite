@@ -110,12 +110,12 @@ export async function addEvent(
     );
 
     if (course) {
-      const updatedDates = [...course.dates, Id];
+      const updatedDates = [...course.dates, date.toISOString()];
       await updateCourse(course.uid, { dates: updatedDates }, userId, userRole);
     }
 
     const allUsers = await getAllUsers(userId, userRole);
-    allUsers.filter((user) => user.settings.notifications.newEvent);
+    allUsers?.filter((user) => user.settings.notifications.newEvent);
 
     sendTriggerEmailToMultipleUsers("newEvent", allUsers, {
       eventName: newEvent.name,

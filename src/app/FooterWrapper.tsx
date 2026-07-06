@@ -17,7 +17,7 @@ export default function FooterWrapper() {
 
   return (
     <footer
-      className={`border-t py-8 transition-colors duration-200 ${isDark ? "bg-zinc-950 border-zinc-900" : "bg-white border-slate-200"
+      className={`border-t py-8 transition-colors  duration-200 ${isDark ? "bg-black border-zinc-900" : "bg-white border-slate-200"
         }`}
     >
       <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
