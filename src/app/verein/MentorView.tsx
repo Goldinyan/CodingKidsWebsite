@@ -28,11 +28,9 @@ export default function MentorenView({
   useEffect(() => {
     if (loading) return;
 
-    if (user) {
-      const currentKey = user ? `${user.uid}-${userRole}` : "guest";
-      if (hasFetched.current === currentKey) return;
-      hasFetched.current = currentKey;
-    }
+    const currentKey = user ? `${user.uid}-${userRole}` : "guest";
+    if (hasFetched.current === currentKey) return;
+    hasFetched.current = currentKey;
 
     const handleData = async () => {
       try {
@@ -46,6 +44,16 @@ export default function MentorenView({
 
     handleData();
   }, [loading, user, userRole, showFetchError]);
+
+  const visibleMentors = useMemo(() => {
+    const sorted = [...mentorData].sort((a, b) => {
+      if (a.uid === expandedMentorId) return -1;
+      if (b.uid === expandedMentorId) return 1;
+      return 0;
+    });
+
+    return showAll ? sorted : sorted.slice(0, 3);
+  }, [mentorData, expandedMentorId, showAll]);
 
   const containerVariants = {
     hidden: {},
@@ -83,7 +91,7 @@ export default function MentorenView({
             className={`font-['JetBrains_Mono'] text-[10px] tracking-[0.22em] uppercase block mb-2 ${theme === "dark" ? "text-[#4ADE80]" : "text-green-600"
               }`}
           >
-            UNSER TEAM{" "}
+            UNSER TEAM
           </span>
 
           <h2
@@ -93,7 +101,7 @@ export default function MentorenView({
             Lernen Sie die Menschen hinter der Mission kennen
           </h2>
           <p
-            className={`text-sm md:text-md  font-normal leading-relaxed ${theme === "dark" ? "text-zinc-400" : "text-slate-600"
+            className={`text-sm md:text-md font-normal leading-relaxed ${theme === "dark" ? "text-zinc-400" : "text-slate-600"
               }`}
           >
             Unser Team ist eine engagierte Gruppe von Entwicklern und
@@ -110,7 +118,7 @@ export default function MentorenView({
             viewport={{ once: true, margin: "0px 0px -10px 0px" }}
             className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6"
           >
-            {mentorData.map((mentor) => (
+            {visibleMentors.map((mentor) => (
               <motion.div
                 key={mentor.uid}
                 variants={itemVariants as Variants}
@@ -133,7 +141,7 @@ export default function MentorenView({
             ))}
           </motion.div>
         </section>
-        {/*
+
         {mentorData.length > 3 && (
           <div className="pt-4 w-full flex items-center justify-center">
             <motion.button
@@ -152,7 +160,7 @@ export default function MentorenView({
               )}
             </motion.button>
           </div>
-        )}*/}
+        )}
       </div>
     </div>
   );
