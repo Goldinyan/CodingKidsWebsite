@@ -1,21 +1,16 @@
 "use client";
 
-import { useAuth } from "@/BackEnd/AuthContext";
-import type { UserData } from "@/BackEnd/type";
-import { useTheme } from "@/context/ThemeContext";
 import {
   TopView,
   MiddleView,
   FeaturedEventsView,
   FeaturedCoursesView,
   MentorsView,
-  CTAView,
 } from "./homepage";
-import { useToast } from "@/components/ui/use-toast";
 
 export default function MainView() {
   return (
-    <div className={`w-full min-h-screen relative main-view-container`}>
+    <div className={`w-full min-h-screen relative main-view-container `}>
       {/*
       <div className="absolute inset-0 bg-grid-pattern   z-0" />
 
