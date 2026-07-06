@@ -9,7 +9,11 @@ import { addCourse, deleteCourse, updateCourse } from "@/lib/db/courses";
 import type { CourseData } from "@/BackEnd/type";
 import { useToast } from "@/components/ui/use-toast";
 import { useErrorToast } from "@/hooks/useErrorToast";
-import { useCoursesData, useFilteredCourses, useMentorsData } from "./courses/hooks";
+import {
+  useCoursesData,
+  useFilteredCourses,
+  useMentorsData,
+} from "./courses/hooks";
 import {
   CourseCard,
   DeleteCourseDialog,
@@ -32,6 +36,8 @@ export default function CourseDashboard() {
     null,
   );
   const [selectedMentorIds, setSelectedMentorIds] = useState<string[]>([]);
+
+  const { showUpdateError } = useErrorToast();
 
   const [deleteConfirm, setDeleteConfirm] = useState<{
     isOpen: boolean;
@@ -76,8 +82,8 @@ export default function CourseDashboard() {
 
   const handleAddCourse = async () => {
     if (!user || !newCourse.name?.trim()) {
-      toast({
-        title: "Fehler",
+      showUpdateError({
+        title: "Fehler beim Erstellen des Kurses",
         description: "Bitte füllen Sie alle erforderlichen Felder aus",
       });
       return;
@@ -105,6 +111,7 @@ export default function CourseDashboard() {
       setTagInput("");
       setIsAddingCourse(false);
 
+      
       toast({
         title: "Erfolg",
         description: "Kurs erfolgreich erstellt",

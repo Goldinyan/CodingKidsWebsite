@@ -16,7 +16,6 @@ const nextConfig: NextConfig = {
         headers: [
           {
             key: "X-Frame-Options", // Verbietet das Einbetten der Seite in iFrames (Schutz vor Clickjacking)
-            key: "X-Frame-Options",
             value: "DENY",
           },
           {
