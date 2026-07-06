@@ -141,7 +141,7 @@ export default function MentorenView({
             ))}
           </motion.div>
         </section>
-
+        {/*
         {mentorData.length > 3 && (
           <div className="pt-4 w-full flex items-center justify-center">
             <motion.button
@@ -160,7 +160,7 @@ export default function MentorenView({
               )}
             </motion.button>
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );
