@@ -144,7 +144,6 @@ export default function FeaturedEventsView() {
           </motion.div>
         )}
 
-        {/* Event List */}
         {validEvents.slice(0, 5).map((ev, i) => {
           const left = spotsLeft(ev);
           const full = left <= 0;

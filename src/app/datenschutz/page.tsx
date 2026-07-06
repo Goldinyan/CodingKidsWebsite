@@ -3,6 +3,7 @@
 import { useTheme } from "@/context/ThemeContext";
 import { Sub } from "@radix-ui/react-navigation-menu";
 import { ArrowUp } from "lucide-react";
+import GlassCard from "../homepage/components/GlassCard";
 
 interface TableOfContentsItem {
   id: string;
@@ -11,7 +12,7 @@ interface TableOfContentsItem {
 }
 
 const Datenschutz = () => {
-  const { theme } = useTheme();
+  const { theme, isRounded } = useTheme();
 
   const tableOfContents: TableOfContentsItem[] = [
     { id: "overview", label: "Datenschutz auf einen Blick", level: 1 },
@@ -61,25 +62,21 @@ const Datenschutz = () => {
     title: string;
     children: React.ReactNode;
   }) => (
-    <div
-      id={id}
-      className={`${theme === "dark"
-          ? "bg-white/5 border-white/10"
-          : "bg-white border-slate-200"
-        } border rounded-none scroll-mt-[90px] backdrop-blur-sm p-8 mb-6`}
-    >
-      <h2
-        className={`text-2xl font-bold mb-4 ${theme === "dark" ? "text-white" : "text-slate-900"
-          }`}
-      >
-        {title}
-      </h2>
-      <div
-        className={`${theme === "dark" ? "text-gray-200" : "text-slate-700"
-          } space-y-4 leading-relaxed`}
-      >
-        {children}
-      </div>
+    <div id={id}>
+      <GlassCard className="p-6">
+        <h2
+          className={`text-2xl font-bold mb-4 ${theme === "dark" ? "text-white" : "text-slate-900"
+            }`}
+        >
+          {title}
+        </h2>
+        <div
+          className={`${theme === "dark" ? "text-gray-200" : "text-slate-700"
+            } space-y-4 leading-relaxed`}
+        >
+          {children}
+        </div>
+      </GlassCard>
     </div>
   );
 
@@ -91,16 +88,22 @@ const Datenschutz = () => {
     children: React.ReactNode;
   }) => (
     <div className="mt-6">
-      <h3
-        className={`text-lg font-semibold mb-3 ${theme === "dark" ? "text-gray-200" : "text-slate-800"
+      {title && (
+        <h3
+          className={`text-lg font-semibold mb-3 ${theme === "dark" ? "text-zinc-100" : "text-slate-800"
+            }`}
+        >
+          {title}
+        </h3>
+      )}
+      <div
+        className={`space-y-3 leading-relaxed ${theme === "dark" ? "text-zinc-400" : "text-slate-600"
           }`}
       >
-        {title}
-      </h3>
-      <div className="space-y-3 text-gray-400">{children}</div>
+        {children}
+      </div>
     </div>
   );
-
   return (
     <div
       id="top"
@@ -109,33 +112,33 @@ const Datenschutz = () => {
     >
       <div
         onClick={() => scrollToSection("top")}
-        className={`fixed w-14 h-14 bottom-25 border border-border/50 group-hover:border-border/70 transition-all duration-400 right-6   -full  z-20 bg-gradient-to-br from-background/50 to-background/30 backdrop-blur-md flex items-center justify-center ${theme == "dark" ? " text-slate-300 " : " text-amber-500"}`}
+        className={`fixed w-14 h-14 bottom-25 border border-border/50 group-hover:border-border/70 transition-all duration-400 right-6   -full  z-20 bg-gradient-to-br from-background/50 to-background/30 backdrop-blur-md flex items-center justify-center ${isRounded ? "rounded-full" : "rounded-none"} ${theme == "dark" ? " text-slate-300 " : " text-amber-500"}`}
       >
         <ArrowUp />
       </div>
 
       <div className="relative z-10 max-w-5xl mx-auto">
-        <div
+        <GlassCard
           className={`${theme === "dark"
               ? "bg-white/5 border-white/10"
               : "bg-white border-slate-200"
             } border  -lg backdrop-blur-sm p-8 mb-8`}
         >
           <h1
-            className={`text-4xl font-bold mb-2 ${theme === "dark" ? "text-white" : "text-slate-900"
+            className={`text-4xl font-gro font-bold mb-2 ${theme === "dark" ? "text-white" : "text-slate-900"
               }`}
           >
             Datenschutzerklärung
           </h1>
           <p
             className={`${theme === "dark" ? "text-gray-500" : "text-slate-600"
-              } text-md`}
+              } text-md font-mono`}
           >
             CodingKids Programmierclub Niederrhein e.V.
           </p>
-        </div>
+        </GlassCard>
 
-        <div
+        <GlassCard
           className={`${theme === "dark"
               ? "bg-white/5 border-white/10"
               : "bg-white border-slate-200"
@@ -152,7 +155,7 @@ const Datenschutz = () => {
               <button
                 key={item.id}
                 onClick={() => scrollToSection(item.id)}
-                className={`block text-left px-4 py-2   transition-colors ${theme === "dark"
+                className={`block text-left px-4 py-2   transition-colors ${isRounded ? "rounded-md" : "rounded-none"} ${theme === "dark"
                     ? "text-white hover:text-green-300 hover:bg-white/10 hover:border-green-400  -lg border border-white/10"
                     : "text-slate-900 hover:text-green-700 hover:bg-slate-100 hover:border-green-600 border border-slate-200"
                   }`}
@@ -161,7 +164,7 @@ const Datenschutz = () => {
               </button>
             ))}
           </div>
-        </div>
+        </GlassCard>
 
         <div className="space-y-6">
           <Section id="overview" title="1. Datenschutz auf einen Blick">
@@ -560,7 +563,7 @@ const Datenschutz = () => {
             </SubSection>
           </Section>
 
-          <div
+          <GlassCard
             className={`${theme === "dark"
                 ? "bg-white/5 border-white/10"
                 : "bg-white border-slate-200"
@@ -572,7 +575,7 @@ const Datenschutz = () => {
             >
               Quelle: https://www.e-recht24.de
             </p>
-          </div>
+          </GlassCard>
         </div>
       </div>
     </div>
