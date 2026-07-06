@@ -1,8 +1,9 @@
 import { db } from "../firebase";
-import { collection, getDocs, deleteDoc, arrayUnion } from "firebase/firestore";
-import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
-import type { AnnouncementData, UserRole } from "@/BackEnd/type";
+import { collection, getDocs, deleteDoc, arrayUnion, doc, query, where } from "firebase/firestore";
+import { getDoc, setDoc, updateDoc } from "firebase/firestore";
+import type { AnnouncementData, UserRole, UserData } from "@/BackEnd/type";
 import { enforceRateLimit } from "./db";
+import { sendTriggerEmailToMultipleUsers } from "./emailTriggers";
 
 export async function getAllAnnouncements(
   userId: string = "anonymous",
@@ -64,6 +65,27 @@ export async function addAnnouncement(
       authorName: newAnnouncement.authorName,
       readBy: [],
     });
+
+    const usersSnapshot = await getDocs(collection(db, "users"));
+    const allUsers: UserData[] = usersSnapshot.docs
+      .map((doc) => doc.data() as UserData)
+      .filter((user) => {
+        if (newAnnouncement.tag === "user") {
+          return ["user", "member", "mentor", "admin"].includes(user.role);
+        } else if (newAnnouncement.tag === "member") {
+          return ["member", "admin"].includes(user.role);
+        } else if (newAnnouncement.tag === "admin") {
+          return user.role === "admin";
+        }
+        return false;
+      });
+
+    if (allUsers.length > 0) {
+      await sendTriggerEmailToMultipleUsers("announcement", allUsers, {
+        announcementTitle: newAnnouncement.title,
+        announcementContent: newAnnouncement.content,
+      });
+    }
   } catch (error) {
     console.error("Error adding announcement:", error);
     throw error;

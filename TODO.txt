@@ -1,5 +1,5 @@
 ## Todos
 
-[ ] - EMAils und notifiaction settings
-[ ] - ui upgrade profile
-[ ]- logs zu usern falls die was ändern oder so
+[ ] - logs zu usern falls die was ändern oder so
+[ ] - mentoren können sich zu coursen hinzufügen
+[ ] - wenn ratelimiter fehler gibt dann im toast oder so dem user mitteilen

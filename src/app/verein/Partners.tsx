@@ -18,7 +18,7 @@ export default function Partners() {
   return (
     <section
       id="verein"
-      className="w-full max-w-6xl mx-auto py-20 px-6 font-['DM_Sans']"
+      className="w-full max-w-6xl mx-auto py-20 px-6 "
     >
       <div className="mb-14 text-left">
         <span

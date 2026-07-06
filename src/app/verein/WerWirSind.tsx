@@ -10,7 +10,7 @@ export default function WerWirSind() {
 
   return (
     <div
-      className={`w-full min-h-screen font-['DM_Sans'] transition-colors duration-300 ${theme === "dark" ? "text-[#f4f4f5]" : " text-slate-700"
+      className={`w-full min-h-screen transition-colors duration-300 ${theme === "dark" ? "text-[#f4f4f5]" : " text-slate-700"
         }`}
     >
       <div className="w-full max-w-6xl mx-auto px-6 py-8">

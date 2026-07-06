@@ -47,7 +47,13 @@ const templates: Record<string, EmailTemplate> = {
       <p>Melde dich an, um deine Teilnahme zu bestätigen!</p>
     `),
     roles: ["user", "member", "mentor"],
-    requiredFields: ["userName", "eventName", "eventDate", "difficulty", "description"],
+    requiredFields: [
+      "userName",
+      "eventName",
+      "eventDate",
+      "difficulty",
+      "description",
+    ],
   },
 
   newEvent_admin: {
@@ -121,7 +127,12 @@ const templates: Record<string, EmailTemplate> = {
       <p>Bitte füge weitere Mentoren hinzu oder verschiebe das Event.</p>
     `),
     roles: ["admin", "mentor"],
-    requiredFields: ["eventName", "mentorCount", "requiredMentors", "eventDate"],
+    requiredFields: [
+      "eventName",
+      "mentorCount",
+      "requiredMentors",
+      "eventDate",
+    ],
   },
 
   announcement_user: {

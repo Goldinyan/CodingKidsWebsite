@@ -3,7 +3,6 @@
 
 import {
   sendAccountCreationEmailToAdmin,
-  sendWelcomeEmail,
 } from "@/BackEnd/email";
 import { auth, db } from "./firebase";
 import {
@@ -26,6 +25,7 @@ import { Timestamp } from "firebase/firestore";
 import { doc, getDoc, setDoc, updateDoc, arrayUnion } from "firebase/firestore";
 import { UserData } from "@/BackEnd/type";
 import { toJsDate } from "@/BackEnd/utils";
+import { sendTriggerEmail, sendAdminNotification } from "@/lib/db/emailTriggers";
 
 export async function registerUser(
   email: string,
@@ -45,10 +45,6 @@ export async function registerUser(
     );
     const user = userCredential.user;
     await emailVerification(user);
-    await sendWelcomeEmail(email, extraData.name);
-    await sendAccountCreationEmailToAdmin(extraData.name, email);
-
-    // User verified kann man checken mit user?.emailVerified und so dann sacehn freischalten oder eben nicht
 
     const userData: UserData = {
       uid: user.uid,
@@ -72,6 +68,18 @@ export async function registerUser(
       },
     };
     await setDoc(doc(db, "users", user.uid), userData);
+
+    await sendTriggerEmail("accountCreated", userData, {
+      userName: extraData.name,
+      userEmail: email,
+      registrationDate: new Date().toLocaleDateString("de-DE"),
+    });
+
+    await sendAdminNotification("accountCreated", ["seifert.ansgar@gmail.com"], {
+      userName: extraData.name,
+      userEmail: email,
+      registrationDate: new Date().toLocaleDateString("de-DE"),
+    });
 
     return user;
   } catch (error) {

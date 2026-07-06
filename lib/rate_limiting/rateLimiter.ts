@@ -14,159 +14,155 @@ interface RateLimitStore {
   [key: string]: RateLimitEntry;
 }
 
-// NEED TO REWORK THIS FOR SPECIFIC VALUES
-// Configuration for different functions and roles
-// Format: { functionName: { roleType: { maxRequests, windowMs } } }
 export const rateLimitConfig = {
-  // Read operations (high limit - these are cheap)
   getUserData: {
     anonymous: { maxRequests: 0, windowMs: 60000 }, // No access for anonymous
-    user: { maxRequests: 100, windowMs: 60000 }, // 100 per minute
-    member: { maxRequests: 100, windowMs: 60000 }, // 100 per minute
-    mentor: { maxRequests: 500, windowMs: 60000 }, // 500 per minute
-    admin: { maxRequests: 1000, windowMs: 60000 }, // 1000 per minute
+    user: { maxRequests: 10, windowMs: 60000 }, // 100 per minute
+    member: { maxRequests: 10, windowMs: 60000 }, // 100 per minute
+    mentor: { maxRequests: 20, windowMs: 60000 }, // 500 per minute
+    admin: { maxRequests: 20, windowMs: 60000 }, // 1000 per minute
   },
   getAllUsers: {
     anonymous: { maxRequests: 0, windowMs: 60000 },
-    user: { maxRequests: 0, windowMs: 60000 }, // Only admins/mentors should call this
+    user: { maxRequests: 0, windowMs: 60000 },
     member: { maxRequests: 0, windowMs: 60000 },
-    mentor: { maxRequests: 20, windowMs: 60000 },
-    admin: { maxRequests: 50, windowMs: 60000 },
+    mentor: { maxRequests: 10, windowMs: 60000 },
+    admin: { maxRequests: 20, windowMs: 60000 },
   },
   getAllEvents: {
     anonymous: { maxRequests: 10, windowMs: 60000 },
     user: { maxRequests: 10, windowMs: 60000 },
-    member: { maxRequests: 100, windowMs: 60000 },
-    mentor: { maxRequests: 200, windowMs: 60000 },
-    admin: { maxRequests: 500, windowMs: 60000 },
+    member: { maxRequests: 10, windowMs: 60000 },
+    mentor: { maxRequests: 20, windowMs: 60000 },
+    admin: { maxRequests: 20, windowMs: 60000 },
   },
   getAllCourses: {
     anonymous: { maxRequests: 10, windowMs: 60000 },
     user: { maxRequests: 10, windowMs: 60000 },
-    member: { maxRequests: 100, windowMs: 60000 },
-    mentor: { maxRequests: 150, windowMs: 60000 },
-    admin: { maxRequests: 300, windowMs: 60000 },
+    member: { maxRequests: 10, windowMs: 60000 },
+    mentor: { maxRequests: 15, windowMs: 60000 },
+    admin: { maxRequests: 30, windowMs: 60000 },
   },
   getAllMentors: {
-    anonymous: { maxRequests: 20, windowMs: 60000 },
-    user: { maxRequests: 50, windowMs: 60000 },
-    member: { maxRequests: 100, windowMs: 60000 },
-    mentor: { maxRequests: 200, windowMs: 60000 },
-    admin: { maxRequests: 500, windowMs: 60000 },
+    anonymous: { maxRequests: 10, windowMs: 60000 },
+    user: { maxRequests: 10, windowMs: 60000 },
+    member: { maxRequests: 10, windowMs: 60000 },
+    mentor: { maxRequests: 10, windowMs: 60000 },
+    admin: { maxRequests: 20, windowMs: 60000 },
   },
   getAllAnnouncements: {
     anonymous: { maxRequests: 10, windowMs: 60000 },
-    user: { maxRequests: 30, windowMs: 60000 },
-    member: { maxRequests: 100, windowMs: 60000 },
-    mentor: { maxRequests: 100, windowMs: 60000 },
-    admin: { maxRequests: 300, windowMs: 60000 },
+    user: { maxRequests: 10, windowMs: 60000 },
+    member: { maxRequests: 10, windowMs: 60000 },
+    mentor: { maxRequests: 10, windowMs: 60000 },
+    admin: { maxRequests: 20, windowMs: 60000 },
   },
   getAllAdmins: {
     anonymous: { maxRequests: 0, windowMs: 60000 },
-    user: { maxRequests: 1, windowMs: 60000 }, // IDK HERE
-    member: { maxRequests: 100, windowMs: 60000 },
-    mentor: { maxRequests: 5, windowMs: 60000 },
-    admin: { maxRequests: 50, windowMs: 60000 },
+    user: { maxRequests: 0, windowMs: 60000 }, // IDK HERE
+    member: { maxRequests: 0, windowMs: 60000 },
+    mentor: { maxRequests: 10, windowMs: 60000 },
+    admin: { maxRequests: 10, windowMs: 60000 },
   },
 
   // Write operations are expensive
   updateUser: {
     anonymous: { maxRequests: 0, windowMs: 60000 },
-    user: { maxRequests: 20, windowMs: 60000 },
-    member: { maxRequests: 20, windowMs: 60000 },
-    mentor: { maxRequests: 50, windowMs: 60000 },
-    admin: { maxRequests: 200, windowMs: 60000 },
+    user: { maxRequests: 10, windowMs: 60000 },
+    member: { maxRequests: 10, windowMs: 60000 },
+    mentor: { maxRequests: 20, windowMs: 60000 },
+    admin: { maxRequests: 20, windowMs: 60000 },
   },
   updateEvent: {
     anonymous: { maxRequests: 0, windowMs: 60000 },
-    user: { maxRequests: 5, windowMs: 60000 },
+    user: { maxRequests: 10, windowMs: 60000 },
     member: { maxRequests: 20, windowMs: 60000 },
-    mentor: { maxRequests: 50, windowMs: 60000 },
-    admin: { maxRequests: 100, windowMs: 60000 },
+    mentor: { maxRequests: 20, windowMs: 60000 },
+    admin: { maxRequests: 20, windowMs: 60000 },
   },
   addEvent: {
     anonymous: { maxRequests: 0, windowMs: 60000 },
-    user: { maxRequests: 0, windowMs: 3600000 },
+    user: { maxRequests: 0, windowMs: 60000 },
     member: { maxRequests: 0, windowMs: 60000 },
-    mentor: { maxRequests: 20, windowMs: 60000 },
-    admin: { maxRequests: 50, windowMs: 60000 },
+    mentor: { maxRequests: 0, windowMs: 60000 },
+    admin: { maxRequests: 10, windowMs: 60000 },
   },
   deleteEvent: {
     anonymous: { maxRequests: 0, windowMs: 60000 },
     user: { maxRequests: 0, windowMs: 60000 },
-    member: { maxRequests: 100, windowMs: 60000 },
-    mentor: { maxRequests: 10, windowMs: 60000 },
-    admin: { maxRequests: 50, windowMs: 60000 },
+    member: { maxRequests: 0, windowMs: 60000 },
+    mentor: { maxRequests: 0, windowMs: 60000 },
+    admin: { maxRequests: 10, windowMs: 60000 },
   },
   addUserToEvent: {
     anonymous: { maxRequests: 0, windowMs: 60000 },
-    user: { maxRequests: 30, windowMs: 60000 },
-    member: { maxRequests: 100, windowMs: 60000 },
-    mentor: { maxRequests: 200, windowMs: 60000 },
-    admin: { maxRequests: 500, windowMs: 60000 },
+    user: { maxRequests: 10, windowMs: 60000 },
+    member: { maxRequests: 10, windowMs: 60000 },
+    mentor: { maxRequests: 20, windowMs: 60000 },
+    admin: { maxRequests: 20, windowMs: 60000 },
   },
   removeUserFromEvent: {
     anonymous: { maxRequests: 0, windowMs: 60000 },
-    user: { maxRequests: 30, windowMs: 60000 },
-    member: { maxRequests: 100, windowMs: 60000 },
-    mentor: { maxRequests: 200, windowMs: 60000 },
-    admin: { maxRequests: 500, windowMs: 60000 },
+    user: { maxRequests: 10, windowMs: 60000 },
+    member: { maxRequests: 20, windowMs: 60000 },
+    mentor: { maxRequests: 20, windowMs: 60000 },
+    admin: { maxRequests: 20, windowMs: 60000 },
   },
   isUserInEvent: {
     anonymous: { maxRequests: 0, windowMs: 60000 },
-    user: { maxRequests: 100, windowMs: 60000 },
-    member: { maxRequests: 100, windowMs: 60000 },
-    mentor: { maxRequests: 500, windowMs: 60000 },
-    admin: { maxRequests: 1000, windowMs: 60000 },
+    user: { maxRequests: 10, windowMs: 60000 },
+    member: { maxRequests: 20, windowMs: 60000 },
+    mentor: { maxRequests: 20, windowMs: 60000 },
+    admin: { maxRequests: 20, windowMs: 60000 },
   },
   updateCourse: {
     anonymous: { maxRequests: 0, windowMs: 60000 },
     user: { maxRequests: 0, windowMs: 60000 },
     member: { maxRequests: 0, windowMs: 60000 },
-    mentor: { maxRequests: 20, windowMs: 60000 },
-    admin: { maxRequests: 100, windowMs: 60000 },
+    mentor: { maxRequests: 10, windowMs: 60000 },
+    admin: { maxRequests: 20, windowMs: 60000 },
   },
   addCourse: {
     anonymous: { maxRequests: 0, windowMs: 60000 },
     user: { maxRequests: 0, windowMs: 60000 },
     member: { maxRequests: 0, windowMs: 60000 },
-    mentor: { maxRequests: 5, windowMs: 60000 },
-    admin: { maxRequests: 50, windowMs: 60000 },
+    mentor: { maxRequests: 0, windowMs: 60000 },
+    admin: { maxRequests: 10, windowMs: 60000 },
   },
   deleteCourse: {
     anonymous: { maxRequests: 0, windowMs: 60000 },
     user: { maxRequests: 0, windowMs: 60000 },
     member: { maxRequests: 0, windowMs: 60000 },
     mentor: { maxRequests: 0, windowMs: 60000 },
-    admin: { maxRequests: 50, windowMs: 60000 },
+    admin: { maxRequests: 10, windowMs: 60000 },
   },
   updateAnnouncement: {
     anonymous: { maxRequests: 0, windowMs: 60000 },
-    user: { maxRequests: 10, windowMs: 60000 },
-    member: { maxRequests: 10, windowMs: 60000 },
-    mentor: { maxRequests: 10, windowMs: 60000 },
-    admin: { maxRequests: 100, windowMs: 60000 },
+    user: { maxRequests: 0, windowMs: 60000 },
+    member: { maxRequests: 0, windowMs: 60000 },
+    mentor: { maxRequests: 0, windowMs: 60000 },
+    admin: { maxRequests: 10, windowMs: 60000 },
   },
   addAnnouncement: {
     anonymous: { maxRequests: 0, windowMs: 60000 },
     user: { maxRequests: 0, windowMs: 60000 },
-    member: { maxRequests: 100, windowMs: 60000 },
+    member: { maxRequests: 0, windowMs: 60000 },
     mentor: { maxRequests: 0, windowMs: 60000 },
-    admin: { maxRequests: 50, windowMs: 60000 },
+    admin: { maxRequests: 10, windowMs: 60000 },
   },
   deleteAnnouncement: {
     anonymous: { maxRequests: 0, windowMs: 60000 },
     user: { maxRequests: 0, windowMs: 60000 },
-    member: { maxRequests: 100, windowMs: 60000 },
+    member: { maxRequests: 0, windowMs: 60000 },
     mentor: { maxRequests: 0, windowMs: 60000 },
-    admin: { maxRequests: 100, windowMs: 60000 },
+    admin: { maxRequests: 10, windowMs: 60000 },
   },
   updateMentor: {
     anonymous: { maxRequests: 0, windowMs: 60000 },
     user: { maxRequests: 0, windowMs: 60000 },
-    member: { maxRequests: 100, windowMs: 60000 },
-    mentor: { maxRequests: 10, windowMs: 60000 },
-    admin: { maxRequests: 50, windowMs: 60000 },
+    member: { maxRequests: 0, windowMs: 60000 },
+    mentor: { maxRequests: 0, windowMs: 60000 },
+    admin: { maxRequests: 10, windowMs: 60000 },
   },
 } as const;
 

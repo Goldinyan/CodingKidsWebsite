@@ -13,11 +13,11 @@ import {
   arrayUnion,
   Timestamp,
 } from "firebase/firestore";
-import { EventData, EventStatus, type Log } from "@/BackEnd/type";
+import { EventData, EventStatus, type Log, type UserData } from "@/BackEnd/type";
 import type { UserRole } from "@/BackEnd/type";
 import { enforceRateLimit } from "./db";
 import { getAllCourses, updateCourse } from "./courses";
-import { sendTriggerEmailToMultipleUsers } from "./emailTriggers";
+import { sendTriggerEmailToMultipleUsers, sendTriggerEmail } from "./emailTriggers";
 import { getAllUsers } from ".";
 
 async function getUserData(userId: string) {
@@ -248,10 +248,9 @@ export async function addUserToEvent(
     }
 
     const eventData = eventSnapshot.data();
-    const userData = await getUserData(userId);
+    const userData = (await getUserData(userId)) as UserData | null;
     const userName = userData?.name || userId;
 
-    // Check if user is mentor or admin
     const isMentorOrAdmin =
       requesterRole === "mentor" || requesterRole === "admin";
 
@@ -259,7 +258,6 @@ export async function addUserToEvent(
     const currentMentors: string[] = eventData.mentors || [];
 
     if (isMentorOrAdmin) {
-      // Add to mentors array instead of users
       const log: Log = {
         type: "mentorJoined",
         date: Timestamp.now(),
@@ -271,7 +269,6 @@ export async function addUserToEvent(
         logs: arrayUnion(log),
       });
     } else {
-      // Regular user logic
       if (currentUsers.length >= eventData.memberCount) {
         const log: Log = {
           type: "userJoinedQueue",
@@ -294,6 +291,16 @@ export async function addUserToEvent(
           users: arrayUnion(userId),
           logs: arrayUnion(log),
         });
+
+        if (userData) {
+          await sendTriggerEmail("newEvent", userData, {
+            userName: userData.name,
+            eventName: eventData.name,
+            eventDate: eventData.date,
+            difficulty: eventData.difficulty,
+            description: eventData.description,
+          });
+        }
       }
     }
   } catch (error) {
@@ -347,6 +354,7 @@ export async function removeUserFromEvent(
   userId: string,
   requesterId: string = "anonymous",
   requesterRole: UserRole = "user",
+  reason?: string,
 ) {
   enforceRateLimit("removeUserFromEvent", requesterId, requesterRole);
 
@@ -363,7 +371,7 @@ export async function removeUserFromEvent(
     const currentQueue: string[] = eventData.queue;
     const currentMentors: string[] = eventData.mentors || [];
 
-    const userData = await getUserData(userId);
+    const userData = (await getUserData(userId)) as UserData | null;
     const userName = userData?.name || userId;
 
     if (currentUsers.includes(userId)) {
@@ -371,7 +379,7 @@ export async function removeUserFromEvent(
         type: "userLeft",
         date: Timestamp.now(),
         userName,
-        reason: "Benutzer wurde entfernt",
+        reason: reason || "Benutzer wurde entfernt",
       };
 
       await updateDoc(eventRef, {
@@ -379,9 +387,17 @@ export async function removeUserFromEvent(
         logs: arrayUnion(log),
       });
 
+      if (userData && requesterId !== userId) {
+        await sendTriggerEmail("kicked", userData, {
+          userName: userData.name,
+          eventName: eventData.name,
+          reason: reason || "Entfernt vom Event",
+        });
+      }
+
       if (currentQueue.length > 0) {
         const nextUser = currentQueue[0];
-        const nextUserData = await getUserData(nextUser);
+        const nextUserData = (await getUserData(nextUser)) as UserData | null;
         const nextUserName = nextUserData?.name || nextUser;
 
         const moveLog: Log = {
@@ -395,6 +411,14 @@ export async function removeUserFromEvent(
           queue: arrayRemove(nextUser),
           logs: arrayUnion(moveLog),
         });
+
+        if (nextUserData) {
+          await sendTriggerEmail("queueToUser", nextUserData, {
+            userName: nextUserData.name,
+            eventName: eventData.name,
+            eventDate: eventData.date,
+          });
+        }
       }
     }
 
@@ -403,13 +427,21 @@ export async function removeUserFromEvent(
         type: "userLeftQueue",
         date: Timestamp.now(),
         userName,
-        reason: "Von Warteschlange entfernt",
+        reason: reason || "Von Warteschlange entfernt",
       };
 
       await updateDoc(eventRef, {
         queue: arrayRemove(userId),
         logs: arrayUnion(log),
       });
+
+      if (userData && requesterId !== userId) {
+        await sendTriggerEmail("kicked", userData, {
+          userName: userData.name,
+          eventName: eventData.name,
+          reason: reason || "Von Warteliste entfernt",
+        });
+      }
     }
 
     if (currentMentors.includes(userId)) {

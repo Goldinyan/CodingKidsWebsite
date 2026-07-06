@@ -30,7 +30,7 @@ export default function Support() {
   const btnRadiusClass = isRounded ? "rounded-md" : "rounded-none";
 
   return (
-    <div className="w-full max-w-6xl mx-auto py-16 px-6 font-['DM_Sans']">
+    <div className="w-full max-w-6xl mx-auto py-16 px-6 ">
       <motion.div
         variants={itemVariants as Variants}
         initial="hidden"
