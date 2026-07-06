@@ -103,6 +103,26 @@ export async function getAllUsers(
   }
 }
 
+export async function getAllMentorUsers(
+  userId: string = "anonymous",
+  userRole: UserRole = "user",
+): Promise<UserData[]> {
+  enforceRateLimit("getAllUsers", userId, userRole);
+
+  try {
+    const snapshot = await getDocs(collection(db, "users"));
+    const data = snapshot.docs
+      .map((doc) => ({
+        uid: doc.id,
+        ...doc.data(),
+      })) as UserData[];
+    return data.filter((user) => user.role === "mentor" || user.role === "admin");
+  } catch (error) {
+    console.error("Error fetching mentor users:", error);
+    throw error;
+  }
+}
+
 export async function updateUser(
   uid: string,
   updates: Partial<UserData>,

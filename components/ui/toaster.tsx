@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   Toast,
@@ -7,29 +7,70 @@ import {
   ToastProvider,
   ToastTitle,
   ToastViewport,
-} from "@/components/ui/toast"
-import { useToast } from "@/components/ui/use-toast"
+} from "@/components/ui/toast";
+import { useToast } from "@/components/ui/use-toast";
+import { useTheme } from "@/context/ThemeContext";
+import { cn } from "@/lib/utils";
 
 export function Toaster() {
-  const { toasts } = useToast()
+  const { toasts } = useToast();
+  const { theme, isRounded } = useTheme();
 
   return (
     <ToastProvider>
-      {toasts.map(function ({ id, title, description, action, open, onOpenChange, ...props }) {
+      {toasts.map(function({
+        id,
+        title,
+        description,
+        action,
+        variant,
+        ...props
+      }) {
+        const isDark = theme === "dark";
+
+        const themeClasses = cn(
+          "bg-white text-zinc-950",
+          isDark && "bg-zinc-950 text-white",
+
+          variant === "failed" &&
+          (isDark ? "bg-white text-zinc-950" : "bg-zinc-950 text-white"),
+        );
+
+        const radiusClass = isRounded ? "rounded-md" : "rounded-none";
+
         return (
-          <Toast key={id} onOpenChange={onOpenChange} open={open} {...props}>
+          <Toast
+            key={id}
+            variant={variant}
+            className={cn(themeClasses, radiusClass)}
+            {...props}
+          >
             <div className="grid gap-1">
               {title && <ToastTitle>{title}</ToastTitle>}
               {description && (
-                <ToastDescription>{description}</ToastDescription>
+                <ToastDescription
+                  className={cn(
+                    isDark ? "text-zinc-400" : "text-zinc-500",
+                    variant === "failed" &&
+                    (isDark ? "text-zinc-700" : "text-zinc-300"),
+                  )}
+                >
+                  {description}
+                </ToastDescription>
               )}
             </div>
             {action}
-            <ToastClose />
+            <ToastClose
+              className={
+                isDark
+                  ? "text-white/50 hover:text-white"
+                  : "text-black/50 hover:text-black"
+              }
+            />
           </Toast>
-        )
+        );
       })}
       <ToastViewport />
     </ToastProvider>
-  )
+  );
 }

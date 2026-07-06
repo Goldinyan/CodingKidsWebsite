@@ -12,6 +12,8 @@ import { useAuth } from "@/BackEnd/AuthContext";
 import SectionLabel from "./components/SectionLabel";
 import SectionHeading from "./components/SectionHeading";
 import GlassCard from "./components/GlassCard";
+import { useToast } from "@/components/ui/use-toast";
+import { toastVariants } from "@/components/ui/toast";
 
 const fmtMonth = (date: any) => {
   return toJsDate(date)
@@ -43,6 +45,7 @@ export default function FeaturedEventsView() {
   const isDark = theme === "dark";
   const { user, userData, userRole, loading } = useAuth();
   const router = useRouter();
+  const { toast } = useToast();
 
   const hasFetched = useRef<string | null>(null);
 
@@ -56,16 +59,27 @@ export default function FeaturedEventsView() {
     }
 
     const fetchEvents = async () => {
-      const [allEvents, allCourses] = await Promise.all([
-        getAllEvents(user?.uid, userRole),
-        getAllCourses(),
-      ]);
+      try {
+        const [allEvents, allCourses] = await Promise.all([
+          getAllEvents(user?.uid, userRole),
+          getAllCourses(),
+        ]);
 
-      const upcomingEvents = (allEvents as EventData[])
-        .sort((a, b) => toJsDate(a.date).getTime() - toJsDate(b.date).getTime())
-        .slice(0, 3);
-      setEvents(upcomingEvents as EventData[]);
-      setCourses(allCourses as CourseData[]);
+        const upcomingEvents = (allEvents as EventData[])
+          .sort(
+            (a, b) => toJsDate(a.date).getTime() - toJsDate(b.date).getTime(),
+          )
+          .slice(0, 3);
+        setEvents(upcomingEvents as EventData[]);
+        setCourses(allCourses as CourseData[]);
+      } catch (error) {
+        toast({
+          variant: "failed" as keyof typeof toastVariants,
+          title: "Fehler beim Laden der Termine",
+          description:
+            "Es ist ein Fehler beim Laden der Termine aufgetreten. Bitte versuche es später erneut.",
+        });
+      }
     };
 
     fetchEvents();
@@ -88,8 +102,16 @@ export default function FeaturedEventsView() {
     (ev) => toJsDate(ev.date).getTime() > Date.now(),
   );
 
+  const idk = () => {
+    toast({
+      variant: "info" as keyof typeof toastVariants,
+      title: "Info",
+      description: "Dies ist eine Info-Nachricht.",
+    });
+  };
+
   return (
-    <section className="py-14 mx-4">
+    <section onClick={() => idk()} className="py-14 mx-4">
       <div className="flex items-end justify-between mb-8">
         <div>
           <SectionLabel>Nächste Termine</SectionLabel>
@@ -106,18 +128,23 @@ export default function FeaturedEventsView() {
       </div>
 
       <div className="flex flex-col gap-3 mb-6">
-        {/* Empty State UI */}
         {validEvents.length === 0 && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
           >
-            <div className={`flex flex-col items-center justify-center p-8 text-center border border-dashed ${isRounded ? "rounded-2xl" : "rounded-none"} ${isDark ? "border-white/10 bg-white/[0.01]" : "border-slate-200 bg-slate-50"}`}>
-              <div className={`w-12 h-12 flex items-center justify-center ${isRounded ? "rounded-xl" : "rounded-none"} bg-purple-500/10 border border-purple-500/20 mb-4`}>
+            <div
+              className={`flex flex-col items-center justify-center p-8 text-center border border-dashed ${isRounded ? "rounded-2xl" : "rounded-none"} ${isDark ? "border-white/10 bg-white/[0.01]" : "border-slate-200 bg-slate-50"}`}
+            >
+              <div
+                className={`w-12 h-12 flex items-center justify-center ${isRounded ? "rounded-xl" : "rounded-none"} bg-purple-500/10 border border-purple-500/20 mb-4`}
+              >
                 <CalendarX2 className="w-6 h-6 text-purple-400" />
               </div>
-              <h3 className={`font-bold text-base font-grotesk mb-1 ${isDark ? "text-white" : "text-slate-900"}`}>
+              <h3
+                className={`font-bold text-base font-grotesk mb-1 ${isDark ? "text-white" : "text-slate-900"}`}
+              >
                 Keine Termine geplant
               </h3>
               <p className="text-sm text-gray-500 max-w-sm leading-relaxed">
@@ -153,7 +180,9 @@ export default function FeaturedEventsView() {
                   <div className="text-[9px] tracking-widest font-mono text-gray-500">
                     {fmtMonth(ev.date)}
                   </div>
-                  <div className={`text-xl font-black leading-tight font-grotesk ${isDark ? "text-white" : "text-slate-900"}`}>
+                  <div
+                    className={`text-xl font-black leading-tight font-grotesk ${isDark ? "text-white" : "text-slate-900"}`}
+                  >
                     {fmtDay(ev.date)}
                   </div>
                 </div>
@@ -161,7 +190,9 @@ export default function FeaturedEventsView() {
                 <div className="w-px h-9 shrink-0 bg-white/[0.07]" />
 
                 <div className="flex-1 min-w-0">
-                  <div className={`font-semibold text-sm truncate font-grotesk ${isDark ? "text-white" : "text-slate-900"}`}>
+                  <div
+                    className={`font-semibold text-sm truncate font-grotesk ${isDark ? "text-white" : "text-slate-900"}`}
+                  >
                     {ev.name}
                   </div>
                   <div className="text-[11px] mt-0.5 font-mono text-gray-500">

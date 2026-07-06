@@ -1,8 +1,9 @@
 "use client";
 
-import { Edit2, Save, Trash2, X } from "lucide-react";
+import { Edit2, Save, Trash2, X, Users } from "lucide-react";
 import { motion } from "framer-motion";
 import { useTheme } from "@/context/ThemeContext";
+import { useAuth } from "@/BackEnd/AuthContext";
 import type { CourseData } from "@/BackEnd/type";
 
 export function CourseCard(props: {
@@ -14,6 +15,7 @@ export function CourseCard(props: {
   onCancelEdit: () => void;
   onSaveEdit: () => void;
   onRequestDelete: () => void;
+  onRequestAssignMentors: () => void;
 }) {
   const {
     course,
@@ -24,11 +26,15 @@ export function CourseCard(props: {
     onCancelEdit,
     onSaveEdit,
     onRequestDelete,
+    onRequestAssignMentors,
   } = props;
 
+  const { userRole } = useAuth();
   const { theme, isRounded } = useTheme();
   const radiusClass = isRounded ? "rounded-[12px]" : "rounded-none";
   const isDark = theme === "dark";
+
+  const canManageMentors = ["admin", "mentor"].includes(userRole || "");
 
   return (
     <motion.div
@@ -191,10 +197,33 @@ export function CourseCard(props: {
                   <span className="font-bold uppercase opacity-70">VERANSTALTUNGEN:</span> {course.dates.length}
                 </div>
               )}
+
+              {course.mentors && course.mentors.length > 0 && (
+                <div
+                  className={`font-['JetBrains_Mono'] text-[10px] tracking-wide ${
+                    isDark ? "text-zinc-600" : "text-slate-400"
+                  }`}
+                >
+                  <span className="font-bold uppercase opacity-70">MENTOREN:</span> {course.mentors.length}
+                </div>
+              )}
             </div>
           </div>
 
           <div className="flex gap-2 border-t border-zinc-100 dark:border-zinc-900/60 pt-4">
+            {canManageMentors && (
+              <button
+                onClick={onRequestAssignMentors}
+                className={`flex-1 px-4 py-2.5 font-['JetBrains_Mono'] text-[10px] tracking-widest uppercase transition-all duration-200 flex items-center justify-center gap-2 border ${radiusClass} ${
+                  isDark
+                    ? "border-zinc-800 text-zinc-400 hover:bg-zinc-900/50 hover:text-blue-400 hover:border-blue-500/30"
+                    : "border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-blue-600 hover:border-blue-200 shadow-sm"
+                }`}
+              >
+                <Users className="w-3.5 h-3.5" />
+                MENTOR
+              </button>
+            )}
             <button
               onClick={onStartEdit}
               className={`flex-1 px-4 py-2.5 font-['JetBrains_Mono'] text-[10px] tracking-widest uppercase transition-all duration-200 flex items-center justify-center gap-2 border ${radiusClass} ${
@@ -223,3 +252,4 @@ export function CourseCard(props: {
     </motion.div>
   );
 }
+

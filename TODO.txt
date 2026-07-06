@@ -1,5 +1,4 @@
 ## Todos
 
 [ ] - logs zu usern falls die was ändern oder so
-[ ] - mentoren können sich zu coursen hinzufügen
 [ ] - wenn ratelimiter fehler gibt dann im toast oder so dem user mitteilen

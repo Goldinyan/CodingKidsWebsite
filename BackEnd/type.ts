@@ -213,5 +213,5 @@ export type CourseData = {
   name: string;
   des: string;
   tags: string[];
-  mentors: Mentor[];
+  mentors: UserData[];
 };

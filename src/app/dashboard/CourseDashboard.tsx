@@ -8,11 +8,12 @@ import { useAuth } from "@/BackEnd/AuthContext";
 import { addCourse, deleteCourse, updateCourse } from "@/lib/db/courses";
 import type { CourseData } from "@/BackEnd/type";
 import { useToast } from "@/components/ui/use-toast";
-import { useCoursesData, useFilteredCourses } from "./courses/hooks";
+import { useCoursesData, useFilteredCourses, useMentorsData } from "./courses/hooks";
 import {
   CourseCard,
   DeleteCourseDialog,
   NewCourseDialog,
+  AssignMentorsDialog,
 } from "./courses/components";
 
 export default function CourseDashboard() {
@@ -24,6 +25,11 @@ export default function CourseDashboard() {
   const [isAddingCourse, setIsAddingCourse] = useState<boolean>(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [tagInput, setTagInput] = useState<string>("");
+
+  const [assigningMentorsId, setAssigningMentorsId] = useState<string | null>(
+    null,
+  );
+  const [selectedMentorIds, setSelectedMentorIds] = useState<string[]>([]);
 
   const [deleteConfirm, setDeleteConfirm] = useState<{
     isOpen: boolean;
@@ -50,6 +56,7 @@ export default function CourseDashboard() {
     refresh,
     isLoading,
   } = useCoursesData(user?.uid, userRole);
+  const { mentors, isLoading: mentorsLoading } = useMentorsData();
   const filteredCourses = useFilteredCourses(coursesData, searchBar);
 
   const radiusClass = isRounded ? "rounded-[12px]" : "rounded-none";
@@ -137,7 +144,6 @@ export default function CourseDashboard() {
     }
   };
 
-  // Kurs löschen
   const handleDeleteCourse = async () => {
     if (!user || !deleteConfirm.courseId) return;
 
@@ -170,6 +176,50 @@ export default function CourseDashboard() {
       des: course.des,
       tags: course.tags,
     });
+  };
+
+  const handleAssignMentorsStart = (course: CourseData) => {
+    setAssigningMentorsId(course.uid);
+    setSelectedMentorIds(course?.mentors.map((m) => m.uid));
+  };
+
+  const handleSaveMentors = async () => {
+    if (!user || !assigningMentorsId) return;
+
+    try {
+      const selectedMentors = mentors.filter((m) =>
+        selectedMentorIds.includes(m.uid),
+      );
+
+      await updateCourse(
+        assigningMentorsId,
+        { mentors: selectedMentors },
+        user.uid,
+        userRole || "user",
+      );
+
+      setCourses(
+        coursesData.map((course) =>
+          course.uid === assigningMentorsId
+            ? { ...course, mentors: selectedMentors }
+            : course,
+        ),
+      );
+
+      setAssigningMentorsId(null);
+      setSelectedMentorIds([]);
+
+      toast({
+        title: "Erfolg",
+        description: "Mentoren erfolgreich zugewiesen",
+      });
+    } catch (error) {
+      console.error("Error assigning mentors:", error);
+      toast({
+        title: "Fehler",
+        description: "Mentoren konnten nicht zugewiesen werden",
+      });
+    }
   };
 
   if (isLoading) {
@@ -302,6 +352,9 @@ export default function CourseDashboard() {
                           courseName: course.name,
                         })
                       }
+                      onRequestAssignMentors={() =>
+                        handleAssignMentorsStart(course)
+                      }
                     />
                   </motion.div>
                 ))}
@@ -332,6 +385,25 @@ export default function CourseDashboard() {
           })
         }
         onConfirm={handleDeleteCourse}
+      />
+
+      <AssignMentorsDialog
+        open={assigningMentorsId !== null}
+        onOpenChange={(open) => {
+          if (!open) {
+            setAssigningMentorsId(null);
+            setSelectedMentorIds([]);
+          }
+        }}
+        courseName={
+          filteredCourses.find((c) => c.uid === assigningMentorsId)?.name ||
+          null
+        }
+        availableMentors={mentors}
+        selectedMentorIds={selectedMentorIds}
+        onSelectedMentorsChange={setSelectedMentorIds}
+        onSave={handleSaveMentors}
+        isLoading={mentorsLoading}
       />
     </>
   );

@@ -11,6 +11,7 @@ import {
   MentorsView,
   CTAView,
 } from "./homepage";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function MainView() {
   return (
