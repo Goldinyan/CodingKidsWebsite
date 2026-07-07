@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
 import { useNotificationToast } from "@/hooks/useNotificationToast";
+import { useAppData } from "@/context/DataContext";
 
 const defaultEvent: EventData = {
   name: "",
@@ -64,6 +65,9 @@ export default function EventCreationDialog(props: {
   const [EventInfo, setEventInfo] = useState<EventData>(defaultEvent);
   const [error, setError] = useState<string>("");
   const [isCreating, setIsCreating] = useState(false);
+
+  const { refreshData, getUsers } = useAppData();
+  const users = getUsers();
 
   const roundedClass = isRounded ? "rounded-xl" : "rounded-none";
 
@@ -170,9 +174,14 @@ export default function EventCreationDialog(props: {
       return;
     }
 
+    const usersToNotify = users.filter(
+      (u) => u.settings?.notifications?.newEvent,
+    );
+
     setIsCreating(true);
     try {
-      await addEvent(EventInfo, user.uid, userRole);
+      await addEvent(EventInfo, user.uid, userRole, usersToNotify);
+      await refreshData("events");
       setEventInfo(defaultEvent);
       setCurrentStep(0);
       setError("");

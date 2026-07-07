@@ -13,11 +13,19 @@ import {
   arrayUnion,
   Timestamp,
 } from "firebase/firestore";
-import { EventData, EventStatus, type Log, type UserData } from "@/BackEnd/type";
+import {
+  EventData,
+  EventStatus,
+  type Log,
+  type UserData,
+} from "@/BackEnd/type";
 import type { UserRole } from "@/BackEnd/type";
 import { enforceRateLimit } from "./db";
 import { getAllCourses, updateCourse } from "./courses";
-import { sendTriggerEmailToMultipleUsers, sendTriggerEmail } from "./emailTriggers";
+import {
+  sendTriggerEmailToMultipleUsers,
+  sendTriggerEmail,
+} from "./emailTriggers";
 import { getAllUsers } from ".";
 
 async function getUserData(userId: string) {
@@ -57,6 +65,7 @@ export async function addEvent(
   newEvent: EventData,
   userId: string = "anonymous",
   userRole: UserRole = "user",
+  usersToSend: UserData[] = [],
 ) {
   enforceRateLimit("addEvent", userId, userRole);
 
@@ -70,6 +79,7 @@ export async function addEvent(
     } else {
       date = new Date(newEvent.date as unknown as string);
     }
+
     const Id = date.toISOString() + "-" + newEvent.course;
 
     const userData = await getUserData(userId);
@@ -88,6 +98,7 @@ export async function addEvent(
     };
 
     await setDoc(doc(db, "events", Id), {
+      uid: Id,
       name: newEvent.name,
       course: newEvent.course,
       date: date.toISOString(),
@@ -105,25 +116,24 @@ export async function addEvent(
       logs: [initialLog],
     });
 
-    const course = (await getAllCourses(userId, userRole)).find(
-      (c) => c.uid === newEvent.course,
-    );
-
-    if (course) {
-      const updatedDates = [...course.dates, date.toISOString()];
-      await updateCourse(course.uid, { dates: updatedDates }, userId, userRole);
+    if (newEvent.course) {
+      const courseRef = doc(db, "courses", newEvent.course);
+      await updateDoc(courseRef, {
+        dates: arrayUnion(Id),
+      });
+      console.log(
+        `Event ${Id} erfolgreich zu Kurs ${newEvent.course} hinzugefügt.`,
+      );
     }
 
-    const allUsers = await getAllUsers(userId, userRole);
-    allUsers?.filter((user) => user.settings.notifications.newEvent);
-
-    sendTriggerEmailToMultipleUsers("newEvent", allUsers, {
-      eventName: newEvent.name,
-      eventDate: date.toISOString(),
-      difficulty: newEvent.difficulty,
-      description: newEvent.description,
-    });
-
+    if (usersToSend.length > 0) {
+      sendTriggerEmailToMultipleUsers("newEvent", usersToSend, {
+        eventName: newEvent.name,
+        eventDate: date.toISOString(),
+        difficulty: newEvent.difficulty,
+        description: newEvent.description,
+      });
+    }
   } catch (error) {
     console.error("Error adding event:", error);
     throw error;
@@ -133,45 +143,22 @@ export async function addEvent(
 export async function deleteEvent(
   uid: string,
   userId: string = "anonymous",
+  courseId: string | null = null,
   userRole: UserRole = "user",
 ) {
   enforceRateLimit("deleteEvent", userId, userRole);
 
   try {
     const ref = doc(db, "events", uid);
-    const eventSnapshot = await getDoc(ref);
-
-    if (!eventSnapshot.exists) {
-      console.log("No event to delete");
-      return;
-    }
-
-    const userData = await getUserData(userId);
-    const userName = userData?.name || userId;
-
-    // Log deletion before deleting
-    const deleteLog: Log = {
-      type: "eventDeleted",
-      date: Timestamp.now(),
-      userName,
-    };
-
-    await updateDoc(ref, {
-      logs: arrayUnion(deleteLog),
-    });
 
     await deleteDoc(ref);
-    console.log("Event deleted");
 
-    const course = (await getAllCourses(userId, userRole)).find((c) =>
-      c.dates.includes(uid),
-    );
-
-    if (course) {
-      const courseRef = doc(db, "courses", course.uid);
+    if (courseId) {
+      const courseRef = doc(db, "courses", courseId);
       await updateDoc(courseRef, {
         dates: arrayRemove(uid),
       });
+      console.log(`Event ${uid} aus Kurs ${courseId} entfernt.`);
     }
   } catch (error) {
     console.log("Error at deleting Event" + error);
@@ -184,6 +171,7 @@ export async function updateEvent(
   updates: Partial<EventData>,
   userId: string = "anonymous",
   userRole: UserRole = "user",
+  userData: UserData | null = null,
 ) {
   enforceRateLimit("updateEvent", userId, userRole);
 
@@ -196,7 +184,6 @@ export async function updateEvent(
     }
 
     const oldData = eventSnapshot.data();
-    const userData = await getUserData(userId);
     const mentorName = userData?.name || userId;
 
     // Calculate only changed fields

@@ -87,24 +87,14 @@ export async function updateCourse(
 }
 
 export async function deleteEventFromCourse(
-  uid: string,
-  userId: string = "anonymous",
-  userRole: UserRole = "user",
+  courseId: string,
+  eventId: string,
 ) {
-  // Don't count this as a separate operation, it's part of another operation
   try {
-    const course = (await getAllCourses(userId, userRole)).find((c) =>
-      c.dates.includes(uid),
-    );
-
-    if (course) {
-      const ref = doc(db, "courses", course.uid);
-      await updateDoc(ref, {
-        dates: arrayRemove(uid),
-      });
-    } else {
-      throw new Error("NO COURSE WITH THIS EVENT");
-    }
+    const ref = doc(db, "courses", courseId);
+    await updateDoc(ref, {
+      dates: arrayRemove(eventId),
+    });
   } catch (error) {
     console.error("Error deleting event from course:", error);
     throw error;
@@ -114,22 +104,12 @@ export async function deleteEventFromCourse(
 export async function addEventToCourse(
   courseId: string,
   eventId: string,
-  userId: string = "anonymous",
-  userRole: UserRole = "user",
 ) {
   try {
-    const course = (await getAllCourses(userId, userRole)).find(
-      (c) => c.uid === courseId,
-    );
-
-    if (course) {
-      const ref = doc(db, "courses", course.uid);
-      await updateDoc(ref, {
-        dates: arrayUnion(eventId),
-      });
-    } else {
-      throw new Error("NO COURSE WITH THIS ID");
-    }
+    const ref = doc(db, "courses", courseId);
+    await updateDoc(ref, {
+      dates: arrayUnion(eventId),
+    });
   } catch (error) {
     console.error("Error adding event to course:", error);
     throw error;
