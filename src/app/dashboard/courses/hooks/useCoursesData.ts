@@ -1,30 +1,20 @@
-import { useCallback, useEffect, useState } from "react";
-import type { CourseData } from "@/BackEnd/type";
-import { getAllCourses } from "@/lib/db/courses";
+// hooks/useCoursesData.ts
+import { useCallback } from "react";
+import { useAppData } from "@/context/DataContext";
 
-export function useCoursesData(userId: string | undefined, userRole: unknown) {
-  const [courses, setCourses] = useState<CourseData[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<unknown>(null);
+export function useCoursesData() {
+  const { getCourses, refreshData, loadingStates } = useAppData();
+
+  const courses = getCourses();
 
   const refresh = useCallback(async () => {
-    if (!userId) return;
-    setIsLoading(true);
-    setError(null);
-    try {
-      const data = await getAllCourses(userId, (userRole || "user") as any);
-      setCourses(data);
-    } catch (e) {
-      setError(e);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [userId, userRole]);
+    await refreshData("courses");
+  }, [refreshData]);
 
-  useEffect(() => {
-    refresh();
-  }, [refresh]);
-
-  return { courses, setCourses, refresh, isLoading, error };
+  return {
+    courses,
+    refresh,
+    isLoading: loadingStates.courses && courses.length === 0,
+    error: null,
+  };
 }
-

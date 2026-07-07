@@ -2,10 +2,10 @@
 
 import Image from "next/image";
 import logoTransparent from "@/public/Logo_aussen_Transparent.png";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import type { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
-import { useAuth } from "@/BackEnd/AuthContext";
+import { useAuth } from "@/context/AuthContext";
 import {
   User,
   MessageCircle,
@@ -15,43 +15,26 @@ import {
   LayoutDashboard,
 } from "lucide-react";
 import NavbarMobile from "./NavbarMobile";
-import { getAllAnnouncements } from "@/lib/db";
 import { useTheme, Theme } from "@/context/ThemeContext";
-import { useNotificationToast } from "@/hooks/useNotificationToast";
+import { useAppData } from "@/context/DataContext";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
-  const { user, userRole, loading } = useAuth();
-  const [unreadMessages, setUnreadMessages] = useState(0);
+  const { user, userRole } = useAuth();
   const router = useRouter();
   const { theme, isRounded } = useTheme();
-  const { showErrorToast } = useNotificationToast();
 
-  const hasFetched = useRef<string | null>(null);
+  const { getAnnouncements } = useAppData();
 
-  useEffect(() => {
-    if (!user?.uid || loading) return;
+  const rawAnnouncements = getAnnouncements();
 
-    const currentKey = `${user.uid}-${userRole}`;
-    if (hasFetched.current === currentKey) return;
-
-    const fetchData = async () => {
-      hasFetched.current = currentKey;
-      try {
-        const announcements = await getAllAnnouncements(user.uid, userRole);
-        const unread = announcements.filter(
-          (announcement) =>
-            (!announcement.readBy || !announcement.readBy.includes(user.uid)) &&
-            announcement.authorUid !== user.uid,
-        ).length;
-        setUnreadMessages(unread);
-      } catch (error) {
-        showErrorToast(error);
-      }
-    };
-
-    fetchData();
-  }, [user?.uid, userRole, loading]);
+  const unreadMessagesCount = useMemo(() => {
+    if (!user) return 0;
+    return rawAnnouncements.filter(
+      (announcement) =>
+        !announcement.readBy || !announcement.readBy.includes(user.uid),
+    ).length;
+  }, [rawAnnouncements, user]);
 
   // Scrollen im Hintergrund bei offener mobiler Navbar verhindern
   useEffect(() => {
@@ -106,14 +89,14 @@ export default function Navbar() {
                 >
                   <MessageCircle className="w-5 h-5" />
                 </button>
-                {unreadMessages > 0 && (
+                {unreadMessagesCount > 0 && (
                   <span
                     className={`absolute -top-1 -right-1 text-xs font-bold px-1.5 py-0.5 rounded-full scale-75 ${theme === "dark"
                         ? "bg-white text-black"
                         : "bg-black text-white"
                       }`}
                   >
-                    {unreadMessages}
+                    {unreadMessagesCount > 99 ? "99+" : unreadMessagesCount}
                   </span>
                 )}
               </div>
@@ -152,7 +135,6 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* MOBILE Burger Button */}
           <div className="flex md:hidden items-center">
             <button
               onClick={() => setOpen(!open)}
@@ -164,7 +146,6 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* MOBILE Vollbild-Menü-Overlay (Ausgebrochen aus dem Header-Container) */}
       {open && (
         <div
           className={`fixed inset-0 z-40 md:hidden pt-14 transition-all duration-300 ${theme === "dark" ? "bg-black" : "bg-white"

@@ -3,12 +3,13 @@
 import { updateUser } from "@/lib/db";
 import { useState } from "react";
 import { type UserData, type Filter, UserRole } from "@/BackEnd/type";
-import { useAuth } from "@/BackEnd/AuthContext";
+import { useAuth } from "@/context/AuthContext";
 import { SortAsc, SortDesc, Search } from "lucide-react";
 import { motion } from "framer-motion";
 import { useTheme } from "@/context/ThemeContext";
 import { useFilteredUsers, useUsersData } from "./users/hooks";
 import { DeleteUserDialog, EditUserDialog, UserCard } from "./users/components";
+import { useAppData } from "@/context/DataContext";
 
 export default function UserDashboard() {
   const [searchBar, setSearchBar] = useState<string>("");
@@ -33,19 +34,31 @@ export default function UserDashboard() {
 
   const { user, userRole } = useAuth();
   const { theme, isRounded } = useTheme();
-  const { users, setUsers } = useUsersData(user?.uid, userRole);
-  const filteredUsers = useFilteredUsers(users, searchBar, filters, seeAll);
+
+  const { getUsers, loadingStates, refreshData } = useAppData();
+
+  const rawUsers = getUsers();
+
+  const filteredUsers = useFilteredUsers(rawUsers, searchBar, filters, seeAll);
+
+  if (loadingStates.users && (!rawUsers || rawUsers.length === 0)) {
+    return <p>Benutzerdaten werden geladen...</p>;
+  }
 
   const saveUserChanges = async (uid: string) => {
     if (!editValues.name?.trim()) return;
-    await updateUser(uid, editValues, user?.uid || "anonymous", userRole);
-    setUsers(
-      users.map(
-        (u) => (u.uid === uid ? { ...u, ...editValues } : u) as UserData,
-      ),
-    );
-    setEditingId(null);
-    setEditValues({});
+
+    try {
+      await updateUser(uid, editValues, user?.uid || "anonymous", userRole);
+
+      // global reset
+      await refreshData("users");
+
+      setEditingId(null);
+      setEditValues({});
+    } catch (error) {
+      console.error("Fehler beim Updaten des Users:", error);
+    }
   };
 
   const handleEditStart = (u: UserData) => {

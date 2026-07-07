@@ -1,4 +1,4 @@
-import { useAuth } from "@/BackEnd/AuthContext";
+import { useAuth } from "@/context/AuthContext";
 
 export function useUserIsAdmin(userId: string | undefined) {
   const { userData, loading } = useAuth();

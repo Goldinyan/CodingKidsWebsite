@@ -60,20 +60,15 @@ export default function EventDashboard() {
 
   const userMap = useEventUsersMap(
     eventsData,
-    user?.uid,
-    userRole,
     useCallback((e) => e.users, []),
   );
+
   const queueUserMap = useEventUsersMap(
     eventsData,
-    user?.uid,
-    userRole,
     useCallback((e) => e.queue, []),
   );
   const mentorMap = useEventUsersMap(
     eventsData,
-    user?.uid,
-    userRole,
     useCallback((e) => e.mentors || [], []),
   );
 

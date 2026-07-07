@@ -4,10 +4,10 @@ import { useState } from "react";
 import { Plus, Search, FolderX } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "@/context/ThemeContext";
-import { useAuth } from "@/BackEnd/AuthContext";
+import { useAuth } from "@/context/AuthContext";
+import { useAppData } from "@/context/DataContext"; // ⚡ AppDataContext importiert
 import { addCourse, deleteCourse, updateCourse } from "@/lib/db/courses";
 import type { CourseData } from "@/BackEnd/type";
-import { useToast } from "@/components/ui/use-toast";
 import { useNotificationToast } from "@/hooks/useNotificationToast";
 import {
   useCoursesData,
@@ -23,7 +23,6 @@ import {
 
 export default function CourseDashboard() {
   const { user, userRole } = useAuth();
-  const { toast } = useToast();
   const {
     showUpdateSuccess,
     showCreateSuccess,
@@ -62,15 +61,13 @@ export default function CourseDashboard() {
 
   const [editValues, setEditValues] = useState<Partial<CourseData>>({});
 
-  const {
-    courses: coursesData,
-    setCourses,
-    refresh,
-    isLoading,
-  } = useCoursesData(user?.uid, userRole);
+  const { refreshData } = useAppData();
+
+  const { courses: coursesData, isLoading } = useCoursesData();
   const { mentors, isLoading: mentorsLoading } = useMentorsData();
   const filteredCourses = useFilteredCourses(coursesData, searchBar);
 
+  const isDark = theme === "dark";
   const radiusClass = isRounded ? "rounded-[12px]" : "rounded-none";
 
   const handleTagChange = (val: string) => {
@@ -95,7 +92,7 @@ export default function CourseDashboard() {
 
     try {
       const courseToAdd: CourseData = {
-        uid: newCourse.name,
+        uid: "", 
         name: newCourse.name,
         des: newCourse.des || "",
         tags: newCourse.tags || [],
@@ -105,13 +102,9 @@ export default function CourseDashboard() {
 
       await addCourse(courseToAdd, user.uid, userRole || "user");
 
-      setCourses([...coursesData, courseToAdd]);
-      setNewCourse({
-        name: "",
-        des: "",
-        tags: [],
-        dates: [],
-      });
+      await refreshData("courses");
+
+      setNewCourse({ name: "", des: "", tags: [], dates: [] });
       setTagInput("");
       setIsAddingCourse(false);
 
@@ -130,11 +123,7 @@ export default function CourseDashboard() {
     try {
       await updateCourse(courseId, editValues, user.uid, userRole || "user");
 
-      setCourses(
-        coursesData.map((course) =>
-          course.uid === courseId ? { ...course, ...editValues } : course,
-        ),
-      );
+      await refreshData("courses");
 
       setEditingId(null);
       setEditValues({});
@@ -154,9 +143,7 @@ export default function CourseDashboard() {
     try {
       await deleteCourse(deleteConfirm.courseId, user.uid, userRole || "user");
 
-      setCourses(
-        coursesData.filter((course) => course.uid !== deleteConfirm.courseId),
-      );
+      await refreshData("courses");
 
       setDeleteConfirm({ isOpen: false, courseId: null, courseName: null });
 
@@ -180,7 +167,7 @@ export default function CourseDashboard() {
 
   const handleAssignMentorsStart = (course: CourseData) => {
     setAssigningMentorsId(course.uid);
-    setSelectedMentorIds(course?.mentors.map((m) => m.uid));
+    setSelectedMentorIds(course?.mentors.map((m) => m.uid) || []);
   };
 
   const handleSaveMentors = async () => {
@@ -198,20 +185,16 @@ export default function CourseDashboard() {
         userRole || "user",
       );
 
-      setCourses(
-        coursesData.map((course) =>
-          course.uid === assigningMentorsId
-            ? { ...course, mentors: selectedMentors }
-            : course,
-        ),
-      );
+      await refreshData("courses");
 
+      const courseName =
+        coursesData.find((c) => c.uid === assigningMentorsId)?.name || "";
       setAssigningMentorsId(null);
       setSelectedMentorIds([]);
 
       showUpdateSuccess({
         title: "Mentoren erfolgreich zugewiesen",
-        description: `Die Mentoren für den Kurs "${coursesData.find((c) => c.uid === assigningMentorsId)?.name}" wurden erfolgreich aktualisiert.`,
+        description: `Die Mentoren für den Kurs "${courseName}" wurden erfolgreich aktualisiert.`,
       });
     } catch (error) {
       showErrorToast(error);

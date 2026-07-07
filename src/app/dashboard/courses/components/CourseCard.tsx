@@ -3,7 +3,7 @@
 import { Edit2, Save, Trash2, X, Users } from "lucide-react";
 import { motion } from "framer-motion";
 import { useTheme } from "@/context/ThemeContext";
-import { useAuth } from "@/BackEnd/AuthContext";
+import { useAuth } from "@/context/AuthContext";
 import type { CourseData } from "@/BackEnd/type";
 
 export function CourseCard(props: {

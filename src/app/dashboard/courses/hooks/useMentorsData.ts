@@ -1,35 +1,23 @@
-import { useCallback, useEffect, useState } from "react";
-import type { Mentor, UserData } from "@/BackEnd/type";
-import { getAllMentorUsers } from "@/lib/db/users";
-import { useAuth } from "@/BackEnd/AuthContext";
+import { useCallback } from "react";
+import { useAppData } from "@/context/DataContext";
+import { useMemo } from "react";
 
 export function useMentorsData() {
-  const [mentors, setMentors] = useState<UserData[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<unknown>(null);
-  const { user, userRole } = useAuth();
+  const { getUsers, refreshData, loadingStates } = useAppData();
+
+  const users = getUsers();
+
+  const mentors = useMemo(() => {
+    return users.filter((user) => user.role === "mentor" || user.role === "admin");
+  }, [users]);
 
   const refresh = useCallback(async () => {
-    if (!user || !userRole) {
-      return;
-    }
+    await refreshData("mentors");
+  }, [refreshData]);
 
-    setIsLoading(true);
-    setError(null);
-    try {
-      const mentorUsers = await getAllMentorUsers(user.uid, userRole);
-
-      setMentors(mentorUsers);
-    } catch (e) {
-      setError(e);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    refresh();
-  }, [refresh]);
-
-  return { mentors, setMentors, refresh, isLoading, error };
+  return {
+    mentors,
+    refresh,
+    isLoading: loadingStates.mentors && mentors.length === 0,
+  };
 }

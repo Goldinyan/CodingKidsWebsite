@@ -1,87 +1,56 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import { getAllMentors } from "@/lib/db";
 import { Mentor } from "@/BackEnd/type";
-import { m, motion, Variants } from "framer-motion";
-import { MentorCard } from "../verein/MentorCard";
-import { useAuth } from "@/BackEnd/AuthContext";
+import { motion, Variants } from "framer-motion";
+import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@/context/ThemeContext";
-import {
-  SimpleMentorCard,
-  SimpleMentorCardProps,
-} from "../verein/mentor/SimpleMentorCard";
+import { SimpleMentorCard } from "../verein/mentor/SimpleMentorCard";
 import SectionLabel from "./components/SectionLabel";
 import SectionHeading from "./components/SectionHeading";
 import { useNotificationToast } from "@/hooks/useNotificationToast";
+import { useAppData } from "@/context/DataContext";
+import { sourceMapsEnabled } from "process";
 
 export default function MentorsView() {
-  const [mentors, setMentors] = useState<Mentor[]>([]);
-  const [orderedMentors, setOrderedMentors] = useState<Mentor[]>([]);
-  const [expanded, setExpanded] = useState<number>(0);
+  const [expandedIndex, setExpandedIndex] = useState<number>(0);
 
-  const { user, userRole, loading } = useAuth();
   const { theme, isRounded } = useTheme();
-  const { showErrorToast } = useNotificationToast();
+  const isDark = theme === "dark";
 
-  const hasFetched = useRef<string | null>(null);
+  const { getMentors, loadingStates } = useAppData();
+  const rawMentors = getMentors();
 
-  const expandMentor = (id: number): void => {
-    const mentors: Mentor[] = [];
+  const sortedMentors = useMemo(() => {
+    return [...rawMentors].sort((a, b) => a.id - b.id);
+  }, [rawMentors]);
 
-    for (let i = 0; i < expanded; i++) {
-      mentors.push(orderedMentors[i]);
-    }
+  const orderedMentors = useMemo(() => {
+    if (sortedMentors.length === 0) return [];
 
-    mentors.push(orderedMentors[id]);
+    const active = sortedMentors[expandedIndex] || sortedMentors[0];
+    const rest = sortedMentors.filter((_, idx) => idx !== expandedIndex);
 
-    for (let i = expanded + 1; i < orderedMentors.length; i++) {
-      mentors.push(orderedMentors[i]);
-    }
+    return [active, ...rest];
+  }, [sortedMentors, expandedIndex]);
 
-    setOrderedMentors(mentors);
+  const expandMentor = (originalId: number): void => {
+    setExpandedIndex(originalId);
   };
 
-  useEffect(() => {
-    if (loading) {
-      return;
-    }
-
-    if (user) {
-      const currentKey = `${user.uid}-${userRole}`;
-      if (hasFetched.current === currentKey) return;
-
-      hasFetched.current = currentKey;
-    }
-
-    const fetchMentors = async () => {
-      try {
-        const allMentors = await getAllMentors(user?.uid, userRole);
-        setMentors(allMentors.sort((a, b) => a.id - b.id));
-      } catch (error) {
-        showErrorToast(error);
-      }
-    };
-
-    fetchMentors();
-  }, [user?.uid, userRole, loading, user]);
-
-  if (loading) {
+  if (loadingStates.mentors && (!rawMentors || rawMentors.length === 0)) {
     return (
-      <div className={`w-full px-8 py-16 transition-colors duration-300 `}>
+      <div className="w-full px-8 py-16 transition-colors duration-300">
         <p
-          className={`text-2xl font-bold mb-8 ${theme === "dark" ? "text-white" : "text-slate-900"
-            }`}
+          className={`text-2xl font-bold mb-8 ${isDark ? "text-white" : "text-slate-900"}`}
         >
           Unsere Mentoren
         </p>
-        <p className={theme === "dark" ? "text-gray-500" : "text-slate-500"}>
-          Lädt...
-        </p>
+        <p className={isDark ? "text-gray-500" : "text-slate-500"}>Lädt...</p>
       </div>
     );
   }
-
   const containerVariants = {
     hidden: {},
     visible: {
@@ -125,7 +94,7 @@ export default function MentorsView() {
         viewport={{ once: false, margin: "0px 0px -50px 0px" }}
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
       >
-        {mentors.slice(0, 3).map((mentor) => (
+        {sortedMentors.slice(0, 3).map((mentor) => (
           <motion.div
             key={mentor.uid}
             variants={itemVariants as Variants}

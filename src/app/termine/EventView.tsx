@@ -6,30 +6,26 @@ import EventNavbar from "./EventNavbar";
 import { toJsDate } from "@/BackEnd/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "@/context/ThemeContext";
-import { useAuth } from "@/BackEnd/AuthContext";
+import { useAuth } from "@/context/AuthContext";
 import { useEventView } from "./hooks/useEventView";
 
 export default function EventView() {
   const { theme, isRounded } = useTheme();
-  const { user, userData, loading } = useAuth();
+  const { userRole } = useAuth();
 
   const {
-    upcomingEvents,
     filteredUpcomingEvents,
-    pastEvents,
+    filteredPastEvents,
     courses,
     filters,
     setFilters,
     statuses,
     handleEvents,
     checkIfEventIsInRange,
-    getSortedEvents,
   } = useEventView();
 
   const isMember =
-    userData?.role === "admin" ||
-    userData?.role === "mentor" ||
-    userData?.role === "member";
+    userRole === "member" || userRole === "mentor" || userRole === "admin";
 
   return (
     <div
@@ -150,7 +146,7 @@ export default function EventView() {
           </AnimatePresence>
         </div>
 
-        {pastEvents.length > 0 && filteredUpcomingEvents.length > 0 && (
+        {filteredPastEvents.length > 0 && (
           <div className="w-full mt-12">
             <h2
               className={`text-2xl font-bold mb-6 font-grotesk ${theme === "dark" ? "text-gray-500" : "text-slate-500"}`}
@@ -158,7 +154,7 @@ export default function EventView() {
               Vergangene Events
             </h2>
             <div className="flex flex-col gap-3">
-              {pastEvents
+              {filteredPastEvents
                 .sort((a, b) => (b.date.seconds || 0) - (a.date.seconds || 0))
                 .map((event) => (
                   <EventCard

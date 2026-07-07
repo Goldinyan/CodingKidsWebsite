@@ -10,7 +10,7 @@ import { useState } from "react";
 import { Plus, Search } from "lucide-react";
 import { motion } from "framer-motion";
 import { useTheme } from "@/context/ThemeContext";
-import { useAuth } from "@/BackEnd/AuthContext";
+import { useAuth } from "@/context/AuthContext";
 import { Timestamp } from "firebase/firestore";
 import { getAuthorName } from "./announcements/getAuthor";
 import {
@@ -25,6 +25,7 @@ import {
   EditAnnouncementDialog,
   NewAnnouncementDialog,
 } from "./announcements/components";
+import { useAppData } from "@/context/DataContext";
 
 export default function AnnouncementDashboard() {
   const [isAddingAnnouncement, setIsAddingAnnouncement] =
@@ -34,12 +35,10 @@ export default function AnnouncementDashboard() {
   const { user, userRole } = useAuth();
   const { theme, isRounded } = useTheme();
   const userIsAdmin = useUserIsAdmin(user?.uid);
-  const admins = useAdmins(user?.uid, userRole);
 
-  const { announcements, setAnnouncements } = useAnnouncementsData(
-    user?.uid,
-    userRole,
-  );
+  const { refreshData } = useAppData();
+
+  const { announcements } = useAnnouncementsData();
   const filteredAnnouncements = useFilteredAnnouncements(
     announcements,
     searchBar,
@@ -75,7 +74,7 @@ export default function AnnouncementDashboard() {
     if (!user || !newAnnouncement.title.trim()) return;
 
     const announcementToAdd: AnnouncementData = {
-      uid: "",
+      uid: "", // Wird von Firestore beim Adden generiert
       title: newAnnouncement.title,
       content: newAnnouncement.content,
       tag: newAnnouncement.tag,
@@ -85,7 +84,9 @@ export default function AnnouncementDashboard() {
     };
 
     await addAnnouncement(announcementToAdd, user.uid, userRole);
-    setAnnouncements((prev) => [...prev, announcementToAdd]);
+
+    await refreshData("announcements");
+
     setIsAddingAnnouncement(false);
     setNewAnnouncement({ title: "", content: "", tag: "user" });
   };
@@ -105,16 +106,18 @@ export default function AnnouncementDashboard() {
       user?.uid || "anonymous",
       userRole,
     );
-    setAnnouncements(
-      announcements.map((a) => (a.uid === uid ? { ...a, ...editValues } : a)),
-    );
+
+    await refreshData("announcements");
+
     setEditingId(null);
     setEditValues({ title: "", content: "" });
   };
 
   const handleDelete = async (uid: string) => {
     await deleteAnnouncement(uid, user?.uid || "anonymous", userRole);
-    setAnnouncements((prev) => prev.filter((a) => a.uid !== uid));
+
+    await refreshData("announcements");
+
     setDeleteConfirm({
       isOpen: false,
       announcementId: null,

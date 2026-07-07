@@ -1,54 +1,24 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
-import { useAuth } from "@/BackEnd/AuthContext";
-import { getAllCourses } from "@/lib/db";
-import { CourseData } from "@/BackEnd/type";
 import { Code2, ChevronRight, CalendarDays } from "lucide-react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useTheme } from "@/context/ThemeContext";
 import SectionLabel from "./components/SectionLabel";
 import SectionHeading from "./components/SectionHeading";
-import { useNotificationToast } from "@/hooks/useNotificationToast";
 import { toJsDate } from "@/BackEnd/utils";
+import { useAppData } from "@/context/DataContext";
 
 export default function FeaturedCoursesView() {
-  const { user, userRole, loading } = useAuth();
-  const [courses, setCourses] = useState<CourseData[]>([]);
   const { theme, isRounded } = useTheme();
   const isDark = theme === "dark";
-  const { showErrorToast } = useNotificationToast();
 
+  const { getCourses, loadingStates } = useAppData();
   const router = useRouter();
 
-  const hasFetched = useRef<string | null>(null);
+  const rawCourseData = getCourses();
 
-  useEffect(() => {
-    if (loading) {
-      return;
-    }
-
-    if (user) {
-      const currentKey = `${user.uid}-${userRole}`;
-      if (hasFetched.current === currentKey) return;
-
-      hasFetched.current = currentKey;
-    }
-
-    const fetchCourses = async () => {
-      try {
-        const allCourses = await getAllCourses(user?.uid, userRole);
-        setCourses(allCourses);
-      } catch (error) {
-        showErrorToast(error);
-      }
-    };
-
-    fetchCourses();
-  }, [user?.uid, userRole, loading, user]);
-
-  if (loading) {
+  if (loadingStates.courses && (!rawCourseData || rawCourseData.length === 0)) {
     return (
       <section className="py-14">
         <p
@@ -70,12 +40,12 @@ export default function FeaturedCoursesView() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {courses.map((course, i) => {
+        {rawCourseData.map((course, i) => {
           const isEven = i % 2 === 0;
           const accentColor = isEven ? "green" : "purple";
           const isGreen = accentColor === "green";
 
-          console.log(course.dates)
+          console.log(course.dates);
           return (
             <motion.div
               key={course.uid}
@@ -181,7 +151,6 @@ export default function FeaturedCoursesView() {
                     <div className="flex items-center gap-1.5 text-[11px] font-mono text-gray-500">
                       <CalendarDays className="w-3.5 h-3.5" />
                       {toJsDate(course.dates[0]).toLocaleDateString("de-DE", {
-                        
                         day: "2-digit",
                         month: "short",
                       })}
