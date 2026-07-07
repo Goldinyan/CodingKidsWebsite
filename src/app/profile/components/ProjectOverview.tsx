@@ -2,7 +2,7 @@
 
 import { useTheme } from "@/context/ThemeContext";
 import { FolderGit2, Plus } from "lucide-react";
-import { useAuth } from "@/BackEnd/AuthContext";
+import { useAuth } from "@/context/AuthContext";
 
 export default function ProjectOverview() {
   const { theme, isRounded } = useTheme();

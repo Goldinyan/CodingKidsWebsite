@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { getAllEvents, getAllCourses } from "@/lib/db";
 import { EventData, CourseData } from "@/BackEnd/type";
 import { ArrowRight, CalendarX2 } from "lucide-react";
@@ -8,13 +8,12 @@ import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { toJsDate } from "@/BackEnd/utils";
 import { useTheme } from "@/context/ThemeContext";
-import { useAuth } from "@/BackEnd/AuthContext";
+import { useAuth } from "@/context/AuthContext";
 import SectionLabel from "./components/SectionLabel";
 import SectionHeading from "./components/SectionHeading";
 import GlassCard from "./components/GlassCard";
-import { useToast } from "@/components/ui/use-toast";
 import { useNotificationToast } from "@/hooks/useNotificationToast";
-import { toastVariants } from "@/components/ui/toast";
+import { useAppData } from "@/context/DataContext";
 
 const fmtMonth = (date: any) => {
   return toJsDate(date)
@@ -40,65 +39,43 @@ const spotsLeft = (event: EventData) => {
 };
 
 export default function FeaturedEventsView() {
-  const [events, setEvents] = useState<EventData[]>([]);
-  const [courses, setCourses] = useState<CourseData[]>([]);
   const { theme, isRounded } = useTheme();
   const isDark = theme === "dark";
-  const { user, userData, userRole, loading } = useAuth();
+
+  const { getEvents, getCourses, loadingStates } = useAppData();
   const router = useRouter();
-  const { showErrorToast } = useNotificationToast();
+  const rawEvents = getEvents();
+  const rawCourses = getCourses();
 
-  const hasFetched = useRef<string | null>(null);
+  const courseMap = useMemo(() => {
+    const map: Record<string, CourseData> = {};
+    rawCourses.forEach((course) => {
+      map[course.uid] = course;
+    });
+    return map;
+  }, [rawCourses]);
 
-  useEffect(() => {
-    if (loading) return;
+  const validEvents = useMemo(() => {
+    const now = Date.now();
+    return [...rawEvents]
+      .filter((ev) => toJsDate(ev.date).getTime() > now)
+      .sort((a, b) => toJsDate(a.date).getTime() - toJsDate(b.date).getTime())
+      .slice(0, 3);
+  }, [rawEvents]);
 
-    if (user) {
-      const currentKey = `${user.uid}-${userRole}`;
-      if (hasFetched.current === currentKey) return;
-      hasFetched.current = currentKey;
-    }
-
-    const fetchEvents = async () => {
-      try {
-        const [allEvents, allCourses] = await Promise.all([
-          getAllEvents(user?.uid, userRole),
-          getAllCourses(),
-        ]);
-
-        const upcomingEvents = (allEvents as EventData[])
-          .sort(
-            (a, b) => toJsDate(a.date).getTime() - toJsDate(b.date).getTime(),
-          )
-          .slice(0, 3);
-        setEvents(upcomingEvents as EventData[]);
-        setCourses(allCourses as CourseData[]);
-      } catch (error) {
-        showErrorToast(error);
-      }
-    };
-
-    fetchEvents();
-  }, [user?.uid, userRole, loading, user]);
-
-  if (loading) {
+  if (
+    (loadingStates.events || loadingStates.courses) &&
+    rawEvents.length === 0
+  ) {
     return (
-      <section className="py-14">
-        <p className="text-2xl font-bold mb-8">Lädt...</p>
+      <section className="py-14 mx-4">
+        <p className="text-2xl font-bold mb-8 font-mono animate-pulse uppercase text-xs">
+          Synchronisiere Termine...
+        </p>
       </section>
     );
   }
 
-  const courseMap: Record<string, CourseData> = {};
-  courses.forEach((course) => {
-    courseMap[course.uid] = course;
-  });
-
-  const validEvents = events.filter(
-    (ev) => toJsDate(ev.date).getTime() > Date.now(),
-  );
-
-  
   return (
     <section className="py-14 mx-4">
       <div className="flex items-end justify-between mb-8">

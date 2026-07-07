@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useAuth } from "@/BackEnd/AuthContext";
+import { useAuth } from "@/context/AuthContext";
 import AccountDetails from "./components/AccountDetails";
 import { useTheme } from "@/context/ThemeContext";
 import UIConfig from "./components/UIConfig";

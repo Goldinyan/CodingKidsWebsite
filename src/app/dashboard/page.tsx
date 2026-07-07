@@ -1,7 +1,7 @@
 "use client";
 
 
-import { useAuth } from "@/BackEnd/AuthContext";
+import { useAuth } from "@/context/AuthContext";
 import { MainOverlayAdminDashboard } from "./MainOverlayAdminDashboard";
 import { notFound } from "next/navigation";
 
