@@ -97,32 +97,37 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 
     if (!force && fetchedKeys.current[target] === currentKey) return;
 
-    setLoadingStates((prev) => ({ ...prev, [target]: true }));
-    try {
-      fetchedKeys.current[target] = currentKey;
+    // schiebe loading states und fetch in den nächsten Execution-Tick, um das Rendern von paar componenten  nicht zu blockieren
 
-      if (target === "mentors") {
-        const res = await getAllMentors(user?.uid, userRole);
-        setMentors(res.sort((a: any, b: any) => a.id - b.id));
-      } else if (target === "events") {
-        const res = (await getAllEvents(user?.uid, userRole)) as EventData[];
-        setEvents(res);
-      } else if (target === "courses") {
-        const res = await getAllCourses(user?.uid, userRole);
-        setCourses(res);
-      } else if (target === "announcements") {
-        const res = await getAllAnnouncements(user?.uid, userRole);
-        setAnnouncements(res);
-      } else if (target === "users") {
-        const res = await getAllUsers(user?.uid, userRole);
-        setUsers(res);
+    setTimeout(async () => {
+      setLoadingStates((prev) => ({ ...prev, [target]: true }));
+
+      try {
+        fetchedKeys.current[target] = currentKey;
+
+        if (target === "mentors") {
+          const res = await getAllMentors(user?.uid, userRole);
+          setMentors(res.sort((a: any, b: any) => a.id - b.id));
+        } else if (target === "events") {
+          const res = (await getAllEvents(user?.uid, userRole)) as EventData[];
+          setEvents(res);
+        } else if (target === "courses") {
+          const res = await getAllCourses(user?.uid, userRole);
+          setCourses(res);
+        } else if (target === "announcements") {
+          const res = await getAllAnnouncements(user?.uid, userRole);
+          setAnnouncements(res);
+        } else if (target === "users") {
+          const res = await getAllUsers(user?.uid, userRole);
+          setUsers(res);
+        }
+      } catch (error) {
+        showErrorToast(`Fehler beim Laden von ${target}: ${error}`);
+        fetchedKeys.current[target] = "";
+      } finally {
+        setLoadingStates((prev) => ({ ...prev, [target]: false }));
       }
-    } catch (error) {
-      showErrorToast(`Fehler beim Laden von ${target}: ${error}`);
-      fetchedKeys.current[target] = "";
-    } finally {
-      setLoadingStates((prev) => ({ ...prev, [target]: false }));
-    }
+    }, 0);
   };
 
   const getMentors = () => {
