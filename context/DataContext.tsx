@@ -4,8 +4,8 @@ import React, {
   createContext,
   useContext,
   useState,
-  useEffect,
   useRef,
+  useEffect,
 } from "react";
 import {
   getAllMentors,
@@ -71,9 +71,29 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     users: "",
   });
 
-  // Cache-Reset bei Session-Wechsel -> auto reset
+  const isFetching = useRef<Record<string, boolean>>({
+    mentors: false,
+    events: false,
+    courses: false,
+    announcements: false,
+    users: false,
+  });
+
+  const isInitialized = useRef(false);
+
   useEffect(() => {
     if (authLoading) return;
+
+    if (!isInitialized.current) {
+      isInitialized.current = true;
+      return; 
+    }
+    // beim aller ersten nicht leeren
+
+    console.log(
+      `[DataContext] Dynamischer Rollenwechsel erkannt! Neuer State: ${userRole}. Cache wird geleert...`,
+    );
+
     fetchedKeys.current = {
       mentors: "",
       events: "",
@@ -81,30 +101,44 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       announcements: "",
       users: "",
     };
+    isFetching.current = {
+      mentors: false,
+      events: false,
+      courses: false,
+      announcements: false,
+      users: false,
+    };
+
     setMentors([]);
     setEvents([]);
     setCourses([]);
     setUsers([]);
     setAnnouncements([]);
-  }, [user, userRole, authLoading]);
+  }, [userRole, authLoading]);
 
   const fetchSingleTarget = async (
     target: "mentors" | "events" | "courses" | "announcements" | "users",
     force = false,
   ) => {
-    if (authLoading) return;
+    if (authLoading || (user && !userRole)) return;
+
     const currentKey = user ? `${user.uid}-${userRole}` : "guest";
 
-    if (!force && fetchedKeys.current[target] === currentKey) return;
+    // wenn key überstimtm oder bereits fetching läuft, dann return
+    if (
+      !force &&
+      (fetchedKeys.current[target] === currentKey || isFetching.current[target])
+    )
+      return;
 
-    // schiebe loading states und fetch in den nächsten Execution-Tick, um das Rendern von paar componenten  nicht zu blockieren
+    // Synchron direkt blockieren, bevor irgendetwas asynchrones passiert
+    fetchedKeys.current[target] = currentKey;
+    isFetching.current[target] = true;
 
     setTimeout(async () => {
       setLoadingStates((prev) => ({ ...prev, [target]: true }));
 
       try {
-        fetchedKeys.current[target] = currentKey;
-
         if (target === "mentors") {
           const res = await getAllMentors(user?.uid, userRole);
           setMentors(res.sort((a: any, b: any) => a.id - b.id));
@@ -123,32 +157,38 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         }
       } catch (error) {
         showErrorToast(`Fehler beim Laden von ${target}: ${error}`);
+        // Nur bei echtem Fehler zurücksetzen
         fetchedKeys.current[target] = "";
       } finally {
         setLoadingStates((prev) => ({ ...prev, [target]: false }));
+        isFetching.current[target] = false;
       }
     }, 0);
   };
 
   const getMentors = () => {
-    if (mentors.length === 0) fetchSingleTarget("mentors");
+    if (mentors.length === 0 && !isFetching.current["mentors"])
+      fetchSingleTarget("mentors");
     return mentors;
   };
   const getEvents = () => {
-    if (events.length === 0) fetchSingleTarget("events");
+    if (events.length === 0 && !isFetching.current["events"])
+      fetchSingleTarget("events");
     return events;
   };
   const getCourses = () => {
-    if (courses.length === 0) fetchSingleTarget("courses");
+    if (courses.length === 0 && !isFetching.current["courses"])
+      fetchSingleTarget("courses");
     return courses;
   };
   const getAnnouncements = () => {
-    if (announcements.length === 0) fetchSingleTarget("announcements");
+    if (announcements.length === 0 && !isFetching.current["announcements"])
+      fetchSingleTarget("announcements");
     return announcements;
   };
-
   const getUsers = () => {
-    if (users.length === 0) fetchSingleTarget("users");
+    if (users.length === 0 && !isFetching.current["users"])
+      fetchSingleTarget("users");
     return users;
   };
 

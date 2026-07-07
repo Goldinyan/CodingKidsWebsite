@@ -45,7 +45,6 @@ export default function FeaturedCoursesView() {
           const accentColor = isEven ? "green" : "purple";
           const isGreen = accentColor === "green";
 
-          console.log(course.dates);
           return (
             <motion.div
               key={course.uid}

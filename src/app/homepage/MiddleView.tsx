@@ -282,13 +282,13 @@ export default function MiddleView() {
               {requirements.map((req) => (
                 <li
                   key={req}
-                  className="flex justify-start items-start gap-2.5"
+                  className="flex justify-start items-center gap-2.5"
                 >
                   <CheckCircle2
                     className="w-4 h-4  shrink-0"
                     style={{ color: "#4ade80" }}
                   />
-                  <span className="text-xs" style={{ color: "#9ca3af" }}>
+                  <span className="text-[14px] font-thin leading-relaxed" style={{ color: "#9ca3af" }}>
                     {req}
                   </span>
                 </li>

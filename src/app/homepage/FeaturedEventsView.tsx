@@ -83,14 +83,14 @@ export default function FeaturedEventsView() {
           <SectionLabel>Nächste Termine</SectionLabel>
           <SectionHeading>Kommende CoderDojos</SectionHeading>
         </div>
-        {validEvents.length > 0 && (
+        {/*{validEvents.length > 0 && (
           <button
             onClick={() => router.push("/termine")}
             className="hidden md:flex items-center gap-1 text-sm no-underline transition-colors text-purple-400 hover:text-purple-300 bg-transparent border-0 cursor-pointer font-medium"
           >
             Alle Termine <ArrowRight className="w-4 h-4" />
           </button>
-        )}
+        )}*/}
       </div>
 
       <div className="flex flex-col gap-3 mb-6">

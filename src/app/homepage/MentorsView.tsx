@@ -9,9 +9,7 @@ import { useTheme } from "@/context/ThemeContext";
 import { SimpleMentorCard } from "../verein/mentor/SimpleMentorCard";
 import SectionLabel from "./components/SectionLabel";
 import SectionHeading from "./components/SectionHeading";
-import { useNotificationToast } from "@/hooks/useNotificationToast";
 import { useAppData } from "@/context/DataContext";
-import { sourceMapsEnabled } from "process";
 
 export default function MentorsView() {
   const [expandedIndex, setExpandedIndex] = useState<number>(0);

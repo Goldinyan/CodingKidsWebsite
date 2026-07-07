@@ -41,7 +41,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       try {
         if (firebaseUser) {
           const data = await getUserData(firebaseUser.uid);
-          console.log("Geladene Userdaten:", data);
           if (data) {
             setUserData(data);
             setUserRole(data.role);

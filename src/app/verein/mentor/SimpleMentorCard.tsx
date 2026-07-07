@@ -14,7 +14,7 @@ export function SimpleMentorCard({ props }: { props: SimpleMentorCardProps }) {
 
   return (
     <div
-      className={` w-full h-full bg-white/2.5 backdrop-blur-2xl p-6 border border-zinc-200 dark:border-zinc-800 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col ${isRounded ? "rounded-2xl" : "rounded-none"
+      className={` w-full h-full bg-white/2.5 backdrop-blur-2xl p-6 border border-zinc-200 dark:border-zinc-800 transition-all duration-300 flex flex-col ${isRounded ? "rounded-2xl" : "rounded-none"
         }`}
     >
       <div className="flex items-center gap-4 mb-4">
