@@ -1,6 +1,6 @@
 "use client";
 
-import { useAuth } from "@/BackEnd/AuthContext";
+import { useAuth } from "@/context/AuthContext";
 import NoUserKontakt from "./NoUserKontakt";
 import AnnouncementView from "./AnnouncementView";
 import { useTheme } from "@/context/ThemeContext";

@@ -1,48 +1,29 @@
-import { useEffect, useState } from "react";
-import type { EventData, UserData, UserRole } from "@/BackEnd/type";
-import { getAllUsers } from "@/lib/db";
+import { useMemo } from "react";
+import type { EventData, UserData } from "@/BackEnd/type";
+import { useAppData } from "@/context/DataContext"; // Pfad anpassen
 
 type UserIdSelector = (event: EventData) => string[];
 
 export function useEventUsersMap(
   events: EventData[],
-  userId: string | undefined,
-  userRole: UserRole,
   selectIds: UserIdSelector,
 ) {
-  const [map, setMap] = useState<Record<string, UserData[]>>({});
+  const { getUsers } = useAppData();
 
-  useEffect(() => {
-    let cancelled = false;
+  const safeUsers = getUsers();
 
-    const run = async () => {
-      if (events.length === 0) {
-        setMap({});
-        return;
-      }
+  return useMemo(() => {
+    const next: Record<string, UserData[]> = {};
 
-      const allUsers = await getAllUsers(userId || "anonymous", userRole);
-      const safeUsers = (allUsers || []) as UserData[];
+    if (events.length === 0 || safeUsers.length === 0) {
+      return next;
+    }
 
-      const next: Record<string, UserData[]> = {};
-      for (const event of events) {
-        const ids = new Set(selectIds(event));
-        next[event.uid] = safeUsers.filter((u) => ids.has(u.uid));
-      }
+    for (const event of events) {
+      const ids = new Set(selectIds(event));
+      next[event.uid] = safeUsers.filter((u) => ids.has(u.uid));
+    }
 
-      if (!cancelled) setMap(next);
-    };
-
-    run().catch((e) => {
-      console.error("Fehler beim Laden der User für Events:", e);
-      if (!cancelled) setMap({});
-    });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [events, userId, userRole, selectIds]);
-
-  return map;
+    return next;
+  }, [events, safeUsers, selectIds]);
 }
-

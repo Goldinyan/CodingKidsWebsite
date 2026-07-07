@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useAuth } from "@/BackEnd/AuthContext";
+import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
 import type { Donation } from "./gifting/types";
 import { StepsHeader } from "./gifting/components/StepsHeader";
@@ -12,7 +12,6 @@ import { useNotificationToast } from "@/hooks/useNotificationToast";
 
 export default function GiftingMainView() {
   const { userRole } = useAuth();
-  const { toast } = useToast();
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [donation, setDonation] = useState<Donation>({
     gift: "geld",

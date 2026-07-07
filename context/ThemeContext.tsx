@@ -1,6 +1,6 @@
 "use client";
 
-import { useAuth } from "@/BackEnd/AuthContext";
+import { useAuth } from "@/context/AuthContext";
 import { updateUser } from "@/lib/db";
 import {
   ReactNode,

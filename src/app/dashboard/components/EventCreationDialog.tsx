@@ -2,7 +2,7 @@
 
 import { Timestamp } from "firebase/firestore";
 import { useState } from "react";
-import { useAuth } from "@/BackEnd/AuthContext";
+import { useAuth } from "@/context/AuthContext";
 import { addEvent } from "@/lib/db";
 import { Difficulties, type CourseData, type EventData } from "@/BackEnd/type";
 import { Input } from "@/components/ui/input";

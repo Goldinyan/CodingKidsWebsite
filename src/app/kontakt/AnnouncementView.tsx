@@ -1,13 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { useAuth } from "@/BackEnd/AuthContext";
+import { useMemo } from "react";
 import type { UserData, AnnouncementData } from "@/BackEnd/type";
-import {
-  getAllAdmins,
-  getAllAnnouncements,
-  markAnnouncementAsRead,
-} from "@/lib/db";
+import { markAnnouncementAsRead } from "@/lib/db";
 import {
   Bell,
   User,
@@ -18,51 +13,20 @@ import {
   Eye,
 } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
-import { UserRole } from "@/BackEnd/type";
-import { useNotificationToast  } from "@/hooks/useNotificationToast";
-
-const ROLES: UserRole[] = ["admin", "mentor", "member", "user"];
+import { useAuth } from "@/context/AuthContext";
+import { useAppData } from "@/context/DataContext";
+import { useNotificationToast } from "@/hooks/useNotificationToast";
 
 export default function AnnouncementView({ data }: { data: UserData }) {
-  const [announcements, setAnnouncements] = useState<AnnouncementData[]>([]);
-  const [filAn, setFilAn] = useState<Record<string, AnnouncementData[]>>({});
   const { user, userRole } = useAuth();
   const { theme, isRounded } = useTheme();
+  const { getAnnouncements, refreshData, loadingStates } = useAppData();
   const { showErrorToast } = useNotificationToast();
-
-  const hasFetched = useRef<string | null>(null);
 
   const radiusClass = isRounded ? "rounded-lg" : "rounded-none";
   const badgeRadiusClass = isRounded ? "rounded-md" : "rounded-none";
 
-  useEffect(() => {
-    if (!user?.uid) return;
-
-    const currentKey = `${user.uid}-${userRole}`;
-    if (hasFetched.current === currentKey) return;
-
-    const fetchAnnouncements = async () => {
-      hasFetched.current = currentKey;
-      const fetchedData = await getAllAnnouncements(
-        user?.uid || "anonymous",
-        userRole,
-      );
-      setAnnouncements(fetchedData);
-    };
-    fetchAnnouncements();
-  }, [user?.uid, userRole]);
-
-  useEffect(() => {
-    if (announcements.length > 0) {
-      const filtered: Record<string, AnnouncementData[]> = {};
-      ROLES.forEach((role) => {
-        filtered[role] = announcements.filter((an) => an.tag === role);
-      });
-      setFilAn(filtered);
-    } else {
-      setFilAn({});
-    }
-  }, [announcements]);
+  const rawAnnouncements = getAnnouncements();
 
   const hasAccess = (role: string) => {
     switch (data.role) {
@@ -79,35 +43,24 @@ export default function AnnouncementView({ data }: { data: UserData }) {
     }
   };
 
-  const getAccessibleAnnouncements = () => {
-    return Object.entries(filAn)
-      .flatMap(([role, anns]) =>
-        anns.filter((an) => hasAccess(an.tag)).map((an) => ({ ...an, role })),
-      )
+  const accessibleAnnouncements = useMemo(() => {
+    return rawAnnouncements
+      .filter((an) => hasAccess(an.tag))
       .sort((a, b) => {
         const timeA = a.date?.toDate?.().getTime() || 0;
         const timeB = b.date?.toDate?.().getTime() || 0;
         return timeB - timeA;
       });
-  };
+  }, [rawAnnouncements, data.role]);
 
   const handleMarkAsRead = async (announcementUid: string) => {
     if (!user?.uid) return;
 
-    setAnnouncements((prev) =>
-      prev.map((an) => {
-        if (an.uid === announcementUid) {
-          const currentReadBy = an.readBy || [];
-          if (!currentReadBy.includes(user.uid)) {
-            return { ...an, readBy: [...currentReadBy, user.uid] };
-          }
-        }
-        return an;
-      }),
-    );
-
     try {
       await markAnnouncementAsRead(announcementUid, user.uid, userRole);
+
+      // refreshed only announcement cache
+      await refreshData("announcements");
     } catch (error) {
       showErrorToast(error);
     }
@@ -152,7 +105,14 @@ export default function AnnouncementView({ data }: { data: UserData }) {
     }
   };
 
-  const accessibleAnnouncements = getAccessibleAnnouncements();
+  // Initiales Laden anzeigen, solange noch gar keine Daten im Cache sind
+  if (loadingStates.announcements && rawAnnouncements.length === 0) {
+    return (
+      <div className="w-full mt-10 p-5 text-center font-mono text-xs uppercase text-zinc-500 animate-pulse">
+        Lade Ankündigungsmatrizen...
+      </div>
+    );
+  }
 
   return (
     <div className="w-full mt-10 font-['DM_Sans']">
@@ -162,17 +122,13 @@ export default function AnnouncementView({ data }: { data: UserData }) {
             className={`w-5 h-5 ${theme === "dark" ? "text-[#4ADE80]" : "text-green-600"}`}
           />
           <h2
-            className={`text-2xl font-black font-['Familjen_Grotesk'] tracking-wide uppercase ${theme === "dark" ? "text-white" : "text-slate-900"
-              }`}
+            className={`text-2xl font-black font-['Familjen_Grotesk'] tracking-wide uppercase ${theme === "dark" ? "text-white" : "text-slate-900"}`}
           >
             Ankündigungen
           </h2>
         </div>
         <span
-          className={`font-['JetBrains_Mono'] text-xs font-bold px-3 py-1 border ${badgeRadiusClass} ${theme === "dark"
-              ? "bg-zinc-950 text-zinc-400 border-zinc-800"
-              : "bg-slate-50 text-slate-600 border-slate-200"
-            }`}
+          className={`font-['JetBrains_Mono'] text-xs font-bold px-3 py-1 border ${badgeRadiusClass} ${theme === "dark" ? "bg-zinc-950 text-zinc-400 border-zinc-800" : "bg-slate-50 text-slate-600 border-slate-200"}`}
         >
           COUNT // {accessibleAnnouncements.length}
         </span>
@@ -188,20 +144,15 @@ export default function AnnouncementView({ data }: { data: UserData }) {
             return (
               <div
                 key={an.uid}
-                className={`p-5 border transition-all duration-150 ${radiusClass} ${theme === "dark"
-                    ? "bg-[rgba(255,255,255,0.015)] border-zinc-900 hover:border-zinc-800"
-                    : "bg-white border-slate-200 hover:border-slate-300"
-                  }`}
+                className={`p-5 border transition-all duration-150 ${radiusClass} ${theme === "dark" ? "bg-[rgba(255,255,255,0.015)] border-zinc-900 hover:border-zinc-800" : "bg-white border-slate-200 hover:border-slate-300"}`}
               >
                 <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-3">
                   <div>
                     <h3
-                      className={`text-lg font-black font-['Familjen_Grotesk'] tracking-wide uppercase mb-2 ${theme === "dark" ? "text-white" : "text-slate-900"
-                        }`}
+                      className={`text-lg font-black font-['Familjen_Grotesk'] tracking-wide uppercase mb-2 ${theme === "dark" ? "text-white" : "text-slate-900"}`}
                     >
                       {an.title}
                     </h3>
-
                     <div className="flex flex-wrap items-center gap-3">
                       <span
                         className={`inline-flex items-center gap-1.5 px-2 py-0.5 font-['JetBrains_Mono'] text-[10px] font-bold uppercase ${badgeRadiusClass} ${getRoleTagColor(an.tag)}`}
@@ -209,7 +160,6 @@ export default function AnnouncementView({ data }: { data: UserData }) {
                         {getRoleIcon(an.tag)}
                         {an.tag}
                       </span>
-
                       <span
                         className={`text-xs ${theme === "dark" ? "text-zinc-500" : "text-slate-400"}`}
                       >
@@ -222,10 +172,8 @@ export default function AnnouncementView({ data }: { data: UserData }) {
                       </span>
                     </div>
                   </div>
-
                   <div
-                    className={`flex items-center gap-1.5 font-['JetBrains_Mono'] text-[11px] whitespace-nowrap ${theme === "dark" ? "text-zinc-500" : "text-slate-400"
-                      }`}
+                    className={`flex items-center gap-1.5 font-['JetBrains_Mono'] text-[11px] whitespace-nowrap ${theme === "dark" ? "text-zinc-500" : "text-slate-400"}`}
                   >
                     <Clock className="w-3.5 h-3.5" />
                     {an.date?.toDate?.().toLocaleDateString("de-DE", {
@@ -239,8 +187,7 @@ export default function AnnouncementView({ data }: { data: UserData }) {
                 </div>
 
                 <div
-                  className={`text-sm leading-relaxed mb-4 whitespace-pre-wrap break-words ${theme === "dark" ? "text-zinc-400" : "text-slate-600"
-                    }`}
+                  className={`text-sm leading-relaxed mb-4 whitespace-pre-wrap break-words ${theme === "dark" ? "text-zinc-400" : "text-slate-600"}`}
                 >
                   {an.content}
                 </div>
@@ -249,18 +196,13 @@ export default function AnnouncementView({ data }: { data: UserData }) {
                   className={`pt-3 border-t flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 ${theme === "dark" ? "border-zinc-900" : "border-slate-100"}`}
                 >
                   <div
-                    className={`flex items-center gap-2 font-['JetBrains_Mono'] text-[11px] uppercase ${theme === "dark" ? "text-zinc-500" : "text-slate-400"
-                      }`}
+                    className={`flex items-center gap-2 font-['JetBrains_Mono'] text-[11px] uppercase ${theme === "dark" ? "text-zinc-500" : "text-slate-400"}`}
                   >
                     {an.readBy && an.readBy.length > 0 ? (
                       <>
                         <CheckCircle2
                           className={`w-3.5 h-3.5 ${theme === "dark" ? "text-[#4ADE80]" : "text-green-600"}`}
                         />
-                        {/*<span>
-                          {an.readBy.length} von{" "}
-                          {Math.max(an.readBy.length + 1, 1)} gelesen
-                        </span>*/}
                         <span>
                           {an.readBy.length} von{" "}
                           {Math.max(an.readBy.length + 1, 1)} gelesen
@@ -274,10 +216,7 @@ export default function AnnouncementView({ data }: { data: UserData }) {
                   {!isReadByCurrentUser && (
                     <button
                       onClick={() => handleMarkAsRead(an.uid)}
-                      className={`inline-flex items-center gap-1.5 px-3 py-1 font-['JetBrains_Mono'] text-xxs font-bold uppercase border transition-colors ${badgeRadiusClass} ${theme === "dark"
-                          ? "bg-zinc-950 text-zinc-300 border-zinc-800 hover:bg-zinc-900 hover:text-white"
-                          : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 hover:text-slate-900"
-                        }`}
+                      className={`inline-flex items-center gap-1.5 px-3 py-1 font-['JetBrains_Mono'] text-xxs font-bold uppercase border transition-colors ${badgeRadiusClass} ${theme === "dark" ? "bg-zinc-950 text-zinc-300 border-zinc-800 hover:bg-zinc-900 hover:text-white" : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 hover:text-slate-900"}`}
                     >
                       <Eye className="w-3.5 h-3.5" />
                       Als gelesen markieren
@@ -289,10 +228,7 @@ export default function AnnouncementView({ data }: { data: UserData }) {
           })
         ) : (
           <div
-            className={`border p-12 text-center ${radiusClass} ${theme === "dark"
-                ? "bg-[rgba(255,255,255,0.015)] border-zinc-900"
-                : "bg-white border-slate-200"
-              }`}
+            className={`border p-12 text-center ${radiusClass} ${theme === "dark" ? "bg-[rgba(255,255,255,0.015)] border-zinc-900" : "bg-white border-slate-200"}`}
           >
             <Bell
               className={`w-8 h-8 mx-auto mb-3 opacity-30 ${theme === "dark" ? "text-white" : "text-slate-900"}`}

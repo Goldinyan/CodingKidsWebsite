@@ -12,6 +12,7 @@ import {
   getAllEvents,
   getAllCourses,
   getAllAnnouncements,
+  getAllUsers,
 } from "@/lib/db";
 import { useAuth } from "./AuthContext";
 import {
@@ -19,6 +20,7 @@ import {
   EventData,
   Mentor,
   CourseData,
+  UserData,
 } from "@/BackEnd/type";
 import { useNotificationToast } from "@/hooks/useNotificationToast";
 
@@ -28,13 +30,15 @@ interface DataContextType {
     events: boolean;
     courses: boolean;
     announcements: boolean;
+    users: boolean;
   };
   getMentors: () => Mentor[];
   getEvents: () => EventData[];
   getCourses: () => CourseData[];
   getAnnouncements: () => AnnouncementData[];
+  getUsers: () => UserData[];
   refreshData: (
-    type: "mentors" | "events" | "courses" | "announcements",
+    type: "mentors" | "events" | "courses" | "announcements" | "users",
   ) => Promise<void>;
 }
 
@@ -45,6 +49,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 
   const [mentors, setMentors] = useState<Mentor[]>([]);
   const [events, setEvents] = useState<EventData[]>([]);
+  const [users, setUsers] = useState<UserData[]>([]);
   const [courses, setCourses] = useState<CourseData[]>([]);
   const [announcements, setAnnouncements] = useState<AnnouncementData[]>([]);
 
@@ -55,6 +60,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     events: false,
     courses: false,
     announcements: false,
+    users: false,
   });
 
   const fetchedKeys = useRef<Record<string, string>>({
@@ -62,9 +68,10 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     events: "",
     courses: "",
     announcements: "",
+    users: "",
   });
 
-  // Cache-Reset bei Session-Wechsel
+  // Cache-Reset bei Session-Wechsel -> auto reset
   useEffect(() => {
     if (authLoading) return;
     fetchedKeys.current = {
@@ -72,15 +79,17 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       events: "",
       courses: "",
       announcements: "",
+      users: "",
     };
     setMentors([]);
     setEvents([]);
     setCourses([]);
+    setUsers([]);
     setAnnouncements([]);
   }, [user, userRole, authLoading]);
 
   const fetchSingleTarget = async (
-    target: "mentors" | "events" | "courses" | "announcements",
+    target: "mentors" | "events" | "courses" | "announcements" | "users",
     force = false,
   ) => {
     if (authLoading) return;
@@ -96,7 +105,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         const res = await getAllMentors(user?.uid, userRole);
         setMentors(res.sort((a: any, b: any) => a.id - b.id));
       } else if (target === "events") {
-        const res = await getAllEvents(user?.uid, userRole) as EventData[];
+        const res = (await getAllEvents(user?.uid, userRole)) as EventData[];
         setEvents(res);
       } else if (target === "courses") {
         const res = await getAllCourses(user?.uid, userRole);
@@ -104,6 +113,9 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       } else if (target === "announcements") {
         const res = await getAllAnnouncements(user?.uid, userRole);
         setAnnouncements(res);
+      } else if (target === "users") {
+        const res = await getAllUsers(user?.uid, userRole);
+        setUsers(res);
       }
     } catch (error) {
       showErrorToast(`Fehler beim Laden von ${target}: ${error}`);
@@ -130,8 +142,13 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     return announcements;
   };
 
+  const getUsers = () => {
+    if (users.length === 0) fetchSingleTarget("users");
+    return users;
+  };
+
   const refreshData = async (
-    target: "mentors" | "events" | "courses" | "announcements",
+    target: "mentors" | "events" | "courses" | "announcements" | "users",
   ) => {
     await fetchSingleTarget(target, true);
   };
@@ -144,6 +161,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         getEvents,
         getCourses,
         getAnnouncements,
+        getUsers,
         refreshData,
       }}
     >

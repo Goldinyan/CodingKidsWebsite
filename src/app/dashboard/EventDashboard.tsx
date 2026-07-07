@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Plus, Search, CalendarX } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "@/context/ThemeContext";
-import { useAuth } from "@/BackEnd/AuthContext";
+import { useAuth } from "@/context/AuthContext";
 import { removedFromEventByAdmin } from "@/BackEnd/email";
 import {
   deleteEvent,
@@ -23,15 +23,12 @@ import {
   useEventsData,
   useFilteredEvents,
 } from "./events/hooks";
+import { useAppData } from "@/context/DataContext";
 
 export default function EventDashboard() {
   const { user, userRole, loading } = useAuth();
-  const { toast } = useToast();
-  const {
-    showErrorToast,
-    showDeleteSuccess,
-    showUpdateSuccess
-  } = useNotificationToast();
+  const { showErrorToast, showDeleteSuccess, showUpdateSuccess } =
+    useNotificationToast();
   const { theme, isRounded } = useTheme();
 
   const [deleteConfirmModal, setDeleteConfirmModal] = useState<{
@@ -47,38 +44,18 @@ export default function EventDashboard() {
   const [time, setTime] = useState<EventTimeFilter>("Upcoming");
   const [searchBar, setSearchBar] = useState<string>("");
   const [isAddingEvent, setIsAddingEvent] = useState<boolean>(false);
-  const [courses, setCourses] = useState<CourseData[]>();
   const [expandedTabs, setExpandedTabs] = useState<Record<string, boolean>>({});
   const [editStates, setEditStates] = useState<Record<string, boolean>>({});
   const [editValues, setEditValues] = useState<
     Record<string, Partial<EventData>>
   >({});
 
-  const hasFetched = useRef<string | null>(null);
-  useEffect(() => {
-    if (loading) return;
+  const { getCourses } = useAppData();
 
-    if (user) {
-      const currentKey = `${user.uid}-${userRole}`;
-      if (hasFetched.current === currentKey) return;
-      hasFetched.current = currentKey;
-    }
-    const fetchCourses = async () => {
-      try {
-        const coursesData = await getAllCourses(
-          user?.uid || "anonymous",
-          userRole,
-        );
-        setCourses(coursesData);
-      } catch (error) {
-        showErrorToast(error);
-      }
-    };
+  const courses = getCourses();
 
-    fetchCourses();
-  }, [user?.uid, userRole, loading, user]);
+  const { events: eventsData, refresh } = useEventsData();
 
-  const { events: eventsData, refresh } = useEventsData(user?.uid, userRole);
   const filEvents = useFilteredEvents(eventsData, time, searchBar, 10);
 
   const userMap = useEventUsersMap(

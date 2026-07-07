@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/BackEnd/AuthContext";
+import { useAuth } from "@/context/AuthContext";
 import {
   ArrowRight,
   Home,
@@ -19,6 +19,7 @@ import { useViewportHeight } from "@/hooks/useViewportHeight";
 import { getAllAnnouncements } from "@/lib/db";
 import { useTheme } from "@/context/ThemeContext";
 import { useNotificationToast } from "@/hooks/useNotificationToast";
+import { useAppData } from "@/context/DataContext";
 
 interface NavbarMobileProps {
   setOpen: (open: boolean) => void;
@@ -28,34 +29,20 @@ export default function NavbarMobile({ setOpen }: NavbarMobileProps) {
   useViewportHeight();
   const router = useRouter();
   const { user, userData, userRole } = useAuth();
-  const [unreadMessages, setUnreadMessages] = useState(0);
   const { theme } = useTheme();
   const { showErrorToast } = useNotificationToast();
 
-  const hasFetched = useRef<string | null>(null);
+  const { getAnnouncements } = useAppData();
 
-  useEffect(() => {
-    if (!user?.uid) return;
+  const rawAnnouncements = getAnnouncements();
 
-    const currentKey = `${user.uid}-${userRole}`;
-    if (hasFetched.current === currentKey) return;
-
-    const fetchData = async () => {
-      hasFetched.current = currentKey;
-      try {
-        const announcements = await getAllAnnouncements(user.uid, userRole);
-        const unread = announcements.filter(
-          (announcement) =>
-            !announcement.readBy || !announcement.readBy.includes(user.uid),
-        ).length;
-        setUnreadMessages(unread);
-      } catch (error) {
-        showErrorToast(error);
-      }
-    };
-
-    fetchData();
-  }, [user?.uid, userRole]);
+  const unreadMessagesCount = useMemo(() => {
+    if (!user) return 0;
+    return rawAnnouncements.filter(
+      (announcement) =>
+        !announcement.readBy || !announcement.readBy.includes(user.uid),
+    ).length;
+  }, [rawAnnouncements, user]);
 
   const navItems = useMemo(() => {
     const items: { label: string; href: string; Icon: LucideIcon }[] = [
@@ -114,14 +101,14 @@ export default function NavbarMobile({ setOpen }: NavbarMobileProps) {
                       : "text-slate-500 group-hover:text-slate-900"
                     }`}
                 />
-                {it.label === "Kontakt" && unreadMessages > 0 && (
+                {it.label === "Kontakt" && unreadMessagesCount > 0 && (
                   <span
                     className={`absolute rounded-full -top-2 -right-2 text-[10px] font-bold px-1.5 py-0.5 min-w-[18px] text-center ${theme === "dark"
                         ? "bg-white text-black"
                         : "bg-emerald-600 text-white"
                       }`}
                   >
-                    {unreadMessages > 99 ? "99+" : unreadMessages}
+                    {unreadMessagesCount > 99 ? "99+" : unreadMessagesCount}
                   </span>
                 )}
               </div>
