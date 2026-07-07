@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
-import { AuthProvider } from "@/BackEnd/AuthContext";
+import { AuthProvider } from "@/context/AuthContext";
+import { DataProvider } from "@/context/DataContext";
 import ClientLayout from "./ClientLayout";
 import { JetBrains_Mono, Familjen_Grotesk } from "next/font/google";
 import "./globals.css";
@@ -28,7 +29,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     >
       <body className="overflow-x-hidden w-full">
         <AuthProvider>
-          <ClientLayout>{children}</ClientLayout>
+          <DataProvider>
+            <ClientLayout>{children}</ClientLayout>
+          </DataProvider>
         </AuthProvider>
         <SpeedInsights />
         <Analytics />
