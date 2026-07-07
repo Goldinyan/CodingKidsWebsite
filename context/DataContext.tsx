@@ -20,6 +20,7 @@ import {
   Mentor,
   CourseData,
 } from "@/BackEnd/type";
+import { useNotificationToast } from "@/hooks/useNotificationToast";
 
 interface DataContextType {
   loadingStates: {
@@ -46,6 +47,8 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   const [events, setEvents] = useState<EventData[]>([]);
   const [courses, setCourses] = useState<CourseData[]>([]);
   const [announcements, setAnnouncements] = useState<AnnouncementData[]>([]);
+
+  const { showErrorToast } = useNotificationToast();
 
   const [loadingStates, setLoadingStates] = useState({
     mentors: false,
@@ -103,7 +106,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         setAnnouncements(res);
       }
     } catch (error) {
-      console.error(`Fehler beim Laden von ${target}:`, error);
+      showErrorToast(`Fehler beim Laden von ${target}: ${error}`);
       fetchedKeys.current[target] = "";
     } finally {
       setLoadingStates((prev) => ({ ...prev, [target]: false }));

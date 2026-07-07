@@ -1,13 +1,9 @@
 "use client";
 
-import { getAllMentors } from "@/lib/db";
-import type { Mentor } from "@/BackEnd/type";
-import { useState, useEffect, useRef, useMemo } from "react";
 import { Theme } from "@/context/ThemeContext";
 import { motion, Variants } from "framer-motion";
 import { SimpleMentorCard } from "./mentor/SimpleMentorCard";
-import { useAuth } from "@/BackEnd/AuthContext";
-import { useNotificationToast } from "@/hooks/useNotificationToast";
+import { useAppData } from "@/context/DataContext";
 
 export default function MentorenView({
   theme,
@@ -16,44 +12,17 @@ export default function MentorenView({
   theme: Theme;
   isRounded: boolean;
 }) {
-  const [mentorData, setMentorData] = useState<Mentor[]>([]);
-  const [showAll, setShowAll] = useState<boolean>(false);
-  const [expandedMentorId, setExpandedMentorId] = useState<string | null>(null);
+  const { getMentors, loadingStates } = useAppData();
 
-  const { user, userRole, loading } = useAuth();
-  const { showFetchError } = useNotificationToast();
+  const rawMentors = getMentors();
 
-  const hasFetched = useRef<string | null>(null);
-
-  useEffect(() => {
-    if (loading) return;
-
-    const currentKey = user ? `${user.uid}-${userRole}` : "guest";
-    if (hasFetched.current === currentKey) return;
-    hasFetched.current = currentKey;
-
-    const handleData = async () => {
-      try {
-        const allMentores = await getAllMentors(user?.uid, userRole);
-        const orderedMentors = allMentores.sort((a, b) => a.id - b.id);
-        setMentorData(orderedMentors);
-      } catch (error) {
-        showFetchError(error);
-      }
-    };
-
-    handleData();
-  }, [loading, user, userRole, showFetchError]);
-
-  const visibleMentors = useMemo(() => {
-    const sorted = [...mentorData].sort((a, b) => {
-      if (a.uid === expandedMentorId) return -1;
-      if (b.uid === expandedMentorId) return 1;
-      return 0;
-    });
-
-    return showAll ? sorted : sorted.slice(0, 3);
-  }, [mentorData, expandedMentorId, showAll]);
+  if (loadingStates.mentors && rawMentors.length === 0) {
+    return (
+      <div className="p-10 font-mono text-xs uppercase animate-pulse">
+        Lade Mentoren-Matrix...
+      </div>
+    );
+  }
 
   const containerVariants = {
     hidden: {},
@@ -118,7 +87,7 @@ export default function MentorenView({
             viewport={{ once: true, margin: "0px 0px -10px 0px" }}
             className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6"
           >
-            {visibleMentors.map((mentor) => (
+            {rawMentors.map((mentor) => (
               <motion.div
                 key={mentor.uid}
                 variants={itemVariants as Variants}
