@@ -37,7 +37,7 @@ export default function MentorChangeView() {
                 isDark ? "text-white" : "text-slate-900"
               }`}
             >
-              MENTORENVERWALTUNG
+              MENTOREN
             </h1>
             <p className={`font-['JetBrains_Mono'] text-[10px] tracking-wider uppercase mt-1 ${
               isDark ? "text-zinc-500" : "text-slate-400"
