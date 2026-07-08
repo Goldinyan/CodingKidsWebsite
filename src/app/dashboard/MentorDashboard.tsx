@@ -24,32 +24,33 @@ export default function MentorChangeView() {
   }, []);
 
   return (
-    <div 
-      className={`w-full p-6 min-h-screen transition-colors duration-200 ${
-        isDark ? "text-white" : "text-slate-900"
-      }`}
+    <div
+      className={`w-full p-6 min-h-screen transition-colors duration-200 ${isDark ? "text-white" : "text-slate-900"
+        }`}
     >
       <div className="max-w-7xl mx-auto">
         <div className="mb-8 border-b border-zinc-200 dark:border-zinc-800 pb-5 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
           <div>
             <h1
-              className={`text-4xl font-black font-['Familjen_Grotesk'] tracking-tight uppercase ${
-                isDark ? "text-white" : "text-slate-900"
-              }`}
+              className={`md:text-4xl text-3xl font-black font-['Familjen_Grotesk'] tracking-tight uppercase ${isDark ? "text-white" : "text-slate-900"
+                }`}
             >
               MENTOREN
             </h1>
-            <p className={`font-['JetBrains_Mono'] text-[10px] tracking-wider uppercase mt-1 ${
-              isDark ? "text-zinc-500" : "text-slate-400"
-            }`}>
-              System-Schnittstelle zur Modifikation administrativer Konten und Berechtigungen
+            <p
+              className={`font-['JetBrains_Mono'] text-[10px] tracking-wider uppercase mt-1 ${isDark ? "text-zinc-500" : "text-slate-400"
+                }`}
+            >
+              System-Schnittstelle zur Modifikation administrativer Konten und
+              Berechtigungen
             </p>
           </div>
 
-          <div 
-            className={`px-3 py-1.5 border border-dashed font-['JetBrains_Mono'] text-[10px] tracking-wider uppercase ${radiusClass} ${
-              isDark ? "bg-zinc-900 border-zinc-800 text-zinc-400" : "bg-white border-slate-200 text-slate-500 shadow-sm"
-            }`}
+          <div
+            className={`px-3 py-1.5 border border-dashed font-['JetBrains_Mono'] text-[10px] tracking-wider uppercase ${radiusClass} ${isDark
+                ? "bg-zinc-900 border-zinc-800 text-zinc-400"
+                : "bg-white border-slate-200 text-slate-500 shadow-sm"
+              }`}
           >
             REGISTRIERT: {String(mentorData.length).padStart(2, "0")}
           </div>

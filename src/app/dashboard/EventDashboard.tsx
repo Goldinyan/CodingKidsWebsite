@@ -159,7 +159,7 @@ export default function EventDashboard() {
         <div className="max-w-7xl mx-auto">
           <div className="mb-8">
             <h1
-              className={`text-4xl font-black font-['Familjen_Grotesk'] tracking-tight uppercase mb-1.5 ${theme === "dark" ? "text-white" : "text-slate-900"
+              className={`md:text-4xl text-3xl font-black font-['Familjen_Grotesk'] tracking-tight uppercase mb-1.5 ${theme === "dark" ? "text-white" : "text-slate-900"
                 }`}
             >
               EventVerwaltung

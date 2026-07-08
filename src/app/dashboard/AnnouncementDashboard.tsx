@@ -134,7 +134,7 @@ export default function AnnouncementDashboard() {
         <div className="mb-8 border-b border-zinc-200 dark:border-zinc-800 pb-5 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
           <div>
             <h1
-              className={`text-4xl font-black font-['Familjen_Grotesk'] tracking-tight uppercase ${isDark ? "text-white" : "text-slate-900"}`}
+              className={`md:text-4xl text-3xl font-black font-['Familjen_Grotesk'] tracking-tight uppercase ${isDark ? "text-white" : "text-slate-900"}`}
             >
               ANKÜNDIGUNGEN
             </h1>
