@@ -250,30 +250,18 @@ body {
   }
 }
 
-
 @utility main-view-container {
   width: 100%;
-  padding-top: 5rem; /* pt-20 */
+  padding-top: 5rem;
   display: flex;
   flex-direction: column;
-
+  
   /* Light Mode (Default) */
-  background-image: linear-gradient(
-    to bottom,
-    /*var(--color-slate-50),*/
-    #ffffff,
-    /*var(--color-slate-50)*/
-  );
+  background-image: linear-gradient(to bottom, #ffffff, #ffffff);
 
-  /* Dark Mode */
-  &:where(.dark &),
-  .dark & {
-    background-image: linear-gradient(
-      to bottom,
-      #000000,
-      /*var(--color-zinc-950),*/
-      #000000
-    );
+  /* Dark Mode mit der offiziellen Tailwind-Variante */
+  @variant dark {
+    background-image: linear-gradient(to bottom, #000000, #000000);
   }
 }
 
