@@ -10,8 +10,8 @@ import {
   Megaphone,
   User,
   Home,
-  ArrowRight,
   StepBack,
+  Folder,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTheme } from "@/context/ThemeContext";
@@ -23,6 +23,7 @@ import { useScrollSpy } from "./overlay/hooks";
 const SECTIONS = [
   { id: "user", label: "Nutzer", icon: Users },
   { id: "events", label: "Event", icon: CalendarCheck },
+  { id: "courses", label: "Kurse", icon: Folder},
   { id: "mentor", label: "Mentoren", icon: UserCheck },
   { id: "announce", label: "Ankündigungen", icon: Megaphone },
 ];
@@ -70,7 +71,6 @@ export function MainOverlayAdminDashboard() {
   return (
     <div className={`flex flex-col min-h-screen transition-colors duration-200 ${isDark ? "bg-zinc-950 text-white" : "bg-slate-50 text-slate-900"}`}>
       
-      {/* Top Bar */}
       <div className={`w-full fixed top-0 left-0 h-12 z-50 border-b backdrop-blur-xl transition-colors duration-200 ${isDark ? "bg-zinc-950/80 border-zinc-900" : "bg-white/80 border-slate-200"}`}>
         <div className="max-w-7xl mx-auto flex justify-between items-center h-full px-5">
           <div className="flex flex-col select-none cursor-pointer" onClick={() => router.push("/")}>
@@ -85,7 +85,6 @@ export function MainOverlayAdminDashboard() {
         </div>
       </div>
 
-      {/* Mobile Fullscreen Overlay */}
       {!isDesktop && open && (
         <div className={`fixed inset-0 top-12 z-40 p-4 ${isDark ? "bg-zinc-950" : "bg-slate-50"}`}>
           <div className="flex flex-col h-full font-['JetBrains_Mono'] max-w-md mx-auto">
@@ -112,7 +111,6 @@ export function MainOverlayAdminDashboard() {
         </div>
       )}
 
-      {/* Desktop Sidebar & Content */}
       <div className="flex pt-12 flex-1 w-full">
         {isDesktop && (
           <div className={`w-50 flex flex-col fixed h-[calc(100vh-3rem)] border-r ${isDark ? "bg-zinc-950 border-zinc-900" : "bg-white border-slate-200"}`}>
@@ -123,7 +121,7 @@ export function MainOverlayAdminDashboard() {
                   <SectionCard key={s.id} id={s.id} Icon={s.icon} label={s.label.toUpperCase()} isActive={activeSection === s.id} setOpen={setOpen} scrollToSection={scrollToSection} />
                 ))}
               </nav>
-              <div className={`pt-6 border-t ${isDark ? "border-zinc-900" : "border-slate-200"}`}>
+              <div className={`pt-6 mb-10 border-t ${isDark ? "border-zinc-900" : "border-slate-200"}`}>
                 <p className={`text-[10px] font-bold tracking-widest uppercase mb-3 pl-1 ${isDark ? "text-zinc-600" : "text-slate-400"}`}>AUTH</p>
                 {ACCOUNT_LINKS.map((link, idx) => {
                   const Icon = link.icon;

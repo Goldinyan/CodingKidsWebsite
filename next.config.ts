@@ -34,6 +34,8 @@ const nextConfig: NextConfig = {
               "style-src 'self' 'unsafe-inline';",
               // img-src: Erlaubt lokale Bilder und Data-URLs (z.B. base64-Platzhalter)
               "img-src 'self' data:;",
+              // für iframe vom standort
+              "frame-src 'self' https://*.google.com;",
             ].join(" "),
           },
         ],

@@ -49,7 +49,6 @@ export default function NavbarMobile({ setOpen }: NavbarMobileProps) {
       { label: "Startseite", href: "/", Icon: Home },
       { label: "Kurse", href: "/termine", Icon: GraduationCap },
       { label: "Über uns", href: "/verein", Icon: Users },
-      { label: "Spenden", href: "/spenden", Icon: HeartHandshakeIcon },
       { label: "Kontakt", href: "/kontakt", Icon: MessageCircle },
     ];
 

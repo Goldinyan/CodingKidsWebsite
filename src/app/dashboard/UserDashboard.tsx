@@ -83,7 +83,7 @@ export default function UserDashboard() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.4 }}
-          className="mb-12"
+          className="mb-2 md:mb-4"
         >
           <span
             className={`font-['JetBrains_Mono'] text-[10px] tracking-[0.22em] uppercase block mb-2 ${theme === "dark" ? "text-[#a855f7]" : "text-purple-600"
@@ -92,7 +92,7 @@ export default function UserDashboard() {
             Systemsteuerung
           </span>
           <h1
-            className={`text-5xl font-black font-['Familjen_Grotesk'] tracking-tight leading-none uppercase ${theme === "dark" ? "text-white" : "text-slate-900"
+            className={`text-4xl font-black font-['Familjen_Grotesk'] tracking-tight leading-none uppercase ${theme === "dark" ? "text-white" : "text-slate-900"
               }`}
           >
             Nutzerverwaltung

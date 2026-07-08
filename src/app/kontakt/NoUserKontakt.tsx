@@ -111,7 +111,7 @@ export default function NoUserKontakt() {
   const borderClass = theme === "dark" ? "border-zinc-800" : "border-zinc-200";
   const bgCardClass = theme === "dark" ? "bg-white/5" : "bg-zinc-50";
   const textTitleClass = theme === "dark" ? "text-white" : "text-black";
-  const textMutedClass = theme === "dark" ? "text-gray-400" : "text-gray-600";
+  const textMutedClass = theme === "dark" ? "text-gray-400" : "text-gray-500";
 
   const inputBgClass = theme === "dark" ? "bg-white/5" : "bg-white";
   const inputBorderClass =
@@ -128,10 +128,10 @@ export default function NoUserKontakt() {
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
         viewport={{ once: true }}
-        className="pt-32 pb-12 flex flex-col items-center text-center px-6"
+        className="pt-32 pb-12 flex flex-col items-start px-6"
       >
         <span
-          className={`text-xs font-mono tracking-widest uppercase mb-3 ${theme === "dark" ? "text-zinc-500" : "text-zinc-400"}`}
+          className={`text-xs font-mono tracking-widest uppercase mb-3 ${theme === "dark" ? "text-green-500" : "text-green-500"}`}
         >
           Kontakt aufnehmen
         </span>
@@ -140,7 +140,7 @@ export default function NoUserKontakt() {
         >
           In Kontakt treten
         </h2>
-        <p className={`text-lg max-w-2xl font-light ${textMutedClass}`}>
+        <p className={`text-md w-[80%] font-gro font-light ${textMutedClass}`}>
           Füllen Sie das Formular aus oder melden Sie sich direkt bei uns. Wir
           freuen uns auf den Austausch.
         </p>
@@ -337,7 +337,7 @@ export default function NoUserKontakt() {
                 }`}
             >
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2474.59027887105!2d6.663062212202145!3d51.667337571732794!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47b88fe13e2b821d%3A0x1698a4fadd47ca72!2sRudolf-Diesel-Stra%C3%9Fe%20115%2C%2046485%20Wesel!5e0!3m2!1sde!2sde!4v1764428777335!5m2!1sde!2sde"
+                src="https://maps.google.com/maps?q=Rudolf-Diesel-Stra%C3%9Fe%20115,%2046485%20Wesel&t=&z=15&ie=UTF8&iwloc=&output=embed"
                 width="100%"
                 height="100%"
                 style={{

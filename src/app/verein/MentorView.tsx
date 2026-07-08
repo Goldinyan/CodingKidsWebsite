@@ -53,9 +53,9 @@ export default function MentorenView({
   const radiusClass = isRounded ? "rounded-lg" : "rounded-none";
 
   return (
-    <div className="w-full py-20 px-4 font-['DM_Sans']">
+    <div className="w-full py-20 px-8 font-['DM_Sans']">
       <div className="w-full flex flex-col items-start justify-center gap-12">
-        <div className="flex flex-col items-start text-left px-8 max-w-4xl">
+        <div className="flex flex-col items-start text-left  max-w-4xl">
           <span
             className={`font-['JetBrains_Mono'] text-[10px] tracking-[0.22em] uppercase block mb-2 ${theme === "dark" ? "text-[#4ADE80]" : "text-green-600"
               }`}

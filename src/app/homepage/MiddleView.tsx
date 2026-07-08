@@ -50,7 +50,8 @@ const activities = [
 const requirements = [
   "Du bist zwischen 8 und 17 Jahre alt",
   "Du kannst ein Notebook zum Dojo mitbringen",
-  "Bei Erst­teilnahme unter 13 Jahren: Elternteil anwesend",
+  "Bei Erst­teilnahme: Elternteil anwesend",
+  "Du bringst Spaß am Programmieren mit"
 ];
 
 export default function MiddleView() {
@@ -163,10 +164,8 @@ export default function MiddleView() {
         </div>
 
         <div className="grid w-full grid-cols-1 xl:grid-cols-5 gap-4">
-          {/* LINKEN CARD: STANDORT & ANFAHRT */}
           <GlassCard className="xl:col-span-3 flex flex-col justify-between p-6 hover:!border-purple-400/40">
             <div className="flex flex-col w-full gap-6">
-              {/* Header: Icon + Adresse */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-white/5 dark:border-white/5">
                 <div className="flex items-start gap-4">
                   <div
@@ -199,7 +198,6 @@ export default function MiddleView() {
                 </a>
               </div>
 
-              {/* Anfahrt: Volle Breite unter der Adresse */}
               <div className="flex flex-col gap-1.5">
                 <p className="text-[10px] font-mono uppercase tracking-widest text-purple-400/80">
                   Anfahrt & Parken
@@ -218,7 +216,6 @@ export default function MiddleView() {
             </div>
           </GlassCard>
 
-          {/* RECHTE CARD: TERMIN */}
           <GlassCard className="w-full xl:col-span-2 p-6 flex flex-col gap-5 hover:!border-purple-400/40">
             <div>
               <div className="text-[10px] uppercase font-mono tracking-widest mb-1 text-gray-500">
@@ -287,15 +284,15 @@ export default function MiddleView() {
                 Voraussetzungen
               </div>
             </div>
-            <ul className="flex flex-col gap-2 mt-2 ">
+            <ul className="flex flex-col gap-1 mt-2 ">
               {requirements.map((req) => (
-                <li key={req} className="flex justify-start items-center gap-1">
+                <li key={req} className="flex justify-start items-center gap-2">
                   <CheckCircle2
                     className="w-4 h-4  shrink-0"
                     style={{ color: "#4ade80" }}
                   />
                   <span
-                    className={`text-[14px] font-thin leading-relaxed ${isDark ? "text-gray-400" : "text-slate-600"}`}
+                    className={`text-[14px] font-thin leading-relaxed ${isDark ? "text-gray-400" : "text-slate-800"}`}
                   >
                     {req}
                   </span>
@@ -313,25 +310,24 @@ export default function MiddleView() {
             <div
               className={`text-lg font-black font-gro ${isDark ? "text-white" : "text-slate-900"} leading-snug mb-3`}
             >
-              Deine Ideen. Deine Regeln. Deine Projekte.
+              Deine Ideen. Deine Regeln. {/*Deine Projekte.*/}
             </div>
             <p
-              className={`text-[14px] font-thin leading-relaxed ${isDark ? "text-gray-400" : "text-slate-600"}`}
+              className={`text-[14px] font-thin leading-relaxed ${isDark ? "text-gray-400" : "text-slate-800"}`}
             >
-              Eigene Spiele, Apps und Websites zu erstellen ist nicht nur cool,
-              Programmieren und digitale Kreativität gehören heute zu den
-              wichtigsten Fähigkeiten überhaupt. Und die CoderDojos sind kein
-              Unterricht: Du lernst spielerisch und in deinem eigenen Tempo.
+              Eigene Spiele, Apps und Websites zu erstellen ist super cool.
+              Programmieren gehört heute zu den wichtigsten Fähigkeiten
+              überhaupt. Im CoderDojo gibt es keinen Frontalunterricht: Du
+              lernst spielerisch und in deinem eigenen Tempo.{" "}
             </p>
             <div className="mt-4 flex flex-wrap gap-2">
-              {[
-                "Spielerisch",
-                "Kein Unterricht",
-                "Gruppenarbeit",
-                "Eigene Projekte",
-              ].map((tag) => (
-                <Chip key={tag}>{tag}</Chip>
-              ))}
+              {["Spielerisch", "Kein Unterricht", "Eigene Projekte"].map(
+                (tag) => (
+                  <Chip key={tag}>{tag}</Chip>
+                ),
+              )}
+
+              {/*"Gruppenarbeit"*/}
             </div>
           </GlassCard>
         </div>
