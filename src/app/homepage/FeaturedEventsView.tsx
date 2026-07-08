@@ -1,18 +1,15 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
-import { getAllEvents, getAllCourses } from "@/lib/db";
+import { useMemo } from "react";
 import { EventData, CourseData } from "@/BackEnd/type";
 import { ArrowRight, CalendarX2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { toJsDate } from "@/BackEnd/utils";
 import { useTheme } from "@/context/ThemeContext";
-import { useAuth } from "@/context/AuthContext";
 import SectionLabel from "./components/SectionLabel";
 import SectionHeading from "./components/SectionHeading";
 import GlassCard from "./components/GlassCard";
-import { useNotificationToast } from "@/hooks/useNotificationToast";
 import { useAppData } from "@/context/DataContext";
 
 const fmtMonth = (date: any) => {
@@ -194,7 +191,7 @@ export default function FeaturedEventsView() {
       {validEvents.length > 0 && (
         <button
           onClick={() => router.push("/termine")}
-          className={`w-full flex items-center justify-center gap-2 px-6 py-3 border font-bold text-xs no-underline transition-all bg-purple-500/[0.06] border-purple-500/20 text-purple-400 hover:bg-purple-500/12 cursor-pointer ${isRounded ? "rounded-xl" : "rounded-none"}`}
+          className={`w-full flex items-center justify-center gap-2 px-6 py-3 border font-medium text-xs no-underline transition-all bg-purple-500/[0.06] border-purple-500/20 text-purple-400 hover:bg-purple-500/12 cursor-pointer ${isRounded ? "rounded-xl" : "rounded-none"}`}
         >
           Alle Termine &amp; Anmeldung <ArrowRight className="w-4 h-4" />
         </button>

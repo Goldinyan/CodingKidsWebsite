@@ -27,31 +27,31 @@ export function SimpleMentorCard({ props }: { props: SimpleMentorCardProps }) {
         />
         <div>
           <h3
-            className={`font-bold text-md font-gro ${theme == "dark" ? "text-white" : "text-black"}`}
+            className={`font-bold text-md sm:text-lg font-gro ${theme == "dark" ? "text-white" : "text-black"}`}
           >
             {props.name}
           </h3>
-          <p className="w-full text-purple-400 font-light text-xxs font-mono">
+          <p className="w-full text-purple-400 font-light text-xxs sm:text-xs font-mono">
             {props.role}
           </p>
         </div>
       </div>
 
-      <p className="text-zinc-600 dark:text-zinc-400 text-xs md:text-sm font-gro leading-relaxed">
+      <p className="text-zinc-600 dark:text-zinc-400 text-sm md:text-sm font-gro leading-relaxed">
         {props.des}
       </p>
 
       <div className="grow min-h-5" />
 
-      <div className="flex justify-between items-center pt-4   border-t border-zinc-100 dark:border-zinc-800">
-        {(props.insta || props.linkedin || props.github) && (
+      <div className={`flex justify-between items-center pt-4   border-t border-zinc-200 dark:border-zinc-800`}>
+        {(props.insta || props.linkedin || props.github) ? (
           <div className="flex items-center gap-2 ">
             {props.insta && (
               <a
                 href={props.insta}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-1.5 rounded-lg text-zinc-400 bg-white/5 backdrop-blur-2xl hover:text-purple-400 transition-colors"
+                className="p-1.5 rounded-lg text-zinc-500 bg-black/5 dark:text-zinc-400 dark:bg-white/5 hover:text-purple-400 transition-colors"
               >
                 <Instagram size={16} />
               </a>
@@ -77,7 +77,7 @@ export function SimpleMentorCard({ props }: { props: SimpleMentorCardProps }) {
               </a>
             )}
           </div>
-        )}
+        ): <div></div>}
         <a
           href="#"
           className="text-xs font-bold text-zinc-500 hover:text-black dark:hover:text-white uppercase tracking-wider"

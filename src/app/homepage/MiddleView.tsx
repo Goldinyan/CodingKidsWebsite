@@ -244,25 +244,28 @@ export default function MiddleView() {
               ].map((note) => (
                 <div key={note} className="flex items-start gap-2">
                   <CheckCircle2 className="w-4 h-4 mt-0.5 shrink-0 text-purple-400" />
-                  <span className="text-sm text-gray-400">{note}</span>
+                  <span
+                    className={`text-sm ${isDark ? "text-gray-400" : "text-gray-500"}`}
+                  >
+                    {note}
+                  </span>
                 </div>
               ))}
             </div>
 
             <button
               onClick={() => router.push("/termine")}
-              className={`mt-auto w-full font-gro flex items-center justify-center gap-2 px-4 py-2 font-bold text-[14px] transition-colors bg-purple-500 hover:bg-purple-400 text-black ${isRounded ? "rounded-xl" : "rounded-none"}`}
+              className={`mt-auto w-full font-gro flex items-center justify-center gap-2 px-4 py-2 font-bold text-[14px] transition-colors bg-purple-500 hover:bg-purple-400 dark:text-black text-white ${isRounded ? "rounded-xl" : "rounded-none"}`}
             >
               Nächste Dojos ansehen <ArrowRight className="w-4 h-4" />
             </button>
           </GlassCard>
         </div>
       </section>{" "}
-      {/* ── Voraussetzungen ──────────────────────────────── */}
       <section className="py-10">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <GlassCard className="p-6">
-            <div className="flex items-center gap-3 mb-5">
+            <div className="flex flex-col items-start gap-3 mb-5">
               {/*<div
                 className="w-9 h-9 rounded-xl flex items-center justify-center"
                 style={{
@@ -273,22 +276,27 @@ export default function MiddleView() {
                 <Notebook className="w-4 h-4" style={{ color: "#4ade80" }} />
               </div>*/}
               <div
-                className={`font-bold font-gro ${isDark ? "text-white" : "text-slate-900"}`}
+                className={`text-[10px] uppercase font-mono tracking-widest ${theme == "dark" ? "text-green-400" : "text-green-500"}`}
+              >
+                Was benötigst du?
+              </div>
+
+              <div
+                className={`text-lg font-black font-gro ${isDark ? "text-white" : "text-slate-900"} leading-snug `}
               >
                 Voraussetzungen
               </div>
             </div>
-            <ul className="flex flex-col gap-3 mt-10 ">
+            <ul className="flex flex-col gap-2 mt-2 ">
               {requirements.map((req) => (
-                <li
-                  key={req}
-                  className="flex justify-start items-center gap-2.5"
-                >
+                <li key={req} className="flex justify-start items-center gap-1">
                   <CheckCircle2
                     className="w-4 h-4  shrink-0"
                     style={{ color: "#4ade80" }}
                   />
-                  <span className="text-[14px] font-thin leading-relaxed" style={{ color: "#9ca3af" }}>
+                  <span
+                    className={`text-[14px] font-thin leading-relaxed ${isDark ? "text-gray-400" : "text-slate-600"}`}
+                  >
                     {req}
                   </span>
                 </li>
@@ -298,10 +306,7 @@ export default function MiddleView() {
 
           <GlassCard className="p-6">
             <div
-              className="text-[10px] uppercase font-mono tracking-widest mb-3"
-              style={{
-                color: "#4ade80",
-              }}
+              className={`text-[10px] uppercase font-mono tracking-widest mb-3 ${theme == "dark" ? "text-green-400" : "text-green-500"}`}
             >
               Warum programmieren?
             </div>
@@ -311,8 +316,7 @@ export default function MiddleView() {
               Deine Ideen. Deine Regeln. Deine Projekte.
             </div>
             <p
-              className="text-[14px] font-thin leading-relaxed"
-              style={{ color: "#9ca3af" }}
+              className={`text-[14px] font-thin leading-relaxed ${isDark ? "text-gray-400" : "text-slate-600"}`}
             >
               Eigene Spiele, Apps und Websites zu erstellen ist nicht nur cool,
               Programmieren und digitale Kreativität gehören heute zu den

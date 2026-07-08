@@ -141,7 +141,7 @@ export default function FeaturedCoursesView() {
                       ))}
                     </div>
                     <span className="text-[11px] font-mono text-gray-500">
-                      {course.mentors?.length} Mentor
+                      {course.mentors?.length ?? 0} Mentor
                       {course.mentors?.length !== 1 ? "en" : ""}
                     </span>
                   </div>

@@ -1,10 +1,7 @@
 "use client";
 
-import { useEffect, useState, useRef, useMemo } from "react";
-import { getAllMentors } from "@/lib/db";
-import { Mentor } from "@/BackEnd/type";
+import { useState, useMemo } from "react";
 import { motion, Variants } from "framer-motion";
-import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@/context/ThemeContext";
 import { SimpleMentorCard } from "../verein/mentor/SimpleMentorCard";
 import SectionLabel from "./components/SectionLabel";

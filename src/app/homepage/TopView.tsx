@@ -86,7 +86,7 @@ export default function TopView() {
               } ${
                 isDark
                   ? "bg-black text-white border-white/10 hover:border-white/5 hover:bg-white/5"
-                  : "bg-white text-slate-900 border-slate-200 hover:border-slate-900 hover:bg-slate-50"
+                  : "bg-white text-slate-900 border-slate-200 hover:border-slate-300 hover:bg-slate-50"
               }`}
             >
               Über den Verein

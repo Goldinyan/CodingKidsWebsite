@@ -1,19 +1,10 @@
-export default function Chip({
-  children,
-  color = "#4ade80",
-}: {
-  children: string;
-  color?: string;
-}) {
+import { useTheme } from "@/context/ThemeContext";
+
+export default function Chip({ children }: { children: string }) {
+  const { theme } = useTheme();
+
   return (
-    <span
-      className="text-[10px] font-mono px-2 py-0.5 rounded-md border"
-      style={{
-        color,
-        background: `${color}14`,
-        borderColor: `${color}30`,
-      }}
-    >
+    <span className={`text-[10px] font-mono px-2 py-0.5 rounded-md border ${theme === "dark" ? "bg-[#0B160F] border-green-900 text-green-400" : "bg-green-200 text-green-600 border-green-400"}`}>
       {children}
     </span>
   );
