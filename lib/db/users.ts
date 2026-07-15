@@ -46,7 +46,8 @@ export async function getUserData(
             newEvent: data.settings?.notifications?.newEvent ?? true,
             kicked: data.settings?.notifications?.kicked ?? true,
             queueToUser: data.settings?.notifications?.queueToUser ?? true,
-            understaffedWarning: data.settings?.notifications?.understaffedWarning ?? true,
+            understaffedWarning:
+              data.settings?.notifications?.understaffedWarning ?? true,
             logs: data.settings?.notifications?.logs ?? false,
             systemAlerts: data.settings?.notifications?.systemAlerts ?? false,
           },
@@ -61,7 +62,8 @@ export async function getUserData(
           ...baseSettings,
           notifications: {
             newEvent: data.settings?.notifications?.newEvent ?? true,
-            understaffedWarning: data.settings?.notifications?.understaffedWarning ?? true,
+            understaffedWarning:
+              data.settings?.notifications?.understaffedWarning ?? true,
           },
         },
       };
@@ -111,12 +113,13 @@ export async function getAllMentorUsers(
 
   try {
     const snapshot = await getDocs(collection(db, "users"));
-    const data = snapshot.docs
-      .map((doc) => ({
-        uid: doc.id,
-        ...doc.data(),
-      })) as UserData[];
-    return data.filter((user) => user.role === "mentor" || user.role === "admin");
+    const data = snapshot.docs.map((doc) => ({
+      uid: doc.id,
+      ...doc.data(),
+    })) as UserData[];
+    return data.filter(
+      (user) => user.role === "mentor" || user.role === "admin",
+    );
   } catch (error) {
     console.error("Error fetching mentor users:", error);
     throw error;
@@ -125,7 +128,7 @@ export async function getAllMentorUsers(
 
 export async function updateUser(
   uid: string,
-  updates: Partial<UserData>,
+  updates: Partial<UserData> & { [key: string]: any }, // Allows FieldValue utilities like arrayUnion,
   userId: string = "anonymous",
   userRole: UserRole = "user",
 ) {

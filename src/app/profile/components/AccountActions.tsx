@@ -47,8 +47,8 @@ export default function AccountActions({
         </span>*/}
         <button
           onClick={() => {
-            logOutUser();
             router.push("/");
+            logOutUser();
           }}
           className={`w-full py-2 font-['JetBrains_Mono'] text-xs font-bold tracking-wider uppercase transition-colors flex items-center justify-center gap-2 border ${innerRoundedClass} ${theme === "dark"
               ? "bg-zinc-950 text-zinc-300 border-zinc-800 hover:bg-zinc-900 hover:text-white"

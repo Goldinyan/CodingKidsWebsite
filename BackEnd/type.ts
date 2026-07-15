@@ -157,7 +157,7 @@ type BaseUserData = {
   birthdate: Timestamp;
   createdAt: Timestamp;
   courses?: string[];
-  projects: string[];
+  projects: ScratchProject[];
 };
 
 // UNION
@@ -214,4 +214,12 @@ export type CourseData = {
   des: string;
   tags: string[];
   mentors: UserData[];
+};
+
+
+export type ScratchProject = {
+  name: string;
+  downloadUrl: string;
+  createdAt: Timestamp; 
+  size?: number;     
 };

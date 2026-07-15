@@ -86,7 +86,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       );
     };
 
-    //updateUserTheme();
+    updateUserTheme();
   };
 
   const toggleRounded = () => {
@@ -113,7 +113,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       );
     };
 
-    //updateUserRounded();
+    updateUserRounded();
   };
 
   return (

@@ -73,6 +73,7 @@ export default function RegisterView() {
       console.error(err);
     } finally {
       setIsLoading(false);
+      
     }
   };
 

@@ -1,10 +1,6 @@
 // lib/rateLimiter.ts
-// In-memory rate limiting for database operations
 
 import { UserRole } from "@/BackEnd/type";
-import { useEffect } from "react";
-import { getAllAnnouncements } from "../db";
-import { toast, useToast } from "@/components/ui/use-toast";
 
 interface RateLimitEntry {
   count: number;
