@@ -6,6 +6,7 @@ import {
   FeaturedEventsView,
   FeaturedCoursesView,
   MentorsView,
+  GlobalAnnouncementsView,
 } from "./homepage";
 
 export default function MainView() {
@@ -22,6 +23,7 @@ export default function MainView() {
         <MiddleView />
         <FeaturedEventsView />
         <FeaturedCoursesView />
+        <GlobalAnnouncementsView />
         <MentorsView />
         {/*<CTAView />*/}
       </div>

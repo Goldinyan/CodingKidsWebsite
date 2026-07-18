@@ -7,7 +7,7 @@ import { enforceRateLimit } from "./db";
 
 export async function getAllMentors(
   userId: string = "anonymous",
-  userRole: UserRole = "user",
+  userRole: UserRole = "anonymous",
 ): Promise<Mentor[]> {
   enforceRateLimit("getAllMentors", userId, userRole);
 
@@ -26,11 +26,24 @@ export async function getAllMentors(
   }
 }
 
+export async function addMentor(
+  mentor: Partial<Mentor>,
+  userId: string = "anonymous",
+  userRole: UserRole = "anonymous",
+) {
+  try {
+    const ref = doc(collection(db, "mentors"));
+    await updateDoc(ref, { ...mentor, uid: ref.id });
+  } catch (error) {
+    console.error("Fehler beim Hinzufügen von Mentoren Daten" + error);
+  }
+}
+
 export async function updateMentor(
   uid: string,
   updates: Partial<Mentor>,
   userId: string = "anonymous",
-  userRole: UserRole = "user",
+  userRole: UserRole = "anonymous",
 ) {
   enforceRateLimit("updateMentor", userId, userRole);
 
@@ -39,6 +52,5 @@ export async function updateMentor(
     await updateDoc(ref, updates);
   } catch (error) {
     console.error("Fehler beim Aktualisieren von Mentoren Daten" + error);
-    throw error;
   }
 }

@@ -216,7 +216,7 @@ export default function EventCreationDialog(props: {
       leftUsers: [],
       typeOfEvent: "CoderDojo",
       tags: "Scratch",
-      difficulty: Difficulties.Einsteiger,
+      difficulty: Difficulties.Alle,
       requirements:
         "Keine Vorkenntnisse erforderlich. Ideal für Kinder ab 8 Jahren",
       description:
@@ -368,9 +368,6 @@ export default function EventCreationDialog(props: {
                         : "bg-slate-50 border-slate-200 focus:bg-white focus:border-purple-400"
                       }`}
                   >
-                    <option value="">
-                      -- Kein Kurs (Allgemeines Event) --
-                    </option>
                     {courses?.map((course) => (
                       <option key={course.uid} value={course.uid}>
                         {course.name}
@@ -384,25 +381,48 @@ export default function EventCreationDialog(props: {
                     className={`text-[11px] font-bold tracking-wider font-['JetBrains_Mono'] uppercase ${theme === "dark" ? "text-zinc-400" : "text-slate-600"
                       }`}
                   >
-                    Datum *
+                    Datum & Uhrzeit *
                   </Label>
                   <Input
                     className={`${roundedClass} px-4 py-2 text-sm transition-colors duration-300 ${theme === "dark"
                         ? "bg-zinc-950 border-zinc-800 text-white focus:border-purple-500/50"
                         : "bg-slate-50 border-slate-200 focus:bg-white focus:border-purple-400"
                       } border focus:outline-none`}
-                    type="date"
-                    value={EventInfo.date.toDate().toISOString().split("T")[0]}
+                    type="datetime-local"
+                    // Konvertiert das Firebase-Date sicher in das lokale Format "YYYY-MM-DDTHH:mm"
+                    value={(() => {
+                      const d = EventInfo.date.toDate();
+                      const tzOffset = d.getTimezoneOffset() * 60000; // Offset in Millisekunden
+                      return new Date(d.getTime() - tzOffset)
+                        .toISOString()
+                        .slice(0, 16);
+                    })()}
                     onChange={(e) => {
                       if (!e.target.value) return;
-                      const selectedDate = Timestamp.fromDate(
-                        new Date(e.target.value + "T18:00:00"),
+
+                      // Wir splitten den Wert auf, um Zeitzonen-Fehler beim Parsen zu verhindern
+                      const [datePart, timePart] = e.target.value.split("T");
+                      const [year, month, day] = datePart
+                        .split("-")
+                        .map(Number);
+                      const [hours, minutes] = timePart.split(":").map(Number);
+
+                      // Erstellt ein neues Date-Objekt mit der lokalen Zeit des Users
+                      const localDate = new Date(
+                        year,
+                        month - 1,
+                        day,
+                        hours,
+                        minutes,
                       );
-                      setEventInfo({ ...EventInfo, date: selectedDate });
+
+                      setEventInfo({
+                        ...EventInfo,
+                        date: Timestamp.fromDate(localDate),
+                      });
                     }}
                   />
                 </div>
-
                 <div className="grid grid-cols-2 gap-4">
                   <div className="grid gap-1.5">
                     <Label

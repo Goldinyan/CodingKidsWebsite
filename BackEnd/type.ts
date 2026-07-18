@@ -14,11 +14,12 @@ export const USER_ROLES_ARRAY = [
   "anonymous",
   "user",
   "member",
-  "admin",
   "mentor",
+  "admin",
 ] as const;
 
 export enum Difficulties {
+  Alle = "Alle",
   Einsteiger = "Einsteiger",
   Mittel = "Mittel",
   Fortgeschritten = "Fortgeschritten",
@@ -106,6 +107,11 @@ export type EventData = {
   logs?: Log[];
 };
 
+export type EventDataPreset = Omit<
+  EventData,
+  "uid" | "users" | "queue" | "mentors" | "leftUsers" | "logs"
+>;
+
 export type AnnouncementData = {
   uid: string;
   tag: UserRole;
@@ -115,6 +121,55 @@ export type AnnouncementData = {
   authorName: string;
   date: Timestamp;
   readBy?: string[];
+};
+
+export type TicketData = {
+  uid: string;
+  ticketNumber: string; // z.b. "TIC-1024", besser als lange uid
+
+  // KUNDE
+  userUid: string;
+  userName: string;
+  userEmail: string;
+
+  //INAHALT
+  subject: string;
+  description: string;
+  category: "general" | "technical" | "billing" | "other";
+
+  // ORGANISATION
+  priority: "low" | "medium" | "high" | "urgent";
+  status: "open" | "closed" | "new" | "pending_customer" | "pending_staff";
+
+  // STAFF
+  assignedToUid?: string;
+  assignedToName?: string;
+
+  // TIME
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
+  closedAt?: Timestamp;
+
+  // MESSAGES
+  messages?: TicketMessage[];
+
+
+  internalNotes?: TicketMessage[]; // Only visible to staff
+};
+
+export type TicketMessage = {
+  uid: string;
+  
+  // SENDER
+  senderUid: string;
+  senderName: string;
+  senderRole: "customer" | "staff";
+
+  // INAHLT
+  message: string;
+
+
+  createdAt: Timestamp;
 };
 
 // ------------------------------
@@ -216,10 +271,9 @@ export type CourseData = {
   mentors: UserData[];
 };
 
-
 export type ScratchProject = {
   name: string;
   downloadUrl: string;
-  createdAt: Timestamp; 
-  size?: number;     
+  createdAt: Timestamp;
+  size?: number;
 };

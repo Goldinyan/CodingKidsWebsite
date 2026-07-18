@@ -21,6 +21,8 @@ import {
 import { toJsDate } from "@/BackEnd/utils";
 import { Theme } from "@/context/ThemeContext";
 import { useNotificationToast } from "@/hooks/useNotificationToast";
+import { useAdmins } from "../dashboard/announcements/hooks";
+import { useAuth } from "@/context/AuthContext";
 
 function formatDate(date: Date): string {
   const options: Intl.DateTimeFormatOptions = {
@@ -37,6 +39,11 @@ const diffStyle: Record<
   Difficulties,
   { color: string; bg: string; border: string }
 > = {
+  [Difficulties.Alle]: {
+    color: "#4ade80",
+    bg: "rgba(74,222,128,0.1)",
+    border: "rgba(74,222,128,0.25)",
+  },
   [Difficulties.Einsteiger]: {
     color: "#4ade80",
     bg: "rgba(74,222,128,0.1)",
@@ -89,8 +96,8 @@ function StatusPill({
     return (
       <span
         className={`flex items-center gap-1 text-[10px] px-2 py-1 rounded-md ${theme === "dark"
-            ? "bg-white/5 text-zinc-400"
-            : "bg-zinc-200 text-zinc-600"
+          ? "bg-white/5 text-zinc-400"
+          : "bg-zinc-200 text-zinc-600"
           }`}
         style={baseStyle}
       >
@@ -165,6 +172,8 @@ export default function EventCard(props: {
     handleEvents,
   } = props;
 
+  const { userRole } = useAuth();
+
   const [expanded, setExpanded] = useState(false);
   const [loading, setLoading] = useState<boolean>(false);
   const { showErrorToast, showUpdateError } = useNotificationToast();
@@ -177,11 +186,14 @@ export default function EventCard(props: {
     .toLocaleDateString("de-DE", { month: "short" })
     .toUpperCase();
 
-  const totalUsers = event.users?.length || 0;
-  const queueCount = event.queue?.length || 0;
-  const maxPlaces = event.memberCount || 20;
+  const totalUsers = event.users?.length ?? 0;
+  const queueCount = event.queue?.length ?? 0;
+  const maxPlaces = event.memberCount ?? 20;
   const pct = Math.min(100, Math.round((totalUsers / maxPlaces) * 100));
   const spotsLeft = Math.max(0, maxPlaces - totalUsers);
+
+  const registerAt = userRole === "member" ? toJsDate(event.date).setHours(toJsDate(event.date).getHours() - 24 * 8) : toJsDate(event.date).setHours(toJsDate(event.date).getHours() - 24 * 7);
+
 
   return (
     <motion.div
@@ -217,10 +229,10 @@ export default function EventCard(props: {
         >
           <div
             className={`text-[9px] tracking-widest transition-colors ${isInEvent
-                ? "text-emerald-500/70"
-                : theme === "dark"
-                  ? "text-zinc-500"
-                  : "text-zinc-600"
+              ? "text-emerald-500/70"
+              : theme === "dark"
+                ? "text-zinc-500"
+                : "text-zinc-600"
               }`}
             style={{ fontFamily: "'JetBrains Mono', monospace" }}
           >
@@ -252,8 +264,8 @@ export default function EventCard(props: {
             <DiffBadge diff={event.difficulty} />
             <span
               className={`text-[10px] px-2 py-0.5 rounded-md ${theme === "dark"
-                  ? "bg-white/5 text-zinc-400"
-                  : "bg-zinc-200 text-zinc-600"
+                ? "bg-white/5 text-zinc-400"
+                : "bg-zinc-200 text-zinc-600"
                 }`}
               style={{ fontFamily: "'JetBrains Mono', monospace" }}
             >
@@ -392,8 +404,8 @@ export default function EventCard(props: {
                 <div className="flex flex-col gap-3">
                   <div
                     className={`rounded-xl border p-4 ${theme === "dark"
-                        ? "bg-white/[0.02] border-white/06"
-                        : "bg-zinc-100/50 border-zinc-200"
+                      ? "bg-white/[0.02] border-white/06"
+                      : "bg-zinc-100/50 border-zinc-200"
                       }`}
                   >
                     <div
@@ -475,7 +487,7 @@ export default function EventCard(props: {
                       }}
                       className={`w-full py-2.5 text-sm font-bold flex items-center justify-center gap-2 transition-all duration-200 ${isRounded ? "rounded-xl" : "rounded-none"
                         } ${tooEarly
-                          ? "bg-zinc-800 text-zinc-500 cursor-not-allowed opacity-50 shadow-none"
+                          ? "bg-zinc-800 text-zinc-400 cursor-not-allowed opacity-50 shadow-none"
                           : isInEvent
                             ? "bg-rose-500/10 text-rose-500 border border-rose-500/20 hover:bg-rose-500/20"
                             : "bg-[#4ade80] text-black hover:bg-[#86efac]"
@@ -485,7 +497,7 @@ export default function EventCard(props: {
                       {loading ? (
                         <Loader2 className="w-4 h-4 animate-spin text-current" />
                       ) : tooEarly ? (
-                        "Zu früh"
+                        "Anmeldung ab " + new Date(registerAt).toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" })
                       ) : isInEvent ? (
                         "Verlassen"
                       ) : (

@@ -160,6 +160,8 @@ export async function deleteEvent(
       });
       console.log(`Event ${uid} aus Kurs ${courseId} entfernt.`);
     }
+
+
   } catch (error) {
     console.log("Error at deleting Event" + error);
     throw error;

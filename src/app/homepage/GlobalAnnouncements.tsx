@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import type { UserData, AnnouncementData } from "@/BackEnd/type";
+import type { UserData } from "@/BackEnd/type";
 import { markAnnouncementAsRead } from "@/lib/db";
 import {
   Bell,
@@ -11,13 +11,14 @@ import {
   CheckCircle2,
   Clock,
   Eye,
+  Globe, // Neu importiert für das Anonymous-Icon
 } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
 import { useAuth } from "@/context/AuthContext";
 import { useAppData } from "@/context/DataContext";
 import { useNotificationToast } from "@/hooks/useNotificationToast";
 
-export default function AnnouncementView({ data }: { data: UserData }) {
+export default function AnnouncementView({ data }: { data?: UserData | null }) {
   const { user, userRole } = useAuth();
   const { theme, isRounded } = useTheme();
   const { getAnnouncements, refreshData, loadingStates } = useAppData();
@@ -28,16 +29,24 @@ export default function AnnouncementView({ data }: { data: UserData }) {
 
   const rawAnnouncements = getAnnouncements();
 
-  const hasAccess = (role: string) => {
-    switch (data.role) {
+  const effectiveRole = data?.role || userRole || "anonymous";
+
+  const hasAccess = (announcementTag: string) => {
+    if (announcementTag === "anonymous") return true;
+
+    if (!user || effectiveRole === "anonymous") {
+      return announcementTag === "anonymous";
+    }
+
+    switch (effectiveRole) {
       case "admin":
         return true;
       case "mentor":
-        return ["user", "member", "mentor"].includes(role);
+        return ["user", "member", "mentor"].includes(announcementTag);
       case "member":
-        return ["user", "member"].includes(role);
+        return ["user", "member"].includes(announcementTag);
       case "user":
-        return role === "user";
+        return announcementTag === "user";
       default:
         return false;
     }
@@ -51,15 +60,13 @@ export default function AnnouncementView({ data }: { data: UserData }) {
         const timeB = b.date?.toDate?.().getTime() || 0;
         return timeB - timeA;
       });
-  }, [rawAnnouncements, data.role]);
+  }, [rawAnnouncements, effectiveRole, user]);
 
   const handleMarkAsRead = async (announcementUid: string) => {
     if (!user?.uid) return;
 
     try {
       await markAnnouncementAsRead(announcementUid, user.uid, userRole);
-
-      // refreshed only announcement cache
       await refreshData("announcements");
     } catch (error) {
       showErrorToast(error);
@@ -74,6 +81,8 @@ export default function AnnouncementView({ data }: { data: UserData }) {
         return <Zap className="w-3.5 h-3.5" />;
       case "member":
         return <User className="w-3.5 h-3.5" />;
+      case "anonymous":
+        return <Globe className="w-3.5 h-3.5" />;
       default:
         return <Bell className="w-3.5 h-3.5" />;
     }
@@ -88,6 +97,8 @@ export default function AnnouncementView({ data }: { data: UserData }) {
           return "bg-amber-950/40 text-amber-400 border border-amber-900/50";
         case "member":
           return "bg-green-950/40 text-green-400 border border-green-900/50";
+        case "anonymous":
+          return "bg-zinc-800/40 text-zinc-400 border border-zinc-700/50";
         default:
           return "bg-blue-950/40 text-blue-400 border border-blue-900/50";
       }
@@ -99,13 +110,14 @@ export default function AnnouncementView({ data }: { data: UserData }) {
           return "bg-amber-50 text-amber-700 border border-amber-200";
         case "member":
           return "bg-green-50 text-green-700 border border-green-200";
+        case "anonymous":
+          return "bg-slate-100 text-slate-600 border border-slate-200";
         default:
           return "bg-blue-50 text-blue-700 border border-blue-200";
       }
     }
   };
 
-  // Initiales Laden anzeigen, solange noch gar keine Daten im Cache sind
   if (loadingStates.announcements && rawAnnouncements.length === 0) {
     return (
       <div className="w-full mt-10 p-5 text-center font-mono text-xs uppercase text-zinc-500 animate-pulse">
@@ -198,22 +210,30 @@ export default function AnnouncementView({ data }: { data: UserData }) {
                   <div
                     className={`flex items-center gap-2 font-['JetBrains_Mono'] text-[11px] uppercase ${theme === "dark" ? "text-zinc-500" : "text-slate-400"}`}
                   >
-                    {an.readBy && an.readBy.length > 0 ? (
-                      <>
-                        <CheckCircle2
-                          className={`w-3.5 h-3.5 ${theme === "dark" ? "text-[#4ADE80]" : "text-green-600"}`}
-                        />
-                        <span>
-                          {an.readBy.length} von{" "}
-                          {Math.max(an.readBy.length + 1, 1)} gelesen
-                        </span>
-                      </>
+                    {/* Gelesen-Zähler nur für eingeloggte User anzeigen */}
+                    {user ? (
+                      an.readBy && an.readBy.length > 0 ? (
+                        <>
+                          <CheckCircle2
+                            className={`w-3.5 h-3.5 ${theme === "dark" ? "text-[#4ADE80]" : "text-green-600"}`}
+                          />
+                          <span>
+                            {an.readBy.length} von{" "}
+                            {Math.max(an.readBy.length + 1, 1)} gelesen
+                          </span>
+                        </>
+                      ) : (
+                        <span>Ungelesen</span>
+                      )
                     ) : (
-                      <span>Ungelesen</span>
+                      <span className="text-zinc-500 dark:text-zinc-500">
+                        Öffentliche Ankündigung
+                      </span>
                     )}
                   </div>
 
-                  {!isReadByCurrentUser && (
+                  {/* Button zum "Als gelesen markieren" nur für eingeloggte User */}
+                  {!isReadByCurrentUser && user && (
                     <button
                       onClick={() => handleMarkAsRead(an.uid)}
                       className={`inline-flex items-center gap-1.5 px-3 py-1 font-['JetBrains_Mono'] text-xxs font-bold uppercase border transition-colors ${badgeRadiusClass} ${theme === "dark" ? "bg-zinc-950 text-zinc-300 border-zinc-800 hover:bg-zinc-900 hover:text-white" : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 hover:text-slate-900"}`}

@@ -1,27 +1,57 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useInsertionEffect, useState } from "react";
 import { useTheme } from "@/context/ThemeContext";
-import { getAllMentors, updateMentor } from "@/lib/db";
-import { useState, useEffect } from "react";
-import MentorCardAdmin from "./MentorCardAdmin";
+import MentorCardAdmin from "./mentors/MentorCardAdmin";
+import { useAppData } from "@/context/DataContext";
+import { Plus } from "lucide-react";
+import { NewMentorDialog } from "./mentors/NewMentorDialog";
+import { addMentor } from "@/lib/db"; // Pfad ggf. anpassen
 import type { Mentor } from "@/BackEnd/type";
+import { useNotificationToast } from "@/hooks/useNotificationToast";
 
 export default function MentorChangeView() {
   const { theme, isRounded } = useTheme();
-  const [mentorData, setMentorData] = useState<Mentor[]>([]);
+  const { getMentors, refreshData } = useAppData();
+  const { showErrorToast } = useNotificationToast();
+
+  const [isAddingMentor, setIsAddingMentor] = useState(false);
+  const [newMentor, setNewMentor] = useState<Partial<Mentor>>({
+    name: "",
+    role: "",
+    des: "",
+    pic: "",
+    insta: "",
+    github: "",
+    linkedin: "",
+  });
 
   const isDark = theme === "dark";
   const radiusClass = isRounded ? "rounded-[12px]" : "rounded-none";
 
-  useEffect(() => {
-    const handleData = async () => {
-      const data = await getAllMentors();
-      setMentorData(data);
-    };
+  const rawMentorData = getMentors();
 
-    handleData();
-  }, []);
+  const handleAddMentor = async () => {
+    if (!newMentor.name) return;
+    try {
+      await addMentor(newMentor);
+      setIsAddingMentor(false);
+      setNewMentor({
+        name: "",
+        role: "",
+        des: "",
+        pic: "",
+        insta: "",
+        github: "",
+        linkedin: "",
+      });
+
+      await refreshData("mentors");
+    } catch (error) {
+      showErrorToast(error);
+    }
+  };
 
   return (
     <div
@@ -45,15 +75,25 @@ export default function MentorChangeView() {
               Berechtigungen
             </p>
           </div>
-
-          <div
-            className={`px-3 py-1.5 border border-dashed font-['JetBrains_Mono'] text-[10px] tracking-wider uppercase ${radiusClass} ${isDark
+          {/*<div
+            className={`px-3 py-1.5 border border-dashed font-['JetBrains_Mono'] text-[10px] tracking-wider uppercase ${radiusClass} ${
+              isDark
                 ? "bg-zinc-900 border-zinc-800 text-zinc-400"
                 : "bg-white border-slate-200 text-slate-500 shadow-sm"
+            }`}
+          >
+            REGISTRIERT: {String(rawMentorData.length).padStart(2, "0")}
+          </div>*/}
+          <button
+            onClick={() => setIsAddingMentor(true)}
+            className={`px-6 py-3 font-['JetBrains_Mono'] text-[10px] tracking-widest uppercase text-white transition-all duration-200 flex items-center justify-center gap-2 border border-transparent ${radiusClass} ${theme === "dark"
+                ? "bg-purple-600 hover:bg-purple-700"
+                : "bg-purple-600 hover:bg-purple-700 shadow-sm"
               }`}
           >
-            REGISTRIERT: {String(mentorData.length).padStart(2, "0")}
-          </div>
+            <Plus className="w-4 h-4" />
+            ADD_MENTOR
+          </button>
         </div>
 
         <motion.div
@@ -68,7 +108,7 @@ export default function MentorChangeView() {
           viewport={{ once: true }}
           className="grid gap-6 grid-cols-1 xl:grid-cols-2"
         >
-          {mentorData.map((mentor, index) => (
+          {rawMentorData.map((mentor, index) => (
             <motion.div
               key={mentor.uid || index}
               variants={{
@@ -90,6 +130,14 @@ export default function MentorChangeView() {
             </motion.div>
           ))}
         </motion.div>
+
+        <NewMentorDialog
+          open={isAddingMentor}
+          onOpenChange={setIsAddingMentor}
+          newMentor={newMentor}
+          onNewMentorChange={setNewMentor}
+          onCreate={handleAddMentor}
+        />
       </div>
     </div>
   );

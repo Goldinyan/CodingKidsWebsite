@@ -86,9 +86,18 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 
     if (!isInitialized.current) {
       isInitialized.current = true;
+      // Beim initialen Load: Daten für den aktuellen User/Role fetchen
+      if (user && userRole) {
+        fetchSingleTarget("mentors");
+        fetchSingleTarget("events");
+        fetchSingleTarget("courses");
+        fetchSingleTarget("announcements");
+        if (userRole === "admin") {
+          fetchSingleTarget("users");
+        }
+      }
       return; 
     }
-    // beim aller ersten nicht leeren
 
     console.log(
       `[DataContext] Dynamischer Rollenwechsel erkannt! Neuer State: ${userRole}. Cache wird geleert...`,
@@ -114,7 +123,16 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     setCourses([]);
     setUsers([]);
     setAnnouncements([]);
-  }, [userRole, authLoading]);
+
+    // Nach Rollenwechsel neu laden
+    fetchSingleTarget("mentors");
+    fetchSingleTarget("events");
+    fetchSingleTarget("courses");
+    fetchSingleTarget("announcements");
+    if (userRole === "admin") {
+      fetchSingleTarget("users");
+    }
+  }, [userRole, authLoading, user?.uid]);
 
   const fetchSingleTarget = async (
     target: "mentors" | "events" | "courses" | "announcements" | "users",
@@ -167,28 +185,18 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   };
 
   const getMentors = () => {
-    if (mentors.length === 0 && !isFetching.current["mentors"])
-      fetchSingleTarget("mentors");
     return mentors;
   };
   const getEvents = () => {
-    if (events.length === 0 && !isFetching.current["events"])
-      fetchSingleTarget("events");
     return events;
   };
   const getCourses = () => {
-    if (courses.length === 0 && !isFetching.current["courses"])
-      fetchSingleTarget("courses");
     return courses;
   };
   const getAnnouncements = () => {
-    if (announcements.length === 0 && !isFetching.current["announcements"])
-      fetchSingleTarget("announcements");
     return announcements;
   };
   const getUsers = () => {
-    if (users.length === 0 && !isFetching.current["users"])
-      fetchSingleTarget("users");
     return users;
   };
 

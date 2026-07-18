@@ -5,6 +5,13 @@ import type { AnnouncementData, UserRole, UserData } from "@/BackEnd/type";
 import { enforceRateLimit } from "./db";
 import { sendTriggerEmailToMultipleUsers } from "./emailTriggers";
 
+
+
+
+
+
+
+
 export async function getAllAnnouncements(
   userId: string = "anonymous",
   userRole: UserRole = "user",

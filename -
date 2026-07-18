@@ -1,0 +1,275 @@
+import { db } from "../firebase";
+import { collection, getDocs, deleteDoc, arrayUnion, doc, query, where } from "firebase/firestore";
+import { getDoc, setDoc, updateDoc } from "firebase/firestore";
+import type { AnnouncementData, UserRole, UserData } from "@/BackEnd/type";
+import { enforceRateLimit } from "./db";
+import { sendTriggerEmailToMultipleUsers } from "./emailTriggers";
+import type { TicketData, TicketMessage } from "@/BackEnd/type";
+
+
+
+
+
+
+// ── GET ALL TICKETS ─────────────────────────────────────────────────────────
+// Holt Tickets aus der DB. Staff/Admins sehen ALLES, normale User NUR IHRE EIGENEN.
+export async function getAllTickets(
+  userId: string = "anonymous",
+  userRole: UserRole = "user",
+): Promise<TicketData[]> {
+  try {
+    let q = collection(db, "tickets");
+
+    // Berechtigungs-Check: Wenn kein Staff/Admin, filtriere nach der userUid des Users
+    if (userRole !== "admin" && userRole !== "mentor" && userRole !== "staff") {
+      // @ts-ignore (Falls query/where Typen-Striktheit meckert)
+      q = query(collection(db, "tickets"), where("userUid", "==", userId));
+    }
+
+    const snapshot = await getDocs(q);
+    
+    return snapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        ...data,
+        uid: doc.id,
+        // Firebase Timestamps sauber in JS Date-Objekte umwandeln
+        createdAt: data.createdAt?.toDate ? data.createdAt.toDate() : data.createdAt,
+        updatedAt: data.updatedAt?.toDate ? data.updatedAt.toDate() : data.updatedAt,
+        closedAt: data.closedAt?.toDate ? data.closedAt.toDate() : data.closedAt,
+        // Sub-Arrays mappen, falls Timestamps darin enthalten sind
+        messages: data.messages?.map((m: any) => ({
+          ...m,
+          createdAt: m.createdAt?.toDate ? m.createdAt.toDate() : m.createdAt
+        })),
+        internalNotes: data.internalNotes?.map((n: any) => ({
+          ...n,
+          createdAt: n.createdAt?.toDate ? n.createdAt.toDate() : n.createdAt
+        }))
+      };
+    }) as TicketData[];
+  } catch (error) {
+    console.error("Error fetching tickets:", error);
+    throw error;
+  }
+}
+
+// ── GET SINGLE TICKET ───────────────────────────────────────────────────────
+// Holt ein einzelnes Ticket anhand seiner UID
+export async function getTicketById(
+  uid: string,
+  userId: string = "anonymous",
+  userRole: UserRole = "user"
+): Promise<TicketData | null> {
+  try {
+    const ref = doc(db, "tickets", uid);
+    const snapshot = await getDoc(ref);
+
+    if (!snapshot.exists()) return null;
+
+    const data = snapshot.data();
+    
+    // Sicherheits-Check: User darf kein fremdes Ticket einsehen, außer er ist Staff
+    if (data.userUid !== userId && !["admin", "mentor", "staff"].includes(userRole)) {
+      throw new Error("Unauthorized to view this ticket");
+    }
+
+    return {
+      ...data,
+      uid: snapshot.id,
+      createdAt: data.createdAt?.toDate ? data.createdAt.toDate() : data.createdAt,
+      updatedAt: data.updatedAt?.toDate ? data.updatedAt.toDate() : data.updatedAt,
+      closedAt: data.closedAt?.toDate ? data.closedAt.toDate() : data.closedAt,
+      messages: data.messages?.map((m: any) => ({
+        ...m,
+        createdAt: m.createdAt?.toDate ? m.createdAt.toDate() : m.createdAt
+      })),
+      internalNotes: data.internalNotes?.map((n: any) => ({
+        ...n,
+        createdAt: n.createdAt?.toDate ? n.createdAt.toDate() : n.createdAt
+      }))
+    } as TicketData;
+  } catch (error) {
+    console.error("Error fetching single ticket:", error);
+    throw error;
+  }
+}
+
+// ── CREATE / ADD TICKET ─────────────────────────────────────────────────────
+// Erstellt ein brandneues Ticket und benachrichtigt optional das Staff-Team per Mail
+export async function addTicket(
+  newTicket: Omit<TicketData, "uid" | "createdAt" | "updatedAt" | "messages" | "internalNotes">,
+  userId: string = "anonymous",
+  userRole: UserRole = "user",
+) {
+  enforceRateLimit("addTicket", userId, userRole);
+
+  try {
+    const ticketUid = new Date().toISOString() + "_" + Math.random().toString(36).substr(2, 9);
+    const now = new Date();
+
+    await setDoc(doc(db, "tickets", ticketUid), {
+      ticketNumber: newTicket.ticketNumber,
+      userUid: newTicket.userUid,
+      userName: newTicket.userName,
+      userEmail: newTicket.userEmail,
+      subject: newTicket.subject,
+      description: newTicket.description,
+      category: newTicket.category,
+      priority: newTicket.priority,
+      status: "new", // Standardmäßig immer "new" beim Erstellen
+      createdAt: now,
+      updatedAt: now,
+      messages: [],
+      internalNotes: []
+    });
+
+    // Optional: Alle Admins/Staff laden, um sie über das neue Ticket zu informieren
+    const usersSnapshot = await getDocs(collection(db, "users"));
+    const staffUsers: UserData[] = usersSnapshot.docs
+      .map((doc) => doc.data() as UserData)
+      .filter((user) => ["admin", "mentor", "staff"].includes(user.role));
+
+    if (staffUsers.length > 0) {
+      await sendTriggerEmailToMultipleUsers("new_ticket_alert", staffUsers, {
+        ticketNumber: newTicket.ticketNumber,
+        ticketSubject: newTicket.subject,
+        ticketCustomer: newTicket.userName,
+      });
+    }
+
+    return ticketUid;
+  } catch (error) {
+    console.error("Error adding ticket:", error);
+    throw error;
+  }
+}
+
+// ── UPDATE TICKET ───────────────────────────────────────────────────────────
+// Generische Update-Funktion für Statuswechsel, Zuweisungen oder closedAt Timestamps
+export async function updateTicket(
+  uid: string,
+  updates: Partial<Omit<TicketData, "messages" | "internalNotes">>,
+  userId: string = "anonymous",
+  userRole: UserRole = "user",
+) {
+  enforceRateLimit("updateTicket", userId, userRole);
+
+  try {
+    const ref = doc(db, "tickets", uid);
+    
+    // Automatisch das globale 'updatedAt' Feld bei jeder Änderung mitgeben
+    const finalUpdates = {
+      ...updates,
+      updatedAt: new Date()
+    };
+
+    await updateDoc(ref, finalUpdates);
+  } catch (error) {
+    console.error("Error updating ticket:", error);
+    throw error;
+  }
+}
+
+// ── ADD MESSAGE TO TICKET ───────────────────────────────────────────────────
+// Pusht eine neue Nachricht (Chatverlauf) in das Ticket
+export async function addMessageToTicket(
+  ticketUid: string,
+  messageText: string,
+  sender: { uid: string; name: string; role: "customer" | "staff" },
+  userId: string = "anonymous",
+  userRole: UserRole = "user"
+) {
+  enforceRateLimit("addMessageToTicket", userId, userRole);
+
+  try {
+    const ref = doc(db, "tickets", ticketUid);
+    const messageUid = new Date().toISOString() + "_" + Math.random().toString(36).substr(2, 5);
+    
+    const newMessage: TicketMessage = {
+      uid: messageUid,
+      senderUid: sender.uid,
+      senderName: sender.name,
+      senderRole: sender.role,
+      message: messageText,
+      createdAt: new Date() as any // Firebase konvertiert das automatisch in ein Timestamp
+    };
+
+    // Ermittle den neuen Status basierend darauf, wer antwortet
+    const nextStatus = sender.role === "staff" ? "pending_customer" : "pending_staff";
+
+    await updateDoc(ref, {
+      messages: arrayUnion(newMessage),
+      status: nextStatus,
+      updatedAt: new Date()
+    });
+  } catch (error) {
+    console.error("Error adding message to ticket:", error);
+    throw error;
+  }
+}
+
+// ── ADD INTERNAL NOTE ───────────────────────────────────────────────────────
+// Pusht eine interne Notiz in das Ticket (nur für Staff sichtbar)
+export async function addInternalNoteToTicket(
+  ticketUid: string,
+  noteText: string,
+  sender: { uid: string; name: string },
+  userId: string = "anonymous",
+  userRole: UserRole = "user"
+) {
+  // Sicherheits-Check: Nur Staff-Rollen dürfen interne Notizen anlegen
+  if (!["admin", "mentor", "staff"].includes(userRole)) {
+    throw new Error("Unauthorized to add internal notes");
+  }
+
+  enforceRateLimit("addInternalNote", userId, userRole);
+
+  try {
+    const ref = doc(db, "tickets", ticketUid);
+    const noteUid = new Date().toISOString() + "_" + Math.random().toString(36).substr(2, 5);
+
+    const newNote: TicketMessage = {
+      uid: noteUid,
+      senderUid: sender.uid,
+      senderName: sender.name,
+      senderRole: "staff", // Interne Notizen kommen immer vom Staff
+      message: noteText,
+      createdAt: new Date() as any
+    };
+
+    await updateDoc(ref, {
+      internalNotes: arrayUnion(newNote),
+      updatedAt: new Date()
+    });
+  } catch (error) {
+    console.error("Error adding internal note:", error);
+    throw error;
+  }
+}
+
+// ── DELETE TICKET ───────────────────────────────────────────────────────────
+// Löscht ein Ticket vollständig aus der Datenbank
+export async function deleteTicket(
+  uid: string,
+  userId: string = "anonymous",
+  userRole: UserRole = "user",
+) {
+  enforceRateLimit("deleteTicket", userId, userRole);
+
+  try {
+    const ref = doc(db, "tickets", uid);
+    const ticketSnapshot = await getDoc(ref);
+
+    if (!ticketSnapshot.exists()) {
+      console.log("No ticket found to delete");
+      return;
+    }
+
+    await deleteDoc(ref);
+    console.log("Ticket successfully deleted");
+  } catch (error) {
+    console.error("Error deleting ticket:", error);
+    throw error;
+  }
+}

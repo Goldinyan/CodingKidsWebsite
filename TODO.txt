@@ -1,4 +1,24 @@
 ## Todos
 
-[ ] - logs zu usern falls die was ändern oder so
 
+[ ] - Auto Preset erstellen dynamic db
+[ ] - Für unangemeldete auch announcements auf startseite
+[ ] - in announcements sollen angemeldete den admins direkt schreibe können
+[ ] - generell announcement auf mit account durch setting auf startseite
+
+
+
+[ ] - Anmeldung bestärigung, mit link für direkte Abmeldung
+[ ] - warteschlange notification nicht deaktivieren also generell als setting entfernen auch mit link für netfernung
+[ ] - Wenn Event gelöscht wird dann email mit grundangabe
+[ ] - generell anzeige von announcements in der navbar sind buggy
+[ ] - Wenn ein event als maXusers 0 hat ist 20 keine ahnung 
+
+
+
+### Erledigt:
+
+
+[ ] - addMentor button für die Mentoren
+[ ] - nicht zu früh sonder anmeldung ab x y 
+[ ] - Start Uhrzeit bei Event Creation Einstellen möglich

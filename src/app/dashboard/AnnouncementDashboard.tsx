@@ -12,9 +12,7 @@ import { motion } from "framer-motion";
 import { useTheme } from "@/context/ThemeContext";
 import { useAuth } from "@/context/AuthContext";
 import { Timestamp } from "firebase/firestore";
-import { getAuthorName } from "./announcements/getAuthor";
 import {
-  useAdmins,
   useAnnouncementsData,
   useFilteredAnnouncements,
   useUserIsAdmin,

@@ -10,17 +10,14 @@ import {
 } from "@/components/ui/dialog";
 import { Plus, X } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
-import { UserRole } from "@/BackEnd/type";
+import { USER_ROLES_ARRAY, UserRole } from "@/BackEnd/type";
+import { clear } from "console";
 
 export function NewAnnouncementDialog(props: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  value: { title: string; content: string; tag: UserRole};
-  onChange: (next: {
-    title: string;
-    content: string;
-    tag: UserRole;
-  }) => void;
+  value: { title: string; content: string; tag: UserRole };
+  onChange: (next: { title: string; content: string; tag: UserRole }) => void;
   onCreate: () => void;
 }) {
   const { open, onOpenChange, value, onChange, onCreate } = props;
@@ -85,26 +82,22 @@ export function NewAnnouncementDialog(props: {
                   : "bg-slate-50 border-slate-200 text-slate-900"
                 }`}
             >
-              <option
-                value="User"
-                className={
-                  isDark ? "bg-zinc-950 text-white" : "bg-white text-slate-900"
-                }
-              >
-                USER
-              </option>
-              <option
-                value="Member"
-                className={
-                  isDark ? "bg-zinc-950 text-white" : "bg-white text-slate-900"
-                }
-              >
-                MEMBER
-              </option>
+              {USER_ROLES_ARRAY.map((role) => (
+                <option
+                  key={role}
+                  value={role}
+                  className={
+                    isDark
+                      ? "bg-zinc-950 text-white"
+                      : "bg-white text-slate-900"
+                  }
+                >
+                  {role.toUpperCase()}
+                </option>
+              ))}
             </select>
           </div>
 
-          {/* INHALT TEXTAREA */}
           <div>
             <label
               className={`block text-[10px] tracking-wider uppercase mb-1.5 ${isDark ? "text-zinc-500" : "text-slate-400"}`}

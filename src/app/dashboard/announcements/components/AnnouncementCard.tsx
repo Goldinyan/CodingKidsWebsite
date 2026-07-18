@@ -30,7 +30,6 @@ export function AnnouncementCard(props: {
         }`}
     >
       <div className="mb-5">
-        {/* METADATEN-ZEILE */}
         <div
           className={`font-['JetBrains_Mono'] text-[10px] tracking-wider uppercase mb-2 flex items-center justify-between ${isDark ? "text-zinc-500" : "text-slate-400"
             }`}
@@ -46,7 +45,6 @@ export function AnnouncementCard(props: {
           </span>
         </div>
 
-        {/* TITEL */}
         <h3
           className={`text-xl font-black font-['Familjen_Grotesk'] tracking-tight uppercase mb-3 ${isDark ? "text-white" : "text-slate-900"
             }`}
@@ -54,7 +52,6 @@ export function AnnouncementCard(props: {
           {announcement.title}
         </h3>
 
-        {/* INHALT */}
         <p
           className={`text-xs font-['JetBrains_Mono'] leading-relaxed mb-4 whitespace-pre-wrap ${isDark ? "text-zinc-300" : "text-slate-600"
             }`}
