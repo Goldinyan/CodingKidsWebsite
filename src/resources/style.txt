@@ -1,0 +1,553 @@
+╔════════════════════════════════════════════════════════════════════════════════╗
+║                     CODINGKIDS WEBSITE - DESIGN SYSTEM                        ║
+║                         Implementierungs-Dokumentation                        ║
+║                           Production v2.0 - 2026                              ║
+╚════════════════════════════════════════════════════════════════════════════════╝
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. ARCHITEKTUR & STRUKTUR
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+LAYOUT HIERARCHY:
+├─ ClientLayout.tsx (Root Wrapper)
+│  ├─ ThemeProvider (Dark/Light Mode Context)
+│  ├─ NavbarWrapper (Fixed Header)
+│  ├─ main (flex-1, flex-col, min-h-screen)
+│  ├─ FooterWrapper
+│  └─ UI Components (ThemeToggle, Toaster)
+│
+├─ MainView.tsx (HomePage Container)
+│  ├─ main-view-container (Custom Utility)
+│  ├─ max-w-7xl mx-auto (Content Container)
+│  └─ Children:
+│     ├─ TopView (Hero Section)
+│     ├─ MiddleView (Activities & Info)
+│     ├─ FeaturedEventsView
+│     ├─ FeaturedCoursesView
+│     ├─ GlobalAnnouncementsView
+│     └─ MentorsView
+│
+└─ AdminDashboard (MainOverlayAdminDashboard.tsx)
+   ├─ Fixed Header (48px)
+   ├─ Sidebar (Desktop) / Mobile Menu
+   ├─ Main Content Area (ml-50 on desktop)
+   └─ Scroll Spy Navigation
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2. COLOR PALETTE & IMPLEMENTATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+BRAND COLORS (Tailwind):
+├─ Primary Green:      bg-green-500/600/700  (#16a34a / #15803d / #166534)
+│  └─ Usage: CTAs, Primary Buttons, Icons, Highlights
+│
+├─ Purple:             #845EC2 (primaryOwn) & #7B028E (fourthOwn)
+│  └─ Usage: Secondary Actions, Hover States, Accents
+│
+└─ Dynamic Colors (MiddleView):
+   └─ Blue (#38bdf8), Orange (#fb923c) for activity cards
+
+LIGHT MODE (Default):
+├─ Background:          bg-white / bg-slate-50
+├─ Text:                text-slate-900 (primary) / text-slate-500 (secondary)
+├─ Borders:             border-slate-200 / border-slate-200/50
+├─ Cards:               bg-slate-100 / rgba(248, 250, 252, 0.7)
+└─ Hover:               hover:bg-slate-50 / hover:bg-slate-100
+
+DARK MODE (via .dark class):
+├─ Background:          bg-zinc-950 (#09090b) / bg-black
+├─ Text:                text-white (primary) / text-gray-400 (secondary)
+├─ Borders:             border-zinc-900 / border-white/[0.07]
+├─ Cards:               bg-zinc-900/20 / rgba(255,255,255,0.025)
+└─ Hover:               hover:bg-zinc-900 / hover:border-green-400/40
+
+GLASS CARD PATTERN (GlassCard.tsx):
+├─ Background:          rgba(248, 250, 252, 0.7) [Light]
+│                       rgba(255, 255, 255, 0.025) [Dark]
+├─ Border:              border-slate-200 [Light] / border-white/[0.07] [Dark]
+├─ Backdrop:            blur(12px)
+├─ Hover:               border-green-500/50 [Light] / border-green-400/40 [Dark]
+└─ Example: GlassCard className="p-6"
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+3. TYPOGRAPHY & TEXT STYLES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+FONT FAMILIES:
+├─ Primary (Headings):     font-gro (Familjen Grotesk)
+│  └─ Geometric, modern, clean sans-serif
+│  └─ Used for: h1, h2, section titles, bold text
+│
+├─ Body Text:              Tailwind default (system sans-serif)
+│  └─ Used for: paragraphs, descriptions
+│
+└─ Monospace:              font-['JetBrains_Mono'] or font-mono
+   └─ Used for: labels, tracking text, timestamps, uppercase labels
+   └─ Example: "text-[10px] font-mono uppercase tracking-widest"
+
+HEADING HIERARCHY (TopView.tsx):
+├─ H1:  text-4xl md:text-5xl font-black font-gro (Hero)
+│       tracking-medium leading-none
+│
+├─ H2:  text-lg/xl font-black font-gro (Section Headers)
+│       leading-snug
+│
+├─ H3:  text-2xl font-black font-gro (Card Titles)
+│
+└─ Labels: text-[10px] font-mono uppercase tracking-widest
+
+BODY TEXT HIERARCHY:
+├─ Primary:     text-base / text-[14px] font-thin/normal
+├─ Secondary:   text-sm / text-[12px] 
+├─ Tertiary:    text-[10px] uppercase mono tracking-widest
+└─ Muted:       text-gray-400/500 / text-slate-500/600
+
+TEXT WEIGHTS:
+├─ font-black:   900 (headings, strong emphasis)
+├─ font-bold:    700 (labels, important text)
+├─ font-medium:  500 (buttons, highlights)
+├─ font-normal:  400 (standard body)
+└─ font-thin:    100 (descriptions, secondary text)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+4. COMPONENT PATTERNS & STYLING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+A. GLASS CARD (Glassmorphism Effect)
+   File: src/app/homepage/components/GlassCard.tsx
+   
+   Props: children, className, style
+   
+   Styling Pattern:
+   ├─ Background:     rgba(248, 250, 252, 0.7) [Light]
+   │                  rgba(255, 255, 255, 0.025) [Dark]
+   ├─ Backdrop:       blur(12px)
+   ├─ Border:         border-slate-200 [Light] / border-white/[0.07] [Dark]
+   ├─ Border Radius:  rounded-2xl (if isRounded=true) / rounded-none
+   ├─ Hover:          border-green-500/50 [Light] / border-green-400/40 [Dark]
+   └─ Transition:     transition-all duration-300
+   
+   Usage Example:
+   ```tsx
+   <GlassCard className="p-6 cursor-pointer h-full">
+     <div>Content</div>
+   </GlassCard>
+   ```
+
+B. BUTTONS (Styled with Tailwind)
+   
+   Primary Button (Green CTA):
+   ├─ Light Mode:    bg-green-600 text-white hover:bg-green-700
+   ├─ Dark Mode:     bg-green-500 text-black hover:bg-green-400
+   ├─ Padding:       px-4 py-2
+   ├─ Font:          font-medium text-xs
+   ├─ Border:        border-green-600/500
+   ├─ Radius:        rounded-lg (if isRounded) / rounded-none
+   ├─ Animation:     whileHover={{ scale: 1.03, y: -1 }} [Framer Motion]
+   └─ Transition:    transition-colors duration-300
+   
+   Secondary Button (Ghost):
+   ├─ Light Mode:    bg-white border-slate-200 hover:bg-slate-50
+   ├─ Dark Mode:     bg-black border-white/10 hover:bg-white/5
+   ├─ Padding:       px-4 py-2
+   ├─ Font:          font-thin text-xs
+   └─ Transition:    transition-colors duration-300
+
+C. ICON BOXES (Dynamic Color from Data)
+   
+   Pattern (from MiddleView.tsx):
+   ```tsx
+   <div
+     className="w-10 h-10 flex items-center justify-center rounded-xl"
+     style={{
+       background: `${color}15`,    // Color with 15% opacity
+       border: `1px solid ${color}30` // Color with 30% opacity
+     }}
+   >
+     <Icon className="w-5 h-5" style={{ color }} />
+   </div>
+   ```
+   
+   Example Colors:
+   ├─ Green:    #4ade80 for programming
+   ├─ Purple:   #a78bfa for games
+   ├─ Blue:     #38bdf8 for websites
+   └─ Orange:   #fb923c for hardware
+
+D. SECTION HEADERS
+   
+   Component: SectionHeading / SectionLabel
+   
+   SectionLabel:
+   ├─ Font:    text-[10px] font-mono uppercase tracking-widest
+   ├─ Color:   text-green-500/400 (accent color)
+   └─ Margin:  mb-2/3
+   
+   SectionHeading:
+   ├─ Font:    text-lg/xl font-black font-gro
+   ├─ Color:   text-slate-900 [Light] / text-white [Dark]
+   └─ Margin:  mb-8/10
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+5. RESPONSIVE DESIGN & BREAKPOINTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+TAILWIND BREAKPOINTS IN USE:
+├─ sm:  640px   (small tablets)
+├─ md:  768px   (tablets)
+├─ lg:  1024px  (desktops)
+├─ xl:  1280px  (wide desktops)
+└─ xxl: 1380px  (ultra-wide)
+
+COMMON RESPONSIVE PATTERNS:
+
+Grid Layouts:
+├─ grid-cols-1 sm:grid-cols-2 lg:grid-cols-4
+├─ grid-cols-1 lg:grid-cols-2
+└─ grid-cols-1 md:grid-cols-2 gap-4
+
+Flex Layouts:
+├─ flex-col sm:flex-row (responsive direction)
+├─ flex-col md:items-center (responsive alignment)
+└─ w-full sm:w-auto (responsive width)
+
+Typography:
+├─ text-3xl sm:text-4xl md:text-5xl (responsive font sizes)
+└─ text-xs md:text-sm lg:text-base
+
+Spacing:
+├─ px-4 sm:px-6 md:px-8 (responsive padding)
+└─ gap-3 sm:gap-4 md:gap-6 (responsive gaps)
+
+DESKTOP MENU VISIBILITY:
+├─ {!isDesktop && open && ( ... )} = Mobile menu (below 960px)
+├─ {isDesktop && ( ... )} = Desktop sidebar (960px+)
+└─ Breakpoint: 960px (lg:)
+
+EXAMPLE (MiddleView.tsx):
+```tsx
+<div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+  {activities.map(activity => <GlassCard key={...} />)}
+</div>
+```
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+6. THEME CONTEXT & DARK MODE (from ThemeContext)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+USAGE IN COMPONENTS:
+
+```tsx
+const { theme, isRounded } = useTheme();
+const isDark = theme === "dark";
+const buttonRadius = isRounded ? "rounded-[8px]" : "rounded-none";
+```
+
+CONDITIONAL STYLING PATTERNS:
+
+Pattern 1 - Ternary Color:
+```tsx
+className={`text-base ${isDark ? "text-gray-400" : "text-slate-600"}`}
+```
+
+Pattern 2 - Full Color Classes:
+```tsx
+className={isDark
+  ? "bg-zinc-950 text-white"
+  : "bg-slate-50 text-slate-900"}
+```
+
+Pattern 3 - Border & Hover:
+```tsx
+className={`border transition-colors ${
+  isDark 
+    ? "border-zinc-900 hover:bg-zinc-900 text-zinc-400"
+    : "border-slate-200 hover:bg-slate-100 text-slate-700"
+}`}
+```
+
+Pattern 4 - Radius Conditional:
+```tsx
+className={isRounded ? "rounded-lg" : "rounded-none"}
+```
+
+DARK MODE COLORS (Common):
+├─ Background:    bg-zinc-950 / bg-black
+├─ Card BG:       bg-zinc-900 / rgba(255,255,255,0.025)
+├─ Text Primary:  text-white
+├─ Text Secondary: text-gray-400 / text-zinc-500
+├─ Borders:       border-zinc-900 / border-white/[0.07]
+├─ Accent Border: hover:border-green-400/40
+└─ Hover State:   hover:bg-zinc-900 / hover:bg-white/5
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+7. ANIMATION & MOTION (Framer Motion)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+COMMON ANIMATIONS (from TopView.tsx):
+
+Fade In + Y Movement:
+```tsx
+<motion.div
+  initial={{ opacity: 1, y: 12 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.6, ease: "easeOut" }}
+>
+  Content
+</motion.div>
+```
+
+Button Hover Scale (CTAs):
+```tsx
+<motion.button
+  whileHover={{ scale: 1.03, y: -1 }}
+  whileTap={{ scale: 0.9 }}
+  transition={{ type: "spring", stiffness: 400, damping: 15 }}
+>
+  Button
+</motion.button>
+```
+
+Staggered Children (Grid):
+```tsx
+{items.map((item, i) => (
+  <motion.div
+    key={item.id}
+    initial={{ opacity: 0, y: 16 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ delay: i * 0.07, duration: 0.4 }}
+  >
+    Content
+  </motion.div>
+))}
+```
+
+ANIMATION TIMING:
+├─ Fast:  duration: 0.2s / 200ms (default transitions)
+├─ Normal: duration: 0.4-0.6s (component enters)
+├─ Slow:  duration: 0.8-1s (hero sections)
+└─ Stagger Delay: i * 0.07 (7ms per item)
+
+EASING FUNCTIONS:
+├─ easeOut (default for fades/slides)
+├─ spring (bouncy, for interactive elements)
+├─ linear (progress bars, loaders)
+└─ easeInOut (UI transitions)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+8. LAYOUT STRUCTURE & CONTAINERS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+MAIN CONTAINER (MainView.tsx):
+```tsx
+<div className="w-full min-h-screen relative main-view-container">
+  <div className="relative max-w-7xl flex flex-col mx-auto z-10">
+    {/* Children components */}
+  </div>
+</div>
+```
+
+Key Classes:
+├─ w-full: Full viewport width
+├─ min-h-screen: At least full screen height
+├─ relative: Positioning context for z-index
+├─ main-view-container: Custom utility (padding-top: 5rem)
+├─ max-w-7xl: Maximum content width (80rem / 1280px)
+├─ mx-auto: Center horizontally
+├─ z-10: Above grid patterns (z-0)
+└─ relative: Position relative for z-index stacking
+
+SECTION CONTAINERS:
+```tsx
+<div className="px-4">
+  <div className="flex flex-col md:flex-row justify-between gap-4 mb-10">
+    {/* Section header */}
+  </div>
+  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+    {/* Grid items */}
+  </div>
+</div>
+```
+
+Key Patterns:
+├─ px-4: Horizontal padding on mobile
+├─ mb-10/mb-14/mb-20: Section spacing
+├─ gap-4/gap-6: Grid/flex gap
+└─ py-14/py-20: Vertical section padding
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+9. ADMIN DASHBOARD STYLING (MainOverlayAdminDashboard.tsx)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+MAIN CONTAINER:
+```tsx
+<div className={`flex flex-col min-h-screen transition-colors duration-200 ${
+  isDark ? "bg-zinc-950 text-white" : "bg-slate-50 text-slate-900"
+}`}>
+```
+
+HEADER (Fixed):
+├─ Position:    fixed top-0 left-0
+├─ Height:      h-12 (48px)
+├─ Z-Index:     z-50 (above content)
+├─ Background:  bg-zinc-950/80 [Dark] / bg-white/80 [Light]
+├─ Blur:        backdrop-blur-xl
+├─ Border:      border-b border-zinc-900/slate-200
+└─ Display:     flex justify-between items-center h-full px-5
+
+LOGO SECTION:
+├─ Font:        font-black tracking-tight text-xs uppercase
+├─ Primary:     "CODING KIDS" in white/slate-900
+├─ Secondary:   "NIEDERRHEIN" in zinc-500
+└─ Cursor:      cursor-pointer select-none
+
+SIDEBAR (Desktop):
+├─ Width:       w-50 (fixed 200px)
+├─ Position:    fixed h-[calc(100vh-3rem)]
+├─ Border:      border-r border-slate-200/zinc-900
+├─ Padding:     p-3 with pt-8
+├─ Font:        font-['JetBrains_Mono']
+├─ Background:  bg-white [Light] / bg-zinc-950 [Dark]
+└─ Content:     
+   ├─ "NAVIGATION" label (uppercase, small, gray)
+   ├─ Section nav items (clickable)
+   ├─ Divider (border-t)
+   └─ "AUTH" links (Profile, Home)
+
+MOBILE MENU (Overlay, below 960px):
+├─ Position:    fixed inset-0 top-12 z-40
+├─ Background:  bg-slate-50 [Light] / bg-zinc-950 [Dark]
+├─ Padding:     p-4
+├─ Max Width:   max-w-md mx-auto
+├─ Content:     Same as desktop but stacked vertically
+└─ Trigger:     Menu button (X/hamburger icon)
+
+SECTION CARD BUTTON:
+```tsx
+<button className={`w-full px-4 py-2 border flex items-center gap-3 
+  text-[11px] font-bold uppercase tracking-wider ${buttonRadius}
+  ${isDark
+    ? "border-zinc-900 text-zinc-400 hover:bg-zinc-900"
+    : "border-slate-200 text-slate-700 hover:bg-slate-50"
+  }`}>
+  <div className={`p-1.5 ${iconRadius} ...`}>
+    <Icon className="w-3.5 h-3.5" />
+  </div>
+  {link.label}
+</button>
+```
+
+CONTENT AREA:
+├─ Position:    flex-1 w-full ml-50 [desktop] / ml-0 [mobile]
+├─ Margin:      -mt-30 (pulled up by header overlap)
+└─ Responsive:  Changes ml based on isDesktop
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+10. DESIGN TOKENS & CSS VARIABLES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CUSTOM CSS VARIABLES (globals.css):
+
+Brand Colors:
+├─ --color-accent-primary:    #0b6f12 (Green)
+├─ --color-accent-secondary:  #7b028e (Purple)
+├─ --color-primaryOwn:        #845ec2 (Purple)
+├─ --color-secondaryOwn:      #0b6f12 (Green)
+└─ --color-thirdOwn:          #428f47 (Green alt)
+
+Background Colors:
+├─ --color-base-white:        #f8f8f8
+├─ --color-otherbg:           #f8f9fa
+├─ --color-lightPinkBg:       #f2e5f3
+├─ --color-lightGreenBg:      #e6f0e7
+└─ --color-lightRedBg:        #fdecec
+
+Border/Text Colors:
+├─ --color-lightborder:       #eaebef
+├─ --color-graytext:          #686868
+└─ --color-gray2text:         #9a9a9a
+
+Spacing/Sizing:
+├─ --text-xxs:                0.650rem (10.4px)
+├─ --radius:                  0.65rem (10.4px base)
+└─ --radius-sm/md/lg/xl:      Calculated variants
+
+DYNAMIC INLINE STYLES:
+
+Icon Box Colors (MiddleView):
+```tsx
+style={{
+  background: `${color}15`,    // 15% opacity
+  border: `1px solid ${color}30` // 30% opacity
+}}
+```
+
+Button Colors:
+```tsx
+style={{
+  "--hover-border": `${color}40`,
+  "--hover-bg": `${color}06`,
+} as React.CSSProperties}
+```
+
+Linear Gradients (Various):
+├─ Purple accent buttons
+├─ Green accent buttons
+└─ Color overlays on cards
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+10. TECHNOLOGY STACK
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+FRAMEWORK:
+└─ Next.js 16.2.7 (React 19.2.7)
+
+CSS FRAMEWORK:
+├─ Tailwind CSS 4 (utility-first CSS)
+├─ PostCSS for CSS transformation
+└─ Class Variance Authority (CVA) for component variants
+
+UI COMPONENTS:
+├─ Shadcn/UI (component library)
+├─ Radix UI (headless UI primitives)
+└─ Lucide React (icon library)
+
+ANIMATION:
+├─ Framer Motion 12.23.25
+└─ TW Animate CSS 1.4.0
+
+BUILD & PERFORMANCE:
+├─ Turbopack (fast builds)
+├─ TypeScript for type safety
+├─ Vercel Analytics
+└─ Vercel Speed Insights
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+11. DESIGN PRINCIPLES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✓ CLEAN & MODERN
+  └─ Minimal, white space-focused design
+  
+✓ ACCESSIBLE
+  └─ WCAG 2.1 compliant, keyboard navigation ready
+  
+✓ RESPONSIVE
+  └─ Mobile-first approach with 8 breakpoints
+  
+✓ SUSTAINABLE
+  └─ System-based design tokens prevent inconsistencies
+  
+✓ PERFORMANT
+  └─ Optimized CSS, smooth transitions, no bloat
+  
+✓ ADAPTABLE
+  └─ Dark mode support built-in from the ground up
+  
+✓ BRAND-ALIGNED
+  └─ Green (#0B6F12) + Purple (#845EC2) color scheme
+
+╔════════════════════════════════════════════════════════════════════════════════╗
+║                         Design System v1.0 - 2026                             ║
+║                  For questions or updates, refer to globals.css               ║
+╚════════════════════════════════════════════════════════════════════════════════╝

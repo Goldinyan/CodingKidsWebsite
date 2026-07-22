@@ -101,7 +101,7 @@ export async function addTicket(
       .filter((user) => ["admin", "mentor", "staff"].includes(user.role));
 
     if (staffUsers.length > 0) {
-      await sendTriggerEmailToMultipleUsers("new_ticket_alert", staffUsers, {
+      await sendTriggerEmailToMultipleUsers("newTicket", staffUsers, {
         ticketNumber: newTicket.ticketNumber,
         ticketSubject: newTicket.subject,
         ticketCustomer: newTicket.userName,
@@ -187,7 +187,7 @@ export async function addInternalNoteToTicket(
     throw new Error("Unauthorized to add internal notes");
   }
 
-  enforceRateLimit("addInternalNote", userId, userRole);
+  enforceRateLimit("addInternalNoteToTicket", userId, userRole);
 
   try {
     const ref = doc(db, "tickets", ticketUid);

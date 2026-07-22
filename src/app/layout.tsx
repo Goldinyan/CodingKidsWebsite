@@ -8,34 +8,34 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 
 const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  variable: "--font-jetbrains-mono",
-  display: "swap",
-  preload: false,
+	subsets: ["latin"],
+	variable: "--font-jetbrains-mono",
+	display: "swap",
+	preload: false,
 });
 
 const familjenGrotesk = Familjen_Grotesk({
-  subsets: ["latin"],
-  variable: "--font-familjen-grotesk", // CSS-Variable für das Theme
-  display: "swap",
-  preload: false,
+	subsets: ["latin"],
+	variable: "--font-familjen-grotesk", // CSS-Variable für das Theme
+	display: "swap",
+	preload: false,
 });
 
 export default function RootLayout({ children }: { children: ReactNode }) {
-  return (
-    <html
-      lang="de"
-      className={`${jetbrainsMono.variable} ${familjenGrotesk.variable}`}
-    >
-      <body className="overflow-x-hidden w-full">
-        <AuthProvider>
-          <DataProvider>
-            <ClientLayout>{children}</ClientLayout>
-          </DataProvider>
-        </AuthProvider>
-        <SpeedInsights />
-        <Analytics />
-      </body>
-    </html>
-  );
+	return (
+		<html
+			lang="de"
+			className={`${jetbrainsMono.variable} ${familjenGrotesk.variable}`}
+		>
+			<body className="overflow-x-hidden w-full">
+				<AuthProvider>
+					<DataProvider>
+						<ClientLayout>{children}</ClientLayout>
+					</DataProvider>
+				</AuthProvider>
+				{/*<SpeedInsights />
+				<Analytics />*/}
+			</body>
+		</html>
+	);
 }

@@ -33,6 +33,9 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 
+# sensitive resources (credentials, API keys)
+src/resources/credentials.txt
+
 # vercel
 .vercel
 

@@ -161,6 +161,55 @@ export const rateLimitConfig = {
     mentor: { maxRequests: 0, windowMs: 60000 },
     admin: { maxRequests: 10, windowMs: 60000 },
   },
+  getAllTickets: {
+    anonymous: { maxRequests: 0, windowMs: 60000 },
+    user: { maxRequests: 10, windowMs: 60000 },
+    member: { maxRequests: 10, windowMs: 60000 },
+    mentor: { maxRequests: 20, windowMs: 60000 },
+    admin: { maxRequests: 30, windowMs: 60000 },
+  },
+  getTicketById: {
+    anonymous: { maxRequests: 0, windowMs: 60000 },
+    user: { maxRequests: 10, windowMs: 60000 },
+    member: { maxRequests: 10, windowMs: 60000 },
+    mentor: { maxRequests: 20, windowMs: 60000 },
+    admin: { maxRequests: 30, windowMs: 60000 },
+  },
+  addTicket: {
+    anonymous: { maxRequests: 0, windowMs: 60000 },
+    user: { maxRequests: 5, windowMs: 60000 },
+    member: { maxRequests: 5, windowMs: 60000 },
+    mentor: { maxRequests: 10, windowMs: 60000 },
+    admin: { maxRequests: 10, windowMs: 60000 },
+  },
+  updateTicket: {
+    anonymous: { maxRequests: 0, windowMs: 60000 },
+    user: { maxRequests: 10, windowMs: 60000 },
+    member: { maxRequests: 10, windowMs: 60000 },
+    mentor: { maxRequests: 20, windowMs: 60000 },
+    admin: { maxRequests: 20, windowMs: 60000 },
+  },
+  addMessageToTicket: {
+    anonymous: { maxRequests: 0, windowMs: 60000 },
+    user: { maxRequests: 10, windowMs: 60000 },
+    member: { maxRequests: 10, windowMs: 60000 },
+    mentor: { maxRequests: 20, windowMs: 60000 },
+    admin: { maxRequests: 20, windowMs: 60000 },
+  },
+  addInternalNoteToTicket: {
+    anonymous: { maxRequests: 0, windowMs: 60000 },
+    user: { maxRequests: 0, windowMs: 60000 },
+    member: { maxRequests: 0, windowMs: 60000 },
+    mentor: { maxRequests: 10, windowMs: 60000 },
+    admin: { maxRequests: 20, windowMs: 60000 },
+  },
+  deleteTicket: {
+    anonymous: { maxRequests: 0, windowMs: 60000 },
+    user: { maxRequests: 0, windowMs: 60000 },
+    member: { maxRequests: 0, windowMs: 60000 },
+    mentor: { maxRequests: 5, windowMs: 60000 },
+    admin: { maxRequests: 10, windowMs: 60000 },
+  },
 } as const;
 
 const store: RateLimitStore = {};

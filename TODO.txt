@@ -2,9 +2,6 @@
 
 
 [ ] - Auto Preset erstellen dynamic db
-[ ] - Für unangemeldete auch announcements auf startseite
-[ ] - in announcements sollen angemeldete den admins direkt schreibe können
-[ ] - generell announcement auf mit account durch setting auf startseite
 
 
 
@@ -19,6 +16,9 @@
 ### Erledigt:
 
 
+
+[ ] - in announcements sollen angemeldete den admins direkt schreibe können
+[ ] - Für unangemeldete auch announcements auf startseite
 [ ] - addMentor button für die Mentoren
 [ ] - nicht zu früh sonder anmeldung ab x y 
 [ ] - Start Uhrzeit bei Event Creation Einstellen möglich

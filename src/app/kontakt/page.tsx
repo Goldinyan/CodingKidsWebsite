@@ -2,7 +2,8 @@
 
 import { useAuth } from "@/context/AuthContext";
 import NoUserKontakt from "./NoUserKontakt";
-import AnnouncementView from "./AnnouncementView";
+import KontaktAdmin from "./KontaktAdmin";
+import AdminView from "./AdminView";
 import { useTheme } from "@/context/ThemeContext";
 
 export default function Home() {
@@ -27,14 +28,11 @@ export default function Home() {
 
   if (!user) return <NoUserKontakt />;
 
-  return (
-    <div
-      className={`min-h-screen transition-colors duration-300 ${theme === "dark" ? "bg-black" : "bg-white"
-        }`}
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {userData && <AnnouncementView data={userData} />}
-      </div>
-    </div>
-  );
+  // Show admin view for admins and mentors
+  if (userData?.role === "admin" || userData?.role === "mentor") {
+    return <AdminView />;
+  }
+
+  // Show user view for regular users, members
+  return <KontaktAdmin />;
 }

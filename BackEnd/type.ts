@@ -36,7 +36,8 @@ export type EmailTrigger =
   | "understaffedWarning"
   | "announcement"
   | "accountCreated"
-  | "accountDeleted";
+  | "accountDeleted"
+  | "newTicket";
 
 export type EmailTemplate = {
   triggerId: EmailTrigger;
@@ -72,20 +73,20 @@ export type Log =
   | (BaseLog & { type: "userJoined"; userName: string })
   | (BaseLog & { type: "userLeft"; userName: string; reason?: string })
   | (BaseLog & {
-    type: "userKicked";
-    userName: string;
-    reason?: string;
-    mentorName: string;
-  })
+      type: "userKicked";
+      userName: string;
+      reason?: string;
+      mentorName: string;
+    })
   | (BaseLog & { type: "mentorJoined"; mentorName: string })
   | (BaseLog & { type: "mentorLeft"; mentorName: string })
   | (BaseLog & { type: "eventDeleted"; userName: string })
   | (BaseLog & {
-    type: "eventChanged";
-    mentorName: string;
-    reason?: string;
-    changes: Record<string, { from: ChangeValue; to: ChangeValue }>;
-  });
+      type: "eventChanged";
+      mentorName: string;
+      reason?: string;
+      changes: Record<string, { from: ChangeValue; to: ChangeValue }>;
+    });
 
 export type EventData = {
   uid: string;
@@ -110,7 +111,9 @@ export type EventData = {
 export type EventDataPreset = Omit<
   EventData,
   "uid" | "users" | "queue" | "mentors" | "leftUsers" | "logs"
->;
+> & {
+  presetName: string;
+};
 
 export type AnnouncementData = {
   uid: string;
@@ -153,13 +156,12 @@ export type TicketData = {
   // MESSAGES
   messages?: TicketMessage[];
 
-
   internalNotes?: TicketMessage[]; // Only visible to staff
 };
 
 export type TicketMessage = {
   uid: string;
-  
+
   // SENDER
   senderUid: string;
   senderName: string;
@@ -167,7 +169,6 @@ export type TicketMessage = {
 
   // INAHLT
   message: string;
-
 
   createdAt: Timestamp;
 };
@@ -219,20 +220,20 @@ type BaseUserData = {
 
 export type UserData =
   | (BaseUserData & {
-    role: "admin";
-    children: string[];
-    settings: AdminSettings;
-  })
+      role: "admin";
+      children: string[];
+      settings: AdminSettings;
+    })
   | (BaseUserData & {
-    role: "mentor";
-    children: string[];
-    settings: StaffSettings;
-  })
+      role: "mentor";
+      children: string[];
+      settings: StaffSettings;
+    })
   | (BaseUserData & {
-    role: "anonymous" | "user" | "member";
-    children?: never;
-    settings: UserSettings;
-  });
+      role: "anonymous" | "user" | "member";
+      children?: never;
+      settings: UserSettings;
+    });
 
 // --------------------------------------
 
