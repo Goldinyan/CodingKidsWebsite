@@ -21,8 +21,10 @@ import {
 	Mentor,
 	CourseData,
 	UserData,
+	EventDataPreset
 } from "@/BackEnd/type";
 import { useNotificationToast } from "@/hooks/useNotificationToast";
+import { getAllEventPresets } from "@/lib/db/eventPresets";
 
 interface DataContextType {
 	loadingStates: {
@@ -31,14 +33,16 @@ interface DataContextType {
 		courses: boolean;
 		announcements: boolean;
 		users: boolean;
+		eventPresets: boolean;
 	};
 	getMentors: () => Mentor[];
 	getEvents: () => EventData[];
 	getCourses: () => CourseData[];
 	getAnnouncements: () => AnnouncementData[];
 	getUsers: () => UserData[];
+	getEventPresets: () => EventDataPreset[];
 	refreshData: (
-		type: "mentors" | "events" | "courses" | "announcements" | "users",
+		type: "mentors" | "events" | "courses" | "announcements" | "users" | "eventPresets",
 	) => Promise<void>;
 }
 
@@ -49,9 +53,10 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 
 	const [mentors, setMentors] = useState<Mentor[]>([]);
 	const [events, setEvents] = useState<EventData[]>([]);
-	const [users, setUsers] = useState<UserData[]>([]);
 	const [courses, setCourses] = useState<CourseData[]>([]);
 	const [announcements, setAnnouncements] = useState<AnnouncementData[]>([]);
+	const [users, setUsers] = useState<UserData[]>([]);
+	const [eventPresets, setEventPresets] = useState<EventDataPreset[]>([]);
 
 	const { showErrorToast } = useNotificationToast();
 
@@ -61,6 +66,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 		courses: false,
 		announcements: false,
 		users: false,
+		eventPresets: false
 	});
 
 	const fetchedKeys = useRef<Record<string, string>>({
@@ -69,6 +75,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 		courses: "",
 		announcements: "",
 		users: "",
+		eventPresets: ""
 	});
 
 	const isFetching = useRef<Record<string, boolean>>({
@@ -77,6 +84,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 		courses: false,
 		announcements: false,
 		users: false,
+		eventPresets: false
 	});
 
 	const isInitialized = useRef(false);
@@ -88,7 +96,6 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 			console.log(
 				`[DataContext] Initialer Load für User: ${user?.uid || "guest"} mit Rolle: ${userRole}`,
 			);
-			if (user) console.log(`[DataContext] User-Objekt:`, user);
 			if (!user) console.log(`[DataContext] Kein User angemeldet, als Gast laden`);
 
 			isInitialized.current = true;
@@ -102,6 +109,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 				fetchSingleTarget("announcements");
 				if (userRole === "admin") {
 					fetchSingleTarget("users");
+					fetchSingleTarget("eventsPresets")
 				}
 			}
 			return;
@@ -117,6 +125,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 			courses: "",
 			announcements: "",
 			users: "",
+			eventPresets: ""
 		};
 		isFetching.current = {
 			mentors: false,
@@ -124,6 +133,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 			courses: false,
 			announcements: false,
 			users: false,
+			eventPresets: false
 		};
 
 		setMentors([]);
@@ -131,6 +141,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 		setCourses([]);
 		setUsers([]);
 		setAnnouncements([]);
+		setEventPresets([]);
 
 		// Nach Rollenwechsel neu laden
 		fetchSingleTarget("mentors");
@@ -139,11 +150,12 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 		fetchSingleTarget("announcements");
 		if (userRole === "admin") {
 			fetchSingleTarget("users");
+			fetchSingleTarget("eventPresets")
 		}
 	}, [userRole, authLoading, user?.uid, user]);
 
 	const fetchSingleTarget = async (
-		target: "mentors" | "events" | "courses" | "announcements" | "users",
+		target: "mentors" | "events" | "courses" | "announcements" | "users" | "eventPresets",
 		force = false,
 	) => {
 		if (authLoading || (user && !userRole)) return;
@@ -167,7 +179,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 			try {
 				if (target === "mentors") {
 					const res = await getAllMentors(user?.uid, userRole);
-					setMentors(res.sort((a: any, b: any) => a.id - b.id));
+					setMentors(res.sort((a: Mentor, b: Mentor) => a.id - b.id));
 				} else if (target === "events") {
 					const res = (await getAllEvents(user?.uid, userRole)) as EventData[];
 					setEvents(res);
@@ -180,6 +192,9 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 				} else if (target === "users") {
 					const res = await getAllUsers(user?.uid, userRole);
 					setUsers(res);
+				} else if (target === "eventPresets") {
+					const res = await getAllEventPresets(user?.uid, userRole);
+					setEventPresets(res);
 				}
 			} catch (error) {
 				showErrorToast(`Fehler beim Laden von ${target}: ${error}`);
@@ -208,8 +223,12 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 		return users;
 	};
 
+	const getEventPresets = () => {
+		return eventPresets;
+	}
+
 	const refreshData = async (
-		target: "mentors" | "events" | "courses" | "announcements" | "users",
+		target: "mentors" | "events" | "courses" | "announcements" | "users" | "eventPresets",
 	) => {
 		await fetchSingleTarget(target, true);
 	};
@@ -223,6 +242,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 				getCourses,
 				getAnnouncements,
 				getUsers,
+				getEventPresets,
 				refreshData,
 			}}
 		>

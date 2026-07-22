@@ -13,6 +13,7 @@ import {
   arrayUnion,
   Timestamp,
 } from "firebase/firestore";
+
 import {
   EventData,
   EventStatus,
@@ -21,25 +22,24 @@ import {
 } from "@/BackEnd/type";
 import type { UserRole } from "@/BackEnd/type";
 import { enforceRateLimit } from "./db";
-import { getAllCourses, updateCourse } from "./courses";
 import {
   sendTriggerEmailToMultipleUsers,
   sendTriggerEmail,
 } from "./emailTriggers";
-import { getAllUsers } from ".";
+import { getUserData } from "./users";
 
-async function getUserData(userId: string) {
-  try {
-    const userRef = doc(db, "users", userId);
-    const userSnapshot = await getDoc(userRef);
-    if (userSnapshot.exists()) {
-      return userSnapshot.data();
-    }
-  } catch (error) {
-    console.error("Error fetching user data:", error);
-  }
-  return null;
-}
+// async function getUserData(userId: string) {
+//  try {
+//    const userRef = doc(db, "users", userId);
+//    const userSnapshot = await getDoc(userRef);
+//    if (userSnapshot.exists()) {
+//      return userSnapshot.data();
+//    }
+//  } catch (error) {
+//    console.error("Error fetching user data:", error);
+//  }
+//  return null;
+//}
 
 // EVENTS
 
@@ -65,6 +65,7 @@ export async function addEvent(
   newEvent: EventData,
   userId: string = "anonymous",
   userRole: UserRole = "user",
+  staffName: string,
   usersToSend: UserData[] = [],
 ) {
   enforceRateLimit("addEvent", userId, userRole);
@@ -82,13 +83,10 @@ export async function addEvent(
 
     const Id = date.toISOString() + "-" + newEvent.course;
 
-    const userData = await getUserData(userId);
-    const mentorName = userData?.name || userId;
-
     const initialLog: Log = {
       type: "eventChanged",
       date: Timestamp.now(),
-      mentorName,
+      mentorName: staffName,
       reason: "Event erstellt",
       changes: {
         name: { from: null, to: newEvent.name },
@@ -160,8 +158,6 @@ export async function deleteEvent(
       });
       console.log(`Event ${uid} aus Kurs ${courseId} entfernt.`);
     }
-
-
   } catch (error) {
     console.log("Error at deleting Event" + error);
     throw error;
@@ -223,6 +219,7 @@ export async function updateEvent(
 export async function addUserToEvent(
   eventId: string,
   userId: string,
+  userData: UserData,
   requesterId: string = "anonymous",
   requesterRole: UserRole = "user",
 ) {
@@ -237,7 +234,6 @@ export async function addUserToEvent(
     }
 
     const eventData = eventSnapshot.data();
-    const userData = (await getUserData(userId)) as UserData | null;
     const userName = userData?.name || userId;
 
     const isMentorOrAdmin =
@@ -341,6 +337,7 @@ export async function isUserInEvent(
 export async function removeUserFromEvent(
   eventId: string,
   userId: string,
+  userData: UserData,
   requesterId: string = "anonymous",
   requesterRole: UserRole = "user",
   reason?: string,
@@ -360,7 +357,6 @@ export async function removeUserFromEvent(
     const currentQueue: string[] = eventData.queue;
     const currentMentors: string[] = eventData.mentors || [];
 
-    const userData = (await getUserData(userId)) as UserData | null;
     const userName = userData?.name || userId;
 
     if (currentUsers.includes(userId)) {
