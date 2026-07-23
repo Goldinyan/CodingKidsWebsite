@@ -12,7 +12,7 @@ import {
 	updateEvent,
 } from "@/lib/db";
 import { type EventData, type UserData } from "@/BackEnd/type";
-import EventCreationDialog from "./components/EventCreationDialog";
+import EventCreationDialog from "./events/creation/EventCreationDialog";
 import type { EventTimeFilter } from "./events/constants";
 import { useNotificationToast } from "@/hooks/useNotificationToast";
 import { DeleteEventDialog, EventCard } from "./events/components";

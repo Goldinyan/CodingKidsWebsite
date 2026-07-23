@@ -52,6 +52,8 @@ interface DataContextType {
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
 
+const debug = true;
+
 export function DataProvider({ children }: { children: React.ReactNode }) {
 	const { user, userRole, loading: authLoading } = useAuth();
 
@@ -101,16 +103,15 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 		if (authLoading) return;
 
 		if (!isInitialized.current) {
-			console.log(
-				`[DataContext] Initialer Load für User: ${user?.uid || "guest"} mit Rolle: ${userRole}`,
-			);
-			if (!user) console.log(`[DataContext] Kein User angemeldet, als Gast laden`);
+
+			if (debug) {
+				console.log(`%c[${new Date().toLocaleTimeString("de-DE")}] %c[DATA CONTEXT] %cINITIAL LOAD %c| %cRole: ${userRole || "guest"} %c  %c %c`, "color: #6b7280;", "color: #eab308; font-weight: bold;", "color: #3b82f6; font-weight: bold;", "color: #4b5563;", "color: #8b5cf6; font-weight: bold;", "color: #4b5563;", "color: #10b981; font-weight: bold;", "color: #6b7280;");
+			}
 
 			isInitialized.current = true;
 
 			// changing from "user && userRole" to "userRole" mal gucken
 			if (userRole) {
-				console.log(`[DataContext] Fetching Data`);
 				fetchSingleTarget("mentors");
 				fetchSingleTarget("events");
 				fetchSingleTarget("courses");
@@ -126,9 +127,9 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 			return;
 		}
 
-		console.log(
-			`[DataContext] Dynamischer Rollenwechsel erkannt! Neuer State: ${userRole}. Cache wird geleert...`,
-		);
+		if (debug) {
+			console.log(`%c[${new Date().toLocaleTimeString("de-DE")}] %c[DATA CONTEXT] %cROLE CHANGE %c| %cNew Role: ${userRole || "guest"} %c| %cClearing Cache... %c`, "color: #6b7280;", "color: #f97316; font-weight: bold;", "color: #3b82f6; font-weight: bold;", "color: #4b5563;", "color: #8b5cf6; font-weight: bold;", "color: #4b5563;", "color: #ef4444; font-weight: bold;", "color: #6b7280;");
+		}
 
 		fetchedKeys.current = {
 			mentors: "",
@@ -187,6 +188,10 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 		// Synchron direkt blockieren, bevor irgendetwas asynchrones passiert
 		fetchedKeys.current[target] = currentKey;
 		isFetching.current[target] = true;
+
+		if (debug) {
+			logDataFetch(target, userRole || "anonymous", user?.uid);
+		}
 
 		setTimeout(async () => {
 			setLoadingStates((prev) => ({ ...prev, [target]: true }));
@@ -279,4 +284,32 @@ export function useAppData() {
 			"useAppData muss innerhalb eines DataProviders verwendet werden",
 		);
 	return context;
+}
+
+
+
+export function logDataFetch(
+	target: string,
+	userRole: string,
+	userId?: string,
+) {
+	const time = new Date().toLocaleTimeString("de-DE", {
+		hour: "2-digit",
+		minute: "2-digit",
+		second: "2-digit",
+	});
+
+	//	`%c[${time}] %c[DATA FETCH] %c${target.toUpperCase()} %c| %cRole: ${userRole} %c| %cUser: ${userId || "guest"} %c`
+
+	console.log(
+		`%c[${time}] %c[DATA FETCH] %c${target.toUpperCase()} %c| %cRole: ${userRole} %c %c %c`,
+		"color: #6b7280; font-weight: normal;",  // Zeitstempel (Grau)
+		"color: #06b6d4; font-weight: bold;",    // [DATA FETCH] (Cyan)
+		"color: #3b82f6; font-weight: bold;",    // Target (Blau)
+		"color: #4b5563;",                       // Trennstrich | (Dunkelgrau)
+		"color: #8b5cf6; font-weight: bold;",    // Role (Violett)
+		"color: #4b5563;",                       // Trennstrich | (Dunkelgrau)
+		"color: #10b981; font-weight: bold;",    // User ID (Grün)
+		"color: #6b7280; font-weight: bold;",    // Ende
+	);
 }

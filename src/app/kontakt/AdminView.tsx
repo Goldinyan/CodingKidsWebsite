@@ -6,7 +6,6 @@ import { useAuth } from "@/context/AuthContext";
 import type { TicketData } from "@/BackEnd/type";
 import TicketList from "./components/TicketList";
 import TicketDetail from "./components/TicketDetail";
-import AdminControls from "./components/AdminControls";
 import {
 	Loader,
 	Ticket,
