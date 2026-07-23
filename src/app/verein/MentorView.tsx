@@ -6,111 +6,111 @@ import { SimpleMentorCard } from "./mentor/SimpleMentorCard";
 import { useAppData } from "@/context/DataContext";
 
 export default function MentorenView({
-  theme,
-  isRounded,
+	theme,
+	isRounded,
 }: {
-  theme: Theme;
-  isRounded: boolean;
+	theme: Theme;
+	isRounded: boolean;
 }) {
-  const { getMentors, loadingStates } = useAppData();
+	const { getMentors, loadingStates } = useAppData();
 
-  const rawMentors = getMentors();
+	const rawMentors = getMentors();
 
-  if (loadingStates.mentors && rawMentors.length === 0) {
-    return (
-      <div className="p-10 font-mono text-xs uppercase animate-pulse">
-        Lade Mentoren-Matrix...
-      </div>
-    );
-  }
+	if (loadingStates.mentors && rawMentors.length === 0) {
+		return (
+			<div className="p-10 font-mono text-xs uppercase animate-pulse">
+				Lade Mentoren-Matrix...
+			</div>
+		);
+	}
 
-  const containerVariants = {
-    hidden: {},
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.04,
-      },
-    },
-  };
+	const containerVariants = {
+		hidden: {},
+		visible: {
+			opacity: 1,
+			transition: {
+				staggerChildren: 0.04,
+			},
+		},
+	};
 
-  const itemVariants = {
-    hidden: {
-      opacity: 0,
-      y: 15,
-    },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        type: "tween",
-        ease: "easeOut",
-        duration: 0.3,
-      },
-    },
-  };
+	const itemVariants = {
+		hidden: {
+			opacity: 0,
+			y: 15,
+		},
+		visible: {
+			opacity: 1,
+			y: 0,
+			transition: {
+				type: "tween",
+				ease: "easeOut",
+				duration: 0.3,
+			},
+		},
+	};
 
-  const radiusClass = isRounded ? "rounded-lg" : "rounded-none";
+	const radiusClass = isRounded ? "rounded-lg" : "rounded-none";
 
-  return (
-    <div className="w-full py-20 px-8 font-['DM_Sans']">
-      <div className="w-full flex flex-col items-start justify-center gap-12">
-        <div className="flex flex-col items-start text-left  max-w-4xl">
-          <span
-            className={`font-['JetBrains_Mono'] text-[10px] tracking-[0.22em] uppercase block mb-2 ${theme === "dark" ? "text-[#4ADE80]" : "text-green-600"
-              }`}
-          >
-            UNSER TEAM
-          </span>
+	return (
+		<div className="w-full py-20 px-4 font-['DM_Sans']">
+			<div className="w-full flex flex-col items-start justify-center gap-12">
+				<div className="flex flex-col items-start text-left  max-w-4xl">
+					<span
+						className={`font-['JetBrains_Mono'] text-[10px] tracking-[0.22em] uppercase block mb-2 ${theme === "dark" ? "text-[#4ADE80]" : "text-green-600"
+							}`}
+					>
+						UNSER TEAM
+					</span>
 
-          <h2
-            className={`text-3xl md:text-4xl font-black font-['Familjen_Grotesk'] tracking-tight leading-none uppercase mb-6 ${theme === "dark" ? "text-white" : "text-slate-900"
-              }`}
-          >
-            Lernen Sie die Menschen hinter der Mission kennen
-          </h2>
-          <p
-            className={`text-sm md:text-md font-normal leading-relaxed ${theme === "dark" ? "text-zinc-400" : "text-slate-600"
-              }`}
-          >
-            Unser Team ist eine engagierte Gruppe von Entwicklern und
-            Freiwilligen, die sich leidenschaftlich dafür einsetzen, die nächste
-            Generation von Entwicklern zu formen und zu begleiten.
-          </p>
-        </div>
+					<h2
+						className={`text-3xl md:text-4xl font-black font-['Familjen_Grotesk'] tracking-tight leading-none uppercase mb-6 ${theme === "dark" ? "text-white" : "text-slate-900"
+							}`}
+					>
+						Lernen Sie die Menschen hinter der Mission kennen
+					</h2>
+					<p
+						className={`text-sm md:text-md font-normal leading-relaxed ${theme === "dark" ? "text-zinc-400" : "text-slate-600"
+							}`}
+					>
+						Unser Team ist eine engagierte Gruppe von Entwicklern und
+						Freiwilligen, die sich leidenschaftlich dafür einsetzen, die nächste
+						Generation von Entwicklern zu formen und zu begleiten.
+					</p>
+				</div>
 
-        <section id="mentor" className="mx-auto w-full">
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "0px 0px -10px 0px" }}
-            className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6"
-          >
-            {rawMentors.map((mentor) => (
-              <motion.div
-                key={mentor.uid}
-                variants={itemVariants as Variants}
-                layout="position"
-              >
-                <SimpleMentorCard
-                  props={{
-                    uid: mentor.uid,
-                    id: mentor.id,
-                    name: mentor.name,
-                    role: mentor.role,
-                    des: mentor.des,
-                    insta: mentor.insta,
-                    github: mentor.github,
-                    linkedin: mentor.linkedin,
-                    pic: mentor.pic,
-                  }}
-                />
-              </motion.div>
-            ))}
-          </motion.div>
-        </section>
-        {/*
+				<section id="mentor" className="mx-auto w-full">
+					<motion.div
+						variants={containerVariants}
+						initial="hidden"
+						whileInView="visible"
+						viewport={{ once: true, margin: "0px 0px -10px 0px" }}
+						className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6"
+					>
+						{rawMentors.map((mentor) => (
+							<motion.div
+								key={mentor.uid}
+								variants={itemVariants as Variants}
+								layout="position"
+							>
+								<SimpleMentorCard
+									props={{
+										uid: mentor.uid,
+										id: mentor.id,
+										name: mentor.name,
+										role: mentor.role,
+										des: mentor.des,
+										insta: mentor.insta,
+										github: mentor.github,
+										linkedin: mentor.linkedin,
+										pic: mentor.pic,
+									}}
+								/>
+							</motion.div>
+						))}
+					</motion.div>
+				</section>
+				{/*
         {mentorData.length > 3 && (
           <div className="pt-4 w-full flex items-center justify-center">
             <motion.button
@@ -130,7 +130,7 @@ export default function MentorenView({
             </motion.button>
           </div>
         )} */}
-      </div>
-    </div>
-  );
+			</div>
+		</div>
+	);
 }

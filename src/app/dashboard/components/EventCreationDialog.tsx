@@ -3,6 +3,7 @@
 import { Timestamp } from "firebase/firestore";
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
+import { toJsDate } from "@/BackEnd/utils";
 import { addEvent } from "@/lib/db";
 import { Difficulties, EventDataPreset, type CourseData, type EventData } from "@/BackEnd/type";
 import { Input } from "@/components/ui/input";
@@ -15,17 +16,19 @@ import {
 	Check,
 	AlertCircle,
 	Sparkles,
+	Bookmark,
+	X,
 } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
 import { useNotificationToast } from "@/hooks/useNotificationToast";
 import { useAppData } from "@/context/DataContext";
-import { addEventPreset } from "@/lib/db/eventPresets";
+import { addEventPreset, deleteEventPreset } from "@/lib/db/eventPresets";
 
 const defaultEvent: EventData = {
 	name: "",
 	uid: "",
-	course: "Scratch",
-	date: Timestamp.fromDate(new Date()),
+	course: "CoderDojo",
+	date: Timestamp.fromDate(new Date(new Date().setHours(18, 0, 0, 0))),
 	length: 0,
 	memberCount: 0,
 	place: ["", "", ""],
@@ -34,24 +37,10 @@ const defaultEvent: EventData = {
 	mentors: [],
 	leftUsers: [],
 	tags: "",
-	difficulty: Difficulties.Einsteiger,
+	difficulty: Difficulties.Alle,
 	requirements: "",
 	description: "",
 };
-
-
-
-
-
-function getNextWednesday(): Date {
-	const today = new Date();
-	const dayOfWeek = today.getDay();
-	const daysUntilWednesday = (3 - dayOfWeek + 7) % 7 || 7;
-	const nextWednesday = new Date(today);
-	nextWednesday.setDate(today.getDate() + daysUntilWednesday);
-	nextWednesday.setHours(18, 0, 0, 0);
-	return nextWednesday;
-}
 
 export default function EventCreationDialog(props: {
 	open: boolean;
@@ -64,12 +53,18 @@ export default function EventCreationDialog(props: {
 	const { user, userRole, userData } = useAuth();
 	const { open, onOpenChange, onCreated, courses, events, eventPresets } = props;
 	const { theme, isRounded } = useTheme();
-	const { showErrorToast } = useNotificationToast();
+	const { showErrorToast, showSuccessToast } = useNotificationToast();
 
 	const [currentStep, setCurrentStep] = useState(0);
 	const [EventInfo, setEventInfo] = useState<EventData>(defaultEvent);
 	const [error, setError] = useState<string>("");
 	const [isCreating, setIsCreating] = useState(false);
+
+	// Custom Preset-Modal States
+	const [activePreset, setActivePreset] = useState<string>("");
+	const [isPresetModalOpen, setIsPresetModalOpen] = useState(false);
+	const [presetNameInput, setPresetNameInput] = useState("");
+	const [isSavingPreset, setIsSavingPreset] = useState(false);
 
 	const { refreshData, getUsers } = useAppData();
 	const users = getUsers();
@@ -148,32 +143,58 @@ export default function EventCreationDialog(props: {
 		}
 	};
 
+	const openPresetModal = () => {
+		if (!EventInfo.name.trim()) {
+			setError("Bitte gib mindestens einen Event-Namen ein, bevor du ein Preset erstellst.");
+			return;
+		}
+		// Standardmäßig den Eventnamen als Presetnamen vorschlagen
+		setPresetNameInput(EventInfo.name);
+		setIsPresetModalOpen(true);
+	};
 
-	const saveCurrentEventAsPreset = async (event: EventData) => {
-		const presetName = prompt("Geben Sie einen Namen für das Preset ein:");
-		if (!presetName) return;
+	const deletePreset = async (presetName: string) => {
+		if (!user) return;
 
+		try {
+			await deleteEventPreset(presetName, user.uid, userRole);
+			await refreshData("eventPresets");
+			showSuccessToast("SAVE_SUCCESS");
+		} catch (error) {
+			showErrorToast(error);
+		}
+	};
+
+
+	const handleConfirmSavePreset = async () => {
+		if (!presetNameInput.trim()) return;
+
+		setIsSavingPreset(true);
 		const preset: EventDataPreset = {
-			presetName,
-			name: event.name,
-			course: event.course,
-			date: event.date,
-			length: event.length,
-			memberCount: event.memberCount,
-			place: event.place,
-			tags: event.tags,
-			difficulty: event.difficulty,
-			requirements: event.requirements,
-			description: event.description,
+			presetName: presetNameInput.trim(),
+			name: EventInfo.name,
+			course: EventInfo.course,
+			date: EventInfo.date,
+			length: EventInfo.length,
+			memberCount: EventInfo.memberCount,
+			place: EventInfo.place,
+			tags: EventInfo.tags,
+			difficulty: EventInfo.difficulty,
+			requirements: EventInfo.requirements,
+			description: EventInfo.description,
 		};
 
 		try {
 			await addEventPreset(preset, user?.uid, userRole);
+			await refreshData("eventPresets");
+			showSuccessToast("SAVE_SUCCESS");
+			setIsPresetModalOpen(false);
 		} catch (error) {
 			showErrorToast(error);
+		} finally {
+			setIsSavingPreset(false);
 		}
-
-	}
+	};
 
 	const handleEventCreate = async () => {
 		if (!user) return;
@@ -225,13 +246,19 @@ export default function EventCreationDialog(props: {
 		}
 	};
 
-
 	const applyPreset = (preset: EventDataPreset) => {
+
+		const newDate = toJsDate(preset.date);
+
+		while (newDate < new Date()) {
+			newDate.setDate(newDate.getDate() + 7); // Add 7 days until the date is in the future
+		}
+
 		setEventInfo({
 			name: preset.name,
 			uid: "",
 			course: preset.course,
-			date: preset.date,
+			date: Timestamp.fromDate(newDate),
 			length: preset.length,
 			memberCount: preset.memberCount,
 			place: preset.place,
@@ -245,7 +272,8 @@ export default function EventCreationDialog(props: {
 			description: preset.description,
 		});
 		setError("");
-	}
+		setActivePreset(preset.presetName);
+	};
 
 	if (!open) return null;
 
@@ -258,11 +286,100 @@ export default function EventCreationDialog(props: {
 				initial={{ opacity: 0, scale: 0.95 }}
 				animate={{ opacity: 1, scale: 1 }}
 				exit={{ opacity: 0, scale: 0.95 }}
-				className={`w-full max-w-2xl ${roundedClass} transition-colors duration-300 overflow-hidden ${theme === "dark"
+				className={`w-full max-w-2xl ${roundedClass} transition-colors duration-300 overflow-hidden relative ${theme === "dark"
 					? "bg-black border border-zinc-800"
 					: "bg-white border border-slate-200 shadow-xl"
 					}`}
 			>
+				<AnimatePresence>
+					{isPresetModalOpen && (
+						<motion.div
+							initial={{ opacity: 0, y: 10 }}
+							animate={{ opacity: 1, y: 0 }}
+							exit={{ opacity: 0, y: 10 }}
+							className={`absolute inset-0 z-50 flex items-center justify-center p-6 backdrop-blur-md ${theme === "dark" ? "bg-black/90" : "bg-white/90"
+								}`}
+						>
+							<div
+								className={`w-full max-w-md p-6 border ${roundedClass} ${theme === "dark"
+									? "bg-zinc-950 border-zinc-800"
+									: "bg-slate-50 border-slate-200 shadow-2xl"
+									}`}
+							>
+								<div className="flex justify-between items-center mb-4">
+									<div className="flex items-center gap-2">
+										<Bookmark className="w-4 h-4 text-green-500" />
+										<h3
+											className={`text-lg font-bold font-['Familjen_Grotesk'] ${theme === "dark" ? "text-white" : "text-slate-900"
+												}`}
+										>
+											Als Preset speichern
+										</h3>
+									</div>
+									<button
+										onClick={() => setIsPresetModalOpen(false)}
+										className={`p-1 transition-colors ${theme === "dark"
+											? "text-zinc-400 hover:text-white"
+											: "text-slate-500 hover:text-slate-900"
+											}`}
+									>
+										<X className="w-4 h-4" />
+									</button>
+								</div>
+
+								<p
+									className={`text-xs mb-4 ${theme === "dark" ? "text-zinc-400" : "text-slate-600"
+										}`}
+								>
+									Vergib einen Namen für dieses Preset, um es später im
+									Formular schnell wiederzuverwenden.
+								</p>
+
+								<div className="grid gap-1.5 mb-6">
+									<Label
+										className={`text-[10px] font-bold tracking-wider font-['JetBrains_Mono'] uppercase ${theme === "dark" ? "text-zinc-400" : "text-slate-600"
+											}`}
+									>
+										Preset-Name *
+									</Label>
+									<Input
+										autoFocus
+										className={`${roundedClass} px-4 py-2 text-sm transition-colors duration-300 ${theme === "dark"
+											? "bg-black border-zinc-800 text-white focus:border-green-500/50"
+											: "bg-white border-slate-200 text-slate-900 focus:border-green-500"
+											} border focus:outline-none`}
+										placeholder="z.B. Standard Scratch Workshop"
+										value={presetNameInput}
+										onChange={(e) => setPresetNameInput(e.target.value)}
+										onKeyDown={(e) => {
+											if (e.key === "Enter") handleConfirmSavePreset();
+										}}
+									/>
+								</div>
+
+								<div className="flex gap-3">
+									<Button
+										type="button"
+										variant="outline"
+										onClick={() => setIsPresetModalOpen(false)}
+										className={`flex-1 font-['JetBrains_Mono'] text-xs uppercase tracking-wider ${roundedClass}`}
+									>
+										Abbrechen
+									</Button>
+									<Button
+										type="button"
+										disabled={!presetNameInput.trim() || isSavingPreset}
+										onClick={handleConfirmSavePreset}
+										className={`flex-1 font-['JetBrains_Mono'] text-xs uppercase tracking-wider bg-green-600 hover:bg-green-700 text-white transition-colors ${roundedClass}`}
+									>
+										{isSavingPreset ? "Speichert..." : "Speichern"}
+									</Button>
+								</div>
+							</div>
+						</motion.div>
+					)}
+				</AnimatePresence>
+
 				<div
 					className={`px-8 py-6 border-b transition-colors duration-300 ${theme === "dark"
 						? "border-zinc-800 bg-zinc-950/50"
@@ -301,19 +418,19 @@ export default function EventCreationDialog(props: {
 						</button>
 					</div>
 
-					{(currentStep === 0 && (eventPresets?.length ?? 0) > 0) && (
+					{currentStep === 0 && (eventPresets?.length ?? 0) > 0 && (
 						<div className="mb-4 flex items-center gap-2 p-2 rounded-lg border border-dashed border-purple-500/30 bg-purple-500/5">
 							<Sparkles className="w-3.5 h-3.5 text-purple-400 shrink-0" />
 							<span className="text-[11px] font-medium font-['JetBrains_Mono'] text-purple-300 mr-2 uppercase">
 								Vorausfüllen:
 							</span>
-							<div className="flex gap-2 flex-1">
+							<div className="flex gap-2 flex-1 overflow-x-auto">
 								{eventPresets?.map((preset) => (
 									<button
 										key={preset.presetName}
 										type="button"
 										onClick={() => applyPreset(preset)}
-										className="text-[11px] font-['JetBrains_Mono'] px-2.5 py-1 rounded bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-white hover:border-purple-500 transition-all"
+										className="text-[11px] font-['JetBrains_Mono'] px-2.5 py-1 rounded bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-white hover:border-purple-500 transition-all shrink-0"
 									>
 										{preset.presetName}
 									</button>
@@ -370,8 +487,10 @@ export default function EventCreationDialog(props: {
 											} border focus:outline-none`}
 										placeholder="z.B. Scratch Workshop"
 										value={EventInfo.name}
-										onChange={(e) =>
+										onChange={(e) => {
 											setEventInfo({ ...EventInfo, name: e.target.value })
+											setActivePreset("")
+										}
 										}
 									/>
 								</div>
@@ -385,8 +504,10 @@ export default function EventCreationDialog(props: {
 									</Label>
 									<select
 										value={EventInfo.course}
-										onChange={(e) =>
+										onChange={(e) => {
 											setEventInfo({ ...EventInfo, course: e.target.value })
+											setActivePreset("")
+										}
 										}
 										className={`${roundedClass} w-full px-4 py-2 text-sm transition-colors duration-300 border focus:outline-none ${theme === "dark"
 											? "bg-zinc-950 border-zinc-800 text-white focus:border-purple-500/50"
@@ -414,10 +535,9 @@ export default function EventCreationDialog(props: {
 											: "bg-slate-50 border-slate-200 focus:bg-white focus:border-purple-400"
 											} border focus:outline-none`}
 										type="datetime-local"
-										// Konvertiert das Firebase-Date sicher in das lokale Format "YYYY-MM-DDTHH:mm"
 										value={(() => {
-											const d = EventInfo.date.toDate();
-											const tzOffset = d.getTimezoneOffset() * 60000; // Offset in Millisekunden
+											const d = toJsDate(EventInfo.date);
+											const tzOffset = d.getTimezoneOffset() * 60000;
 											return new Date(d.getTime() - tzOffset)
 												.toISOString()
 												.slice(0, 16);
@@ -425,14 +545,12 @@ export default function EventCreationDialog(props: {
 										onChange={(e) => {
 											if (!e.target.value) return;
 
-											// Wir splitten den Wert auf, um Zeitzonen-Fehler beim Parsen zu verhindern
 											const [datePart, timePart] = e.target.value.split("T");
 											const [year, month, day] = datePart
 												.split("-")
 												.map(Number);
 											const [hours, minutes] = timePart.split(":").map(Number);
 
-											// Erstellt ein neues Date-Objekt mit der lokalen Zeit des Users
 											const localDate = new Date(
 												year,
 												month - 1,
@@ -445,6 +563,7 @@ export default function EventCreationDialog(props: {
 												...EventInfo,
 												date: Timestamp.fromDate(localDate),
 											});
+											setActivePreset("")
 										}}
 									/>
 								</div>
@@ -464,11 +583,13 @@ export default function EventCreationDialog(props: {
 											type="number"
 											placeholder="90"
 											value={EventInfo.length || ""}
-											onChange={(e) =>
+											onChange={(e) => {
 												setEventInfo({
 													...EventInfo,
 													length: parseInt(e.target.value) || 0,
 												})
+												setActivePreset("")
+											}
 											}
 										/>
 									</div>
@@ -488,11 +609,13 @@ export default function EventCreationDialog(props: {
 											type="number"
 											placeholder="18"
 											value={EventInfo.memberCount || ""}
-											onChange={(e) =>
+											onChange={(e) => {
 												setEventInfo({
 													...EventInfo,
 													memberCount: parseInt(e.target.value) || 0,
 												})
+												setActivePreset("")
+											}
 											}
 										/>
 									</div>
@@ -526,6 +649,7 @@ export default function EventCreationDialog(props: {
 											const updated = [...EventInfo.place];
 											updated[0] = e.target.value;
 											setEventInfo({ ...EventInfo, place: updated });
+											setActivePreset("")
 										}}
 									/>
 								</div>
@@ -548,6 +672,7 @@ export default function EventCreationDialog(props: {
 											const updated = [...EventInfo.place];
 											updated[1] = e.target.value;
 											setEventInfo({ ...EventInfo, place: updated });
+											setActivePreset("")
 										}}
 									/>
 								</div>
@@ -570,6 +695,7 @@ export default function EventCreationDialog(props: {
 											const updated = [...EventInfo.place];
 											updated[2] = e.target.value;
 											setEventInfo({ ...EventInfo, place: updated });
+											setActivePreset("")
 										}}
 									/>
 								</div>
@@ -598,8 +724,10 @@ export default function EventCreationDialog(props: {
 											} border focus:outline-none`}
 										placeholder="z.B. Scratch, Python"
 										value={EventInfo.tags}
-										onChange={(e) =>
+										onChange={(e) => {
 											setEventInfo({ ...EventInfo, tags: e.target.value })
+											setActivePreset("")
+										}
 										}
 									/>
 								</div>
@@ -614,17 +742,18 @@ export default function EventCreationDialog(props: {
 									</Label>
 									<select
 										id="difficulty"
-										className={`${roundedClass} w-full px-4 py-2 text-sm transition-colors duration-300 border focus:outline-none appearance-none cursor-pointer
-          ${theme === "dark"
-												? "bg-zinc-950 border-zinc-800 text-white focus:border-purple-500/50"
-												: "bg-slate-50 border-slate-200 text-slate-900 focus:bg-white focus:border-purple-400"
+										className={`${roundedClass} w-full px-4 py-2 text-sm transition-colors duration-300 border focus:outline-none appearance-none cursor-pointer ${theme === "dark"
+											? "bg-zinc-950 border-zinc-800 text-white focus:border-purple-500/50"
+											: "bg-slate-50 border-slate-200 text-slate-900 focus:bg-white focus:border-purple-400"
 											}`}
 										value={EventInfo.difficulty}
-										onChange={(e) =>
+										onChange={(e) => {
 											setEventInfo({
 												...EventInfo,
 												difficulty: e.target.value as Difficulties,
 											})
+											setActivePreset("")
+										}
 										}
 									>
 										{Object.values(Difficulties).map((value) => (
@@ -644,6 +773,7 @@ export default function EventCreationDialog(props: {
 								</div>
 							</motion.div>
 						)}
+
 						{currentStep === 3 && (
 							<motion.div
 								key="step-3"
@@ -666,11 +796,13 @@ export default function EventCreationDialog(props: {
 											} border`}
 										placeholder="Geben Sie eine detaillierte Beschreibung des Events ein..."
 										value={EventInfo.description}
-										onChange={(e) =>
+										onChange={(e) => {
 											setEventInfo({
 												...EventInfo,
 												description: e.target.value,
 											})
+											setActivePreset("")
+										}
 										}
 									/>
 								</div>
@@ -719,14 +851,27 @@ export default function EventCreationDialog(props: {
 								<ArrowRight className="w-3.5 h-3.5 ml-2" />
 							</Button>
 						) : (
-							<div className="flex gap-5">
+							<div className="flex gap-3 flex-1">
+								{activePreset == "" ?
+									<Button
+										type="button"
+										onClick={openPresetModal}
+										className={`flex-1 font-['JetBrains_Mono'] text-xs uppercase tracking-wider bg-green-600 hover:bg-green-700 text-white transition-colors duration-300 ${roundedClass}`}
+									>
+										<Bookmark className="w-3.5 h-3.5 mr-2" />
+										Als Preset
+									</Button> :
+									<Button
+										type="button"
+										onClick={() => deleteEventPreset(activePreset)}
+										className={`flex-1 font-['JetBrains_Mono'] text-xs uppercase tracking-wider bg-red-600 hover:bg-red-700 text-white transition-colors duration-300 ${roundedClass}`}
+									>
+										<Bookmark className="w-3.5 h-3.5 mr-2" />
+										Preset löschen
+									</Button>
+								}
 								<Button
-									onClick={() => saveCurrentEventAsPreset(EventInfo)}
-									className={`flex-1 font-['JetBrains_Mono'] text-xs uppercase tracking-wider bg-green-600 hover:bg-green-700 text-white transition-colors duration-300 ${roundedClass} disabled:opacity-50`}
-								>
-									Als Preset speichern
-								</Button>
-								<Button
+									type="button"
 									onClick={handleEventCreate}
 									disabled={isCreating}
 									className={`flex-1 font-['JetBrains_Mono'] text-xs uppercase tracking-wider bg-purple-600 hover:bg-purple-700 text-white transition-colors duration-300 ${roundedClass} disabled:opacity-50`}

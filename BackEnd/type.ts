@@ -99,7 +99,6 @@ export type EventData = {
   length: number;
   memberCount: number;
   place: string[];
-  typeOfEvent: string;
   description: string;
   users: string[];
   queue: string[];
@@ -142,7 +141,7 @@ export type TicketData = {
 
   // ORGANISATION
   priority: "low" | "medium" | "high" | "urgent";
-  status: "open" | "closed" | "new" | "pending_customer" | "pending_staff";
+  status: "closed" | "new" | "pending_customer" | "pending_staff";
 
   // STAFF
   assignedToUid?: string;

@@ -7,7 +7,6 @@ import GlassCard from "../homepage/components/GlassCard";
 import SectionHeading from "../homepage/components/SectionHeading";
 import SectionLabel from "../homepage/components/SectionLabel";
 import { useState } from "react";
-import Link from "next/link";
 
 const WLAN_DATA = {
 	ssid: "Cubes-All",
@@ -66,112 +65,113 @@ export default function RessourcesView() {
 	};
 
 	return (
-		<div className="max-w-6xl px-4 md:px-6">
-			<motion.div
-				initial={{ opacity: 0, y: 12 }}
-				animate={{ opacity: 1, y: 0 }}
-				transition={{ duration: 0.6, ease: "easeOut" }}
-				className="mb-16"
-			>
-				<h1
-					className={`text-4xl md:text-5xl font-black font-gro tracking-medium leading-none mb-5 ${isDark ? "text-white" : "text-slate-900"
-						}`}
-				>
-					Ressourcen.
-					<br />
-				</h1>
-				<p
-					className={`text-[20px] font-thin leading-relaxed max-w-md ${isDark ? "text-gray-400" : "text-slate-500"
-						}`}
-				>
-					Alle wichtigen Informationen, Guides und Ressourcen für deine CoderDojo
-					Reise an einem Ort.
-				</p>
-			</motion.div>
-
-			<section className="mb-20">
-				<SectionLabel>NETZWERK</SectionLabel>
-				<SectionHeading>WLAN Verbindung</SectionHeading>
-
+		<div className="w-full">
+			<div className="max-w-7xl mx-auto px-4">
 				<motion.div
 					initial={{ opacity: 0, y: 12 }}
 					animate={{ opacity: 1, y: 0 }}
-					transition={{ duration: 0.5, delay: 0.1 }}
+					transition={{ duration: 0.6, ease: "easeOut" }}
+					className="mb-16 "
 				>
-					<GlassCard className="p-8 mt-4 max-w-3xl w-full border-green-400/20 hover:!border-green-400/40">
-						<div className="flex flex-col gap-6">
-							<div>
-								<div className="flex items-center gap-3 mb-3">
-									<div
-										className={`w-10 h-10 flex items-center justify-center ${isRounded ? "rounded-xl" : "rounded-none"
-											}`}
-										style={{
-											background: "rgba(74, 222, 128, 0.15)",
-											border: "1px solid rgba(74, 222, 128, 0.30)",
-										}}
-									>
-										<Wifi className="w-5 h-5 text-green-500" />
-									</div>
-									<div>
-										<p
-											className={`text-[10px] font-mono uppercase tracking-widest ${isDark ? "text-green-400" : "text-green-600"
-												}`}
-										>
-											Netzwerkname
-										</p>
-										<p
-											className={`text-2xl font-black font-gro ${isDark ? "text-white" : "text-slate-900"
-												}`}
-										>
-											{WLAN_DATA.ssid}
-										</p>
-									</div>
-								</div>
-							</div>
-
-							<div className="h-px w-full bg-white/10" />
-
-							<div>
-								<p
-									className={`text-[10px] font-mono uppercase tracking-widest mb-2 ${isDark ? "text-gray-500" : "text-slate-400"
-										}`}
-								>
-									Passwort
-								</p>
-								<div className="flex items-center gap-3">
-									<code
-										className={`flex-1 px-4 py-3 ${isRounded ? "rounded-lg" : "rounded-none"} font-mono text-sm font-bold break-all ${isDark
-											? "bg-black/30 text-green-400 border border-white/10"
-											: "bg-slate-100 text-green-700 border border-slate-200"
-											}`}
-									>
-										{WLAN_DATA.password}
-									</code>
-									<motion.button
-										whileHover={{ scale: 1.05 }}
-										whileTap={{ scale: 0.95 }}
-										onClick={() => copyToClipboard(WLAN_DATA.password)}
-										className={`px-4 py-3 flex items-center gap-2 text-xs font-bold uppercase tracking-wider border transition-all ${isRounded ? "rounded-lg" : "rounded-none"
-											} ${copiedPassword
-												? isDark
-													? "bg-green-500/20 text-green-400 border-green-500/50"
-													: "bg-green-100 text-green-700 border-green-300"
-												: isDark
-													? "bg-green-500/10 text-green-400 border-green-500/30 hover:bg-green-500/20"
-													: "bg-green-50 text-green-700 border-green-200 hover:bg-green-100"
-											}`}
-									>
-										<Copy className="w-4 h-4" />
-										{copiedPassword ? "Kopiert!" : "Kopieren"}
-									</motion.button>
-								</div>
-							</div>
-
-						</div>
-					</GlassCard>
+					<h1
+						className={`text-4xl md:text-5xl font-black font-gro tracking-medium leading-none mb-5 ${isDark ? "text-white" : "text-slate-900"
+							}`}
+					>
+						Ressourcen.
+						<br />
+					</h1>
+					<p
+						className={`text-[20px] font-thin leading-relaxed max-w-md ${isDark ? "text-gray-400" : "text-slate-500"
+							}`}
+					>
+						Alle wichtigen Informationen, Guides und Ressourcen für deine CoderDojo
+						Reise an einem Ort.
+					</p>
 				</motion.div>
-			</section>
-			{/*
+
+				<section className="mb-20">
+					<SectionLabel>NETZWERK</SectionLabel>
+					<SectionHeading>WLAN Verbindung</SectionHeading>
+
+					<motion.div
+						initial={{ opacity: 0, y: 12 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ duration: 0.5, delay: 0.1 }}
+					>
+						<GlassCard className="p-8 mt-4 max-w-3xl w-full border-green-400/20 hover:!border-green-400/40">
+							<div className="flex flex-col gap-6">
+								<div>
+									<div className="flex items-center gap-3 mb-3">
+										<div
+											className={`w-10 h-10 flex items-center justify-center ${isRounded ? "rounded-xl" : "rounded-none"
+												}`}
+											style={{
+												background: "rgba(74, 222, 128, 0.15)",
+												border: "1px solid rgba(74, 222, 128, 0.30)",
+											}}
+										>
+											<Wifi className="w-5 h-5 text-green-500" />
+										</div>
+										<div>
+											<p
+												className={`text-[10px] font-mono uppercase tracking-widest ${isDark ? "text-green-400" : "text-green-600"
+													}`}
+											>
+												Netzwerkname
+											</p>
+											<p
+												className={`text-2xl font-black font-gro ${isDark ? "text-white" : "text-slate-900"
+													}`}
+											>
+												{WLAN_DATA.ssid}
+											</p>
+										</div>
+									</div>
+								</div>
+
+								<div className="h-px w-full bg-white/10" />
+
+								<div>
+									<p
+										className={`text-[10px] font-mono uppercase tracking-widest mb-2 ${isDark ? "text-gray-500" : "text-slate-400"
+											}`}
+									>
+										Passwort
+									</p>
+									<div className="flex items-center gap-3">
+										<code
+											className={`flex-1 px-4 py-3 ${isRounded ? "rounded-lg" : "rounded-none"} font-mono text-sm font-bold break-all ${isDark
+												? "bg-black/30 text-green-400 border border-white/10"
+												: "bg-slate-100 text-green-700 border border-slate-200"
+												}`}
+										>
+											{WLAN_DATA.password}
+										</code>
+										<motion.button
+											whileHover={{ scale: 1.05 }}
+											whileTap={{ scale: 0.95 }}
+											onClick={() => copyToClipboard(WLAN_DATA.password)}
+											className={`px-4 py-3 flex items-center gap-2 text-xs font-bold uppercase tracking-wider border transition-all ${isRounded ? "rounded-lg" : "rounded-none"
+												} ${copiedPassword
+													? isDark
+														? "bg-green-500/20 text-green-400 border-green-500/50"
+														: "bg-green-100 text-green-700 border-green-300"
+													: isDark
+														? "bg-green-500/10 text-green-400 border-green-500/30 hover:bg-green-500/20"
+														: "bg-green-50 text-green-700 border-green-200 hover:bg-green-100"
+												}`}
+										>
+											<Copy className="w-4 h-4" />
+											{copiedPassword ? "Kopiert!" : "Kopieren"}
+										</motion.button>
+									</div>
+								</div>
+
+							</div>
+						</GlassCard>
+					</motion.div>
+				</section>
+				{/*
 			<section className="mb-20">
 				<div className="mb-10">
 					<SectionLabel>LERNMATERIAL</SectionLabel>
@@ -276,6 +276,7 @@ export default function RessourcesView() {
 
 			</section>
 			*/}
+			</div>
 		</div>
 	);
 }

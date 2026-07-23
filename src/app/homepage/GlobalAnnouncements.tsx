@@ -127,7 +127,7 @@ export default function AnnouncementView({ data }: { data?: UserData | null }) {
 	}
 
 	return (
-		<div className="w-full px-4 mt-10 font-['DM_Sans']">
+		<div className="w-full mt-10 font-['DM_Sans']">
 			<div className="mb-8 text-left flex items-center justify-between border-b pb-4 border-dashed border-zinc-200 dark:border-zinc-800">
 				<div className="flex items-center gap-3">
 					<Bell

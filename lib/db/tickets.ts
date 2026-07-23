@@ -1,20 +1,19 @@
 import { db } from "../firebase";
-import { 
-  collection, 
-  getDocs, 
-  deleteDoc, 
-  arrayUnion, 
-  doc, 
-  query, 
-  where, 
-  getDoc, 
-  setDoc, 
-  updateDoc 
+import {
+  collection,
+  getDocs,
+  deleteDoc,
+  arrayUnion,
+  doc,
+  query,
+  where,
+  getDoc,
+  setDoc,
+  updateDoc,
 } from "firebase/firestore";
 import type { DocumentData, Query } from "firebase/firestore"; // Importiert den Query Typ
-import type { TicketData, TicketMessage, UserRole, UserData } from "@/BackEnd/type";
+import type { TicketData, TicketMessage, UserRole } from "@/BackEnd/type";
 import { enforceRateLimit } from "./db";
-import { sendTriggerEmailToMultipleUsers } from "./emailTriggers";
 
 export async function getAllTickets(
   userId: string = "anonymous",
@@ -29,10 +28,10 @@ export async function getAllTickets(
     }
 
     const snapshot = await getDocs(q);
-    
+
     return snapshot.docs.map((doc) => ({
       ...doc.data(),
-      uid: doc.id, 
+      uid: doc.id,
     })) as TicketData[];
   } catch (error) {
     console.error("Error fetching tickets:", error);
@@ -43,7 +42,7 @@ export async function getAllTickets(
 export async function getTicketById(
   uid: string,
   userId: string = "anonymous",
-  userRole: UserRole = "user"
+  userRole: UserRole = "user",
 ): Promise<TicketData | null> {
   try {
     const ref = doc(db, "tickets", uid);
@@ -52,7 +51,7 @@ export async function getTicketById(
     if (!snapshot.exists()) return null;
 
     const data = snapshot.data();
-    
+
     // secury check
     if (data.userUid !== userId && !["admin", "mentor"].includes(userRole)) {
       throw new Error("Unauthorized to view this ticket");
@@ -69,14 +68,18 @@ export async function getTicketById(
 }
 
 export async function addTicket(
-  newTicket: Omit<TicketData, "uid" | "createdAt" | "updatedAt" | "messages" | "internalNotes">,
+  newTicket: Omit<
+    TicketData,
+    "uid" | "createdAt" | "updatedAt" | "messages" | "internalNotes"
+  >,
   userId: string = "anonymous",
   userRole: UserRole = "user",
 ) {
   enforceRateLimit("addTicket", userId, userRole);
 
   try {
-    const ticketUid = new Date().toISOString() + "_" + Math.random().toString(36).substr(2, 9);
+    const ticketUid =
+      new Date().toISOString() + "_" + Math.random().toString(36).substr(2, 9);
     const now = new Date(); // firebase converts date automatically to Timestamp
 
     await setDoc(doc(db, "tickets", ticketUid), {
@@ -88,14 +91,14 @@ export async function addTicket(
       description: newTicket.description,
       category: newTicket.category,
       priority: newTicket.priority,
-      status: "new", 
+      status: "new",
       createdAt: now,
       updatedAt: now,
       messages: [],
-      internalNotes: []
+      internalNotes: [],
     });
 
-    const usersSnapshot = await getDocs(collection(db, "users"));
+    /*const usersSnapshot = await getDocs(collection(db, "users"));
     const staffUsers: UserData[] = usersSnapshot.docs
       .map((doc) => doc.data() as UserData)
       .filter((user) => ["admin", "mentor", "staff"].includes(user.role));
@@ -107,6 +110,7 @@ export async function addTicket(
         ticketCustomer: newTicket.userName,
       });
     }
+		*/
 
     return ticketUid;
   } catch (error) {
@@ -125,10 +129,10 @@ export async function updateTicket(
 
   try {
     const ref = doc(db, "tickets", uid);
-    
+
     const finalUpdates = {
       ...updates,
-      updatedAt: new Date() // Automatisch das globale 'updatedAt' Feld aktualisieren
+      updatedAt: new Date(), // Automatisch das globale 'updatedAt' Feld aktualisieren
     };
 
     await updateDoc(ref, finalUpdates);
@@ -144,30 +148,32 @@ export async function addMessageToTicket(
   messageText: string,
   sender: { uid: string; name: string; role: "customer" | "staff" },
   userId: string = "anonymous",
-  userRole: UserRole = "user"
+  userRole: UserRole = "user",
 ) {
   enforceRateLimit("addMessageToTicket", userId, userRole);
 
   try {
     const ref = doc(db, "tickets", ticketUid);
-    const messageUid = new Date().toISOString() + "_" + Math.random().toString(36).substr(2, 5);
-    
+    const messageUid =
+      new Date().toISOString() + "_" + Math.random().toString(36).substr(2, 5);
+
     const newMessage: TicketMessage = {
       uid: messageUid,
       senderUid: sender.uid,
       senderName: sender.name,
       senderRole: sender.role,
       message: messageText,
-      createdAt: new Date() as any // Firebase konvertiert JS-Date automatisch in Timestamp
+      createdAt: new Date() as any, // Firebase konvertiert JS-Date automatisch in Timestamp
     };
 
     // Ermittle den neuen Status basierend darauf, wer antwortet
-    const nextStatus = sender.role === "staff" ? "pending_customer" : "pending_staff";
+    const nextStatus =
+      sender.role === "staff" ? "pending_customer" : "pending_staff";
 
     await updateDoc(ref, {
       messages: arrayUnion(newMessage),
       status: nextStatus,
-      updatedAt: new Date()
+      updatedAt: new Date(),
     });
   } catch (error) {
     console.error("Error adding message to ticket:", error);
@@ -181,7 +187,7 @@ export async function addInternalNoteToTicket(
   noteText: string,
   sender: { uid: string; name: string },
   userId: string = "anonymous",
-  userRole: UserRole = "user"
+  userRole: UserRole = "user",
 ) {
   if (!["admin", "mentor", "staff"].includes(userRole)) {
     throw new Error("Unauthorized to add internal notes");
@@ -191,7 +197,8 @@ export async function addInternalNoteToTicket(
 
   try {
     const ref = doc(db, "tickets", ticketUid);
-    const noteUid = new Date().toISOString() + "_" + Math.random().toString(36).substr(2, 5);
+    const noteUid =
+      new Date().toISOString() + "_" + Math.random().toString(36).substr(2, 5);
 
     const newNote: TicketMessage = {
       uid: noteUid,
@@ -199,12 +206,12 @@ export async function addInternalNoteToTicket(
       senderName: sender.name,
       senderRole: "staff",
       message: noteText,
-      createdAt: new Date() as any
+      createdAt: new Date() as any,
     };
 
     await updateDoc(ref, {
       internalNotes: arrayUnion(newNote),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     });
   } catch (error) {
     console.error("Error adding internal note:", error);

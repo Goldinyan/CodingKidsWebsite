@@ -1,6 +1,9 @@
 import type { Log } from "@/BackEnd/type";
 
-export function formatLogMessage(log: Log): { title: string; details?: string } {
+export function formatLogMessage(log: Log): {
+  title: string;
+  details?: string;
+} {
   switch (log.type) {
     case "userJoined":
       return {
@@ -79,7 +82,6 @@ function formatFieldName(key: string): string {
     length: "Dauer",
     memberCount: "Teilnehmerzahl",
     place: "Ort",
-    typeOfEvent: "Event-Typ",
     description: "Beschreibung",
     tag: "Tag",
     difficulty: "Schwierigkeitsgrad",
@@ -104,7 +106,9 @@ function formatValue(value: any): string {
 
 export function formatLogDate(log: Log): string {
   try {
-    const date = log.date.toDate ? log.date.toDate() : new Date(log.date as any);
+    const date = log.date.toDate
+      ? log.date.toDate()
+      : new Date(log.date as any);
     return date.toLocaleString("de-DE", {
       day: "2-digit",
       month: "short",

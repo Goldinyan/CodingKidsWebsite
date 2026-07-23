@@ -1,16 +1,15 @@
 import { db } from "../firebase";
-import { collection, getDocs, deleteDoc, arrayUnion, doc, query, where } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  deleteDoc,
+  arrayUnion,
+  doc,
+} from "firebase/firestore";
 import { getDoc, setDoc, updateDoc } from "firebase/firestore";
 import type { AnnouncementData, UserRole, UserData } from "@/BackEnd/type";
 import { enforceRateLimit } from "./db";
 import { sendTriggerEmailToMultipleUsers } from "./emailTriggers";
-
-
-
-
-
-
-
 
 export async function getAllAnnouncements(
   userId: string = "anonymous",
@@ -64,6 +63,7 @@ export async function addAnnouncement(
   try {
     const dateId = new Date().toISOString();
     await setDoc(doc(db, "announcements", dateId), {
+      uid: dateId,
       tag: newAnnouncement.tag,
       title: newAnnouncement.title,
       content: newAnnouncement.content,

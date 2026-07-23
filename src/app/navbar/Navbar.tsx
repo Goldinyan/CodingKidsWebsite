@@ -13,13 +13,12 @@ import {
 	Menu,
 	X,
 	LayoutDashboard,
-	Book,
-	CircleQuestionMark,
 	BookOpen,
 } from "lucide-react";
 import NavbarMobile from "./NavbarMobile";
 import { useTheme, Theme } from "@/context/ThemeContext";
 import { useAppData } from "@/context/DataContext";
+import { AnnouncementData, UserRole } from "@/BackEnd/type";
 
 export default function Navbar() {
 	const [open, setOpen] = useState(false);
@@ -31,11 +30,29 @@ export default function Navbar() {
 
 	const rawAnnouncements = getAnnouncements();
 
+	const availableForUser = (announcement: AnnouncementData, userRole: UserRole) => {
+		switch (announcement.tag) {
+			case "anonymous":
+				return true;
+			case "user":
+				return userRole === "user" || userRole === "member" || userRole === "mentor" || userRole === "admin";
+			case "member":
+				return userRole === "member" || userRole === "mentor" || userRole === "admin";
+			case "mentor":
+				return userRole === "mentor" || userRole === "admin";
+			case "admin":
+				return userRole === "admin";
+			default:
+				return false;
+		}
+	}
+
+
 	const unreadMessagesCount = useMemo(() => {
 		if (!user) return 0;
 		return rawAnnouncements.filter(
 			(announcement) =>
-				!announcement.readBy || !announcement.readBy.includes(user.uid),
+				(!announcement.readBy || !announcement.readBy.includes(user.uid)) && availableForUser(announcement, userRole)
 		).length;
 	}, [rawAnnouncements, user]);
 
@@ -55,7 +72,7 @@ export default function Navbar() {
 					: "bg-white/40 border-slate-200/80"
 					}`}
 			>
-				<div className="w-full max-w-7xl mx-auto flex items-center justify-between px-4 md:px-6 relative">
+				<div className="w-full max-w-7xl px-4 mx-auto flex items-center justify-between  relative">
 					<div
 						className="flex items-center gap-2 cursor-pointer select-none"
 						onClick={() => {

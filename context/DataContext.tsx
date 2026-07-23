@@ -21,10 +21,12 @@ import {
 	Mentor,
 	CourseData,
 	UserData,
-	EventDataPreset
+	EventDataPreset,
+	TicketData
 } from "@/BackEnd/type";
 import { useNotificationToast } from "@/hooks/useNotificationToast";
 import { getAllEventPresets } from "@/lib/db/eventPresets";
+import { getAllTickets } from "@/lib/db/tickets";
 
 interface DataContextType {
 	loadingStates: {
@@ -34,6 +36,7 @@ interface DataContextType {
 		announcements: boolean;
 		users: boolean;
 		eventPresets: boolean;
+		tickets: boolean;
 	};
 	getMentors: () => Mentor[];
 	getEvents: () => EventData[];
@@ -41,8 +44,9 @@ interface DataContextType {
 	getAnnouncements: () => AnnouncementData[];
 	getUsers: () => UserData[];
 	getEventPresets: () => EventDataPreset[];
+	getTickets: () => TicketData[];
 	refreshData: (
-		type: "mentors" | "events" | "courses" | "announcements" | "users" | "eventPresets",
+		type: "mentors" | "events" | "courses" | "announcements" | "users" | "eventPresets" | "tickets",
 	) => Promise<void>;
 }
 
@@ -57,6 +61,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 	const [announcements, setAnnouncements] = useState<AnnouncementData[]>([]);
 	const [users, setUsers] = useState<UserData[]>([]);
 	const [eventPresets, setEventPresets] = useState<EventDataPreset[]>([]);
+	const [tickets, setTickets] = useState<TicketData[]>([]);
 
 	const { showErrorToast } = useNotificationToast();
 
@@ -66,7 +71,8 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 		courses: false,
 		announcements: false,
 		users: false,
-		eventPresets: false
+		eventPresets: false,
+		tickets: false
 	});
 
 	const fetchedKeys = useRef<Record<string, string>>({
@@ -75,7 +81,8 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 		courses: "",
 		announcements: "",
 		users: "",
-		eventPresets: ""
+		eventPresets: "",
+		tickets: ""
 	});
 
 	const isFetching = useRef<Record<string, boolean>>({
@@ -84,7 +91,8 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 		courses: false,
 		announcements: false,
 		users: false,
-		eventPresets: false
+		eventPresets: false,
+		tickets: false
 	});
 
 	const isInitialized = useRef(false);
@@ -107,9 +115,12 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 				fetchSingleTarget("events");
 				fetchSingleTarget("courses");
 				fetchSingleTarget("announcements");
+				if (userRole !== "anonymous") {
+					fetchSingleTarget("tickets");
+				}
 				if (userRole === "admin") {
 					fetchSingleTarget("users");
-					fetchSingleTarget("eventsPresets")
+					fetchSingleTarget("eventPresets")
 				}
 			}
 			return;
@@ -125,7 +136,8 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 			courses: "",
 			announcements: "",
 			users: "",
-			eventPresets: ""
+			eventPresets: "",
+			tickets: ""
 		};
 		isFetching.current = {
 			mentors: false,
@@ -133,7 +145,8 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 			courses: false,
 			announcements: false,
 			users: false,
-			eventPresets: false
+			eventPresets: false,
+			tickets: false
 		};
 
 		setMentors([]);
@@ -142,12 +155,14 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 		setUsers([]);
 		setAnnouncements([]);
 		setEventPresets([]);
+		setTickets([]);
 
 		// Nach Rollenwechsel neu laden
 		fetchSingleTarget("mentors");
 		fetchSingleTarget("events");
 		fetchSingleTarget("courses");
 		fetchSingleTarget("announcements");
+		fetchSingleTarget("tickets");
 		if (userRole === "admin") {
 			fetchSingleTarget("users");
 			fetchSingleTarget("eventPresets")
@@ -155,7 +170,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 	}, [userRole, authLoading, user?.uid, user]);
 
 	const fetchSingleTarget = async (
-		target: "mentors" | "events" | "courses" | "announcements" | "users" | "eventPresets",
+		target: "mentors" | "events" | "courses" | "announcements" | "users" | "eventPresets" | "tickets",
 		force = false,
 	) => {
 		if (authLoading || (user && !userRole)) return;
@@ -195,6 +210,9 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 				} else if (target === "eventPresets") {
 					const res = await getAllEventPresets(user?.uid, userRole);
 					setEventPresets(res);
+				} else if (target === "tickets") {
+					const res = await getAllTickets(user?.uid, userRole);
+					setTickets(res);
 				}
 			} catch (error) {
 				showErrorToast(`Fehler beim Laden von ${target}: ${error}`);
@@ -222,13 +240,15 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 	const getUsers = () => {
 		return users;
 	};
-
 	const getEventPresets = () => {
 		return eventPresets;
 	}
+	const getTickets = () => {
+		return tickets;
+	}
 
 	const refreshData = async (
-		target: "mentors" | "events" | "courses" | "announcements" | "users" | "eventPresets",
+		target: "mentors" | "events" | "courses" | "announcements" | "users" | "eventPresets" | "tickets",
 	) => {
 		await fetchSingleTarget(target, true);
 	};
@@ -243,6 +263,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 				getAnnouncements,
 				getUsers,
 				getEventPresets,
+				getTickets,
 				refreshData,
 			}}
 		>

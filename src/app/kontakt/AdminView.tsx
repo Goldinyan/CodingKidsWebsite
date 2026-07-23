@@ -1,249 +1,267 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useTheme } from "@/context/ThemeContext";
 import { useAuth } from "@/context/AuthContext";
-import { getAllTickets } from "@/lib/db/tickets";
-import { useNotificationToast } from "@/hooks/useNotificationToast";
 import type { TicketData } from "@/BackEnd/type";
 import TicketList from "./components/TicketList";
 import TicketDetail from "./components/TicketDetail";
 import AdminControls from "./components/AdminControls";
-import { Loader, Filter, X } from "lucide-react";
+import {
+	Loader,
+	Ticket,
+	Search,
+	RotateCcw,
+	SlidersHorizontal,
+	Activity,
+	Terminal
+} from "lucide-react";
+import { useAppData } from "@/context/DataContext";
 
 export default function AdminView() {
-  const { theme, isRounded } = useTheme();
-  const { user, userData } = useAuth();
-  const { showErrorToast } = useNotificationToast();
+	const { theme, isRounded } = useTheme();
+	const { loading } = useAuth();
+	const { getTickets, refreshData } = useAppData();
 
-  const [tickets, setTickets] = useState<TicketData[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [selectedTicket, setSelectedTicket] = useState<TicketData | null>(null);
-  const [showDetailModal, setShowDetailModal] = useState(false);
+	const [selectedTicket, setSelectedTicket] = useState<TicketData | null>(null);
+	const [showDetailModal, setShowDetailModal] = useState(false);
 
-  const [filters, setFilters] = useState({
-    status: "" as TicketData["status"] | "",
-    priority: "" as TicketData["priority"] | "",
-    search: "",
-  });
+	const [filters, setFilters] = useState({
+		status: "" as TicketData["status"] | "",
+		priority: "" as TicketData["priority"] | "",
+		search: "",
+	});
 
-  const statuses: TicketData["status"][] = ["new", "open", "pending_staff", "pending_customer", "closed"];
-  const priorities: TicketData["priority"][] = ["low", "medium", "high", "urgent"];
+	const statuses: TicketData["status"][] = ["new", "pending_staff", "pending_customer", "closed"];
+	const priorities: TicketData["priority"][] = ["low", "medium", "high", "urgent"];
 
-  const fetchTickets = async () => {
-    if (!user || !userData) return;
+	const tickets = getTickets();
+	const hasActiveFilters = Boolean(filters.search || filters.status || filters.priority);
 
-    setLoading(true);
-    try {
-      const data = await getAllTickets(user.uid, userData.role);
-      setTickets(data);
-    } catch (error) {
-      showErrorToast("Fehler beim Laden der Tickets");
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
+	const filteredTickets = tickets.filter((ticket) => {
+		if (filters.status && ticket.status !== filters.status) return false;
+		if (filters.priority && ticket.priority !== filters.priority) return false;
+		if (filters.search) {
+			const search = filters.search.toLowerCase();
+			return (
+				ticket.ticketNumber.toLowerCase().includes(search) ||
+				ticket.subject.toLowerCase().includes(search) ||
+				ticket.userName.toLowerCase().includes(search) ||
+				ticket.userEmail.toLowerCase().includes(search)
+			);
+		}
+		return true;
+	});
 
-  useEffect(() => {
-    fetchTickets();
-  }, [user, userData]);
+	const radiusClass = isRounded ? "rounded-lg" : "rounded-none";
+	const containerClass = theme === "dark" ? "bg-black text-zinc-100" : "bg-slate-50 text-slate-900";
+	const inputClass = theme === "dark"
+		? "bg-zinc-900/50 border-zinc-800 focus:border-[#4ADE80] text-zinc-200 placeholder:text-zinc-600"
+		: "bg-slate-50 border-slate-300 focus:border-emerald-500 text-slate-800 placeholder:text-slate-400";
 
-  const filteredTickets = tickets.filter((ticket) => {
-    if (filters.status && ticket.status !== filters.status) return false;
-    if (filters.priority && ticket.priority !== filters.priority) return false;
-    if (filters.search) {
-      const search = filters.search.toLowerCase();
-      return (
-        ticket.ticketNumber.toLowerCase().includes(search) ||
-        ticket.subject.toLowerCase().includes(search) ||
-        ticket.userName.toLowerCase().includes(search) ||
-        ticket.userEmail.toLowerCase().includes(search)
-      );
-    }
-    return true;
-  });
+	return (
+		<div className={`min-h-screen  transition-colors duration-300 ${containerClass}`}>
 
-  const radiusClass = isRounded ? "rounded-lg" : "rounded-none";
-  const containerClass = theme === "dark" ? "bg-black" : "bg-white";
-  const headerBg = theme === "dark" ? "bg-white/5 border-white/10" : "bg-slate-50 border-slate-200";
-  const inputClass = theme === "dark" ? "bg-slate-800 border-slate-600 text-white" : "bg-white border-slate-300 text-slate-900";
+			<div className="max-w-7xl mx-auto mb-6 flex items-center justify-between border-b border-zinc-800/60 pb-4">
+				<div className="flex items-center gap-3">
+					<div className={``}>
+						<Ticket className={`w-5 h-5 ${theme === "dark" ? "text-[#4ADE80]" : "text-emerald-600"}`} />
+					</div>
+					<div>
+						<h2 className="text-xl md:text-2xl font-black font-['Familjen_Grotesk'] tracking-wider uppercase">
+							Support Ticket Verwaltung
+						</h2>
+					</div>
+				</div>
 
-  return (
-    <div className={`min-h-screen transition-colors duration-300 ${containerClass}`}>
-      {/* Header */}
-      <div className={`${headerBg} border-b p-4 sm:p-6 backdrop-blur-sm transition-colors duration-300`}>
-        <div className="max-w-7xl mx-auto">
-          <h1 className={`text-2xl sm:text-3xl font-bold transition-colors duration-300 ${
-            theme === "dark" ? "text-white" : "text-slate-900"
-          }`}>
-            Support Ticket Verwaltung
-          </h1>
-          <p className={`text-sm mt-1 ${theme === "dark" ? "text-slate-400" : "text-slate-600"}`}>
-            Verwalte alle eingehenden Tickets von Benutzern
-          </p>
-        </div>
-      </div>
+				{loading && (
+					<div className="flex items-center gap-2 font-['JetBrains_Mono'] text-xs text-zinc-400">
+						<Loader size={14} className="animate-spin text-[#4ADE80]" />
+						<span>SYNCING...</span>
+					</div>
+				)}
+			</div>
 
-      {/* Content */}
-      <div className="max-w-7xl mx-auto p-4 sm:p-6">
-        {/* Filters */}
-        <div className={`border ${theme === "dark" ? "border-slate-700" : "border-slate-200"} p-4 mb-6 ${radiusClass}`}>
-          <div className="flex items-center gap-2 mb-4">
-            <Filter size={18} />
-            <h3 className={`font-semibold ${theme === "dark" ? "text-white" : "text-slate-900"}`}>
-              Filter
-            </h3>
-          </div>
+			<div className={`w-full max-w-7xl mx-auto mb-6 ${theme === "dark" ? "bg-[rgba(255,255,255,0.015)] border-zinc-900" : "bg-white border-slate-200"}`}>
+				<div className={`p-4 border transition-colors ${radiusClass} ${theme === "dark" ? " border-zinc-800/80" : "bg-white border-slate-200 shadow-sm"
+					}`}>
+					<div className="flex items-center justify-between pb-3 mb-4 border-b border-zinc-200 dark:border-zinc-800/80">
+						<div className="flex items-center gap-2 mb-4">
+							<SlidersHorizontal className={`w-4 h-4 ${theme === "dark" ? "text-[#4ADE80]" : "text-emerald-600"}`} />
+							<h3 className={`text-xs font-black font-['Familjen_Grotesk'] uppercase tracking-wider ${theme === "dark" ? "text-white" : "text-slate-900"
+								}`}>
+								Filter
+							</h3>
+						</div>
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            {/* Search */}
-            <div>
-              <label className={`block text-sm font-medium mb-2 ${theme === "dark" ? "text-slate-300" : "text-slate-700"}`}>
-                Suche
-              </label>
-              <input
-                type="text"
-                value={filters.search}
-                onChange={(e) => setFilters({ ...filters, search: e.target.value })}
-                placeholder="Ticket #, Betreff, Name..."
-                className={`w-full border px-3 py-2 text-sm ${inputClass} ${radiusClass}`}
-              />
-            </div>
+						<div className={`font-['JetBrains_Mono'] mb-4 text-[10px] font-bold uppercase px-2 py-0.5 border ${radiusClass} ${theme === "dark" ? "bg-zinc-900 text-zinc-400 border-zinc-800" : "bg-slate-100 text-slate-600 border-slate-200"
+							}`}>
+							MATCHES // <span className={theme === "dark" ? "text-[#4ADE80]" : "text-emerald-600"}>{filteredTickets.length}</span> / {tickets.length}
+						</div>
+					</div>
 
-            {/* Status Filter */}
-            <div>
-              <label className={`block text-sm font-medium mb-2 ${theme === "dark" ? "text-slate-300" : "text-slate-700"}`}>
-                Status
-              </label>
-              <select
-                value={filters.status}
-                onChange={(e) => setFilters({ ...filters, status: e.target.value as any })}
-                className={`w-full border px-3 py-2 text-sm ${inputClass} ${radiusClass}`}
-              >
-                <option value="">Alle</option>
-                {statuses.map((status) => (
-                  <option key={status} value={status}>
-                    {status.charAt(0).toUpperCase() + status.slice(1)}
-                  </option>
-                ))}
-              </select>
-            </div>
+					<div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+						<div className="space-y-1.5">
+							<label className={`block font-['JetBrains_Mono'] text-[10px] font-bold uppercase tracking-wider ${theme === "dark" ? "text-zinc-400" : "text-slate-600"
+								}`}>
+								SEARCH_QUERY
+							</label>
+							<div className="relative flex items-center">
+								<Search className="w-3.5 h-3.5 absolute left-3 text-zinc-500 pointer-events-none" />
+								<input
+									type="text"
+									value={filters.search}
+									onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+									placeholder="ID, Betreff, User..."
+									className={`w-full border pl-10 pr-3 py-1.5 text-xs font-['JetBrains_Mono'] transition-all focus:outline-none ${inputClass} ${radiusClass}`}
+								/>
+							</div>
+						</div>
 
-            {/* Priority Filter */}
-            <div>
-              <label className={`block text-sm font-medium mb-2 ${theme === "dark" ? "text-slate-300" : "text-slate-700"}`}>
-                Priorität
-              </label>
-              <select
-                value={filters.priority}
-                onChange={(e) => setFilters({ ...filters, priority: e.target.value as any })}
-                className={`w-full border px-3 py-2 text-sm ${inputClass} ${radiusClass}`}
-              >
-                <option value="">Alle</option>
-                {priorities.map((priority) => (
-                  <option key={priority} value={priority}>
-                    {priority.charAt(0).toUpperCase() + priority.slice(1)}
-                  </option>
-                ))}
-              </select>
-            </div>
+						<div className="space-y-1.5">
+							<label className={`block font-['JetBrains_Mono'] text-[10px] font-bold uppercase tracking-wider ${theme === "dark" ? "text-zinc-400" : "text-slate-600"
+								}`}>
+								STATUS_FLAG
+							</label>
+							<select
+								value={filters.status}
+								onChange={(e) => setFilters({ ...filters, status: e.target.value as TicketData["status"] | "" })}
+								className={`w-full border px-3 py-1.5 text-xs font-['JetBrains_Mono'] transition-all focus:outline-none cursor-pointer ${inputClass} ${radiusClass}`}
+							>
+								<option value="" className={theme === "dark" ? "bg-zinc-950 text-zinc-400" : "bg-white text-slate-600"}>
+									ALL_STATUSES
+								</option>
+								{statuses.map((status) => (
+									<option key={status} value={status} className={theme === "dark" ? "bg-zinc-900 text-zinc-200" : "bg-white text-slate-800"}>
+										{status.toUpperCase()}
+									</option>
+								))}
+							</select>
+						</div>
 
-            {/* Reset Button */}
-            <div className="flex items-end">
-              <button
-                onClick={() => setFilters({ status: "", priority: "", search: "" })}
-                className={`w-full px-4 py-2 font-medium flex items-center justify-center gap-2 ${
-                  theme === "dark"
-                    ? "bg-slate-800 text-white hover:bg-slate-700"
-                    : "bg-slate-100 text-slate-900 hover:bg-slate-200"
-                } ${radiusClass} transition-colors`}
-              >
-                <X size={16} />
-                Zurücksetzen
-              </button>
-            </div>
-          </div>
+						<div className="space-y-1.5">
+							<label className={`block font-['JetBrains_Mono'] text-[10px] font-bold uppercase tracking-wider ${theme === "dark" ? "text-zinc-400" : "text-slate-600"
+								}`}>
+								PRIORITY_LEVEL
+							</label>
+							<select
+								value={filters.priority}
+								onChange={(e) => setFilters({ ...filters, priority: e.target.value as "" | "low" | "medium" | "high" | "urgent" })}
+								className={`w-full border pl-2 py-1.5 text-xs font-['JetBrains_Mono'] transition-all focus:outline-none cursor-pointer ${inputClass} ${radiusClass}`}
+							>
+								<option value="" className={theme === "dark" ? "bg-zinc-950 text-zinc-400" : "bg-white text-slate-600"}>
+									ALL_PRIORITIES
+								</option>
+								{priorities.map((priority) => (
+									<option key={priority} value={priority} className={theme === "dark" ? "bg-zinc-900 text-zinc-200" : "bg-white text-slate-800"}>
+										{priority.toUpperCase()}
+									</option>
+								))}
+							</select>
+						</div>
 
-          {/* Filter Info */}
-          <div className={`mt-4 text-sm ${theme === "dark" ? "text-slate-400" : "text-slate-600"}`}>
-            {filteredTickets.length} von {tickets.length} Tickets
-          </div>
-        </div>
+						<div className="flex items-end">
+							<button
+								onClick={() => setFilters({ status: "", priority: "", search: "" })}
+								disabled={!hasActiveFilters}
+								className={`w-full py-1.5 px-3 font-['JetBrains_Mono'] text-xs font-bold uppercase border flex items-center justify-center gap-2 transition-all active:scale-[0.98] ${radiusClass} ${hasActiveFilters
+									? theme === "dark"
+										? "bg-red-950/30 text-red-400 border-red-900/60 hover:bg-red-900/40 hover:border-red-500/80"
+										: "bg-red-50 text-red-700 border-red-200 hover:bg-red-100"
+									: theme === "dark"
+										? "bg-zinc-900/30 text-zinc-600 border-zinc-800/60 cursor-not-allowed opacity-50"
+										: "bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed opacity-50"
+									}`}
+							>
+								<RotateCcw className={`w-3.5 h-3.5 ${hasActiveFilters ? "animate-spin-once" : ""}`} />
+								RESET_FILTERS
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
 
-        {/* Tickets Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Main List */}
-          <div className="lg:col-span-2">
-            <div className={`border ${theme === "dark" ? "border-slate-700" : "border-slate-200"} p-6 ${radiusClass}`}>
-              <div className="flex items-center justify-between mb-4">
-                <h2 className={`text-lg font-semibold ${
-                  theme === "dark" ? "text-white" : "text-slate-900"
-                }`}>
-                  Tickets
-                </h2>
-                {loading && <Loader size={20} className="animate-spin" />}
-              </div>
+			<div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-              <TicketList
-                tickets={filteredTickets}
-                onTicketClick={(ticket) => {
-                  setSelectedTicket(ticket);
-                  setShowDetailModal(true);
-                }}
-                isAdmin={true}
-                loading={loading}
-              />
-            </div>
-          </div>
+				<div className="lg:col-span-2">
+					<div className={`p-5 border transition-colors ${radiusClass} ${theme === "dark" ? "bg-zinc-950/40 border-zinc-800/80" : "bg-white border-slate-200 shadow-sm"
+						}`}>
+						<div className="flex items-center justify-between mb-4 pb-2 border-b border-zinc-200 dark:border-zinc-800/60">
+							<div className="flex items-center gap-2">
+								<Terminal className={`w-4 h-4 ${theme === "dark" ? "text-[#4ADE80]" : "text-emerald-600"}`} />
+								<h3 className={`text-xs font-black font-['Familjen_Grotesk'] uppercase tracking-wider ${theme === "dark" ? "text-white" : "text-slate-900"
+									}`}>
+									QUEUED_TICKETS
+								</h3>
+							</div>
+							<span className="font-['JetBrains_Mono'] text-[10px] text-zinc-500">
+								COUNT: {filteredTickets.length}
+							</span>
+						</div>
 
-          {/* Sidebar Info */}
-          <div className="space-y-4">
-            {/* Stats */}
-            <div className={`border ${theme === "dark" ? "border-slate-700" : "border-slate-200"} p-4 ${radiusClass}`}>
-              <h3 className={`font-semibold mb-3 ${theme === "dark" ? "text-white" : "text-slate-900"}`}>
-                Übersicht
-              </h3>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className={theme === "dark" ? "text-slate-400" : "text-slate-600"}>Insgesamt:</span>
-                  <span className="font-semibold">{tickets.length}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className={theme === "dark" ? "text-slate-400" : "text-slate-600"}>Neu:</span>
-                  <span className="font-semibold">{tickets.filter((t) => t.status === "new").length}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className={theme === "dark" ? "text-slate-400" : "text-slate-600"}>Offen:</span>
-                  <span className="font-semibold">{tickets.filter((t) => t.status === "open").length}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className={theme === "dark" ? "text-slate-400" : "text-slate-600"}>Dringend:</span>
-                  <span className="font-semibold">{tickets.filter((t) => t.priority === "urgent").length}</span>
-                </div>
-              </div>
-            </div>
+						<TicketList
+							tickets={filteredTickets}
+							onTicketClick={(ticket) => {
+								setSelectedTicket(ticket);
+								setShowDetailModal(true);
+							}}
+							isAdmin={true}
+							loading={loading}
+						/>
+					</div>
+				</div>
 
-            {/* Admin Controls */}
-            {selectedTicket && showDetailModal && (
-              <AdminControls ticket={selectedTicket} onUpdate={fetchTickets} />
-            )}
-          </div>
-        </div>
-      </div>
+				<div className="space-y-4">
 
-      {/* Ticket Detail Modal */}
-      {selectedTicket && showDetailModal && (
-        <TicketDetail
-          ticket={selectedTicket}
-          onClose={() => {
-            setShowDetailModal(false);
-            setSelectedTicket(null);
-          }}
-          onUpdate={fetchTickets}
-          isAdmin={true}
-        />
-      )}
-    </div>
-  );
+					<div className={`p-4 border transition-colors ${radiusClass} ${theme === "dark" ? "bg-zinc-950/40 border-zinc-800/80" : "bg-white border-slate-200 shadow-sm"
+						}`}>
+						<div className="flex items-center gap-2 mb-3 pb-2 border-b border-zinc-200 dark:border-zinc-600/60">
+							<Activity className={`w-4 h-4 ${theme === "dark" ? "text-[#4ADE80]" : "text-emerald-600"}`} />
+							<h3 className={`text-xs font-black font-['Familjen_Grotesk'] uppercase tracking-wider ${theme === "dark" ? "text-white" : "text-slate-900"
+								}`}>
+								SYS_METRICS
+							</h3>
+						</div>
+
+						<div className="space-y-2 font-['JetBrains_Mono'] text-xs">
+							<div className={`flex justify-between items-center py-1 border-b ${theme == "dark" ? "border-zinc-800" : "border-zinc-100"}`}>
+								<span className={`${theme === "dark" ? "text-zinc-400" : "text-slate-600"} `}>TOTAL_ENTRIES:</span>
+								<span className={`font-bold`}> {tickets.length}</span>
+							</div>
+							<div className={`flex justify-between items-center py-1 border-b  ${theme == "dark" ? "border-zinc-800" : "border-zinc-100"}`}>
+								<span className={theme === "dark" ? "text-zinc-400" : "text-slate-600"}>STATUS_NEW:</span>
+								<span className={`font-bold ${theme === "dark" ? "text-[#4ADE80]" : "text-emerald-600"}`}>
+									{tickets.filter((t) => t.status === "new").length}
+								</span>
+							</div>
+							<div className="flex justify-between items-center py-1">
+								<span className={theme === "dark" ? "text-zinc-400" : "text-slate-600"}>FLAG_URGENT:</span>
+								<span className="font-bold text-red-400">
+									{tickets.filter((t) => t.priority === "urgent").length}
+								</span>
+							</div>
+						</div>
+					</div>
+
+
+				</div >
+
+			</div >
+
+			{
+				selectedTicket && showDetailModal && (
+					<TicketDetail
+						ticket={selectedTicket}
+						onClose={() => {
+							setShowDetailModal(false);
+							setSelectedTicket(null);
+						}}
+						onUpdate={() => refreshData("tickets")}
+						isAdmin={true}
+					/>
+				)
+			}
+
+		</div >
+	);
 }

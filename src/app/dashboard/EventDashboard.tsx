@@ -89,7 +89,6 @@ export default function EventDashboard() {
 					length: event.length,
 					memberCount: event.memberCount,
 					place: event.place,
-					typeOfEvent: event.typeOfEvent,
 				},
 			}));
 		}

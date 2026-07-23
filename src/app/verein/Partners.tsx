@@ -20,7 +20,7 @@ export default function Partners() {
 	const radiusClass = isRounded ? "rounded-lg" : "rounded-none";
 
 	return (
-		<section id="verein" className="w-full max-w-6xl mx-auto py-20 px-6">
+		<section id="verein" className="w-full max-w-7xl mx-auto py-20 px-4">
 			<div className="mb-14 text-left">
 				<span
 					className={`font-['JetBrains_Mono'] text-[10px] tracking-[0.22em] uppercase block mb-2 ${theme === "dark" ? "text-[#4ADE80]" : "text-green-600"

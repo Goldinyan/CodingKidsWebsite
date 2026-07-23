@@ -25,7 +25,6 @@ export async function getAllEventPresets(
           description: doc.data().description,
           tags: doc.data().tags,
           difficulty: doc.data().difficulty,
-          typeOfEvent: doc.data().typeOfEvent,
         }) as EventDataPreset,
     );
   } catch (error) {
@@ -49,7 +48,6 @@ export async function addEventPreset(
       length: newEventPreset.length,
       memberCount: newEventPreset.memberCount,
       place: newEventPreset.place,
-      typeOfEvent: newEventPreset.typeOfEvent,
       description: newEventPreset.description,
       tags: newEventPreset.tags,
       difficulty: newEventPreset.difficulty,

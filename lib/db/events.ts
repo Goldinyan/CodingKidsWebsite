@@ -103,7 +103,6 @@ export async function addEvent(
       length: newEvent.length,
       memberCount: newEvent.memberCount,
       place: newEvent.place,
-      typeOfEvent: newEvent.typeOfEvent,
       description: newEvent.description,
       tags: newEvent.tags,
       difficulty: newEvent.difficulty,

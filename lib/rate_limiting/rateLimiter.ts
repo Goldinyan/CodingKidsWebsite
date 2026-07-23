@@ -135,9 +135,9 @@ export const rateLimitConfig = {
   },
   updateAnnouncement: {
     anonymous: { maxRequests: 0, windowMs: 60000 },
-    user: { maxRequests: 0, windowMs: 60000 },
-    member: { maxRequests: 0, windowMs: 60000 },
-    mentor: { maxRequests: 0, windowMs: 60000 },
+    user: { maxRequests: 10, windowMs: 60000 },
+    member: { maxRequests: 10, windowMs: 60000 },
+    mentor: { maxRequests: 10, windowMs: 60000 },
     admin: { maxRequests: 10, windowMs: 60000 },
   },
   addAnnouncement: {
@@ -227,15 +227,16 @@ export function checkRateLimit(
   userId: string,
   userRole: UserRole,
 ): boolean {
+  const debug = true;
   const now = Date.now();
   const key = `${functionName}:${userId}`;
 
   const status = getRateLimitStatus(functionName, userId);
   const currentCount = (status?.count ?? 0) + 1;
 
-  console.log(
-    `[RATE LIMIT] ${functionName.toUpperCase()} | Call #${currentCount} | User: ${userId} (${userRole})`,
-  );
+  if (debug) {
+    logRateLimit(functionName, currentCount, userRole);
+  }
 
   // Get the rate limit config for this function and role
   const config = rateLimitConfig[functionName];
@@ -309,4 +310,28 @@ export class RateLimitExceededError extends Error {
     super(message);
     this.name = "RateLimitExceededError";
   }
+}
+
+export function logRateLimit(
+  functionName: string,
+  currentCount: number,
+  userRole: string,
+) {
+  const time = new Date().toLocaleTimeString("de-DE", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
+
+  console.log(
+    `%c[${time}] %c[RATE LIMIT] %c${functionName.toUpperCase()} %c| %cCall #${currentCount} %c| %cRole: ${userRole} %c`,
+    "color: #6b7280; font-weight: normal;", // Zeitstempel (Grau)
+    "color: #ef4444; font-weight: bold;", // RATE LIMIT (Rot)
+    "color: #3b82f6; font-weight: bold;", // Function Name (Blau)
+    "color: #4b5563;", // Trennstrich | (Dunkelgrau)
+    "color: #10b981; font-weight: bold;", // Call Count (Grün)
+    "color: #4b5563;", // Trennstrich | (Dunkelgrau)
+    "color: #8b5cf6;", // Role (Violett)
+    "color: #6b7280; font-weight: bold;", // [...] am Ende (Grau)
+  );
 }
