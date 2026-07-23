@@ -33,8 +33,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 						<ClientLayout>{children}</ClientLayout>
 					</DataProvider>
 				</AuthProvider>
-				{/*<SpeedInsights />
-				<Analytics />*/}
+				<SpeedInsights />
+				<Analytics />
 			</body>
 		</html>
 	);
